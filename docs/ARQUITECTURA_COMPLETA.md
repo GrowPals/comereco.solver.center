@@ -1,5 +1,8 @@
 # 🏗️ ARQUITECTURA COMPLETA: COMERECO WEBAPP
 
+> ⚠️ **Estado 2025-11-02:** Este documento describe la arquitectura objetivo para la automatización con Bind ERP y n8n. Aún faltan migraciones y funciones clave (`bind_mappings`, `bind_sync_logs`, `format_requisition_for_bind_api`, trigger `enqueue_requisition_for_bind`, etc.).  
+> Úsalo como blueprint hasta que se incorporen los cambios en Supabase.
+
 **Fecha:** 2025-01-31  
 **Versión:** 1.0  
 **Propósito:** Documentar la arquitectura completa del sistema para facilitar automatización y producción
@@ -568,12 +571,10 @@ SELECT validate_requisition_for_bind(id);
 
 ## 📚 DOCUMENTACIÓN RELACIONADA
 
-1. `docs/ADAPTACION_SUPABASE_PARA_N8N.md` - Guía técnica de adaptación
-2. `docs/GUIA_N8N_CONSUMO_SUPABASE.md` - Guía para usar desde n8n
-3. `docs/AUDITORIA_VISION_VS_REALIDAD.md` - Comparación visión vs realidad
-4. `docs/PLAN_ACCION_INTEGRACION_BIND.md` - Plan técnico detallado
+1. `../GUIA_IMPLEMENTACION_BIND_PASO_A_PASO.md` - Plan operativo para habilitar la integración.
+2. `CHECKLIST_PRODUCCION_AUTOMATIZACION.md` - Lista de verificación de pendientes.
+3. `INSTRUCCIONES_FIX_RLS_RECURSION.md` - Pasos para sanear las políticas RLS antes de automatizar.
 
 ---
 
-**Estado:** ✅ **ARQUITECTURA COMPLETA Y LISTA PARA PRODUCCIÓN**
-
+**Estado objetivo:** Documento de referencia; implementar migraciones y validaciones antes de marcar la automatización como completada.

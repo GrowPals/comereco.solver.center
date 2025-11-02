@@ -1,0 +1,22 @@
+{
+  "AddressID": "efff1744-da2f-499d-952f-20b9140a95bf",
+  "ClientID": "d02c1c47-c9a5-4728-93a0-29e6b6136a15",
+  "CurrencyID": "b7e2c065-bd52-40ca-b508-3accdd538860",
+  "LocationID": "d7ef64f2-fd1e-437a-bd93-af01985be5a5",
+  "OrderDate": "2025-11-02T10:30:00Z",
+  "PriceListID": "1d5f1d2f-7cd1-4e44-83cc-d47789f70b51",
+  "WarehouseID": "a8605382-7b48-47e2-9fb6-a25cfb7cf735",
+  "Comments": "Requisición ComerECO #REQ-2025-001",
+  "PurchaseOrder": null,
+  "Products": [
+    {
+      "ID": "2d800143-c834-497a-939c-a6e9d19f645f",
+      "Price": 9.5,
+      "Qty": 10,
+      "VAT": 0,
+      "Comments": "",
+      "Unit": "Litro"
+    }
+  ],
+  "Services": []
+}

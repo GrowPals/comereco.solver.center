@@ -1,167 +1,166 @@
-# ✅ CHECKLIST PARA PRODUCCIÓN Y AUTOMATIZACIÓN
+# ✅ CHECKLIST PARA PRODUCCIÓN Y AUTOMATIZACIÓN (Pendiente)
 
-**Fecha:** 2025-01-31  
-**Proyecto:** ComerECO - Sistema de Requisiciones  
-**Propósito:** Verificar que todo esté listo para automatización y producción
+**Fecha original:** 2025-01-31  
+**Actualización 2025-11-02:** Este checklist refleja el objetivo final; **muchos ítems siguen pendientes** (tablas Bind, triggers PGMQ, workflows n8n). Marca cada punto únicamente cuando se materialice en Supabase/n8n.
 
 ---
 
 ## 🎯 PROPÓSITO FINAL VERIFICADO
 
 **El sistema está diseñado para:**
-- ✅ Transformar proceso manual en automático
-- ✅ Cero intervención manual después de aprobación
-- ✅ Integración completa con Bind ERP vía n8n
-- ✅ Sincronización bidireccional de productos
-- ✅ Auditoría completa de todas las operaciones
+- Transformar proceso manual en automático
+- Reducir intervención manual después de aprobación
+- Integrarse con Bind ERP vía n8n
+- Sincronizar productos en ambos sentidos
+- Mantener auditoría completa de todas las operaciones
 
 ---
 
 ## 📊 CHECKLIST: ARQUITECTURA SUPABASE
 
-### Estructura de Datos ✅
+### Estructura de Datos (por completar)
 
-- [x] **Tablas core** creadas con relaciones correctas
-  - [x] `companies` con `bind_location_id` y `bind_price_list_id`
-  - [x] `profiles` con `role_v2` (admin/supervisor/user)
-  - [x] `products` con `bind_id` y `bind_sync_enabled`
-  - [x] `requisitions` con estados de negocio e integración
-  - [x] `requisition_items` con cálculo automático
+- [ ] **Tablas core** creadas con relaciones correctas
+  - [ ] `companies` con `bind_location_id` y `bind_price_list_id`
+  - [ ] `profiles` con `role_v2` (admin/supervisor/user)
+  - [ ] `products` con `bind_id` y `bind_sync_enabled`
+  - [ ] `requisitions` con estados de negocio e integración
+  - [ ] `requisition_items` con cálculo automático
 
-- [x] **Tablas de integración** para Bind ERP
-  - [x] `bind_mappings` para mapeos Supabase → Bind
-  - [x] `bind_sync_logs` para auditoría completa
+- [ ] **Tablas de integración** para Bind ERP
+  - [ ] `bind_mappings` para mapeos Supabase → Bind
+  - [ ] `bind_sync_logs` para auditoría completa
 
-- [x] **Vistas optimizadas** para n8n
-  - [x] `requisitions_pending_sync` - Requisiciones listas para procesar
-  - [x] `products_pending_sync` - Productos que necesitan sincronización
+- [ ] **Vistas optimizadas** para n8n
+  - [ ] `requisitions_pending_sync` - Requisiciones listas para procesar
+  - [ ] `products_pending_sync` - Productos que necesitan sincronización
 
-### Estados y Flujos ✅
+### Estados y Flujos (por completar)
 
-- [x] **Estados de negocio** (`business_status`)
-  - [x] `draft` → `submitted` → `approved` → `rejected`/`ordered`
-  - [x] Transiciones validadas por triggers
+- [ ] **Estados de negocio** (`business_status`)
+  - [ ] `draft` → `submitted` → `approved` → `rejected`/`ordered`
+  - [ ] Transiciones validadas por triggers
 
-- [x] **Estados de integración** (`integration_status`) ⭐ CRÍTICO
-  - [x] `draft` → `pending_sync` → `syncing` → `synced`/`sync_failed`
-  - [x] Flujo claro para n8n
+- [ ] **Estados de integración** (`integration_status`) ⭐ CRÍTICO
+  - [ ] `draft` → `pending_sync` → `syncing` → `synced`/`sync_failed`
+  - [ ] Flujo claro para n8n
 
-- [x] **Campos de integración** en `requisitions`
-  - [x] `bind_folio` - Folio retornado por Bind
-  - [x] `bind_synced_at` - Fecha de sincronización
-  - [x] `bind_error_message` - Mensaje de error
-  - [x] `bind_sync_attempts` - Contador de reintentos
-  - [x] `approved_at` - Trigger para n8n
+- [ ] **Campos de integración** en `requisitions`
+  - [ ] `bind_folio` - Folio retornado por Bind
+  - [ ] `bind_synced_at` - Fecha de sincronización
+  - [ ] `bind_error_message` - Mensaje de error
+  - [ ] `bind_sync_attempts` - Contador de reintentos
+  - [ ] `approved_at` - Trigger para n8n
 
-### Funciones Críticas ✅
+### Funciones Críticas (por completar)
 
-- [x] **Flujo de negocio**
-  - [x] `create_full_requisition()` - Crear desde carrito
-  - [x] `submit_requisition()` - Enviar para aprobación
-  - [x] `approve_requisition()` - Aprobar y marcar `pending_sync` ⭐
-  - [x] `reject_requisition()` - Rechazar
+- [ ] **Flujo de negocio**
+  - [ ] `create_full_requisition()` - Crear desde carrito
+  - [ ] `submit_requisition()` - Enviar para aprobación
+  - [ ] `approve_requisition()` - Aprobar y marcar `pending_sync` ⭐
+  - [ ] `reject_requisition()` - Rechazar
 
-- [x] **Flujo de integración** ⭐ CRÍTICO PARA N8N
-  - [x] `get_requisition_for_bind()` - Obtener info completa
-  - [x] `format_requisition_for_bind_api()` - Formatear para Bind
-  - [x] `validate_requisition_for_bind()` - Validar antes de procesar
-  - [x] `update_bind_sync_status()` - Actualizar después de sincronizar
-  - [x] `log_bind_sync()` - Registrar en logs
+- [ ] **Flujo de integración** ⭐ CRÍTICO PARA N8N
+  - [ ] `get_requisition_for_bind()` - Obtener info completa
+  - [ ] `format_requisition_for_bind_api()` - Formatear para Bind
+  - [ ] `validate_requisition_for_bind()` - Validar antes de procesar
+  - [ ] `update_bind_sync_status()` - Actualizar después de sincronizar
+  - [ ] `log_bind_sync()` - Registrar en logs
 
-- [x] **Sincronización de productos**
-  - [x] `upsert_product_from_bind()` - Crear/actualizar producto
-  - [x] `batch_upsert_products_from_bind()` - Procesar múltiples
-  - [x] `get_products_pending_sync()` - Obtener pendientes
-  - [x] `mark_product_as_synced()` - Marcar como sincronizado
+- [ ] **Sincronización de productos**
+  - [ ] `upsert_product_from_bind()` - Crear/actualizar producto
+  - [ ] `batch_upsert_products_from_bind()` - Procesar múltiples
+  - [ ] `get_products_pending_sync()` - Obtener pendientes
+  - [ ] `mark_product_as_synced()` - Marcar como sincronizado
 
-- [x] **Diagnóstico y mantenimiento**
-  - [x] `get_integration_dashboard()` - Dashboard completo
-  - [x] `get_requisitions_with_issues()` - Identificar problemas
-  - [x] `retry_failed_syncs()` - Reintentar fallidos
-  - [x] `cleanup_old_sync_logs()` - Limpiar logs antiguos
+- [ ] **Diagnóstico y mantenimiento**
+  - [ ] `get_integration_dashboard()` - Dashboard completo
+  - [ ] `get_requisitions_with_issues()` - Identificar problemas
+  - [ ] `retry_failed_syncs()` - Reintentar fallidos
+  - [ ] `cleanup_old_sync_logs()` - Limpiar logs antiguos
 
-### Triggers Automáticos ✅
+### Triggers Automáticos (por completar)
 
-- [x] **Trigger crítico** ⭐ CRÍTICO PARA AUTOMATIZACIÓN
-  - [x] `enqueue_requisition_for_bind_trigger` - Marca automáticamente `pending_sync` al aprobar
-  - [x] Asegura que TODA aprobación se marque para procesamiento
+- [ ] **Trigger crítico** ⭐ CRÍTICO PARA AUTOMATIZACIÓN
+  - [ ] `enqueue_requisition_for_bind_trigger` - Marca automáticamente `pending_sync` al aprobar
+  - [ ] Asegura que TODA aprobación se marque para procesamiento
 
-- [x] **Triggers de cálculo**
-  - [x] `calculate_item_subtotal` - Calcula subtotal automáticamente
-  - [x] `update_requisition_total` - Actualiza total de requisición
+- [ ] **Triggers de cálculo**
+  - [ ] `calculate_item_subtotal` - Calcula subtotal automáticamente
+  - [ ] `update_requisition_total` - Actualiza total de requisición
 
-- [x] **Triggers de auditoría**
-  - [x] `validate_requisition_status_transition` - Valida transiciones
-  - [x] `set_updated_at` - Actualiza timestamps
+- [ ] **Triggers de auditoría**
+  - [ ] `validate_requisition_status_transition` - Valida transiciones
+  - [ ] `set_updated_at` - Actualiza timestamps
 
-### Seguridad: RLS ✅
+### Seguridad: RLS (por completar)
 
-- [x] **RLS habilitado** en todas las tablas críticas
-- [x] **Políticas optimizadas** usando `(SELECT auth.uid())`
-- [x] **Funciones SECURITY DEFINER** con `SET search_path`
-- [x] **Multi-tenancy** garantizado por `company_id`
+- [ ] **RLS habilitado** en todas las tablas críticas
+- [ ] **Políticas optimizadas** usando `(SELECT auth.uid())`
+- [ ] **Funciones SECURITY DEFINER** con `SET search_path`
+- [ ] **Multi-tenancy** garantizado por `company_id`
 
-### Performance ✅
+### Performance (por completar)
 
-- [x] **Índices optimizados** para consultas críticas
-  - [x] `idx_requisitions_pending_sync` - Para webhooks/polling
-  - [x] `idx_requisitions_approved_at` - Para ordenamiento
-  - [x] `idx_products_company_bind_id` - Único por empresa y bind_id
-  - [x] `idx_bind_sync_logs_company_type` - Para auditoría
+- [ ] **Índices optimizados** para consultas críticas
+  - [ ] `idx_requisitions_pending_sync` - Para webhooks/polling
+  - [ ] `idx_requisitions_approved_at` - Para ordenamiento
+  - [ ] `idx_products_company_bind_id` - Único por empresa y bind_id
+  - [ ] `idx_bind_sync_logs_company_type` - Para auditoría
 
 ---
 
 ## 🔄 CHECKLIST: FLUJO DE AUTOMATIZACIÓN
 
-### Flujo Completo ✅
+### Flujo Completo (por completar)
 
-- [x] **Usuario crea requisición**
-  - [x] `create_full_requisition()` funciona correctamente
-  - [x] Estado inicial: `draft`
+- [ ] **Usuario crea requisición**
+  - [ ] `create_full_requisition()` funciona correctamente
+  - [ ] Estado inicial: `draft`
 
-- [x] **Usuario envía requisición**
-  - [x] `submit_requisition()` funciona correctamente
-  - [x] Estado: `submitted`
-  - [x] Notificación creada para supervisor
+- [ ] **Usuario envía requisición**
+  - [ ] `submit_requisition()` funciona correctamente
+  - [ ] Estado: `submitted`
+  - [ ] Notificación creada para supervisor
 
-- [x] **Supervisor aprueba** ⭐ CRÍTICO
-  - [x] `approve_requisition()` funciona correctamente
-  - [x] Estado: `approved` + `pending_sync`
-  - [x] `approved_at` establecido
-  - [x] **TRIGGER automático** marca `pending_sync` ⭐
-  - [x] Notificación creada para usuario
+- [ ] **Supervisor aprueba** ⭐ CRÍTICO
+  - [ ] `approve_requisition()` funciona correctamente
+  - [ ] Estado: `approved` + `pending_sync`
+  - [ ] `approved_at` establecido
+  - [ ] **TRIGGER automático** marca `pending_sync` ⭐
+  - [ ] Notificación creada para usuario
 
-- [x] **n8n detecta requisición** ⭐ LISTO PARA CONFIGURAR
-  - [x] Vista `requisitions_pending_sync` disponible
-  - [x] Función `get_requisition_for_bind()` disponible
-  - [x] Webhook o polling puede configurarse
+- [ ] **n8n detecta requisición** ⭐ LISTO PARA CONFIGURAR
+  - [ ] Vista `requisitions_pending_sync` disponible
+  - [ ] Función `get_requisition_for_bind()` disponible
+  - [ ] Webhook o polling puede configurarse
 
-- [x] **n8n procesa requisición** ⭐ LISTO PARA CONFIGURAR
-  - [x] `validate_requisition_for_bind()` disponible
-  - [x] `format_requisition_for_bind_api()` disponible
-  - [x] Estructura JSON clara y completa
+- [ ] **n8n procesa requisición** ⭐ LISTO PARA CONFIGURAR
+  - [ ] `validate_requisition_for_bind()` disponible
+  - [ ] `format_requisition_for_bind_api()` disponible
+  - [ ] Estructura JSON clara y completa
 
-- [x] **n8n envía a Bind ERP** ⭐ LISTO PARA CONFIGURAR
-  - [x] Datos formateados correctamente
-  - [x] `bind_id` de productos incluido
-  - [x] `bind_location_id` de empresa incluido
+- [ ] **n8n envía a Bind ERP** ⭐ LISTO PARA CONFIGURAR
+  - [ ] Datos formateados correctamente
+  - [ ] `bind_id` de productos incluido
+  - [ ] `bind_location_id` de empresa incluido
 
-- [x] **n8n actualiza estado** ⭐ LISTO PARA CONFIGURAR
-  - [x] `update_bind_sync_status()` disponible
-  - [x] Logs automáticos en `bind_sync_logs`
-  - [x] Notificaciones automáticas al usuario
+- [ ] **n8n actualiza estado** ⭐ LISTO PARA CONFIGURAR
+  - [ ] `update_bind_sync_status()` disponible
+  - [ ] Logs automáticos en `bind_sync_logs`
+  - [ ] Notificaciones automáticas al usuario
 
 ---
 
 ## 🚀 CHECKLIST: PREPARACIÓN PARA PRODUCCIÓN
 
-### Configuración de Supabase ✅
+### Configuración de Supabase (verificar)
 
-- [x] **Migraciones aplicadas** correctamente
-- [x] **Funciones creadas** y probadas
-- [x] **Triggers configurados** correctamente
-- [x] **RLS policies** optimizadas
-- [x] **Índices creados** para performance
+- [ ] **Migraciones aplicadas** correctamente
+- [ ] **Funciones creadas** y probadas
+- [ ] **Triggers configurados** correctamente
+- [ ] **RLS policies** optimizadas
+- [ ] **Índices creados** para performance
 
 ### Configuración de n8n ⏭️ PENDIENTE
 
@@ -215,50 +214,50 @@
 
 ---
 
-## ✅ VERIFICACIÓN FINAL
+## 🚧 Verificación pendiente
 
-### Arquitectura ✅
+### Arquitectura (verificar)
 
-- [x] **Estructura de datos** completa y bien relacionada
-- [x] **Estados y flujos** claramente definidos
-- [x] **Funciones críticas** implementadas y probadas
-- [x] **Triggers automáticos** configurados
-- [x] **Vistas optimizadas** para n8n
-- [x] **Logs de auditoría** completos
+- [ ] **Estructura de datos** completa y bien relacionada
+- [ ] **Estados y flujos** claramente definidos
+- [ ] **Funciones críticas** implementadas y probadas
+- [ ] **Triggers automáticos** configurados
+- [ ] **Vistas optimizadas** para n8n
+- [ ] **Logs de auditoría** completos
 
-### Código Frontend ✅
+### Código Frontend (verificar)
 
-- [x] **Servicios optimizados** con helpers cacheados
-- [x] **Queries optimizadas** sin duplicaciones
-- [x] **Manejo de errores** robusto
-- [x] **Performance mejorada** significativamente
+- [ ] **Servicios optimizados** con helpers cacheados
+- [ ] **Queries optimizadas** sin duplicaciones
+- [ ] **Manejo de errores** robusto
+- [ ] **Performance mejorada** significativamente
 
-### Integración ✅
+### Integración (verificar)
 
-- [x] **Estructura lista** para n8n
-- [x] **Funciones disponibles** para consumo
-- [x] **Validaciones** antes de procesar
-- [x] **Actualización de estados** después de procesar
+- [ ] **Estructura lista** para n8n
+- [ ] **Funciones disponibles** para consumo
+- [ ] **Validaciones** antes de procesar
+- [ ] **Actualización de estados** después de procesar
 
-### Seguridad ✅
+### Seguridad (verificar)
 
-- [x] **RLS habilitado** en todas las tablas
-- [x] **Políticas optimizadas** para performance
-- [x] **Funciones seguras** con SECURITY DEFINER
-- [x] **Multi-tenancy** garantizado
+- [ ] **RLS habilitado** en todas las tablas
+- [ ] **Políticas optimizadas** para performance
+- [ ] **Funciones seguras** con SECURITY DEFINER
+- [ ] **Multi-tenancy** garantizado
 
 ---
 
 ## 🎯 RESULTADO FINAL
 
-### ✅ **ARQUITECTURA COMPLETA Y LISTA PARA PRODUCCIÓN**
+### Objetivo de la checklist
 
-**El sistema está diseñado para:**
-1. ✅ Transformar proceso manual en automático
-2. ✅ Facilitar integración con n8n y Bind ERP
-3. ✅ Escalar sin problemas
-4. ✅ Mantener auditoría completa
-5. ✅ Monitorear y diagnosticar problemas fácilmente
+**El sistema busca:**
+1. Automatizar el flujo de requisiciones end-to-end
+2. Facilitar integración con n8n y Bind ERP
+3. Escalar sin problemas
+4. Mantener auditoría completa
+5. Monitorear y diagnosticar problemas fácilmente
 
 **Próximos pasos:**
 1. ⏭️ Configurar workflows en n8n usando las funciones disponibles
@@ -269,7 +268,6 @@
 
 ---
 
-**Estado:** ✅ **LISTO PARA AUTOMATIZACIÓN Y PRODUCCIÓN**  
-**Arquitectura:** ✅ **COMPLETA Y BIEN PENSADA**  
-**Documentación:** ✅ **COMPLETA**
-
+**Estado actual:** 🟡 En progreso — completar migraciones y workflows antes del go-live  
+**Arquitectura:** 🧭 Referencia objetivo — consolidar en Supabase antes de validar  
+**Documentación:** 📝 Actualizada a noviembre 2025 con notas de pendientes
