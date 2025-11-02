@@ -259,8 +259,13 @@ export default defineConfig({
 			'react-dom',
 			'react/jsx-runtime',
 			'react/jsx-dev-runtime',
+			'react-dom/client',
 			'react-router-dom',
-			'react-dom/client'
+			'@tanstack/react-query',
+			'react-hook-form',
+			'react-helmet',
+			'react-intersection-observer',
+			'framer-motion'
 		],
 		force: false,
 		esbuildOptions: {
@@ -294,21 +299,29 @@ export default defineConfig({
 				'@babel/types'
 			],
 			output: {
-				// Separar React en su propio chunk para asegurar carga correcta
+				// Separar React y todas sus dependencias en su propio chunk
 				manualChunks: (id) => {
-					// React y React-DOM siempre en un chunk separado y estable
+					// React core - DEBE estar primero
 					if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
 						return 'react-vendor';
 					}
-					// React Router y dependencias relacionadas
-					if (id.includes('node_modules/react-router')) {
-						return 'react-router-vendor';
+					// Todas las librerías que dependen de React deben estar en react-vendor también
+					// Esto asegura que React esté disponible cuando estas librerías se ejecuten
+					if (
+						id.includes('node_modules/@tanstack/react-query') ||
+						id.includes('node_modules/react-router') ||
+						id.includes('node_modules/react-hook-form') ||
+						id.includes('node_modules/react-helmet') ||
+						id.includes('node_modules/react-intersection-observer') ||
+						id.includes('node_modules/react-chartjs-2') ||
+						id.includes('node_modules/react-day-picker') ||
+						id.includes('node_modules/@radix-ui') ||
+						id.includes('node_modules/framer-motion') ||
+						id.includes('node_modules/lucide-react')
+					) {
+						return 'react-vendor';
 					}
-					// Radix UI components (muchos componentes)
-					if (id.includes('node_modules/@radix-ui')) {
-						return 'radix-vendor';
-					}
-					// Otros vendor dependencies
+					// Otros vendor dependencies (sin React)
 					if (id.includes('node_modules')) {
 						return 'vendor';
 					}
