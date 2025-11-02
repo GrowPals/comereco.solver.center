@@ -4,20 +4,21 @@ import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const badgeVariants = cva(
-  'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+  'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
   {
     variants: {
       variant: {
-        default: 'border-transparent bg-[var(--primary-00)] text-[var(--primary-60)]',
-        secondary: 'border-transparent bg-[var(--neutral-10)] text-[var(--neutral-60)]',
+        default: 'border-transparent bg-gradient-to-r from-primary-100 to-primary-50 text-primary-700 shadow-sm',
+        secondary: 'border-transparent bg-neutral-100 text-neutral-700 shadow-sm',
 
-        success: 'bg-[var(--success-00)] text-[var(--success-text)] border-[var(--success-border)]',
-        warning: 'bg-[var(--warning-00)] text-[var(--warning-text)] border-[var(--warning-border)]',
-        danger: 'bg-[var(--danger-00)] text-[var(--danger-text)] border-[var(--danger-border)]',
-        info: 'bg-[var(--info-00)] text-[var(--info-text)] border-[var(--info-border)]',
+        success: 'bg-gradient-to-r from-green-100 to-green-50 text-green-700 border-green-200 shadow-sm',
+        warning: 'bg-gradient-to-r from-yellow-100 to-yellow-50 text-yellow-700 border-yellow-200 shadow-sm',
+        danger: 'bg-gradient-to-r from-red-100 to-red-50 text-red-700 border-red-200 shadow-sm',
+        destructive: 'bg-gradient-to-r from-red-100 to-red-50 text-red-700 border-red-200 shadow-sm',
+        info: 'bg-gradient-to-r from-blue-100 to-blue-50 text-blue-700 border-blue-200 shadow-sm',
 
-        muted: 'bg-[var(--neutral-10)] text-[var(--neutral-60)] border-[var(--neutral-20)]',
-        outline: 'text-[var(--neutral-100)] border-[var(--neutral-10)]',
+        muted: 'bg-neutral-100 text-neutral-600 border-neutral-200',
+        outline: 'text-neutral-700 border-neutral-300 bg-white hover:bg-neutral-50',
       },
     },
     defaultVariants: {
