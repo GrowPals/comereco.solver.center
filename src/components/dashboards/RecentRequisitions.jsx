@@ -13,10 +13,15 @@ import { Clock } from 'lucide-react';
 
 const RecentRequisitions = () => {
     const navigate = useNavigate();
-    const { data: requisitions, isLoading } = useQuery({
+    const { data: requisitions, isLoading, isError } = useQuery({
         queryKey: ['recentRequisitions'],
         queryFn: getRecentRequisitions,
+        retry: false, // No reintentar si falla
+        refetchOnWindowFocus: false, // No reintentar al enfocar ventana
     });
+
+    // Asegurar que requisitions sea un array
+    const safeRequisitions = Array.isArray(requisitions) ? requisitions : [];
 
     const getStatusVariant = (status) => {
         switch (status) {
@@ -60,8 +65,14 @@ const RecentRequisitions = () => {
                                     <TableCell className="text-right"><Skeleton className="h-6 w-20 ml-auto" /></TableCell>
                                 </TableRow>
                             ))
+                        ) : safeRequisitions.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                                    {isError ? 'No se pudieron cargar las requisiciones recientes' : 'No hay requisiciones recientes'}
+                                </TableCell>
+                            </TableRow>
                         ) : (
-                            requisitions?.map(req => (
+                            safeRequisitions.map(req => (
                                 <TableRow key={req.id} onClick={() => navigate(`/requisitions/${req.id}`)} className="cursor-pointer hover:bg-muted">
                                     <TableCell className="font-medium">{req.internal_folio}</TableCell>
                                     <TableCell className="hidden sm:table-cell">{req.project?.name || 'N/A'}</TableCell>

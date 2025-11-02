@@ -88,25 +88,20 @@ const LoginPage = () => {
                 <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary-300/20 rounded-full blur-3xl" />
 
                 <div className="w-full max-w-md relative z-10">
-                    {/* Logo and Title */}
+                    {/* Logo */}
                     <motion.div
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.4, ease: "easeOut" }}
                         className="text-center mb-8"
                     >
-                        <div className="mx-auto w-24 h-24 mb-6 bg-white rounded-2xl shadow-lg flex items-center justify-center">
+                        <div className="mx-auto w-24 h-24 bg-white rounded-2xl shadow-lg flex items-center justify-center">
                             <img
                                 src="https://i.ibb.co/XZW8Nh3v/solver-logo-1.png"
                                 alt="ComerECO Logo"
                                 className="w-16 h-16 object-contain"
                             />
                         </div>
-                        <h1 className="text-4xl font-bold mb-2">
-                            <span className="text-neutral-900">Comer</span>
-                            <span className="bg-gradient-primary bg-clip-text text-transparent">ECO</span>
-                        </h1>
-                        <p className="text-neutral-500 text-base">Bienvenido de vuelta</p>
                     </motion.div>
 
                     {/* Login Card */}
@@ -116,6 +111,14 @@ const LoginPage = () => {
                         transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
                         className={`bg-white rounded-2xl shadow-xl border border-neutral-200 p-8 ${isShaking ? 'animate-shake' : ''}`}
                     >
+                        {/* Title inside card */}
+                        <div className="text-center mb-6">
+                            <h1 className="text-4xl font-bold mb-2">
+                                <span className="text-neutral-900">Comer</span>
+                                <span className="bg-gradient-primary bg-clip-text text-transparent">ECO</span>
+                            </h1>
+                            <p className="text-neutral-500 text-base">Bienvenido de vuelta</p>
+                        </div>
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                             {/* Email Input */}
                             <div>
@@ -142,7 +145,7 @@ const LoginPage = () => {
                                         label="Contraseña"
                                         icon={<Lock />}
                                         error={errors.password?.message}
-                                        className="pr-12"
+                                        className="pr-14"
                                         {...register('password', {
                                             required: 'La contraseña es requerida'
                                         })}
@@ -151,8 +154,9 @@ const LoginPage = () => {
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-900 transition-colors duration-200 z-10"
+                                        className="absolute right-3 top-[28px] text-neutral-500 hover:text-neutral-900 transition-colors duration-200 z-20"
                                         disabled={isLoading}
+                                        aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                                     >
                                         {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                                     </button>

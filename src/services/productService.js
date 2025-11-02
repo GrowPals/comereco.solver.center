@@ -9,46 +9,54 @@ import logger from '@/utils/logger';
  * RLS filtra automáticamente por company_id según REFERENCIA_TECNICA_BD_SUPABASE.md
  */
 export const fetchProducts = async ({ pageParam = 0, searchTerm = '', category = '', availability = '' }) => {
-    // Validar sesión antes de hacer queries (usando cache)
-    const { session, error: sessionError } = await getCachedSession();
-    if (sessionError || !session) {
-        throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
-    }
+    try {
+        // Validar sesión antes de hacer queries (usando cache)
+        const { session, error: sessionError } = await getCachedSession();
+        if (sessionError || !session) {
+            // En lugar de lanzar error, devolver datos vacíos para que la UI se muestre
+            return { products: [], totalCount: 0 };
+        }
 
-    const ITEMS_PER_PAGE = 12;
-    const from = pageParam * ITEMS_PER_PAGE;
-    const to = from + ITEMS_PER_PAGE - 1;
+        const ITEMS_PER_PAGE = 12;
+        const from = pageParam * ITEMS_PER_PAGE;
+        const to = from + ITEMS_PER_PAGE - 1;
 
-    // RLS filtra automáticamente por company_id del usuario autenticado
-    let query = supabase
-        .from('products')
-        .select('*', { count: 'exact' })
-        .eq('is_active', true)
-        .order('name', { ascending: true })
-        .range(from, to);
-    
-    if (searchTerm) {
-        query = query.or(`name.ilike.%${searchTerm}%,sku.ilike.%${searchTerm}%`);
-    }
-    if (category) {
-        query = query.eq('category', category);
-    }
-    if (availability === 'in_stock') {
-        query = query.gt('stock', 0);
-    }
+        // RLS filtra automáticamente por company_id del usuario autenticado
+        let query = supabase
+            .from('products')
+            .select('*', { count: 'exact' })
+            .eq('is_active', true)
+            .order('name', { ascending: true })
+            .range(from, to);
+        
+        if (searchTerm) {
+            query = query.or(`name.ilike.%${searchTerm}%,sku.ilike.%${searchTerm}%`);
+        }
+        if (category) {
+            query = query.eq('category', category);
+        }
+        if (availability === 'in_stock') {
+            query = query.gt('stock', 0);
+        }
 
-    const { data, error, count } = await query;
+        const { data, error, count } = await query;
 
-    if (error) {
-        logger.error("Error fetching products:", error);
-        throw new Error(formatErrorMessage(error));
+        if (error) {
+            logger.error('Error fetching products:', error);
+            // En lugar de lanzar error, devolver datos vacíos para que la UI se muestre
+            return { products: [], totalCount: 0 };
+        }
+
+        return {
+            products: data || [],
+            nextPage: (to + 1) < (count || 0) ? pageParam + 1 : undefined,
+            totalCount: count || 0,
+        };
+    } catch (err) {
+        logger.error('Exception in fetchProducts:', err);
+        // Devolver datos vacíos en caso de excepción
+        return { products: [], totalCount: 0 };
     }
-    
-    return {
-        products: data || [],
-        nextPage: (to + 1) < (count || 0) ? pageParam + 1 : undefined,
-        totalCount: count || 0,
-    };
 };
 
 export const fetchProductById = async (productId) => {

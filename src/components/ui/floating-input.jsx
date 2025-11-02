@@ -17,8 +17,8 @@ const FloatingInput = React.forwardRef(({ className, type, label, icon, error, .
     <div className="relative w-full group">
       {icon && (
         <div className={cn(
-          "absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 transition-all duration-200 pointer-events-none z-10",
-          isFloating && "scale-90 -translate-y-7"
+          "absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 transition-colors duration-200 pointer-events-none z-10",
+          isFloating && "text-primary-500"
         )}>
           {React.cloneElement(icon, { className: 'h-5 w-5' })}
         </div>

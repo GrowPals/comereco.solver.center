@@ -24,7 +24,7 @@ import EmptyState from '@/components/EmptyState';
 const CatalogPage = () => {
   const [viewMode, setViewMode] = useState('grid');
   const [searchTerm, setSearchTerm] = useState('');
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState('all');
   const [page, setPage] = useState(1);
   const pageSize = 12;
 
@@ -32,7 +32,7 @@ const CatalogPage = () => {
 
   const filters = useMemo(() => ({
     searchTerm: debouncedSearchTerm,
-    category,
+    category: category === 'all' ? '' : category,
     page,
     pageSize,
   }), [debouncedSearchTerm, category, page, pageSize]);
@@ -75,16 +75,16 @@ const CatalogPage = () => {
                   <SelectValue placeholder="Categoría" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todas</SelectItem>
+                  <SelectItem value="all">Todas</SelectItem>
                   {isLoadingCategories ? (
-                    <SelectItem value="loading" disabled>Cargando...</SelectItem>
+                    <div className="px-2 py-1.5 text-sm text-muted-foreground">Cargando...</div>
                   ) : (
-                    categories?.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)
+                    categories?.map(cat => cat ? <SelectItem key={cat} value={cat}>{cat}</SelectItem> : null)
                   )}
                 </SelectContent>
               </Select>
-              {category && (
-                <Button variant="ghost" size="icon" onClick={() => setCategory('')}>
+              {category && category !== 'all' && (
+                <Button variant="ghost" size="icon" onClick={() => setCategory('all')}>
                   <X className="h-4 w-4" />
                 </Button>
               )}
