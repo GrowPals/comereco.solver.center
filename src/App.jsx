@@ -125,7 +125,7 @@ const AppLayout = () => {
       <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${contentMargin}`}>
         {showNav && <Header setSidebarOpen={handleToggleSidebar} />}
         
-        <main className="flex-1 overflow-y-auto pb-24 lg:pb-0" id="main-content" role="main">
+        <main className="flex-1 overflow-y-auto pb-28 lg:pb-0" id="main-content" role="main">
             <ErrorBoundary level="page">
               <Suspense fallback={<div className="h-full"><PageLoader /></div>}>
                 <Routes location={location}>

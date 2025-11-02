@@ -56,10 +56,10 @@ const CatalogPage = () => {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <header className="mb-10 pb-8 border-b border-slate-200">
-            <h1 className="text-5xl font-bold tracking-tight text-slate-900 mb-3">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-slate-900 mb-3">
               Catálogo de Productos
             </h1>
-            <p className="text-lg text-slate-600">
+            <p className="text-base sm:text-lg text-slate-600">
               Encuentra todo lo que necesitas para tus proyectos
             </p>
           </header>
@@ -154,7 +154,7 @@ const CatalogPage = () => {
 
           {!isLoading && !isError && products.length === 0 && (
             <div className="flex items-center justify-center min-h-[400px]">
-              <div className="bg-white rounded-2xl shadow-lg p-16 max-w-md mx-auto">
+              <div className="bg-white rounded-2xl shadow-lg p-16 w-full max-w-2xl">
                 <EmptyState
                   title="No se encontraron productos"
                   message="Intenta ajustar tu búsqueda o filtros para encontrar lo que buscas."

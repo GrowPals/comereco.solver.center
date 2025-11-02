@@ -1,0 +1,753 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://api.bind.com.mx/api/Warehouses",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "d48cee1d-1d2b-4c38-bd51-2dee7a83dcee",
+      "name": "GET Almacenes",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        288,
+        -80
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extraer el ID del almacén principal\nconst response = $input.first().json;\n\n// La respuesta viene en el formato OData con un array \"value\"\nconst warehouses = response.value || [];\n\nif (warehouses.length === 0) {\n  throw new Error('No se encontraron almacenes en Bind ERP');\n}\n\n// Como solo hay 1 almacén (\"Matriz\"), tomamos ese\nconst mainWarehouse = warehouses[0];\n\n// Log para debug\nconsole.log('Almacén encontrado:', mainWarehouse.Name, '-', mainWarehouse.ID);\n\nreturn [{\n  json: {\n    warehouseId: mainWarehouse.ID,\n    warehouseName: mainWarehouse.Name,\n    warehouseLocationId: mainWarehouse.LocationID,\n    message: `Almacén principal: ${mainWarehouse.Name}`,\n    totalWarehouses: warehouses.length\n  }\n}];"
+      },
+      "id": "f000ae74-f6ed-495f-bb3f-ea6bc5111dd7",
+      "name": "Extraer WarehouseID Comereco",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.bind.com.mx/api/Products",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "$top",
+              "value": "100"
+            },
+            {
+              "name": "$skip",
+              "value": "0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c6f25c0d-665a-4db0-809d-77f442e2aba5",
+      "name": "GET Productos",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        688,
+        -80
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.bind.com.mx/api/Clients",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "c16d6884-dbc9-41b5-9a0c-8b223bbaceae",
+      "name": "GET Cliente (Soluciones)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1136,
+        -128
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Combinar todos los datos obtenidos\nconst warehouse = $('Extraer WarehouseID Comereco').first().json;\nconst products = $('GET Productos').all().map(item => item.json);\nconst inventory = $('GET Inventario').all().map(item => item.json);\nconst clients = $('GET Cliente (Soluciones)').all().map(item => item.json);\nconst priceLists = $('GET Listas de Precios').all().map(item => item.json);\n\n// Encontrar el cliente de Soluciones a la Orden\nconst solucionesClient = clients.find(c => \n  c.Name && c.Name.toLowerCase().includes('soluciones')\n);\n\n// Combinar productos con su inventario\nconst productsWithStock = products.map(product => {\n  const stock = inventory.find(inv => inv.ProductID === product.ID);\n  \n  return {\n    ...product,\n    stock: stock ? stock.Quantity : 0,\n    minStock: stock ? stock.MinStock : 0\n  };\n});\n\nreturn [{\n  json: {\n    warehouse: warehouse,\n    client: solucionesClient,\n    products: productsWithStock,\n    priceLists: priceLists,\n    summary: {\n      totalProducts: productsWithStock.length,\n      clientId: solucionesClient?.ID || 'NO ENCONTRADO',\n      warehouseId: warehouse.warehouseId,\n      timestamp: new Date().toISOString()\n    }\n  }\n}];"
+      },
+      "id": "0a250d12-7599-4bbc-b38d-e12d8fc7d004",
+      "name": "Combinar Todos los Datos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Formatear los datos como mock-data.js\nconst data = $input.first().json;\n\n// Template del archivo mock-data.js\nconst mockDataTemplate = `// mock-data.js - Estructura basada en Bind ERP API\n// Generado automáticamente: ${data.summary.timestamp}\n\nexport const WAREHOUSE_ID = \"${data.summary.warehouseId}\";\nexport const CLIENT_ID = \"${data.summary.clientId}\";\nexport const CLIENT_NAME = \"${data.client?.Name || 'Soluciones a la Orden'}\";\n\n// Productos con inventario\nexport const products = ${JSON.stringify(data.products, null, 2)};\n\n// Listas de precios\nexport const priceLists = ${JSON.stringify(data.priceLists, null, 2)};\n\n// Cliente\nexport const client = ${JSON.stringify(data.client, null, 2)};\n\n// Almacén\nexport const warehouse = ${JSON.stringify(data.warehouse, null, 2)};\n\n// Mock users para testing (simulados)\nexport const mockUsers = [\n  {\n    email: \"juan@soluciones.com\",\n    password: \"test123\",\n    name: \"Juan Pérez\",\n    role: \"employee\",\n    department: \"Operaciones\"\n  },\n  {\n    email: \"maria@soluciones.com\",\n    password: \"test123\",\n    name: \"María González\",\n    role: \"employee\",\n    department: \"Limpieza\"\n  },\n  {\n    email: \"admin@soluciones.com\",\n    password: \"admin123\",\n    name: \"Roberto Admin\",\n    role: \"admin\",\n    department: \"Administración\"\n  }\n];\n\n// Categorías (inferidas de los productos)\nexport const categories = [\n  { id: \"cat-limpieza\", name: \"Productos de Limpieza\" },\n  { id: \"cat-desinfeccion\", name: \"Desinfección\" },\n  { id: \"cat-herramientas\", name: \"Herramientas\" },\n  { id: \"cat-equipos\", name: \"Equipos\" },\n  { id: \"cat-consumibles\", name: \"Consumibles\" }\n];\n`;\n\nreturn [{\n  json: {\n    mockDataContent: mockDataTemplate,\n    summary: data.summary\n  }\n}];"
+      },
+      "id": "4a8a20f1-f790-4082-bdb6-bf402a2c4559",
+      "name": "Formatear como mock-data.js",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1984,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extraer cliente principal para MVP\nconst response = $input.first().json;\nconst allClients = response.value || [];\n\n// Cliente principal hardcodeado para MVP\nconst mainClient = allClients.find(c => \n  c.ID === 'd02c1c47-c9a5-4728-93a0-29e6b6136a15'\n);\n\nif (!mainClient) {\n  throw new Error('Cliente principal no encontrado');\n}\n\nreturn [{\n  json: {\n    clientId: mainClient.ID,\n    clientNumber: mainClient.Number,\n    clientName: mainClient.ClientName,\n    clientRFC: mainClient.RFC,\n    clientEmail: mainClient.Email,\n    message: 'Cliente principal para MVP configurado'\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1344,
+        -128
+      ],
+      "id": "787a330e-4358-4510-bcac-f3ddccbe4950",
+      "name": "Extraer Cliente"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Combinar toda la información recopilada\nconst warehouseData = $('Extraer WarehouseID Comereco').first().json;\nconst productsData = $('Procesar Productos').first().json;\nconst clientData = $('Extraer Cliente').first().json;\n\n// Crear objeto consolidado\nconst consolidatedData = {\n  // Información del almacén\n  warehouse: {\n    id: warehouseData.warehouseId,\n    name: warehouseData.warehouseName,\n    locationId: warehouseData.warehouseLocationId\n  },\n  \n  // Información del cliente\n  client: {\n    id: clientData.clientId,\n    number: clientData.clientNumber,\n    name: clientData.clientName,\n    rfc: clientData.clientRFC,\n    email: clientData.clientEmail\n  },\n  \n  // Productos con stock\n  products: productsData.products,\n  \n  // Estadísticas generales\n  summary: {\n    totalProducts: productsData.stats.totalProducts,\n    productsWithStock: productsData.stats.productsWithStock,\n    productsWithoutStock: productsData.stats.productsWithoutStock,\n    totalCategories: productsData.stats.categories,\n    totalStockValue: productsData.stats.totalStockValue,\n    warehouseName: warehouseData.warehouseName,\n    clientName: clientData.clientName,\n    generatedAt: new Date().toISOString()\n  }\n};\n\n// Log para debug\nconsole.log('=== DATOS CONSOLIDADOS ===');\nconsole.log('Almacén:', consolidatedData.warehouse.name);\nconsole.log('Cliente:', consolidatedData.client.name);\nconsole.log('Productos con stock:', consolidatedData.products.length);\nconsole.log('Valor total inventario: $', consolidatedData.summary.totalStockValue.toFixed(2), 'MXN');\n\nreturn [{\n  json: consolidatedData\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1552,
+        -128
+      ],
+      "id": "90849f3a-ddfc-441a-bc2b-5c3c88212a9f",
+      "name": "Combinar toda la información recopilada"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Procesar productos de Bind ERP\nconst response = $input.first().json;\nconst allProducts = response.value || [];\n\n// Filtrar y limpiar productos\nconst cleanProducts = allProducts\n  .filter(p => p.CurrentInventory > 0) // Solo productos con stock\n  .map(product => ({\n    // IDs y códigos\n    id: product.ID,\n    code: product.Code,\n    \n    // Información básica\n    title: product.Title,\n    description: product.Description || '',\n    \n    // Precio e inventario\n    cost: product.Cost,\n    stock: product.CurrentInventory,\n    unit: product.Unit,\n    \n    // Categorías\n    category1Id: product.Category1ID,\n    category2Id: product.Category2ID,\n    category3Id: product.Category3ID,\n    \n    // Información fiscal y tipo\n    chargeVAT: product.ChargeVAT,\n    type: product.Type,\n    typeText: product.TypeText,\n    \n    // Moneda\n    currencyCode: product.CurrencyCode,\n    \n    // Metadata\n    creationDate: product.CreationDate,\n    number: product.Number\n  }));\n\n// Estadísticas útiles\nconst stats = {\n  totalProducts: allProducts.length,\n  productsWithStock: cleanProducts.length,\n  productsWithoutStock: allProducts.length - cleanProducts.length,\n  categories: [...new Set(allProducts.map(p => p.Category1ID).filter(Boolean))].length,\n  totalStockValue: cleanProducts.reduce((sum, p) => sum + (p.cost * p.stock), 0)\n};\n\nreturn [{\n  json: {\n    products: cleanProducts,\n    stats: stats,\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        -80
+      ],
+      "id": "b9022f3c-0f36-473a-871c-dffe0d56caca",
+      "name": "Procesar Productos"
+    },
+    {
+      "parameters": {
+        "url": "https://api.bind.com.mx/api/Orders/a4ae8fa0-342d-4793-b298-0007023decb8",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "e79946e3-22e2-4e3b-a851-9310e711d573",
+      "name": "orden espesifica",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        624,
+        144
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.bind.com.mx/api/Orders",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "9cdd3ab0-1ff3-45ef-9f40-8279ec02c66e",
+      "name": "ordenes",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        304,
+        144
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.bind.com.mx/api/Products/79b0b9d5-57b6-4dc4-a152-002c27f5f7b2",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "dfb6f03c-6aed-4cb4-9cc2-13ef88702afa",
+      "name": "producto espesifico",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        928,
+        160
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.bind.com.mx/api/Clients/d02c1c47-c9a5-4728-93a0-29e6b6136a15",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "1b103e78-12aa-42f0-ad83-731cba871d4e",
+      "name": "cliente espesifico",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1184,
+        160
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/PriceLists/1d5f1d2f-7cd1-4e44-83cc-d47789f70b51",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "5f88b46c-bfee-46bf-ad16-7e60c4434438",
+      "name": "lista de precios espesifica",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        288,
+        432
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.bind.com.mx/api/Inventory?warehouseId=a8605382-7b48-47e2-9fb6-a25cfb7cf735",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "e6727b85-a7cb-4b91-b495-ed9cf2259680",
+      "name": "inventario",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1424,
+        160
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.bind.com.mx/api/Employees",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "34087b0c-5ee3-4d83-8b6f-d91bc325a3cf",
+      "name": "empleados",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        512,
+        432
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.bind.com.mx/api/Locations",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "6292fb5a-5c76-4f0b-84f4-a1aecf1883c3",
+      "name": "location",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1648,
+        160
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.bind.com.mx/api/Warehouses",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "2fe167b5-d9ed-49a5-8763-6a42a6decce6",
+      "name": "Warehouses",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1888,
+        176
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "ae09e30f-2946-4507-bf6b-324b6b9ba9a5",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// NODO 1: PREPARAR REQUEST COMPLETO\n// ============================================\n\nconst requestBody = {\n  AddressID: \"efff1744-da2f-499d-952f-20b9140a95bf\",\n  ClientID: \"d02c1c47-c9a5-4728-93a0-29e6b6136a15\",\n  CurrencyID: \"b7e2c065-bd52-40ca-b508-3accdd538860\",\n  LocationID: \"d7ef64f2-fd1e-437a-bd93-af01985be5a5\",\n  OrderDate: new Date().toISOString(),\n  PriceListID: \"1d5f1d2f-7cd1-4e44-83cc-d47789f70b51\",\n  WarehouseID: \"a8605382-7b48-47e2-9fb6-a25cfb7cf735\",\n  Comments: \"TEST - Orden de prueba para ingeniería inversa\",\n  PurchaseOrder: null,\n  Products: [\n    {\n      ID: \"2d800143-c834-497a-939c-a6e9d19f645f\",\n      Price: 9.5,\n      Qty: 1,\n      VAT: 0,\n      Comments: \"\",\n      Unit: \"Litro\"\n    }\n  ],\n  Services: []\n};\n\nconst testMetadata = {\n  testId: `test-${Date.now()}`,\n  timestamp: new Date().toISOString(),\n  purpose: \"Validar comportamiento DELETE (soft delete)\"\n};\n\nreturn {\n  json: {\n    requestBody: requestBody,\n    metadata: testMetadata\n  }\n};"
+      },
+      "id": "9cfc5893-aa96-4b16-875b-da94bb82ecb3",
+      "name": "Preparar Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        96,
+        -352
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.bind.com.mx/api/Orders",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.requestBody) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "id": "9925f20c-29f3-4745-8636-7eb8dc20882d",
+      "name": "POST Create Order",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        288,
+        -352
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const postResponse = $input.first().json;\nconst metadata = $('Preparar Request').first().json.metadata;\n\nconst orderId = postResponse.data;\n\nif (!orderId) {\n  throw new Error('❌ ERROR: No se recibió ID de la orden');\n}\n\nconsole.log('✅ Orden creada');\nconsole.log('📋 Order ID:', orderId);\n\nreturn {\n  json: {\n    orderId: orderId,\n    testId: metadata.testId,\n    timestamp: metadata.timestamp\n  }\n};"
+      },
+      "id": "b1e1f220-f746-484a-b8bf-98ae4c4071b9",
+      "name": "Capturar ID",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        496,
+        -352
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.bind.com.mx/api/Orders/{{ $json.orderId }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "4bb9f9e0-aea8-44de-9b4f-8a16e759edd2",
+      "name": "GET Order Initial",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        752,
+        -368
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const bindResponse = $input.first().json;\nconst metadata = $('Preparar Request').first().json.metadata;\n\nconsole.log('📊 Orden inicial:');\nconsole.log('  ID:', bindResponse.ID);\nconsole.log('  Number:', bindResponse.Number);\nconsole.log('  StatusCode:', bindResponse.StatusCode, '(Pendiente)');\n\nreturn {\n  json: {\n    testId: metadata.testId,\n    orderId: bindResponse.ID,\n    orderNumber: bindResponse.Number,\n    initialStatus: {\n      statusCode: bindResponse.StatusCode,\n      statusText: bindResponse.Status\n    },\n    orderData: bindResponse\n  }\n};"
+      },
+      "id": "4d9a280a-19f0-4bb6-a2be-165d320b3a7d",
+      "name": "Capturar Estado Inicial",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        -352
+      ]
+    },
+    {
+      "parameters": {
+        "unit": "seconds"
+      },
+      "id": "e1dc3bc6-fc7d-44f0-81cd-2690adf155f7",
+      "name": "Wait 1s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        1824,
+        -352
+      ],
+      "webhookId": "e64f172a-c712-43cb-95ab-51913a73dfd2"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "=https://api.bind.com.mx/api/Orders/{{ $json.orderId }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "dd8b99be-146c-4fa9-bd43-b19b345f5c32",
+      "name": "DELETE Order",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1312,
+        -352
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const deleteResponse = $input.first();\nconst previousData = $('Capturar Estado Inicial').first().json;\n\nconsole.log('🗑️ DELETE ejecutado');\nconsole.log('Status HTTP:', deleteResponse.statusCode);\n\nreturn {\n  json: {\n    testId: previousData.testId,\n    orderId: previousData.orderId,\n    orderNumber: previousData.orderNumber,\n    deleteStatus: {\n      httpCode: deleteResponse.statusCode,\n      success: deleteResponse.statusCode === 200 || deleteResponse.statusCode === 204\n    },\n    initialStatus: previousData.initialStatus\n  }\n};"
+      },
+      "id": "7e32840e-f47e-43dd-ac9c-dfeb43b315fd",
+      "name": "Capturar DELETE Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1584,
+        -352
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.bind.com.mx/api/Orders/{{ $json.orderId }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "4f3f6841-1e58-4960-9bce-e64d906c3055",
+      "name": "GET Order After DELETE",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2016,
+        -352
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// REPORTE: COMPORTAMIENTO REAL DEL DELETE\n// ============================================\n\nconst previousData = $('Capturar DELETE Response').first().json;\nconst verifyResponse = $input.first();\n\nconst ordenSigueExistiendo = verifyResponse.statusCode === 200;\nconst ordenData = verifyResponse.json;\n\nlet comportamiento = {};\n\nif (ordenSigueExistiendo) {\n  // La orden SIGUE EXISTIENDO después del DELETE\n  comportamiento = {\n    tipo: \"SOFT DELETE / CANCELACIÓN LÓGICA\",\n    descripcion: \"DELETE no elimina físicamente, solo cambia el estado\",\n    verificacion: {\n      httpStatus: verifyResponse.statusCode,\n      ordenExiste: true,\n      statusCodeAntes: previousData.initialStatus.statusCode,\n      statusCodeDespues: ordenData.StatusCode,\n      statusTextoDespues: ordenData.Status,\n      cambioEstado: previousData.initialStatus.statusCode !== ordenData.StatusCode\n    },\n    conclusiones: [\n      \"✅ DELETE funciona pero NO elimina físicamente\",\n      \"✅ Cambia StatusCode de 0 (Pendiente) a 2 (Cancelado)\",\n      \"✅ La orden sigue siendo accesible vía GET\",\n      \"⚠️ Para 'limpiar' pruebas, solo cancelas (no eliminas)\",\n      \"📊 En reportes DEBES filtrar por StatusCode != 2\"\n    ]\n  };\n} else {\n  // La orden NO existe (eliminación física - inesperado)\n  comportamiento = {\n    tipo: \"ELIMINACIÓN FÍSICA (INESPERADO)\",\n    descripcion: \"DELETE eliminó físicamente el registro\",\n    verificacion: {\n      httpStatus: verifyResponse.statusCode,\n      ordenExiste: false\n    },\n    conclusiones: [\n      \"⚠️ Comportamiento diferente al esperado\",\n      \"🔍 Verificar si hay cambios en la API de Bind\"\n    ]\n  };\n}\n\nconst reporteFinal = {\n  // Metadata\n  testId: previousData.testId,\n  ejecutadoEn: new Date().toISOString(),\n  \n  // Datos de la orden\n  orden: {\n    id: previousData.orderId,\n    number: previousData.orderNumber,\n    estadoInicial: previousData.initialStatus,\n    estadoFinal: ordenSigueExistiendo ? {\n      statusCode: ordenData.StatusCode,\n      status: ordenData.Status\n    } : null\n  },\n  \n  // Comportamiento descubierto\n  comportamientoAPI: comportamiento,\n  \n  // Resultado del test\n  resultado: {\n    testCompletado: true,\n    ordenCreada: true,\n    deleteEjecutado: previousData.deleteStatus.success,\n    ordenEliminadaFisicamente: !ordenSigueExistiendo,\n    ordenCancelada: ordenSigueExistiendo && ordenData.StatusCode === 2,\n    status: ordenSigueExistiendo && ordenData.StatusCode === 2 ? \n      \"✅ CONFIRMADO: DELETE = Soft Delete (Cancelación)\" : \n      \"⚠️ Comportamiento inesperado\"\n  },\n  \n  // Documentación para el equipo\n  implicacionesParaSolverCenter: {\n    paraWebApps: [\n      \"Al listar órdenes, filtrar por StatusCode != 2\",\n      \"Mostrar badge 'Cancelada' cuando StatusCode === 2\",\n      \"Deshabilitar acciones en órdenes canceladas\"\n    ],\n    paraWorkflowsN8n: [\n      \"Después de DELETE, verificar StatusCode = 2 (no 404)\",\n      \"Las órdenes de prueba quedarán como 'Canceladas'\",\n      \"No esperar eliminación física\"\n    ],\n    paraSupabase: [\n      \"Sincronizar campo StatusCode desde Bind\",\n      \"Crear vistas que filtren StatusCode != 2 por defecto\",\n      \"Mantener órdenes canceladas para auditoría\"\n    ]\n  },\n  \n  // Estados de orden en Bind\n  estadosBindERP: {\n    0: \"Pendiente (recién creada)\",\n    1: \"Surtido (completada)\",\n    2: \"Cancelado (eliminada/cancelada)\"\n  },\n  \n  // Data completa para referencia\n  datosCompletos: {\n    ordenFinal: ordenData || null,\n    deleteResponse: previousData.deleteStatus\n  }\n};\n\nconsole.log('\\n' + '='.repeat(70));\nconsole.log('🔬 REPORTE: COMPORTAMIENTO DELETE EN BIND ERP');\nconsole.log('='.repeat(70));\nconsole.log(`Tipo: ${comportamiento.tipo}`);\nconsole.log(`Status: ${reporteFinal.resultado.status}`);\nif (ordenSigueExistiendo) {\n  console.log(`StatusCode cambió: ${previousData.initialStatus.statusCode} → ${ordenData.StatusCode}`);\n  console.log(`Status: ${previousData.initialStatus.statusText} → ${ordenData.Status}`);\n}\nconsole.log('='.repeat(70) + '\\n');\n\nreturn { json: reporteFinal };"
+      },
+      "id": "53bcdbe0-8699-41bd-8603-50ba4a882a54",
+      "name": "REPORTE FINAL",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2224,
+        -352
+      ]
+    }
+  ],
+  "connections": {
+    "GET Almacenes": {
+      "main": [
+        [
+          {
+            "node": "Extraer WarehouseID Comereco",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer WarehouseID Comereco": {
+      "main": [
+        [
+          {
+            "node": "GET Productos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Productos": {
+      "main": [
+        [
+          {
+            "node": "Procesar Productos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Cliente (Soluciones)": {
+      "main": [
+        [
+          {
+            "node": "Extraer Cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combinar Todos los Datos": {
+      "main": [
+        [
+          {
+            "node": "Formatear como mock-data.js",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer Cliente": {
+      "main": [
+        [
+          {
+            "node": "Combinar toda la información recopilada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combinar toda la información recopilada": {
+      "main": [
+        [
+          {
+            "node": "Combinar Todos los Datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Procesar Productos": {
+      "main": [
+        [
+          {
+            "node": "GET Cliente (Soluciones)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        []
+      ]
+    },
+    "Preparar Request": {
+      "main": [
+        [
+          {
+            "node": "POST Create Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST Create Order": {
+      "main": [
+        [
+          {
+            "node": "Capturar ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Capturar ID": {
+      "main": [
+        [
+          {
+            "node": "GET Order Initial",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Order Initial": {
+      "main": [
+        [
+          {
+            "node": "Capturar Estado Inicial",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Capturar Estado Inicial": {
+      "main": [
+        [
+          {
+            "node": "DELETE Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 1s": {
+      "main": [
+        [
+          {
+            "node": "GET Order After DELETE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DELETE Order": {
+      "main": [
+        [
+          {
+            "node": "Capturar DELETE Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Capturar DELETE Response": {
+      "main": [
+        [
+          {
+            "node": "Wait 1s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Order After DELETE": {
+      "main": [
+        [
+          {
+            "node": "REPORTE FINAL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "9d36606a75bfddef070f4a9a11c5c66b4616ce3f69cbe6026c99d5941f703c67"
+  }
+}

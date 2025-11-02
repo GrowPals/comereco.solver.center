@@ -36,10 +36,10 @@ const RequisitionsPage = () => {
           <header className="mb-10 pb-8 border-b border-slate-200">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
-                <h1 className="text-5xl font-bold tracking-tight text-slate-900 mb-3">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-slate-900 mb-3">
                   Mis Requisiciones
                 </h1>
-                <p className="text-lg text-slate-600">
+                <p className="text-base sm:text-lg text-slate-600">
                   Historial y seguimiento de todas tus solicitudes
                 </p>
               </div>

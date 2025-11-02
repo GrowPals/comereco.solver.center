@@ -71,11 +71,11 @@ const CartItem = memo(({ item }) => {
             variant="outline"
             size="icon"
             onClick={handleDecrease}
-            className="w-8 h-8 rounded-full border-primary/50 text-primary/50 hover:bg-primary/10 transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+            className="w-10 h-10 rounded-full border-primary/50 text-primary/50 hover:bg-primary/10 transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
             aria-label={`Reducir cantidad de ${item.name || 'producto'}`}
             disabled={itemQuantity <= 1}
           >
-            <Minus size={14} aria-hidden="true" />
+            <Minus size={16} aria-hidden="true" />
           </Button>
           <span className="w-12 text-center font-semibold text-sm text-foreground" aria-label={`Cantidad: ${itemQuantity}`}>
             {itemQuantity}
@@ -83,10 +83,10 @@ const CartItem = memo(({ item }) => {
           <Button
             size="icon"
             onClick={handleIncrease}
-            className="w-8 h-8 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+            className="w-10 h-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
             aria-label={`Aumentar cantidad de ${item.name || 'producto'}`}
           >
-            <Plus size={14} aria-hidden="true" />
+            <Plus size={16} aria-hidden="true" />
           </Button>
         </div>
       </div>
@@ -99,10 +99,10 @@ const CartItem = memo(({ item }) => {
           variant="ghost"
           size="icon"
           onClick={handleRemove}
-          className="w-8 h-8 rounded-full hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-destructive focus:ring-offset-2"
+          className="w-10 h-10 rounded-full hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-destructive focus:ring-offset-2"
           aria-label={`Eliminar ${item.name || 'producto'} del carrito`}
         >
-          <Trash2 size={16} aria-hidden="true" />
+          <Trash2 size={18} aria-hidden="true" />
         </Button>
       </div>
     </div>
@@ -257,7 +257,7 @@ const Cart = () => {
             onClick={toggleCart}
             className="fixed inset-0 bg-black/60 z-40 transition-opacity"
           />
-          <div className="fixed top-0 right-0 h-full w-full max-w-md bg-background shadow-2xl z-50 flex flex-col transition-transform"
+          <div className="fixed top-0 right-0 h-full w-full sm:max-w-md bg-background shadow-2xl z-50 flex flex-col transition-transform"
             role="dialog"
             aria-modal="true"
             aria-labelledby="cart-title"

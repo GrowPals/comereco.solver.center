@@ -140,8 +140,6 @@ COMERECO WEBAPP/
 - **Cache:** Assets estáticos con cache de 1 año
 - **Build:** Optimizado con esbuild para builds rápidos
 
-Para más detalles, consulta [`docs/guides/OPTIMIZACIONES_APLICADAS.md`](docs/guides/OPTIMIZACIONES_APLICADAS.md).
-
 ## 📚 Documentación
 
 La documentación completa está organizada en [`docs/`](docs/README.md). Documentación esencial:
@@ -157,7 +155,7 @@ La documentación completa está organizada en [`docs/`](docs/README.md). Docume
 - **[Implementación Backend](docs/guides/IMPLEMENTACION_BACKEND_SUPABASE.md)** - Guía de implementación
 
 ### ⚡ Optimizaciones
-- **[Optimizaciones Aplicadas](docs/guides/OPTIMIZACIONES_APLICADAS.md)** - Detalles de optimizaciones
+- **[Mejores Prácticas Supabase](docs/guides/GUIA_BEST_PRACTICES_SUPABASE.md)** - Reglas vigentes para sesiones, RLS y consultas
 
 > 📖 **Ver índice completo:** [`docs/README.md`](docs/README.md)
 

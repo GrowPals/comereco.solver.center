@@ -150,8 +150,8 @@ const NotificationsPage = () => {
                                 <Bell className="h-7 w-7 text-blue-600" aria-hidden="true" />
                             </div>
                             <div>
-                                <h1 className="text-4xl font-bold tracking-tight text-slate-900 mb-1">Notificaciones</h1>
-                                {unreadCount > 0 && <p className="text-base text-slate-600">{unreadCount} notificaciones no leídas</p>}
+                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-slate-900 mb-1">Notificaciones</h1>
+                                {unreadCount > 0 && <p className="text-base sm:text-lg text-slate-600">{unreadCount} notificaciones no leídas</p>}
                             </div>
                         </div>
                         <Button onClick={() => confirmAction('markAllRead', allNotifications.filter(n => !n.is_read).map(n => n.id))} disabled={unreadCount === 0} size="lg" className="shadow-lg hover:shadow-xl whitespace-nowrap">

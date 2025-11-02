@@ -20,7 +20,7 @@ const Input = React.forwardRef(({ className, type, icon, error, success, ...prop
       <input
         type={type}
         className={cn(
-          "flex h-12 w-full rounded-lg border-2 border-neutral-200 bg-white px-4 py-3 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-400 transition-all duration-200",
+          "flex h-12 w-full rounded-lg border-2 border-neutral-200 bg-white px-4 py-3 text-base text-slate-900 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-400 transition-all duration-200",
           "focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-200/30 focus-visible:shadow-glow-primary",
           "hover:border-neutral-300",
           "disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-neutral-50",

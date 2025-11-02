@@ -1,5 +1,7 @@
 # 🚀 GUÍA DE IMPLEMENTACIÓN BIND ERP - PASO A PASO
 
+> Actualizado 2025-11-02: esta guía es un plan de ejecución. Ninguno de los pasos marcados aquí se ha aplicado todavía en Supabase/n8n; usa las casillas de verificación como seguimiento real cuando ejecutes cada tarea.
+
 **Fecha:** 2025-11-02
 **Objetivo:** Activar integración automática con Bind ERP en 3-4 días
 
@@ -460,14 +462,14 @@ WHERE c.name = 'Soluciones a la Orden';
 
 ---
 
-### ✅ CHECKPOINT DÍA 1
+### 🔎 CHECKPOINT DÍA 1 (marcar cuando se implemente)
 
 Al final del día 1, deberías tener:
 
-- [x] Trigger `trigger_enqueue_for_bind` activo
-- [x] Tabla `bind_mappings` creada con RLS
-- [x] Mappings iniciales insertados (ClientID, WarehouseID)
-- [x] 4 funciones helper funcionando
+- [ ] Trigger `trigger_enqueue_for_bind` activo
+- [ ] Tabla `bind_mappings` creada con RLS
+- [ ] Mappings iniciales insertados (ClientID, WarehouseID)
+- [ ] 4 funciones helper funcionando
 
 **Prueba end-to-end del día 1:**
 
@@ -748,14 +750,14 @@ WHERE r.id = '{{ $('Set Variables').first().json.requisition_id }}'::UUID;
 
 ---
 
-### ✅ CHECKPOINT DÍA 2-3
+### 🔎 CHECKPOINT DÍA 2-3 (marcar cuando se implemente)
 
 Al final, deberías tener:
 
-- [x] n8n instalado y corriendo
-- [x] Conexión a Supabase PostgreSQL configurada
-- [x] Workflow `bind-create-order` creado y activo
-- [x] Variables de entorno configuradas (BIND_API_URL, BIND_API_TOKEN)
+- [ ] n8n instalado y corriendo
+- [ ] Conexión a Supabase PostgreSQL configurada
+- [ ] Workflow `bind-create-order` creado y activo
+- [ ] Variables de entorno configuradas (BIND_API_URL, BIND_API_TOKEN)
 
 **Prueba end-to-end completa:**
 

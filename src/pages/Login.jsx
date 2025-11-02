@@ -88,20 +88,18 @@ const LoginPage = () => {
                 <div className="absolute bottom-10 right-10 w-[400px] h-[400px] bg-gradient-to-br from-blue-300/30 to-blue-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '6s', animationDelay: '1s' }} />
 
                 <div className="w-full max-w-md relative z-10">
-                    {/* Logo */}
+                    {/* Logo - Sin contenedor, limpio */}
                     <motion.div
                         initial={{ opacity: 0, y: -30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, ease: "easeOut" }}
                         className="text-center mb-10"
                     >
-                        <div className="mx-auto w-28 h-28 bg-white rounded-3xl shadow-2xl flex items-center justify-center ring-2 ring-blue-100">
-                            <img
-                                src="https://i.ibb.co/XZW8Nh3v/solver-logo-1.png"
-                                alt="ComerECO Logo"
-                                className="w-16 h-16 object-contain"
-                            />
-                        </div>
+                        <img
+                            src="https://i.ibb.co/XZW8Nh3v/solver-logo-1.png"
+                            alt="ComerECO Logo"
+                            className="w-24 h-24 object-contain mx-auto drop-shadow-xl"
+                        />
                     </motion.div>
 
                     {/* Login Card */}
@@ -109,15 +107,18 @@ const LoginPage = () => {
                         initial={{ opacity: 0, scale: 0.92, y: 30 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-                        className={`bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border-2 border-slate-200 p-10 ${isShaking ? 'animate-shake' : ''}`}
+                        className={`bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border-2 border-slate-200 p-6 sm:p-10 ${isShaking ? 'animate-shake' : ''}`}
                     >
                         {/* Title inside card */}
                         <div className="text-center mb-8">
-                            <h1 className="text-5xl font-bold mb-3 tracking-tight">
+                            <h1 className="text-4xl sm:text-5xl font-bold mb-3 tracking-tight">
                                 <span className="text-slate-900">Comer</span>
                                 <span className="bg-gradient-primary bg-clip-text text-transparent">ECO</span>
                             </h1>
-                            <p className="text-slate-600 text-lg">Bienvenido de vuelta</p>
+                            <p className="text-slate-600 text-base sm:text-lg mb-2">Bienvenido de vuelta</p>
+                            <p className="text-sm font-medium text-slate-500">
+                                Sistema de Requisiciones · <span className="text-blue-600">ComerECO</span>
+                            </p>
                         </div>
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                             {/* Email Input */}
@@ -154,7 +155,7 @@ const LoginPage = () => {
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3 top-[28px] text-neutral-500 hover:text-neutral-900 transition-colors duration-200 z-20"
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-900 transition-colors duration-200 z-20 p-2 rounded-lg hover:bg-slate-100 active:bg-slate-200 min-w-[44px] min-h-[44px] flex items-center justify-center"
                                         disabled={isLoading}
                                         aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                                     >

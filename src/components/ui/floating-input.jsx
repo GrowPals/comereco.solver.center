@@ -27,7 +27,7 @@ const FloatingInput = React.forwardRef(({ className, type, label, icon, error, .
       <input
         type={type}
         className={cn(
-          "peer flex h-14 w-full rounded-lg border-2 border-neutral-200 bg-white px-4 pt-6 pb-2 text-base transition-all duration-200",
+          "peer flex h-14 w-full rounded-lg border-2 border-neutral-200 bg-white px-4 pt-6 pb-2 text-base text-slate-900 transition-all duration-200",
           "focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-200/30 focus-visible:shadow-glow-primary",
           "placeholder-transparent",
           "disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-neutral-50",

@@ -154,10 +154,10 @@ const TemplatesPage = () => {
                 <LayoutTemplate className="h-7 w-7 text-blue-600" aria-hidden="true" />
               </div>
               <div>
-                <h1 className="text-4xl font-bold tracking-tight text-slate-900 mb-1">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-slate-900 mb-1">
                   Plantillas de <span className="bg-gradient-primary bg-clip-text text-transparent">Requisición</span>
                 </h1>
-                <p className="text-base text-slate-600">Reutiliza tus pedidos frecuentes con un solo clic.</p>
+                <p className="text-base sm:text-lg text-slate-600">Reutiliza tus pedidos frecuentes con un solo clic.</p>
               </div>
             </div>
             <Button onClick={() => navigate('/catalog')} size="lg" className="shadow-lg hover:shadow-xl whitespace-nowrap">

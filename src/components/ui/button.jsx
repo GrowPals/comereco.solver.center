@@ -31,7 +31,7 @@ const buttonVariants = cva(
         secondary: 'bg-white border-2 border-slate-200 text-slate-700 shadow-sm hover:shadow-md hover:border-slate-300 hover:-translate-y-0.5 active:translate-y-0 rounded-xl',
 
         // Ghost
-        ghost: 'hover:bg-slate-100 hover:text-slate-900 rounded-xl active:bg-slate-200',
+        ghost: 'text-slate-700 hover:bg-slate-100 hover:text-slate-900 rounded-xl active:bg-slate-200',
 
         // Link
         link: 'text-primary-600 underline-offset-4 hover:underline hover:text-primary-700 active:text-primary-800',

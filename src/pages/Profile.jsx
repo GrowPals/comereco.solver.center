@@ -128,18 +128,16 @@ const ProfilePage = () => {
 
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8 space-y-8">
         <Card className="overflow-hidden border-2 border-slate-200 shadow-lg rounded-2xl">
-          <div className="bg-gradient-to-br from-blue-50 via-blue-100 to-blue-50 h-32 relative">
-            <div className="absolute inset-0 bg-gradient-primary opacity-10" />
-          </div>
+          <div className="bg-gradient-to-br from-blue-50 via-blue-100 to-blue-50 h-32" />
           <CardContent className="p-8 pt-0">
             <div className="flex flex-col sm:flex-row items-start sm:items-end -mt-16 gap-6">
-              <Avatar className="h-32 w-32 border-4 border-white shadow-xl rounded-2xl">
+              <Avatar className="h-32 w-32 border-4 border-white shadow-lg">
                 <AvatarImage src={user.avatar_url} alt={full_name} />
                 <AvatarFallback className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700 text-4xl font-bold">{fallback}</AvatarFallback>
               </Avatar>
               <div className="flex-1 pb-2">
-                <h2 className="text-3xl font-bold text-slate-900 tracking-tight">{profileData.full_name}</h2>
-                <p className="text-base text-slate-600 mt-1">{company?.name || 'Compañía no asignada'}</p>
+                <h2 className="text-2xl sm:text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">{profileData.full_name}</h2>
+                <p className="text-base sm:text-lg text-slate-600 mt-1">{company?.name || 'Compañía no asignada'}</p>
               </div>
               {isEditing ? (
                 <div className="flex gap-2">

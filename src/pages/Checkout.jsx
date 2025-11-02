@@ -131,10 +131,10 @@ const CheckoutPage = () => {
                                 <ShoppingCart className="h-7 w-7 text-blue-600" aria-hidden="true" />
                             </div>
                             <div>
-                                <h1 className="text-4xl font-bold tracking-tight text-slate-900">
+                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
                                     Finalizar <span className="bg-gradient-primary bg-clip-text text-transparent">Compra</span>
                                 </h1>
-                                <p className="text-base text-slate-600 mt-1">
+                                <p className="text-base sm:text-lg text-slate-600 mt-1">
                                     Revisa tu pedido y completa la información para generar la requisición
                                 </p>
                             </div>
