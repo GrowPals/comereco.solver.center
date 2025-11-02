@@ -2,6 +2,7 @@
 import { supabase } from '@/lib/customSupabaseClient';
 import { getCachedSession } from '@/lib/supabaseHelpers';
 import logger from '@/utils/logger';
+import { formatErrorMessage } from '@/utils/errorHandler';
 
 /**
  * CORREGIDO: Valida sesión antes de hacer queries
@@ -32,7 +33,7 @@ export const getTemplates = async () => {
 
     if (error) {
         logger.error('Error fetching templates:', error);
-        throw new Error('No se pudieron cargar las plantillas.');
+        throw new Error(formatErrorMessage(error));
     }
     return data || [];
 };
@@ -90,7 +91,7 @@ export const createTemplate = async (templateData) => {
     
     if (error) {
         logger.error('Error creating template:', error);
-        throw new Error(`Error al crear plantilla: ${error.message}`);
+        throw new Error(formatErrorMessage(error));
     }
     return data;
 };
@@ -152,7 +153,7 @@ export const updateTemplate = async (templateData) => {
     
     if (error) {
         logger.error('Error updating template:', error);
-        throw new Error(`Error al actualizar plantilla: ${error.message}`);
+        throw new Error(formatErrorMessage(error));
     }
     return data;
 };
@@ -193,7 +194,7 @@ export const deleteTemplate = async (templateId) => {
     
     if (error) {
         logger.error('Error deleting template:', error);
-        throw new Error(`Error al eliminar plantilla: ${error.message}`);
+        throw new Error(formatErrorMessage(error));
     }
 };
 
@@ -237,7 +238,7 @@ export const useTemplateForRequisition = async (templateId) => {
 
     if (error) {
         logger.error('Error in use_requisition_template RPC:', error);
-        throw new Error(error.message || 'Error al usar la plantilla.');
+        throw new Error(formatErrorMessage(error));
     }
     
     return data; // El RPC devuelve el ID de la nueva requisición

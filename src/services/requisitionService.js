@@ -1,6 +1,7 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
 import { getCachedSession } from '@/lib/supabaseHelpers';
+import { formatErrorMessage } from '@/utils/errorHandler';
 import logger from '@/utils/logger';
 
 /**
@@ -46,7 +47,7 @@ export const fetchRequisitions = async (page = 1, pageSize = 10, sortBy = 'creat
 
     if (error) {
         logger.error("Error fetching requisitions:", error);
-        throw new Error("No se pudieron cargar las requisiciones.");
+        throw new Error(formatErrorMessage(error));
     }
 
     // Optimizar: Hacer batch queries en lugar de queries individuales
@@ -84,7 +85,7 @@ export const fetchRequisitions = async (page = 1, pageSize = 10, sortBy = 'creat
         creator: req.created_by ? creatorsMap.get(req.created_by) || null : null,
     }));
 
-    return { data: enrichedData, total: count };
+    return { data: enrichedData || [], total: count || 0 };
 };
 
 /**
@@ -103,7 +104,11 @@ export const fetchRequisitionDetails = async (id) => {
 
     if (reqError) {
         logger.error("Error fetching requisition details:", reqError);
-        throw new Error("No se pudo cargar el detalle de la requisición.");
+        throw new Error(formatErrorMessage(reqError));
+    }
+    
+    if (!requisition) {
+        throw new Error("Requisición no encontrada.");
     }
 
     // Obtener items de la requisición
@@ -206,7 +211,12 @@ export const createRequisitionFromCart = async ({ projectId, comments, items }) 
     
     if (error) {
         logger.error('Error in create_full_requisition RPC:', error);
-        throw new Error(error.message || 'Error al crear la requisición.');
+        throw new Error(formatErrorMessage(error));
+    }
+
+    // Validar que el RPC retornó un ID válido
+    if (!data) {
+        throw new Error('El RPC no retornó un ID válido.');
     }
 
     // El RPC devuelve el ID, hacemos una consulta para obtener el objeto completo
@@ -218,7 +228,11 @@ export const createRequisitionFromCart = async ({ projectId, comments, items }) 
     
     if (fetchError) {
          logger.error('Error fetching new requisition after creation:', fetchError);
-         throw new Error('La requisición fue creada pero no se pudo recuperar.');
+         throw new Error(formatErrorMessage(fetchError));
+    }
+    
+    if (!newRequisition) {
+        throw new Error('La requisición fue creada pero no se pudo recuperar.');
     }
 
     // Limpiar el carrito del usuario después de crear la requisición
@@ -251,7 +265,7 @@ export const fetchPendingApprovals = async () => {
     
     if (error) {
         logger.error('Error fetching pending approvals:', error);
-        throw new Error('No se pudieron cargar las aprobaciones pendientes.');
+        throw new Error(formatErrorMessage(error));
     }
 
     // Optimizar: Hacer batch queries en lugar de queries individuales
@@ -310,8 +324,13 @@ export const submitRequisition = async (requisitionId) => {
 
     if (error) {
         logger.error('Error submitting requisition:', error);
+        throw new Error(formatErrorMessage(error));
+    }
+    
+    if (!data) {
         throw new Error('No se pudo enviar la requisición.');
     }
+    
     return data;
 };
 
@@ -357,7 +376,12 @@ export const updateRequisitionStatus = async (requisitionId, status, reason = nu
 
     if (error) {
         logger.error('Error updating requisition status:', error);
+        throw new Error(formatErrorMessage(error));
+    }
+    
+    if (!data) {
         throw new Error(`No se pudo ${status === 'approved' ? 'aprobar' : 'rechazar'} la requisición.`);
     }
+    
     return data;
 };

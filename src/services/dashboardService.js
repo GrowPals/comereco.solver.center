@@ -1,6 +1,7 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
 import logger from '@/utils/logger';
+import { formatErrorMessage } from '@/utils/errorHandler';
 
 /**
  * Obtiene las estadísticas del dashboard para el rol actual.
@@ -14,11 +15,22 @@ export const getDashboardStats = async () => {
 
     if (error) {
         logger.error('Error fetching dashboard stats:', error);
-        throw new Error('No se pudieron cargar las estadísticas del dashboard.');
+        throw new Error(formatErrorMessage(error));
     }
     
     // El RPC devuelve un array con un solo objeto
-    return data[0];
+    // Validar que data existe y tiene elementos
+    if (!data || !Array.isArray(data) || data.length === 0) {
+        logger.warn('Dashboard stats RPC returned empty result');
+        return {
+            total_requisitions: 0,
+            pending_requisitions: 0,
+            approved_requisitions: 0,
+            total_amount: 0,
+        };
+    }
+    
+    return data[0] || {};
 };
 
 /**
@@ -42,7 +54,7 @@ export const getRecentRequisitions = async () => {
 
     if (error) {
         logger.error('Error fetching recent requisitions:', error);
-        throw new Error('No se pudieron cargar las requisiciones recientes.');
+        throw new Error(formatErrorMessage(error));
     }
 
     // Enriquecer con datos de proyecto si es necesario
@@ -77,7 +89,7 @@ export const getSupervisorProjectsActivity = async () => {
 
      if (error) {
         logger.error('Error fetching supervisor projects activity:', error);
-        throw new Error('No se pudo cargar la actividad de los proyectos.');
+        throw new Error(formatErrorMessage(error));
     }
     return data;
 };

@@ -13,11 +13,26 @@ import { fetchRequisitions, fetchRequisitionDetails } from '@/services/requisiti
 export const useRequisitions = (filters = { page: 1, pageSize: 10, sortBy: 'created_at', ascending: false }) => {
   return useQuery({
     queryKey: ['requisitions', filters],
-    queryFn: () => fetchRequisitions(filters.page, filters.pageSize, filters.sortBy, filters.ascending),
+    queryFn: async () => {
+      const result = await fetchRequisitions(
+        filters.page || 1, 
+        filters.pageSize || 10, 
+        filters.sortBy || 'created_at', 
+        filters.ascending ?? false
+      );
+      // fetchRequisitions retorna { data: enrichedData, total: count }
+      // El hook debe retornar el mismo formato para compatibilidad
+      return {
+        data: result?.data || [],
+        total: result?.total || 0,
+        count: result?.total || 0, // Alias para compatibilidad
+      };
+    },
     staleTime: 1000 * 60 * 2, // 2 minutos - requisiciones pueden cambiar frecuentemente
     gcTime: 1000 * 60 * 10, // 10 minutos en cache
     placeholderData: (previousData) => previousData,
     keepPreviousData: true,
+    retry: 2,
   });
 };
 

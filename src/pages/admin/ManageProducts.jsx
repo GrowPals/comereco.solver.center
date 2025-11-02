@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getAdminProducts, createProduct, updateProduct } from '@/services/productService';
 import { useForm } from 'react-hook-form';
-import { PlusCircle, MoreHorizontal, Edit, ToggleLeft, ToggleRight, ShoppingBag } from 'lucide-react'; // Added ShoppingBag
+import { PlusCircle, MoreHorizontal, Edit, ToggleLeft, ToggleRight, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/useToast';
 import PageLoader from '@/components/PageLoader';
@@ -17,9 +17,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import FormStatusFeedback from '@/components/ui/form-status-feedback';
 
 const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
-    const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm({ 
+    const [formStatus, setFormStatus] = useState({ status: 'idle', message: '' });
+    const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } = useForm({ 
         mode: 'onBlur',
         defaultValues: product || { name: '', sku: '', price: 0, stock: 0, is_active: true } 
     });
@@ -29,22 +31,46 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
         if(product) {
             Object.keys(product).forEach(key => setValue(key, product[key]));
         }
+        setFormStatus({ status: 'idle', message: '' });
     }, [product, setValue]);
+
+    const onSubmit = async (data) => {
+        setFormStatus({ status: 'loading', message: product ? 'Guardando cambios...' : 'Creando producto...' });
+        try {
+            await onSave(data);
+            setFormStatus({ status: 'success', message: product ? 'Producto actualizado exitosamente' : 'Producto creado exitosamente' });
+            setTimeout(() => {
+                onClose();
+                setFormStatus({ status: 'idle', message: '' });
+            }, 1500);
+        } catch (error) {
+            setFormStatus({ status: 'error', message: error.message || 'Error al guardar el producto' });
+        }
+    };
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent>
                 <DialogHeader><DialogTitle>{product ? 'Editar Producto' : 'Crear Producto'}</DialogTitle></DialogHeader>
-                <form onSubmit={handleSubmit(onSave)} className="space-y-4 py-4">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
+                    <FormStatusFeedback status={formStatus.status} message={formStatus.message} />
                     <div>
                         <Label htmlFor="name">Nombre</Label>
-                        <Input id="name" {...register('name', { required: 'El nombre es requerido' })} />
+                        <Input 
+                            id="name" 
+                            {...register('name', { required: 'El nombre es requerido' })} 
+                            className={errors.name && 'border-error focus-visible:ring-error'}
+                        />
                         {errors.name && <p className="text-destructive text-sm mt-1">{errors.name.message}</p>}
                     </div>
                      <div className="grid grid-cols-2 gap-4">
                         <div>
                             <Label htmlFor="sku">SKU</Label>
-                            <Input id="sku" {...register('sku', { required: 'El SKU es requerido' })} />
+                            <Input 
+                                id="sku" 
+                                {...register('sku', { required: 'El SKU es requerido' })} 
+                                className={errors.sku && 'border-error focus-visible:ring-error'}
+                            />
                              {errors.sku && <p className="text-destructive text-sm mt-1">{errors.sku.message}</p>}
                         </div>
                         <div>
@@ -58,6 +84,7 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
                                     valueAsNumber: true, 
                                     min: { value: 0, message: 'El precio debe ser mayor o igual a 0' }
                                 })} 
+                                className={errors.price && 'border-error focus-visible:ring-error'}
                             />
                             {errors.price && <p className="text-destructive text-sm mt-1">{errors.price.message}</p>}
                         </div>
@@ -73,6 +100,7 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
                                     valueAsNumber: true, 
                                     min: { value: 0, message: 'El stock debe ser mayor o igual a 0' }
                                 })} 
+                                className={errors.stock && 'border-error focus-visible:ring-error'}
                             />
                             {errors.stock && <p className="text-destructive text-sm mt-1">{errors.stock.message}</p>}
                         </div>
@@ -90,8 +118,10 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
                         <Label htmlFor="is_active">{isActive ? 'Activo' : 'Inactivo'}</Label>
                     </div>
                     <DialogFooter>
-                        <Button variant="outline" type="button" onClick={onClose}>Cancelar</Button>
-                        <Button type="submit">Guardar</Button>
+                        <Button variant="outline" type="button" onClick={onClose} disabled={isSubmitting}>Cancelar</Button>
+                        <Button type="submit" isLoading={isSubmitting} isSuccess={formStatus.status === 'success'}>
+                            {product ? 'Actualizar' : 'Crear'}
+                        </Button>
                     </DialogFooter>
                 </form>
             </DialogContent>
@@ -113,14 +143,28 @@ const ManageProductsPage = () => {
         onError: (error) => toast({ variant: 'destructive', title: 'Error', description: error.message }),
     };
 
-    const createMutation = useMutation({ mutationFn: createProduct, ...mutationOptions, onSuccess: () => { toast({ title: 'Producto creado' }); mutationOptions.onSuccess(); } });
-    const updateMutation = useMutation({ mutationFn: updateProduct, ...mutationOptions, onSuccess: () => { toast({ title: 'Producto actualizado' }); mutationOptions.onSuccess(); } });
+    const createMutation = useMutation({ 
+        mutationFn: createProduct, 
+        ...mutationOptions, 
+        onSuccess: () => { 
+            toast({ title: 'Producto creado', description: 'El producto se ha creado exitosamente' }); 
+            mutationOptions.onSuccess(); 
+        } 
+    });
+    const updateMutation = useMutation({ 
+        mutationFn: updateProduct, 
+        ...mutationOptions, 
+        onSuccess: () => { 
+            toast({ title: 'Producto actualizado', description: 'El producto se ha actualizado exitosamente' }); 
+            mutationOptions.onSuccess(); 
+        } 
+    });
 
-    const handleSave = (data) => {
+    const handleSave = async (data) => {
         if (data.id) {
-            updateMutation.mutate(data);
+            await updateMutation.mutateAsync(data);
         } else {
-            createMutation.mutate(data);
+            await createMutation.mutateAsync(data);
         }
     };
     

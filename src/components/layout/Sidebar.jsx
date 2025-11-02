@@ -14,16 +14,19 @@ const NavItem = memo(({ to, icon: Icon, children, isSidebarOpen }) => {
     return (
         <NavLink to={to}>
             {({ isPending }) => (
-                <div className={`flex items-center p-3 my-1 rounded-lg transition-colors duration-150 relative group ${
-                    isActive
-                        ? 'bg-primary-500 text-white'
-                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                }`}>
-                    <Icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-gray-500 group-hover:text-primary-600'}`} />
+                <div 
+                    className={`flex items-center p-3 my-1 rounded-lg transition-colors duration-150 relative group focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-2 ${
+                        isActive
+                            ? 'bg-primary-500 text-white'
+                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    }`}
+                    role="listitem"
+                >
+                    <Icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-gray-500 group-hover:text-primary-600'}`} aria-hidden="true" />
                     <span className={`ml-4 font-medium text-sm ${isSidebarOpen ? 'block' : 'hidden'}`}>
                         {children}
                     </span>
-                    {isPending && <span className="ml-2">...</span>}
+                    {isPending && <span className="ml-2" aria-label="Cargando">...</span>}
                 </div>
             )}
         </NavLink>
@@ -72,7 +75,12 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
     }, [isAdmin, isSupervisor]);
 
     return (
-        <aside className={`fixed lg:relative top-0 left-0 h-full bg-white border-r border-gray-200 z-50 flex flex-col transition-all duration-200 shadow-lg lg:shadow-none ${isSidebarOpen ? 'w-64' : 'w-20'} ${isMobileNavOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+        <aside 
+            className={`fixed lg:relative top-0 left-0 h-full bg-white border-r border-gray-200 z-50 flex flex-col transition-all duration-200 shadow-lg lg:shadow-none ${isSidebarOpen ? 'w-64' : 'w-20'} ${isMobileNavOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
+            role="complementary"
+            aria-label="Navegación principal"
+            id="navigation"
+        >
             <div className={`flex items-center ${isSidebarOpen ? 'justify-start px-6' : 'justify-center'} h-16 border-b border-gray-200`}>
                 <div className={`flex items-center justify-center rounded-lg bg-primary-50 ${isSidebarOpen ? 'h-10 w-10' : 'h-10 w-10'}`}>
                     <img
@@ -88,16 +96,20 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
                 )}
             </div>
 
-            <nav className="flex-1 px-4 py-6 overflow-y-auto">
+            <nav className="flex-1 px-4 py-6 overflow-y-auto" role="navigation" aria-label="Menú principal">
                 {navItems.map(item => <NavItem key={item.to} to={item.to} icon={item.icon} isSidebarOpen={isSidebarOpen}>{item.text}</NavItem>)}
             </nav>
 
             <div className="px-4 py-4 border-t border-gray-200">
                 <NavItem to="/settings" icon={Settings} isSidebarOpen={isSidebarOpen}>Configuración</NavItem>
-                <div onClick={handleLogout} className="flex items-center p-3 my-1 rounded-lg cursor-pointer text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors duration-150 group">
-                    <LogOut className="h-5 w-5 text-gray-500 group-hover:text-red-600" />
+                <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center p-3 my-1 rounded-lg cursor-pointer text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors duration-150 group focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                    aria-label="Cerrar sesión"
+                >
+                    <LogOut className="h-5 w-5 text-gray-500 group-hover:text-red-600" aria-hidden="true" />
                     <span className={`ml-4 font-medium text-sm ${isSidebarOpen ? 'block' : 'hidden'}`}>Cerrar Sesión</span>
-                </div>
+                </button>
             </div>
         </aside>
     );

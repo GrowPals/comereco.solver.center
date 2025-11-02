@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { X, CheckCircle, AlertTriangle, Info, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion, AnimatePresence } from 'framer-motion';
 
 const ToastContext = createContext(null);
 
@@ -14,23 +13,27 @@ export const useToastNotification = () => {
 };
 
 const toastIcons = {
-  success: { Icon: CheckCircle, className: 'text-green-600 bg-gradient-to-br from-green-100 to-green-50' },
-  error: { Icon: XCircle, className: 'text-red-600 bg-gradient-to-br from-red-100 to-red-50' },
-  warning: { Icon: AlertTriangle, className: 'text-yellow-600 bg-gradient-to-br from-yellow-100 to-yellow-50' },
-  info: { Icon: Info, className: 'text-blue-600 bg-gradient-to-br from-blue-100 to-blue-50' },
+  success: { Icon: CheckCircle, className: 'text-success bg-success-light' },
+  error: { Icon: XCircle, className: 'text-error bg-error-light' },
+  warning: { Icon: AlertTriangle, className: 'text-warning bg-warning-light' },
+  info: { Icon: Info, className: 'text-info bg-info-light' },
 };
 
 const Toast = ({ id, title, message, variant = 'info', onClose }) => {
   const { Icon, className } = toastIcons[variant];
+  const [isExiting, setIsExiting] = React.useState(false);
+
+  const handleClose = () => {
+    setIsExiting(true);
+    setTimeout(() => onClose(id), 200);
+  };
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: -50, scale: 0.3 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, x: 200, scale: 0.5 }}
-      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-      className="flex items-start gap-3 w-full max-w-md p-4 bg-white rounded-xl border border-neutral-200 shadow-2xl backdrop-blur-sm"
+    <div
+      className={cn(
+        'flex items-start gap-3 w-full max-w-md p-4 bg-white rounded-xl border border-neutral-200 shadow-2xl backdrop-blur-sm transition-all duration-200',
+        isExiting ? 'opacity-0 translate-x-full scale-95' : 'opacity-100 translate-x-0 scale-100'
+      )}
     >
       <div className={cn("flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center shadow-sm", className)}>
         <Icon className="w-5 h-5" />
@@ -48,12 +51,13 @@ const Toast = ({ id, title, message, variant = 'info', onClose }) => {
       </div>
 
       <button
-        onClick={() => onClose(id)}
-        className="flex-shrink-0 w-8 h-8 rounded-lg hover:bg-neutral-100 flex items-center justify-center transition-colors group"
+        onClick={handleClose}
+        className="flex-shrink-0 w-8 h-8 rounded-lg hover:bg-neutral-100 flex items-center justify-center transition-colors group focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2"
+        aria-label="Cerrar notificación"
       >
         <X className="w-4 h-4 text-neutral-400 group-hover:text-neutral-900 transition-colors" />
       </button>
-    </motion.div>
+    </div>
   );
 };
 
@@ -88,13 +92,11 @@ export const ToastProvider = ({ children }) => {
     <ToastContext.Provider value={toast}>
       {children}
       <div className="fixed top-4 right-4 z-[100] flex flex-col gap-3 pointer-events-none">
-        <AnimatePresence mode="popLayout">
-          {toasts.map(toast => (
-            <div key={toast.id} className="pointer-events-auto">
-              <Toast {...toast} onClose={removeToast} />
-            </div>
-          ))}
-        </AnimatePresence>
+        {toasts.map(toast => (
+          <div key={toast.id} className="pointer-events-auto">
+            <Toast {...toast} onClose={removeToast} />
+          </div>
+        ))}
       </div>
     </ToastContext.Provider>
   );

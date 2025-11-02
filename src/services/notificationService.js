@@ -2,6 +2,7 @@
 import { supabase } from '@/lib/customSupabaseClient';
 import { getCachedSession } from '@/lib/supabaseHelpers';
 import logger from '@/utils/logger';
+import { formatErrorMessage } from '@/utils/errorHandler';
 
 /**
  * CORREGIDO: Valida sesión y usa RLS correctamente
@@ -29,7 +30,7 @@ export const getNotifications = async () => {
     return data || [];
   } catch (error) {
     logger.error('Error fetching notifications:', error);
-    throw new Error('No se pudieron cargar las notificaciones.');
+    throw new Error(formatErrorMessage(error));
   }
 };
 
@@ -81,7 +82,7 @@ export const markNotificationsAsRead = async (ids) => {
     if (error) throw error;
   } catch (error) {
     logger.error('Error marking notifications as read:', error);
-    throw new Error('No se pudieron marcar las notificaciones como leídas.');
+    throw new Error(formatErrorMessage(error));
   }
 };
 
@@ -107,7 +108,7 @@ export const markNotificationsAsUnread = async (ids) => {
     if (error) throw error;
   } catch (error) {
     logger.error('Error marking notifications as unread:', error);
-    throw new Error('No se pudieron marcar las notificaciones como no leídas.');
+    throw new Error(formatErrorMessage(error));
   }
 };
 
@@ -133,7 +134,7 @@ export const deleteNotifications = async (ids) => {
     if (error) throw error;
   } catch (error) {
     logger.error('Error deleting notifications:', error);
-    throw new Error('No se pudieron eliminar las notificaciones.');
+    throw new Error(formatErrorMessage(error));
   }
 };
 
@@ -182,6 +183,6 @@ export const createNotification = async ({ user_id, company_id, type, title, mes
     return data;
   } catch (error) {
     logger.error('Error creating notification:', error);
-    throw new Error('No se pudo crear la notificación.');
+    throw new Error(formatErrorMessage(error));
   }
 };

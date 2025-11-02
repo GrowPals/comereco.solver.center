@@ -1,6 +1,9 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
+/* Import design tokens - Sistema centralizado de tokens */
+@import './styles/design-tokens.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -45,6 +48,11 @@
     --success-50: #10B981;
     --warning-50: #F59E0B;
     --info-50: #3B82F6;
+
+    /* ============ TEXT COLORS - Mejora de contraste ============ */
+    --text-primary: var(--neutral-900);
+    --text-secondary: var(--neutral-600);
+    --text-tertiary: var(--neutral-500);
 
     /* ============ GRADIENTS ============ */
     --gradient-primary: linear-gradient(135deg, #00C05D 0%, #00A651 100%);
@@ -92,12 +100,25 @@
     --input: var(--neutral-200);
     --ring: var(--primary-200);
 
-    /* ============ SPACING SCALE (Base 4px) ============ */
-    --space-0_5: 2px;
-    --space-1: 4px;
-    --space-2: 8px;
-    --space-3: 12px;
-    --space-4: 16px;
+  /* ============ SPACING SCALE (Base 4px) ============ */
+  --space-0_5: 2px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* ============ SPACING MEJORADO - Mejor jerarquía visual ============ */
+  --spacing-card: 1.5rem; /* 24px - Padding más generoso en cards */
+  --spacing-section: 3rem; /* 48px - Espacio entre secciones */
+  --spacing-element: 0.75rem; /* 12px - Espacio entre elementos relacionados */
     --space-5: 20px;
     --space-6: 24px;
     --space-8: 32px;
@@ -322,5 +343,44 @@
 
   .animate-fadeIn {
     animation: fadeIn 0.3s ease-out;
+  }
+}
+
+@layer utilities {
+  /* ============ UTILITY CLASSES ============ */
+  
+  /* Screen reader only - Accesibilidad */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+  
+  .sr-only-focusable:focus,
+  .sr-only:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: inherit;
+    margin: inherit;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  /* Focus visible mejorado - Accesibilidad */
+  .focus-visible-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2;
+  }
+
+  /* Skip links styling */
+  .skip-link {
+    @apply sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary-500 focus:text-white focus:rounded-md focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
   }
 }

@@ -7,6 +7,8 @@ import { useProducts, useProductCategories } from '@/hooks/useProducts';
 import { useDebounce } from '@/hooks/useDebounce';
 
 import ProductCard from '@/components/ProductCard';
+import { ProductCardSkeletonList } from '@/components/skeletons/ProductCardSkeleton';
+import ErrorState from '@/components/ErrorState';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -16,7 +18,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Pagination } from '@/components/ui/pagination';
 import EmptyState from '@/components/EmptyState';
 
@@ -43,17 +44,6 @@ const CatalogPage = () => {
   const totalCount = productsData?.count ?? 0;
   const totalPages = Math.ceil(totalCount / pageSize);
 
-  const renderSkeletons = () => (
-    Array.from({ length: pageSize }).map((_, index) => (
-      <div key={index} className="flex flex-col space-y-3">
-        <Skeleton className="h-[200px] w-full rounded-xl" />
-        <div className="space-y-2">
-          <Skeleton className="h-4 w-3/4" />
-          <Skeleton className="h-4 w-1/2" />
-        </div>
-      </div>
-    ))
-  );
 
   return (
     <>
@@ -109,17 +99,13 @@ const CatalogPage = () => {
             </div>
           </div>
 
-          {isLoading && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {renderSkeletons()}
-            </div>
-          )}
+          {isLoading && <ProductCardSkeletonList count={pageSize} />}
 
           {!isLoading && isError && (
-            <EmptyState
-              title="Error al cargar productos"
-              message="Hubo un problema al conectar con el servidor. Por favor, intenta de nuevo más tarde."
-              icon="AlertTriangle"
+            <ErrorState 
+              error={isError} 
+              onRetry={() => window.location.reload()}
+              showDetails={process.env.NODE_ENV === 'development'}
             />
           )}
 

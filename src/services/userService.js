@@ -2,6 +2,7 @@
 import { supabase } from '@/lib/customSupabaseClient';
 import { getCachedSession } from '@/lib/supabaseHelpers';
 import logger from '@/utils/logger';
+import { formatErrorMessage } from '@/utils/errorHandler';
 
 /**
  * CORREGIDO: Valida sesión antes de hacer queries
@@ -36,7 +37,7 @@ export const fetchUsersInCompany = async () => {
 
   if (error) {
     logger.error('Error fetching users in company', error);
-    throw new Error('No se pudieron cargar los usuarios.');
+    throw new Error(formatErrorMessage(error));
   }
   return data || [];
 };
@@ -84,7 +85,7 @@ export const inviteUser = async (email, role) => {
 
     if (error) {
         logger.error('Error inviting user:', error);
-        throw new Error(`No se pudo invitar al usuario: ${error.message}`);
+        throw new Error(formatErrorMessage(error));
     }
 
     return data;
@@ -131,7 +132,7 @@ export const updateUserProfile = async (userId, updateData) => {
   
   if (error) {
     logger.error('Error updating user profile', error);
-    throw new Error('No se pudo actualizar el perfil del usuario.');
+    throw new Error(formatErrorMessage(error));
   }
   return data;
 };

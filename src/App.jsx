@@ -1,16 +1,21 @@
 
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
+import { fetchProducts } from '@/services/productService';
+import { fetchRequisitions } from '@/services/requisitionService';
 
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
 import BottomNav from '@/components/layout/BottomNav';
 import Cart from '@/components/Cart';
 import PageLoader from '@/components/PageLoader';
+import SkipLinks from '@/components/SkipLinks';
 import AppProviders from '@/context/AppProviders';
 import { ToastProvider } from '@/components/ui/toast-notification';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 // Lazy loading de las páginas
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
@@ -62,6 +67,31 @@ const AppLayout = () => {
   const [isSidebarOpen, setSidebarOpen] = React.useState(() => window.innerWidth > 1024);
   const [isMobileNavOpen, setMobileNavOpen] = React.useState(false);
   const location = useLocation();
+  const queryClient = useQueryClient();
+  const { session } = useSupabaseAuth();
+
+  // Prefetching inteligente de datos probables
+  useEffect(() => {
+    if (!session) return;
+
+    // Prefetch requisiciones si está en dashboard
+    if (location.pathname === '/dashboard') {
+      queryClient.prefetchQuery({
+        queryKey: ['requisitions', 1, 10, 'created_at', false],
+        queryFn: () => fetchRequisitions(1, 10, 'created_at', false),
+        staleTime: 60000, // 1 minuto
+      });
+    }
+
+    // Prefetch productos si está cerca de catalog
+    if (location.pathname === '/dashboard' || location.pathname === '/catalog') {
+      queryClient.prefetchQuery({
+        queryKey: ['products', { page: 1, pageSize: 12, searchTerm: '', category: '' }],
+        queryFn: () => fetchProducts({ pageParam: 0, searchTerm: '', category: '' }),
+        staleTime: 60000, // 1 minuto
+      });
+    }
+  }, [location.pathname, session, queryClient]);
 
   const handleToggleSidebar = () => {
     if (window.innerWidth < 1024) {
@@ -78,6 +108,7 @@ const AppLayout = () => {
 
   return (
     <div className="flex h-screen bg-white text-gray-900">
+      <SkipLinks />
       {showNav && (
         <>
           <Sidebar isSidebarOpen={isSidebarOpen} isMobileNavOpen={isMobileNavOpen} setMobileNavOpen={setMobileNavOpen} />
@@ -88,8 +119,9 @@ const AppLayout = () => {
       <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${contentMargin}`}>
         {showNav && <Header setSidebarOpen={handleToggleSidebar} />}
         
-        <main className="flex-1 overflow-y-auto pb-24 lg:pb-0" id="main-content">
-            <Suspense fallback={<div className="h-full"><PageLoader /></div>}>
+        <main className="flex-1 overflow-y-auto pb-24 lg:pb-0" id="main-content" role="main">
+            <ErrorBoundary level="page">
+              <Suspense fallback={<div className="h-full"><PageLoader /></div>}>
                 <Routes location={location}>
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/requisitions" element={<RequisitionsPage />} />
@@ -132,7 +164,8 @@ const AppLayout = () => {
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />
                         <Route path="*" element={<Navigate to="/dashboard" replace />} />
                     </Routes>
-            </Suspense>
+              </Suspense>
+            </ErrorBoundary>
         </main>
 
         {showNav && (

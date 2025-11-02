@@ -1,55 +1,134 @@
+/**
+ * ErrorBoundary Component - Enhanced Version
+ *
+ * React Error Boundary para capturar errores en el árbol de componentes
+ * y mostrar un fallback UI elegante sin romper toda la aplicación.
+ *
+ * @see https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary
+ */
+
 import React from 'react';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import ErrorState from './ErrorState';
+import logger from '@/utils/logger';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = {
+      hasError: false,
+      error: null,
+      errorInfo: null,
+    };
   }
 
   static getDerivedStateFromError(error) {
-    return { hasError: true, error };
+    // Actualizar estado para mostrar fallback UI en el próximo render
+    return {
+      hasError: true,
+      error,
+    };
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
-    // Aquí podrías enviar el error a un servicio de logging
+    logger.error('ErrorBoundary caught an error:', { error, errorInfo });
+
+    this.setState({
+      errorInfo,
+    });
+
+    // TODO: Implementar logging a servicio externo en producción
+    // if (import.meta.env.PROD) {
+    //   Sentry.captureException(error, { extra: errorInfo });
+    // }
   }
 
   handleReset = () => {
-    this.setState({ hasError: false, error: null });
+    this.setState({
+      hasError: false,
+      error: null,
+      errorInfo: null,
+    });
+
+    // Si hay callback de reset personalizado, usarlo
+    if (this.props.onReset) {
+      this.props.onReset();
+    }
+  };
+
+  handleReload = () => {
     window.location.reload();
+  };
+
+  handleGoHome = () => {
+    window.location.href = '/dashboard';
   };
 
   render() {
     if (this.state.hasError) {
-      return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-          <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6 text-center">
-            <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Algo salió mal
-            </h1>
-            <p className="text-gray-600 mb-6">
-              Ha ocurrido un error inesperado. Por favor, intenta recargar la página.
-            </p>
-            {process.env.NODE_ENV === 'development' && this.state.error && (
-              <details className="text-left mb-4 p-4 bg-gray-100 rounded text-sm">
-                <summary className="cursor-pointer font-semibold mb-2">
-                  Detalles del error (solo en desarrollo)
+      const { level = 'page', fallback } = this.props;
+
+      // Si hay fallback personalizado, usarlo
+      if (fallback) {
+        return typeof fallback === 'function'
+          ? fallback({
+              error: this.state.error,
+              errorInfo: this.state.errorInfo,
+              reset: this.handleReset,
+            })
+          : fallback;
+      }
+
+      // Fallback según nivel de error
+      if (level === 'component') {
+        // Error a nivel de componente - UI más discreta
+        return (
+          <div className="p-4 bg-error-light border border-error rounded-lg">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-error flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  Error en el componente
+                </h3>
+                <p className="text-sm text-gray-600 mb-3">
+                  Este componente no se pudo cargar correctamente.
+                </p>
+                <Button
+                  onClick={this.handleReset}
+                  size="sm"
+                  variant="outline"
+                >
+                  <RefreshCw className="w-3 h-3 mr-2" />
+                  Reintentar
+                </Button>
+              </div>
+            </div>
+            {import.meta.env.DEV && this.state.error && (
+              <details className="mt-4 text-xs">
+                <summary className="cursor-pointer font-medium text-gray-700">
+                  Detalles técnicos (solo en desarrollo)
                 </summary>
-                <pre className="whitespace-pre-wrap text-xs">
+                <pre className="mt-2 p-2 bg-white rounded text-xs overflow-auto">
                   {this.state.error.toString()}
+                  {'\n'}
                   {this.state.error.stack}
                 </pre>
               </details>
             )}
-            <Button onClick={this.handleReset} className="w-full">
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Recargar página
-            </Button>
           </div>
+        );
+      }
+
+      // Error a nivel de página - Usar ErrorState component
+      return (
+        <div className="flex items-center justify-center min-h-screen p-4">
+          <ErrorState 
+            error={this.state.error}
+            onRetry={this.handleReset}
+            title="Error de la Aplicación"
+            showDetails={process.env.NODE_ENV === 'development'}
+          />
         </div>
       );
     }
@@ -59,4 +138,47 @@ class ErrorBoundary extends React.Component {
 }
 
 export default ErrorBoundary;
+
+/**
+ * HOC para envolver componentes con ErrorBoundary fácilmente
+ */
+export function withErrorBoundary(Component, errorBoundaryProps = {}) {
+  const WrappedComponent = (props) => (
+    <ErrorBoundary {...errorBoundaryProps}>
+      <Component {...props} />
+    </ErrorBoundary>
+  );
+
+  WrappedComponent.displayName = `withErrorBoundary(${
+    Component.displayName || Component.name || 'Component'
+  })`;
+
+  return WrappedComponent;
+}
+
+/**
+ * Ejemplo de uso:
+ *
+ * // A nivel de página (default)
+ * <ErrorBoundary>
+ *   <MyPage />
+ * </ErrorBoundary>
+ *
+ * // A nivel de componente
+ * <ErrorBoundary level="component">
+ *   <MyComponent />
+ * </ErrorBoundary>
+ *
+ * // Con fallback personalizado
+ * <ErrorBoundary
+ *   fallback={({ error, reset }) => (
+ *     <CustomError error={error} onReset={reset} />
+ *   )}
+ * >
+ *   <MyComponent />
+ * </ErrorBoundary>
+ *
+ * // Usando HOC
+ * export default withErrorBoundary(MyComponent, { level: 'component' });
+ */
 

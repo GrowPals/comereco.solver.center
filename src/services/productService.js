@@ -1,6 +1,7 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
 import { getCachedSession } from '@/lib/supabaseHelpers';
+import { formatErrorMessage } from '@/utils/errorHandler';
 import logger from '@/utils/logger';
 
 /**
@@ -40,13 +41,13 @@ export const fetchProducts = async ({ pageParam = 0, searchTerm = '', category =
 
     if (error) {
         logger.error("Error fetching products:", error);
-        throw new Error("No se pudieron cargar los productos.");
+        throw new Error(formatErrorMessage(error));
     }
     
     return {
-        products: data,
-        nextPage: (to + 1) < count ? pageParam + 1 : undefined,
-        totalCount: count,
+        products: data || [],
+        nextPage: (to + 1) < (count || 0) ? pageParam + 1 : undefined,
+        totalCount: count || 0,
     };
 };
 
@@ -68,8 +69,13 @@ export const fetchProductById = async (productId) => {
         if (error.code === 'PGRST116') { // Not found
              throw new Error("Producto no encontrado.");
         }
-        throw new Error("No se pudo cargar el producto.");
+        throw new Error(formatErrorMessage(error));
     }
+    
+    if (!data) {
+        throw new Error("Producto no encontrado.");
+    }
+    
     return data;
 };
 
@@ -93,7 +99,12 @@ export const fetchProductCategories = async () => {
         logger.error("Error fetching categories:", error);
         return [];
     }
-    return data.map(c => c.category);
+    
+    if (!data || !Array.isArray(data)) {
+        return [];
+    }
+    
+    return data.map(c => c?.category).filter(Boolean);
 };
 
 /**
@@ -114,9 +125,9 @@ export const getAdminProducts = async () => {
         
     if (error) {
         logger.error('Error fetching admin products:', error);
-        throw new Error('No se pudieron cargar los productos.');
+        throw new Error(formatErrorMessage(error));
     }
-    return data;
+    return data || [];
 };
 
 /**
@@ -150,18 +161,32 @@ export const createProduct = async (productData) => {
         
     if (error) {
         logger.error('Error creating product:', error);
-        throw new Error(error.message);
+        throw new Error(formatErrorMessage(error));
     }
+    
+    if (!data) {
+        throw new Error("No se pudo crear el producto.");
+    }
+    
     return data;
 };
 
 export const updateProduct = async (productData) => {
+    if (!productData || !productData.id) {
+        throw new Error("Datos del producto inválidos.");
+    }
+    
     const { id, ...updateData } = productData;
     const { data, error } = await supabase.from('products').update(updateData).eq('id', id).select().single();
     if (error) {
         logger.error('Error updating product:', error);
-        throw new Error(error.message);
+        throw new Error(formatErrorMessage(error));
     }
+    
+    if (!data) {
+        throw new Error("No se pudo actualizar el producto.");
+    }
+    
     return data;
 };
 
@@ -171,9 +196,9 @@ export const getProducts = async (filters = {}) => {
     const pageParam = page - 1;
     const result = await fetchProducts({ pageParam, searchTerm, category });
     return {
-        data: result.products,
-        count: result.totalCount, // Cambiado de 'total' a 'count' para consistencia
-        total: result.totalCount, // Mantener ambos para compatibilidad
+        data: result.products || [],
+        count: result.totalCount || 0,
+        total: result.totalCount || 0, // Mantener ambos para compatibilidad
     };
 };
 

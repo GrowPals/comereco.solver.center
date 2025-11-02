@@ -2,6 +2,7 @@
 import { supabase } from '@/lib/customSupabaseClient';
 import { getCachedSession } from '@/lib/supabaseHelpers';
 import logger from '@/utils/logger';
+import { formatErrorMessage } from '@/utils/errorHandler';
 
 /**
  * CORREGIDO: Valida sesión antes de hacer queries
@@ -23,7 +24,7 @@ export const getAllProjects = async () => {
   
   if (error) {
     logger.error('Error fetching projects:', error);
-    throw new Error('No se pudieron cargar los proyectos.');
+    throw new Error(formatErrorMessage(error));
   }
 
   // Obtener supervisores por separado si es necesario
@@ -116,7 +117,7 @@ export const createProject = async (projectData) => {
     
   if (error) {
     logger.error('Error creating project:', error);
-    throw new Error(`Error al crear proyecto: ${error.message}`);
+    throw new Error(formatErrorMessage(error));
   }
   return data;
 };
@@ -142,10 +143,10 @@ export const updateProject = async (projectData) => {
     .eq('id', id)
     .select()
     .single();
-  if (error) {
-    logger.error('Error updating project:', error);
-    throw new Error(`Error al actualizar proyecto: ${error.message}`);
-  }
+    if (error) {
+        logger.error('Error updating project:', error);
+        throw new Error(formatErrorMessage(error));
+    }
   return data;
 };
 
@@ -165,7 +166,7 @@ export const deleteProject = async (projectId) => {
   const { error } = await supabase.from('projects').delete().eq('id', projectId);
   if (error) {
     logger.error('Error deleting project:', error);
-    throw new Error(`Error al eliminar proyecto: ${error.message}`);
+    throw new Error(formatErrorMessage(error));
   }
 };
 
@@ -191,7 +192,7 @@ export const getProjectMembers = async (projectId) => {
     
     if (membersError) {
         logger.error('Error fetching project members:', membersError);
-        throw new Error(`Error al obtener miembros: ${membersError.message}`);
+        throw new Error(formatErrorMessage(membersError));
     }
 
     if (!memberships || memberships.length === 0) return [];
@@ -204,7 +205,7 @@ export const getProjectMembers = async (projectId) => {
 
     if (usersError) {
         logger.error('Error fetching users for project members:', usersError);
-        throw new Error(`Error al obtener usuarios: ${usersError.message}`);
+        throw new Error(formatErrorMessage(usersError));
     }
 
     // Combinar membresías con datos de usuarios
@@ -237,7 +238,7 @@ export const addProjectMember = async (projectId, userId, roleInProject = 'membe
         .insert({ project_id: projectId, user_id: userId, role_in_project: roleInProject });
     if (error) {
         logger.error('Error adding project member:', error);
-        throw new Error(`Error al agregar miembro: ${error.message}`);
+        throw new Error(formatErrorMessage(error));
     }
 };
 
@@ -261,7 +262,7 @@ export const removeProjectMember = async (projectId, userId) => {
         .match({ project_id: projectId, user_id: userId });
     if (error) {
         logger.error('Error removing project member:', error);
-        throw new Error(`Error al eliminar miembro: ${error.message}`);
+        throw new Error(formatErrorMessage(error));
     }
 };
 
@@ -286,6 +287,6 @@ export const updateProjectMemberRole = async (projectId, userId, roleInProject) 
     
     if (error) {
         logger.error('Error updating project member role:', error);
-        throw new Error(`Error al actualizar rol del miembro: ${error.message}`);
+        throw new Error(formatErrorMessage(error));
     }
 };

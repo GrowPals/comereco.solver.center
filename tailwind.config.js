@@ -89,11 +89,41 @@ module.exports = {
           foreground: "var(--card-foreground)",
         },
 
-        // Semantic colors
-        success: "var(--success)",
-        warning: "var(--warning)",
-        error: "var(--error)",
-        info: "var(--info)",
+        // Semantic colors - Extended
+        success: {
+          DEFAULT: '#10b981',
+          light: '#d1fae5',
+          dark: '#065f46',
+          foreground: '#ffffff',
+        },
+        warning: {
+          DEFAULT: '#f59e0b',
+          light: '#fef3c7',
+          dark: '#92400e',
+          foreground: '#ffffff',
+        },
+        error: {
+          DEFAULT: '#ef4444',
+          light: '#fee2e2',
+          dark: '#991b1b',
+          foreground: '#ffffff',
+        },
+        info: {
+          DEFAULT: '#3b82f6',
+          light: '#dbeafe',
+          dark: '#1e40af',
+          foreground: '#ffffff',
+        },
+
+        // Status colors para requisiciones y estados de negocio
+        status: {
+          draft: '#94a3b8',
+          pending: '#f59e0b',
+          approved: '#10b981',
+          rejected: '#ef4444',
+          ordered: '#3b82f6',
+          cancelled: '#64748b',
+        },
       },
 
       borderRadius: {
@@ -165,5 +195,42 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    // Plugin para clases semánticas de tipografía
+    function({ addComponents }) {
+      addComponents({
+        '.heading-1': {
+          '@apply text-4xl md:text-5xl font-bold tracking-tight leading-tight text-gray-900': {},
+        },
+        '.heading-2': {
+          '@apply text-3xl md:text-4xl font-bold tracking-tight leading-tight text-gray-900': {},
+        },
+        '.heading-3': {
+          '@apply text-2xl md:text-3xl font-semibold leading-tight text-gray-900': {},
+        },
+        '.heading-4': {
+          '@apply text-xl md:text-2xl font-semibold leading-normal text-gray-900': {},
+        },
+        '.heading-5': {
+          '@apply text-lg md:text-xl font-semibold leading-normal text-gray-900': {},
+        },
+        '.body-large': {
+          '@apply text-lg leading-relaxed text-gray-700': {},
+        },
+        '.body-base': {
+          '@apply text-base leading-normal text-gray-700': {},
+        },
+        '.body-small': {
+          '@apply text-sm leading-normal text-gray-600': {},
+        },
+        '.caption': {
+          '@apply text-xs leading-normal text-gray-500 uppercase tracking-wide': {},
+        },
+        '.label': {
+          '@apply text-sm font-medium leading-none text-gray-700': {},
+        },
+      })
+    }
+  ],
 }
