@@ -57,61 +57,72 @@ const ProductCard = memo(({ product }) => {
 
   return (
     <article
-      className="bg-white rounded-lg overflow-hidden border border-gray-200 hover:border-primary-500 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer group h-full flex flex-col"
+      className="group relative bg-white rounded-2xl overflow-hidden border border-slate-200 hover:border-blue-300 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 cursor-pointer h-full flex flex-col"
       role="article"
       aria-label={`Producto ${productName}, precio ${productPrice} pesos, categoría ${productCategory}`}
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onClick={handleCardClick}
     >
+      {/* Accent line on hover */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+
       {/* Imagen del producto */}
-      <div className="relative aspect-square bg-gray-50 overflow-hidden">
+      <div className="relative aspect-square bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden">
         <OptimizedImage
           src={product.image_url || product.image}
           alt={`Imagen de ${productName}`}
           fallback="/placeholder.png"
           loading="lazy"
-          className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300 ease-out"
+          className="w-full h-full object-contain p-6 group-hover:scale-110 transition-transform duration-500 ease-out"
         />
 
         {/* Botón de favorito */}
         <button
           onClick={handleToggleFavorite}
-          className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white shadow-sm hover:shadow-md flex items-center justify-center transition-all duration-150 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+          className="absolute top-4 right-4 z-10 w-10 h-10 rounded-xl bg-white/90 backdrop-blur-sm shadow-md hover:shadow-lg flex items-center justify-center transition-all duration-200 active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
           aria-label={isFavorite ? `Quitar ${productName} de favoritos` : `Añadir ${productName} a favoritos`}
           aria-pressed={isFavorite}
         >
           <Heart
             className={cn(
-              'w-5 h-5 transition-all duration-150',
-              isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-400 hover:text-gray-600'
+              'w-5 h-5 transition-all duration-200',
+              isFavorite ? 'fill-red-500 text-red-500 scale-110' : 'text-slate-400 hover:text-red-500 hover:scale-110'
             )}
             aria-hidden="true"
           />
         </button>
+
+        {/* Category badge */}
+        <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-lg bg-white/90 backdrop-blur-sm shadow-sm">
+          <p className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
+            {productCategory}
+          </p>
+        </div>
       </div>
 
       {/* Info del producto */}
-      <div className="p-4 space-y-2 flex-1 flex flex-col">
-        <h3 className="font-semibold text-gray-900 text-sm line-clamp-2 min-h-[2.5rem]">
+      <div className="p-5 space-y-3 flex-1 flex flex-col">
+        <h3 className="font-bold text-slate-900 text-base line-clamp-2 min-h-[3rem] leading-tight">
           {productName}
         </h3>
-        <p className="text-xs text-gray-500 uppercase tracking-wide">
-          {productCategory}
-        </p>
-        <div className="flex items-center justify-between pt-2 mt-auto">
-          <span className="text-lg font-bold text-gray-900">
-            ${productPrice}
-          </span>
+
+        <div className="flex items-center justify-between pt-3 mt-auto border-t border-slate-100">
+          <div className="flex flex-col">
+            <span className="text-xs text-slate-500 font-medium mb-0.5">Precio</span>
+            <span className="text-2xl font-bold text-slate-900 tracking-tight">
+              ${productPrice}
+            </span>
+          </div>
           <button
             onClick={handleAddToCart}
             disabled={isAdding || isAdded}
             className={cn(
-              'w-10 h-10 rounded-full flex items-center justify-center transition-all duration-150 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
+              'w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 shadow-md',
               isAdded
-                ? 'bg-green-500 hover:bg-green-600 text-white'
-                : 'bg-primary-500 hover:bg-primary-600 text-white shadow-sm hover:shadow-md',
-              (isAdding || isAdded) && 'cursor-default active:scale-100'
+                ? 'bg-gradient-accent hover:shadow-glow-accent text-white focus-visible:ring-accent-500'
+                : 'bg-gradient-primary hover:shadow-glow-primary text-white focus-visible:ring-primary-500',
+              (isAdding || isAdded) && 'cursor-default'
             )}
             aria-label={isAdded ? `${productName} ya está en el carrito` : `Añadir ${productName} al carrito`}
             aria-disabled={isAdding || isAdded}
@@ -119,9 +130,9 @@ const ProductCard = memo(({ product }) => {
             {isAdding ? (
               <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
             ) : isAdded ? (
-              <Check className="w-5 h-5" aria-hidden="true" />
+              <Check className="w-6 h-6" aria-hidden="true" />
             ) : (
-              <Plus className="w-5 h-5" aria-hidden="true" />
+              <Plus className="w-6 h-6" aria-hidden="true" />
             )}
           </button>
         </div>

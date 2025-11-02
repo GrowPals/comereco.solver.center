@@ -48,26 +48,29 @@ const BottomNav = memo(() => {
     return (
         <nav className="fixed bottom-0 left-0 right-0 bg-card border-t border-border z-50 lg:hidden">
             <div className="grid h-16 grid-cols-5 max-w-full mx-auto">
-                {navItems.map((item, index) => (
-                    <NavLink
-                        key={index}
-                        to={item.path}
-                        className={({ isActive: isLinkActive }) =>
-                            `inline-flex flex-col items-center justify-center px-2 group transition-colors duration-200 ${isLinkActive || isActive(item.path) ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
-                            }`
-                        }
-                    >
-                        <div className="relative">
-                            <item.icon className="w-6 h-6 mb-1" />
-                            {item.path === '/catalog' && totalItems > 0 && (
-                                <span className="absolute -top-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                                    {totalItems || 0}
-                                </span>
-                            )}
-                        </div>
-                        <span className="text-xs font-medium">{item.label}</span>
-                    </NavLink>
-                ))}
+                {navItems.map((item) => {
+                    const ItemIcon = item.icon;
+                    return (
+                        <NavLink
+                            key={item.path}
+                            to={item.path}
+                            className={({ isActive: isLinkActive }) =>
+                                `inline-flex flex-col items-center justify-center px-2 group transition-colors duration-200 ${isLinkActive || isActive(item.path) ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                                }`
+                            }
+                        >
+                            <div className="relative">
+                                {ItemIcon && <ItemIcon className="w-6 h-6 mb-1" />}
+                                {item.path === '/catalog' && totalItems > 0 && (
+                                    <span className="absolute -top-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                                        {totalItems || 0}
+                                    </span>
+                                )}
+                            </div>
+                            <span className="text-xs font-medium">{item.label}</span>
+                        </NavLink>
+                    );
+                })}
             </div>
         </nav>
     );

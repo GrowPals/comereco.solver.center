@@ -44,9 +44,9 @@ import PageLoader from '@/components/PageLoader';
 
 // Mapeo de roles según app_role_v2 enum (admin | supervisor | user)
 const roleMapping = {
-    user: { label: 'Usuario', icon: <UserIcon className="w-4 h-4 mr-2" /> },
-    supervisor: { label: 'Supervisor', icon: <Briefcase className="w-4 h-4 mr-2" /> },
-    admin: { label: 'Admin', icon: <Shield className="w-4 h-4 mr-2" /> },
+    user: { label: 'Usuario', icon: UserIcon },
+    supervisor: { label: 'Supervisor', icon: Briefcase },
+    admin: { label: 'Admin', icon: Shield },
 };
 
 const UserForm = ({ user, onSave, onCancel, isLoading }) => {
@@ -183,15 +183,36 @@ const Users = () => {
             <Helmet>
                 <title>Gestión de Usuarios - ComerECO</title>
             </Helmet>
-            <div className="p-4 md:p-8">
-                <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-3xl font-bold">Usuarios</h1>
-                    <Button onClick={() => handleOpenForm()}>
-                        <Plus className="mr-2 h-4 w-4" /> Invitar Usuario
-                    </Button>
-                </div>
-                <div className="bg-card rounded-lg shadow-sm border">
-                    <Table>
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8">
+                <div className="max-w-7xl mx-auto space-y-8">
+                    {/* Header */}
+                    <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-slate-200">
+                        <div className="flex items-center gap-4">
+                            <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-md">
+                                <UserIcon className="h-7 w-7 text-blue-600" aria-hidden="true" />
+                            </div>
+                            <div>
+                                <h1 className="text-4xl font-bold tracking-tight text-slate-900 mb-1">
+                                    Gestión de <span className="bg-gradient-primary bg-clip-text text-transparent">Usuarios</span>
+                                </h1>
+                                <p className="text-base text-slate-600">
+                                    {users?.length || 0} {users?.length === 1 ? 'usuario' : 'usuarios'} en tu organización
+                                </p>
+                            </div>
+                        </div>
+                        <Button
+                            size="lg"
+                            onClick={() => handleOpenForm()}
+                            className="shadow-lg hover:shadow-xl whitespace-nowrap"
+                        >
+                            <Plus className="mr-2 h-5 w-5" />
+                            Invitar Usuario
+                        </Button>
+                    </header>
+
+                    {/* Users Table */}
+                    <div className="bg-white border-2 border-slate-200 rounded-2xl shadow-lg overflow-hidden">
+                        <Table>
                         <TableHeader>
                             <TableRow>
                                 <TableHead>Usuario</TableHead>
@@ -202,39 +223,54 @@ const Users = () => {
                         </TableHeader>
                         <TableBody>
                             {users?.map((user) => (
-                                <TableRow key={user.id}>
+                                <TableRow key={user.id} className="hover:bg-slate-50 transition-colors">
                                     <TableCell>
                                         <div className="flex items-center space-x-3">
-                                            <Avatar>
+                                            <Avatar className="h-11 w-11 border-2 border-slate-200">
                                                 <AvatarImage src={user.avatar_url} />
-                                                <AvatarFallback>{user.full_name?.charAt(0) || 'U'}</AvatarFallback>
+                                                <AvatarFallback className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700 font-bold">
+                                                    {user.full_name?.charAt(0) || 'U'}
+                                                </AvatarFallback>
                                             </Avatar>
                                             <div>
-                                                <p className="font-medium">{user.full_name}</p>
-                                                <p className="text-sm text-muted-foreground">{user.email}</p>
+                                                <p className="font-bold text-slate-900">{user.full_name}</p>
+                                                <p className="text-sm text-slate-600">{user.email}</p>
                                             </div>
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                         <Badge
-                                            variant="outline"
-                                            className="font-semibold"
-                                          >
-                                            {roleMapping[user.role_v2]?.icon}
+                                        <Badge variant="outline" className="font-semibold shadow-sm">
+                                            {roleMapping[user.role_v2]?.icon && (
+                                                React.createElement(roleMapping[user.role_v2].icon, { className: "w-4 h-4 mr-2" })
+                                            )}
                                             {roleMapping[user.role_v2]?.label || user.role_v2}
-                                          </Badge>
+                                        </Badge>
                                     </TableCell>
-                                    <TableCell>{new Date(user.updated_at).toLocaleDateString()}</TableCell>
+                                    <TableCell className="font-medium text-slate-700">
+                                        {new Date(user.updated_at).toLocaleDateString('es-MX', {
+                                            year: 'numeric',
+                                            month: 'short',
+                                            day: 'numeric'
+                                        })}
+                                    </TableCell>
                                     <TableCell>
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                                    <MoreHorizontal className="h-4 w-4" />
+                                                <Button
+                                                    variant="ghost"
+                                                    className="h-9 w-9 p-0 hover:bg-slate-100 rounded-xl"
+                                                    aria-label={`Acciones para ${user.full_name || user.email}`}
+                                                >
+                                                    <MoreHorizontal className="h-5 w-5" aria-hidden="true" />
                                                 </Button>
                                             </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                                <DropdownMenuItem onClick={() => handleOpenForm(user)}>Editar</DropdownMenuItem>
-                                                <DropdownMenuItem className="text-destructive">Desactivar</DropdownMenuItem>
+                                            <DropdownMenuContent align="end" className="rounded-xl">
+                                                <DropdownMenuItem onClick={() => handleOpenForm(user)}>
+                                                    Editar
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem className="text-red-600">
+                                                    Desactivar
+                                                </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </TableCell>
@@ -242,14 +278,17 @@ const Users = () => {
                             ))}
                         </TableBody>
                     </Table>
+                    </div>
                 </div>
             </div>
 
             <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-                <DialogContent>
+                <DialogContent className="sm:max-w-lg">
                     <DialogHeader>
-                        <DialogTitle>{editingUser ? 'Editar Usuario' : 'Invitar Nuevo Usuario'}</DialogTitle>
-                         <DialogDescription>
+                        <DialogTitle className="text-2xl font-bold">
+                            {editingUser ? 'Editar Usuario' : 'Invitar Nuevo Usuario'}
+                        </DialogTitle>
+                        <DialogDescription className="text-base">
                             {editingUser ? 'Actualiza el rol o nombre del usuario.' : 'Envía una invitación por email para que se una a tu compañía.'}
                         </DialogDescription>
                     </DialogHeader>

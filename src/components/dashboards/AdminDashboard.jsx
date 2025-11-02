@@ -24,26 +24,33 @@ const AdminDashboard = ({ user }) => {
     ];
 
     return (
-        <div className="space-y-8">
-            <div className="flex flex-col gap-2">
-                <h1 className="text-4xl font-bold text-neutral-900">
+        <div className="max-w-7xl mx-auto space-y-10">
+            {/* Hero Section */}
+            <div className="flex flex-col gap-4 pb-8 border-b border-slate-200">
+                <h1 className="text-5xl font-bold tracking-tight text-slate-900">
                     Dashboard <span className="bg-gradient-primary bg-clip-text text-transparent">Ejecutivo</span>
                 </h1>
-                <p className="text-base text-neutral-600">
-                    Vista general de la compañía: <span className="font-semibold text-neutral-900">{user.company?.name || ''}</span>
+                <p className="text-lg text-slate-600">
+                    Vista general de la compañía: <span className="font-semibold text-slate-900">{user.company?.name || 'Tu Empresa'}</span>
                 </p>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {/* Stats Grid */}
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 <StatCard title="Requisiciones Activas" value={stats?.active_requisitions_count || 0} icon={FileText} isLoading={isLoading} />
                 <StatCard title="Total de Usuarios" value={stats?.total_users_count || 0} icon={Users} isLoading={isLoading} />
                 <StatCard title="Total de Proyectos" value={stats?.total_projects_count || 0} icon={FolderKanban} isLoading={isLoading} />
                 <StatCard title="Monto Aprobado (mes)" value={stats?.approved_total || 0} icon={FileText} isLoading={isLoading} format={formatCurrency} />
             </div>
-            
-            <div className="space-y-6">
-                <QuickAccess actions={quickActions} />
-                <RecentRequisitions />
+
+            {/* Content Sections */}
+            <div className="grid gap-8 lg:grid-cols-3">
+                <div className="lg:col-span-2 space-y-6">
+                    <RecentRequisitions />
+                </div>
+                <div>
+                    <QuickAccess actions={quickActions} />
+                </div>
             </div>
         </div>
     );

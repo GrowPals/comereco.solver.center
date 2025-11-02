@@ -4,21 +4,21 @@ import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const badgeVariants = cva(
-  'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+  'inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
   {
     variants: {
       variant: {
-        default: 'border-transparent bg-gradient-to-r from-primary-100 to-primary-50 text-primary-700 shadow-sm',
-        secondary: 'border-transparent bg-neutral-100 text-neutral-700 shadow-sm',
+        default: 'border-blue-200 bg-gradient-to-r from-blue-100 to-blue-50 text-blue-700 shadow-sm',
+        secondary: 'border-slate-200 bg-slate-100 text-slate-700 shadow-sm',
 
-        success: 'bg-gradient-to-r from-green-100 to-green-50 text-green-700 border-green-200 shadow-sm',
-        warning: 'bg-gradient-to-r from-yellow-100 to-yellow-50 text-yellow-700 border-yellow-200 shadow-sm',
+        success: 'bg-gradient-to-r from-emerald-100 to-emerald-50 text-emerald-700 border-emerald-200 shadow-sm',
+        warning: 'bg-gradient-to-r from-amber-100 to-amber-50 text-amber-700 border-amber-200 shadow-sm',
         danger: 'bg-gradient-to-r from-red-100 to-red-50 text-red-700 border-red-200 shadow-sm',
         destructive: 'bg-gradient-to-r from-red-100 to-red-50 text-red-700 border-red-200 shadow-sm',
         info: 'bg-gradient-to-r from-blue-100 to-blue-50 text-blue-700 border-blue-200 shadow-sm',
 
-        muted: 'bg-neutral-100 text-neutral-600 border-neutral-200',
-        outline: 'text-neutral-700 border-neutral-300 bg-white hover:bg-neutral-50',
+        muted: 'bg-slate-100 text-slate-600 border-slate-200',
+        outline: 'text-slate-700 border-slate-300 bg-white hover:bg-slate-50',
       },
     },
     defaultVariants: {

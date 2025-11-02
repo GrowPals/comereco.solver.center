@@ -22,18 +22,18 @@ const TABS = [
 ];
 
 const SettingsCard = ({ title, description, children, onSave, isSaving }) => (
-    <Card>
-        <CardHeader>
-            <CardTitle>{title}</CardTitle>
-            {description && <CardDescription>{description}</CardDescription>}
+    <Card className="border-2 border-slate-200 shadow-lg rounded-2xl">
+        <CardHeader className="pb-6">
+            <CardTitle className="text-2xl font-bold text-slate-900">{title}</CardTitle>
+            {description && <CardDescription className="text-base text-slate-600 mt-2">{description}</CardDescription>}
         </CardHeader>
         <CardContent className="space-y-6">
             {children}
         </CardContent>
         {onSave && (
             <div className="p-6 pt-0">
-                <Button onClick={onSave} disabled={isSaving}>
-                    {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null} Guardar Cambios
+                <Button onClick={onSave} disabled={isSaving} className="rounded-xl shadow-lg hover:shadow-xl" size="lg">
+                    {isSaving ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : null} Guardar Cambios
                 </Button>
             </div>
         )}
@@ -67,36 +67,48 @@ const SettingsPage = () => {
     return (
         <>
             <Helmet><title>Configuración - ComerECO</title></Helmet>
-            <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50">
-                    <aside className="w-full lg:w-64 bg-background lg:border-r border-b lg:border-b-0">
-                    <div className="p-4 hidden lg:block border-b">
-                        <h2 className="text-lg font-semibold">Configuración</h2>
+            <div className="flex flex-col lg:flex-row min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
+                    <aside className="w-full lg:w-72 bg-white lg:border-r-2 border-b-2 lg:border-b-0 border-slate-200 lg:shadow-lg">
+                    <div className="p-6 hidden lg:block border-b-2 border-slate-200">
+                        <div className="flex items-center gap-3">
+                            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm">
+                                <Settings className="h-6 w-6 text-blue-600" aria-hidden="true" />
+                            </div>
+                            <h2 className="text-2xl font-bold text-slate-900">Configuración</h2>
+                        </div>
                     </div>
                     {/* Mobile Dropdown */}
                     <div className="p-4 lg:hidden">
                         <Select value={activeTab} onValueChange={setActiveTab}>
-                            <SelectTrigger>
+                            <SelectTrigger className="rounded-xl h-12 shadow-sm">
                                 <SelectValue placeholder="Seleccionar sección" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="rounded-xl">
                                 {TABS.map(tab => (
-                                    <SelectItem key={tab.id} value={tab.id}>{tab.name}</SelectItem>
+                                    <SelectItem key={tab.id} value={tab.id} className="rounded-lg">{tab.name}</SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
                     </div>
                     {/* Desktop Sidebar */}
-                    <nav className="hidden lg:block space-y-1 p-2">
+                    <nav className="hidden lg:block space-y-2 p-4">
                         {TABS.map(tab => (
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
                                 className={cn(
-                                    'w-full flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-md transition-colors',
-                                    activeTab === tab.id ? 'bg-muted text-primary font-semibold' : 'hover:bg-muted/50'
+                                    'w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200',
+                                    activeTab === tab.id
+                                        ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 font-bold shadow-md border-2 border-blue-200'
+                                        : 'hover:bg-slate-100 text-slate-700 hover:shadow-sm'
                                 )}
                             >
-                                <tab.icon className="h-5 w-5" />
+                                <div className={cn(
+                                    "h-9 w-9 rounded-lg flex items-center justify-center transition-all duration-200",
+                                    activeTab === tab.id ? 'bg-gradient-to-br from-blue-100 to-blue-200' : 'bg-slate-100'
+                                )}>
+                                    <tab.icon className={cn("h-5 w-5", activeTab === tab.id ? 'text-blue-600' : 'text-slate-600')} aria-hidden="true" />
+                                </div>
                                 <span>{tab.name}</span>
                             </button>
                         ))}
@@ -158,26 +170,34 @@ const SecuritySettings = () => (
         <TooltipProvider>
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <Button variant="outline">Cambiar Contraseña</Button>
+                    <Button variant="outline" className="rounded-xl shadow-sm hover:shadow-md">Cambiar Contraseña</Button>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent className="rounded-xl">
                     <p>Actualiza tu contraseña de acceso</p>
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>
-        <div className="pt-4 border-t">
-            <h3 className="font-semibold">Sesiones Activas</h3>
-            <p className="text-sm text-muted-foreground mb-4">Estas son las sesiones activas en tu cuenta.</p>
-            <div className="flex items-center justify-between p-3 rounded-md bg-muted">
-                <div className="flex items-center gap-3"><Monitor className="h-5 w-5"/><div><p className="font-medium">Chrome en Windows</p><p className="text-xs text-muted-foreground">Este dispositivo</p></div></div>
-                <Badge variant="default" className="bg-green-500">Activa</Badge>
+        <div className="pt-6 border-t-2 border-slate-200">
+            <h3 className="font-bold text-slate-900 text-lg mb-2">Sesiones Activas</h3>
+            <p className="text-sm text-slate-600 mb-4">Estas son las sesiones activas en tu cuenta.</p>
+            <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200">
+                <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                        <Monitor className="h-5 w-5 text-blue-600" aria-hidden="true" />
+                    </div>
+                    <div>
+                        <p className="font-bold text-slate-900">Chrome en Windows</p>
+                        <p className="text-xs text-slate-600">Este dispositivo</p>
+                    </div>
+                </div>
+                <Badge variant="success" className="shadow-sm">Activa</Badge>
             </div>
             <TooltipProvider>
                 <Tooltip>
                     <TooltipTrigger asChild>
-                        <Button variant="destructive" className="w-full mt-4">Cerrar todas las demás sesiones</Button>
+                        <Button variant="destructive" className="w-full mt-4 rounded-xl shadow-sm hover:shadow-md">Cerrar todas las demás sesiones</Button>
                     </TooltipTrigger>
-                    <TooltipContent>
+                    <TooltipContent className="rounded-xl">
                         <p>Cierra sesión en todos los dispositivos excepto este</p>
                     </TooltipContent>
                 </Tooltip>

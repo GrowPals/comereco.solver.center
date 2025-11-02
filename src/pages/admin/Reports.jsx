@@ -12,13 +12,13 @@ const ReportsPage = () => {
     return (
         <>
             <Helmet><title>Reportes - ComerECO</title></Helmet>
-            <div className="h-full -mt-20 flex items-center justify-center">
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 flex items-center justify-center">
                 <EmptyState
                     icon={BarChart2}
                     title="Módulo de Reportes en Construcción"
                     description="Estamos trabajando para traerte análisis y visualizaciones poderosas. ¡Vuelve pronto!"
                     actionButton={
-                        <Button onClick={() => navigate('/dashboard')}>
+                        <Button onClick={() => navigate('/dashboard')} size="lg" className="shadow-lg hover:shadow-xl">
                             Volver al Dashboard
                         </Button>
                     }

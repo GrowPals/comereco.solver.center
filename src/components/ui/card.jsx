@@ -2,14 +2,17 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
-const Card = React.forwardRef(({ className, interactive = false, ...props }, ref) => (
+const Card = React.forwardRef(({ className, interactive = false, accentColor = 'primary', ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      'bg-white rounded-xl border border-neutral-200 shadow-card transition-all duration-300 relative overflow-hidden',
-      'before:absolute before:top-0 before:left-0 before:right-0 before:h-[3px] before:bg-gradient-primary before:scale-x-0 before:transition-transform before:duration-300',
-      'after:absolute after:inset-0 after:bg-gradient-to-br after:from-primary-50/0 after:via-primary-50/0 after:to-primary-50/5 after:opacity-0 after:transition-opacity after:duration-300 after:pointer-events-none',
-      interactive && 'hover:shadow-card-hover hover:-translate-y-1 hover:border-primary-200 hover:before:scale-x-100 hover:after:opacity-100 cursor-pointer',
+      'bg-white rounded-2xl border border-slate-200 shadow-sm transition-all duration-300 relative overflow-hidden',
+      'before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:scale-x-0 before:transition-transform before:duration-300',
+      accentColor === 'primary' && 'before:bg-gradient-primary',
+      accentColor === 'accent' && 'before:bg-gradient-accent',
+      accentColor === 'success' && 'before:bg-gradient-success',
+      'after:absolute after:inset-0 after:bg-gradient-to-br after:from-slate-50/0 after:via-slate-50/0 after:to-slate-50/30 after:opacity-0 after:transition-opacity after:duration-300 after:pointer-events-none',
+      interactive && 'hover:shadow-xl hover:-translate-y-1 hover:border-slate-300 hover:before:scale-x-100 hover:after:opacity-100 cursor-pointer',
       className
     )}
     {...props}

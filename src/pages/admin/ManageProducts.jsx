@@ -50,9 +50,13 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent>
-                <DialogHeader><DialogTitle>{product ? 'Editar Producto' : 'Crear Producto'}</DialogTitle></DialogHeader>
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
+            <DialogContent className="sm:max-w-2xl">
+                <DialogHeader>
+                    <DialogTitle className="text-2xl font-bold">
+                        {product ? 'Editar Producto' : 'Crear Producto'}
+                    </DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 py-4">
                     <FormStatusFeedback status={formStatus.status} message={formStatus.message} />
                     <div>
                         <Label htmlFor="name">Nombre</Label>
@@ -177,18 +181,34 @@ const ManageProductsPage = () => {
     return (
         <>
             <Helmet><title>Gestionar Productos - ComerECO</title></Helmet>
-            <div className="p-4 sm:p-6 lg:p-8">
-                <div className="flex justify-between items-center mb-8">
-                    <div>
-                        <h1 className="text-3xl font-bold">Gestionar Productos</h1>
-                        <p className="text-muted-foreground">Crea, edita y gestiona el catálogo de tu compañía.</p>
-                    </div>
-                    <Button onClick={() => setFormModal({ isOpen: true, product: null })}><PlusCircle className="mr-2 h-4 w-4" /> Crear Producto</Button>
-                </div>
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8">
+                <div className="max-w-7xl mx-auto space-y-8">
+                    {/* Header */}
+                    <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-slate-200">
+                        <div className="flex items-center gap-4">
+                            <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-md">
+                                <ShoppingBag className="h-7 w-7 text-blue-600" aria-hidden="true" />
+                            </div>
+                            <div>
+                                <h1 className="text-4xl font-bold tracking-tight text-slate-900 mb-1">
+                                    Gestionar <span className="bg-gradient-primary bg-clip-text text-transparent">Productos</span>
+                                </h1>
+                                <p className="text-base text-slate-600">Crea, edita y gestiona el catálogo de tu compañía</p>
+                            </div>
+                        </div>
+                        <Button
+                            size="lg"
+                            onClick={() => setFormModal({ isOpen: true, product: null })}
+                            className="shadow-lg hover:shadow-xl whitespace-nowrap"
+                        >
+                            <PlusCircle className="mr-2 h-5 w-5" />
+                            Crear Producto
+                        </Button>
+                    </header>
 
-                {products?.length > 0 ? (
-                    <div className="bg-card border rounded-lg">
-                        <Table>
+                    {products?.length > 0 ? (
+                        <div className="bg-white border-2 border-slate-200 rounded-2xl shadow-lg overflow-hidden">
+                            <Table>
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>SKU</TableHead>
@@ -199,34 +219,55 @@ const ManageProductsPage = () => {
                                     <TableHead><span className="sr-only">Acciones</span></TableHead>
                                 </TableRow>
                             </TableHeader>
-                            <TableBody>
-                                {products.map(p => (
-                                    <TableRow key={p.id}>
-                                        <TableCell className="font-medium">{p.sku}</TableCell>
-                                        <TableCell>{p.name}</TableCell>
-                                        <TableCell>${p.price.toFixed(2)}</TableCell>
-                                        <TableCell>{p.stock}</TableCell>
-                                        <TableCell><Badge variant={p.is_active ? 'success' : 'secondary'}>{p.is_active ? 'Activo' : 'Inactivo'}</Badge></TableCell>
-                                        <TableCell>
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild><Button variant="ghost" className="h-8 w-8 p-0"><MoreHorizontal /></Button></DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end">
-                                                    <DropdownMenuItem onClick={() => setFormModal({ isOpen: true, product: p })}><Edit className="mr-2 h-4 w-4" /> Editar</DropdownMenuItem>
-                                                    <DropdownMenuItem onClick={() => handleToggleActive(p)}>
-                                                        {p.is_active ? <ToggleLeft className="mr-2 h-4 w-4" /> : <ToggleRight className="mr-2 h-4 w-4" />}
-                                                        {p.is_active ? 'Desactivar' : 'Activar'}
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </div>
-                ) : (
-                    <EmptyState icon={ShoppingBag} title="No hay productos" description="Crea tu primer producto para empezar a construir tu catálogo." actionButton={<Button onClick={() => setFormModal({ isOpen: true, product: null })}>Crear Producto</Button>} />
-                )}
+                                <TableBody>
+                                    {products.map(p => (
+                                        <TableRow key={p.id} className="hover:bg-slate-50 transition-colors">
+                                            <TableCell className="font-mono font-semibold text-slate-900">{p.sku}</TableCell>
+                                            <TableCell className="font-semibold text-slate-900">{p.name}</TableCell>
+                                            <TableCell className="font-bold text-slate-900">${p.price.toFixed(2)}</TableCell>
+                                            <TableCell className="font-medium text-slate-700">{p.stock}</TableCell>
+                                            <TableCell>
+                                                <Badge variant={p.is_active ? 'success' : 'muted'} className="shadow-sm">
+                                                    {p.is_active ? 'Activo' : 'Inactivo'}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button variant="ghost" className="h-9 w-9 p-0 hover:bg-slate-100 rounded-xl">
+                                                            <MoreHorizontal className="h-5 w-5" />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end" className="rounded-xl">
+                                                        <DropdownMenuItem onClick={() => setFormModal({ isOpen: true, product: p })}>
+                                                            <Edit className="mr-2 h-4 w-4" /> Editar
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => handleToggleActive(p)}>
+                                                            {p.is_active ? <ToggleLeft className="mr-2 h-4 w-4" /> : <ToggleRight className="mr-2 h-4 w-4" />}
+                                                            {p.is_active ? 'Desactivar' : 'Activar'}
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
+                    ) : (
+                        <EmptyState
+                            icon={ShoppingBag}
+                            title="No hay productos"
+                            description="Crea tu primer producto para empezar a construir tu catálogo."
+                            actionButton={
+                                <Button size="lg" onClick={() => setFormModal({ isOpen: true, product: null })}>
+                                    <PlusCircle className="mr-2 h-5 w-5" />
+                                    Crear Producto
+                                </Button>
+                            }
+                        />
+                    )}
+                </div>
             </div>
 
             {formModal.isOpen && <ProductFormModal isOpen={formModal.isOpen} onClose={() => setFormModal({ isOpen: false, product: null })} product={formModal.product} onSave={handleSave} />}

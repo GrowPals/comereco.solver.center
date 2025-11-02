@@ -82,20 +82,20 @@ const LoginPage = () => {
             <Helmet><title>Iniciar Sesión - ComerECO</title></Helmet>
 
             {/* Background with gradient */}
-            <div className="min-h-screen w-full bg-gradient-to-br from-neutral-50 via-white to-primary-50/20 flex items-center justify-center p-4 font-sans relative overflow-hidden">
+            <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-white to-blue-50 flex items-center justify-center p-4 font-sans relative overflow-hidden">
                 {/* Decorative gradient orbs */}
-                <div className="absolute top-0 left-0 w-96 h-96 bg-primary-200/30 rounded-full blur-3xl" />
-                <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary-300/20 rounded-full blur-3xl" />
+                <div className="absolute top-10 left-10 w-[500px] h-[500px] bg-gradient-to-br from-blue-200/40 to-blue-300/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '8s' }} />
+                <div className="absolute bottom-10 right-10 w-[400px] h-[400px] bg-gradient-to-br from-blue-300/30 to-blue-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '6s', animationDelay: '1s' }} />
 
                 <div className="w-full max-w-md relative z-10">
                     {/* Logo */}
                     <motion.div
-                        initial={{ opacity: 0, y: -20 }}
+                        initial={{ opacity: 0, y: -30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4, ease: "easeOut" }}
-                        className="text-center mb-8"
+                        transition={{ duration: 0.5, ease: "easeOut" }}
+                        className="text-center mb-10"
                     >
-                        <div className="mx-auto w-24 h-24 bg-white rounded-2xl shadow-lg flex items-center justify-center">
+                        <div className="mx-auto w-28 h-28 bg-white rounded-3xl shadow-2xl flex items-center justify-center ring-2 ring-blue-100">
                             <img
                                 src="https://i.ibb.co/XZW8Nh3v/solver-logo-1.png"
                                 alt="ComerECO Logo"
@@ -106,18 +106,18 @@ const LoginPage = () => {
 
                     {/* Login Card */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        initial={{ opacity: 0, scale: 0.92, y: 30 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
-                        className={`bg-white rounded-2xl shadow-xl border border-neutral-200 p-8 ${isShaking ? 'animate-shake' : ''}`}
+                        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+                        className={`bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border-2 border-slate-200 p-10 ${isShaking ? 'animate-shake' : ''}`}
                     >
                         {/* Title inside card */}
-                        <div className="text-center mb-6">
-                            <h1 className="text-4xl font-bold mb-2">
-                                <span className="text-neutral-900">Comer</span>
+                        <div className="text-center mb-8">
+                            <h1 className="text-5xl font-bold mb-3 tracking-tight">
+                                <span className="text-slate-900">Comer</span>
                                 <span className="bg-gradient-primary bg-clip-text text-transparent">ECO</span>
                             </h1>
-                            <p className="text-neutral-500 text-base">Bienvenido de vuelta</p>
+                            <p className="text-slate-600 text-lg">Bienvenido de vuelta</p>
                         </div>
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                             {/* Email Input */}
@@ -165,12 +165,16 @@ const LoginPage = () => {
 
                             {/* Auth Error */}
                             {authError && (
-                                <div className="p-3 rounded-lg bg-error-light border border-error/20">
-                                    <p className="text-sm text-error flex items-center gap-2">
-                                        <AlertTriangle className="w-4 h-4"/>
+                                <motion.div
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="p-4 rounded-xl bg-red-50 border-2 border-red-200"
+                                >
+                                    <p className="text-sm font-medium text-red-700 flex items-center gap-2">
+                                        <AlertTriangle className="w-5 h-5"/>
                                         {authError}
                                     </p>
-                                </div>
+                                </motion.div>
                             )}
 
                             {/* Remember & Forgot Password */}
@@ -181,10 +185,11 @@ const LoginPage = () => {
                                         checked={getValues('remember')}
                                         onCheckedChange={handleRememberChange}
                                         disabled={isLoading}
+                                        className="rounded-md"
                                     />
                                     <Label
                                         htmlFor="remember"
-                                        className="font-normal text-neutral-600 cursor-pointer text-sm hover:text-neutral-900 transition-colors"
+                                        className="font-medium text-slate-600 cursor-pointer text-sm hover:text-slate-900 transition-colors"
                                     >
                                         Recordarme
                                     </Label>
@@ -192,7 +197,7 @@ const LoginPage = () => {
                                 <Link
                                     to="#"
                                     onClick={() => toast.info("Función no implementada", "La recuperación de contraseña estará disponible pronto.")}
-                                    className="text-sm text-primary-600 hover:text-primary-700 hover:underline transition-all duration-200 font-medium"
+                                    className="text-sm text-blue-600 hover:text-blue-700 hover:underline transition-all duration-200 font-semibold"
                                 >
                                     ¿Olvidaste tu contraseña?
                                 </Link>
@@ -202,7 +207,7 @@ const LoginPage = () => {
                             <RippleButton
                                 type="submit"
                                 size="lg"
-                                className="w-full"
+                                className="w-full shadow-lg hover:shadow-xl"
                                 disabled={isLoading}
                             >
                                 {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
@@ -214,10 +219,10 @@ const LoginPage = () => {
                     <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        transition={{ duration: 0.4, delay: 0.3 }}
-                        className="mt-8 text-center text-sm text-neutral-500"
+                        transition={{ duration: 0.5, delay: 0.4 }}
+                        className="mt-10 text-center text-sm font-medium text-slate-500"
                     >
-                        Sistema de Requisiciones · ComerECO
+                        Sistema de Requisiciones · <span className="text-blue-600">ComerECO</span>
                     </motion.p>
                 </div>
             </div>

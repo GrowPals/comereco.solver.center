@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getDashboardStats } from '@/services/dashboardService';
 import StatCard from './StatCard';
@@ -16,41 +15,53 @@ const UserDashboard = ({ user }) => {
         queryFn: getDashboardStats,
     });
     
-    const formatCurrency = (value) => value ? `$${Number(value).toFixed(2)}` : '$0.00';
+    const formatCurrency = useMemo(() => (value) => value ? `$${Number(value).toFixed(2)}` : '$0.00', []);
 
-    const quickActions = [
-        { label: 'Ver Catálogo', icon: ShoppingCart, path: '/catalog', variant: 'outline' },
-        { label: 'Mis Borradores', icon: FileText, path: '/requisitions?status=draft', variant: 'outline' },
-        { label: 'Plantillas', icon: LayoutTemplate, path: '/templates', variant: 'outline' },
+    const firstName = useMemo(() => {
+        return user?.full_name?.split(' ')[0] || 'Usuario';
+    }, [user?.full_name]);
+
+    const quickActions = useMemo(() => [
+        { label: 'Nueva Requisición', icon: ShoppingCart, path: '/catalog' },
+        { label: 'Mis Plantillas', icon: LayoutTemplate, path: '/templates' },
         { label: 'Mi Historial', icon: History, path: '/requisitions', variant: 'outline' },
-    ];
+    ], []);
+
+    const handleNavigateToCatalog = useMemo(() => () => navigate('/catalog'), [navigate]);
 
     return (
-        <div className="space-y-8">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-                <div className="flex flex-col gap-2">
-                    <h1 className="text-4xl font-bold text-neutral-900">
-                        ¡Hola, <span className="bg-gradient-primary bg-clip-text text-transparent">{user.full_name?.split(' ')[0]}</span>!
+        <div className="max-w-7xl mx-auto space-y-10">
+            {/* Hero Section */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-slate-200">
+                <div className="flex flex-col gap-3">
+                    <h1 className="text-5xl font-bold text-slate-900 tracking-tight">
+                        Hola, <span className="bg-gradient-primary bg-clip-text text-transparent">{firstName}</span>
                     </h1>
-                    <p className="text-base text-neutral-600">
-                        Aquí tienes un resumen de tu actividad.
+                    <p className="text-lg text-slate-600">
+                        Gestiona tus requisiciones y revisa tu actividad reciente
                     </p>
                 </div>
-                <Button size="lg" className="whitespace-nowrap" onClick={() => navigate('/catalog')}>
-                    <ShoppingCart className="mr-2 h-5 w-5" /> Crear Nueva Requisición
+                <Button size="lg" className="whitespace-nowrap shadow-lg" onClick={handleNavigateToCatalog}>
+                    <ShoppingCart className="mr-2 h-5 w-5" aria-hidden="true" /> Nueva Requisición
                 </Button>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {/* Stats Grid */}
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 <StatCard title="Borradores" value={stats?.draft_count || 0} icon={FileText} isLoading={isLoading} />
                 <StatCard title="Pendientes" value={stats?.submitted_count || 0} icon={Hourglass} isLoading={isLoading} />
-                <StatCard title="Aprobadas (mes)" value={stats?.approved_count || 0} icon={CheckCircle} isLoading={isLoading} />
-                <StatCard title="Gasto (mes)" value={stats?.approved_total || 0} icon={CheckCircle} isLoading={isLoading} format={formatCurrency} />
+                <StatCard title="Aprobadas" value={stats?.approved_count || 0} icon={CheckCircle} isLoading={isLoading} />
+                <StatCard title="Gasto Total" value={stats?.approved_total || 0} icon={CheckCircle} isLoading={isLoading} format={formatCurrency} />
             </div>
 
-            <div className="space-y-6">
-                <QuickAccess actions={quickActions} />
-                <RecentRequisitions />
+            {/* Content Sections */}
+            <div className="grid gap-8 lg:grid-cols-3">
+                <div className="lg:col-span-2 space-y-6">
+                    <RecentRequisitions />
+                </div>
+                <div>
+                    <QuickAccess actions={quickActions} />
+                </div>
             </div>
         </div>
     );

@@ -122,16 +122,36 @@ const CheckoutPage = () => {
     return (
         <>
             <Helmet><title>Finalizar Compra - ComerECO</title></Helmet>
-            <div className="container mx-auto max-w-4xl py-8 px-4">
-                <h1 className="text-3xl font-bold mb-2">Finalizar Compra</h1>
-                <p className="text-muted-foreground mb-8">Revisa tu pedido y completa la información para generar la requisición.</p>
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8">
+                <div className="max-w-6xl mx-auto space-y-8">
+                    {/* Header */}
+                    <header className="pb-8 border-b border-slate-200">
+                        <div className="flex items-center gap-4 mb-3">
+                            <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-md">
+                                <ShoppingCart className="h-7 w-7 text-blue-600" aria-hidden="true" />
+                            </div>
+                            <div>
+                                <h1 className="text-4xl font-bold tracking-tight text-slate-900">
+                                    Finalizar <span className="bg-gradient-primary bg-clip-text text-transparent">Compra</span>
+                                </h1>
+                                <p className="text-base text-slate-600 mt-1">
+                                    Revisa tu pedido y completa la información para generar la requisición
+                                </p>
+                            </div>
+                        </div>
+                    </header>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {/* Columna Izquierda: Detalles de Requisición */}
                     <div className="space-y-6">
                         <div>
-                            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2"><CreditCard /> Detalles de la Requisición</h2>
-                            <div className="bg-card p-6 rounded-lg border space-y-4">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                                    <CreditCard className="h-5 w-5 text-blue-600" />
+                                </div>
+                                <h2 className="text-2xl font-bold text-slate-900">Detalles de la Requisición</h2>
+                            </div>
+                            <div className="bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-md space-y-4">
                                 <div>
                                     <Label htmlFor="projectId" className={errors.projectId ? 'text-destructive' : ''}>Proyecto</Label>
                                     <Select name="projectId" control={control} onValueChange={(value) => {
@@ -158,55 +178,78 @@ const CheckoutPage = () => {
                             </div>
                         </div>
                         <div>
-                             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2"><Save /> Acciones Adicionales</h2>
-                             <div className="bg-card p-6 rounded-lg border">
-                                <Button type="button" variant="outline" className="w-full" onClick={() => setTemplateModalOpen(true)} disabled={items.length === 0}>
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                                    <Save className="h-5 w-5 text-blue-600" />
+                                </div>
+                                <h2 className="text-2xl font-bold text-slate-900">Acciones Adicionales</h2>
+                            </div>
+                            <div className="bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-md">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="w-full"
+                                    size="lg"
+                                    onClick={() => setTemplateModalOpen(true)}
+                                    disabled={items.length === 0}
+                                >
                                     Guardar como Plantilla
                                 </Button>
-                             </div>
+                            </div>
                         </div>
                     </div>
 
                     {/* Columna Derecha: Resumen de Pedido */}
                     <div className="space-y-6">
-                        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2"><ShoppingCart /> Resumen del Pedido</h2>
-                        <div className="bg-card p-4 rounded-lg border space-y-3 max-h-96 overflow-y-auto">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                                <ShoppingCart className="h-5 w-5 text-blue-600" />
+                            </div>
+                            <h2 className="text-2xl font-bold text-slate-900">Resumen del Pedido</h2>
+                        </div>
+                        <div className="bg-white p-5 rounded-2xl border-2 border-slate-200 shadow-md space-y-3 max-h-96 overflow-y-auto">
                             {items.map(item => (
-                                <div key={item.id} className="flex items-center gap-4 text-sm">
-                                    <img className="w-14 h-14 rounded-md object-cover" alt={item.name} src={item.image_url || '/placeholder.png'} />
+                                <div key={item.id} className="flex items-center gap-4 p-3 rounded-xl bg-slate-50 border border-slate-200 hover:bg-slate-100 transition-colors">
+                                    <img className="w-16 h-16 rounded-lg object-cover border-2 border-white shadow-sm" alt={item.name} src={item.image_url || '/placeholder.png'} />
                                     <div className="flex-grow">
-                                        <p className="font-semibold line-clamp-1">{item.name}</p>
-                                        <p className="text-muted-foreground">Cantidad: {item.quantity}</p>
+                                        <p className="font-bold text-slate-900 line-clamp-1">{item.name}</p>
+                                        <p className="text-sm text-slate-600">Cantidad: <span className="font-semibold">{item.quantity}</span></p>
                                     </div>
-                                    <p className="font-semibold">${(item.quantity * (item.price || 0)).toFixed(2)}</p>
+                                    <p className="font-bold text-lg text-slate-900">${(item.quantity * (item.price || 0)).toFixed(2)}</p>
                                 </div>
                             ))}
                         </div>
-                        <div className="bg-card p-6 rounded-lg border space-y-3 text-lg">
-                            <div className="flex justify-between items-center">
-                                <span className="text-muted-foreground">Subtotal:</span>
-                                <span className="font-semibold">${subtotal.toFixed(2)}</span>
+                        <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl border-2 border-blue-200 space-y-3">
+                            <div className="flex justify-between items-center text-base">
+                                <span className="text-slate-700 font-medium">Subtotal:</span>
+                                <span className="font-bold text-slate-900">${subtotal.toFixed(2)}</span>
                             </div>
-                            <div className="flex justify-between items-center">
-                                <span className="text-muted-foreground">IVA (16%):</span>
-                                <span className="font-semibold">${((total - subtotal) || 0).toFixed(2)}</span>
+                            <div className="flex justify-between items-center text-base">
+                                <span className="text-slate-700 font-medium">IVA (16%):</span>
+                                <span className="font-bold text-slate-900">${((total - subtotal) || 0).toFixed(2)}</span>
                             </div>
-                            <div className="flex justify-between items-center font-bold border-t pt-3">
-                                <span>Total:</span>
-                                <span>${total.toFixed(2)}</span>
+                            <div className="flex justify-between items-center text-xl font-bold border-t-2 border-blue-300 pt-3">
+                                <span className="text-slate-900">Total:</span>
+                                <span className="text-3xl bg-gradient-primary bg-clip-text text-transparent">${total.toFixed(2)}</span>
                             </div>
                         </div>
-                        <Button type="submit" size="lg" className="w-full" isLoading={createRequisitionMutation.isPending}>
+                        <Button
+                            type="submit"
+                            size="lg"
+                            className="w-full shadow-lg hover:shadow-xl"
+                            isLoading={createRequisitionMutation.isPending}
+                        >
                             Crear Requisición
                         </Button>
                     </div>
-                </form>
+                    </form>
+                </div>
             </div>
-            
+
             <Dialog open={isTemplateModalOpen} onOpenChange={setTemplateModalOpen}>
-                <DialogContent>
+                <DialogContent className="sm:max-w-lg">
                     <DialogHeader>
-                        <DialogTitle>Guardar como Plantilla</DialogTitle>
+                        <DialogTitle className="text-2xl font-bold">Guardar como Plantilla</DialogTitle>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                         <div>

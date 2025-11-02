@@ -41,15 +41,16 @@ const Pagination = memo(({
   }, [currentPage, totalPages]);
 
   return (
-    <div className={cn('flex items-center justify-center space-x-2 py-4', className)}>
+    <div className={cn('flex items-center justify-center space-x-2 py-6', className)}>
       <Button
         variant="outline"
         size="icon"
         onClick={handlePrevious}
         disabled={currentPage === 1}
-        className="h-10 w-10 rounded-full"
+        className="h-11 w-11 rounded-xl hover:scale-105 transition-transform duration-200 shadow-sm hover:shadow-md"
+        aria-label="Página anterior"
       >
-        <ChevronLeft className="h-4 w-4" />
+        <ChevronLeft className="h-5 w-5" />
       </Button>
       {pageNumbers.map((page, index) =>
         typeof page === 'number' ? (
@@ -58,12 +59,14 @@ const Pagination = memo(({
             variant={currentPage === page ? 'default' : 'outline'}
             size="icon"
             onClick={() => onPageChange(page)}
-            className="h-10 w-10 rounded-full"
+            className="h-11 w-11 rounded-xl hover:scale-105 transition-transform duration-200 shadow-sm hover:shadow-md font-semibold"
+            aria-label={`Ir a página ${page}`}
+            aria-current={currentPage === page ? 'page' : undefined}
           >
             {page}
           </Button>
         ) : (
-          <span key={index} className="px-2 text-neutral-70">
+          <span key={index} className="px-3 text-slate-500 font-medium select-none">
             {page}
           </span>
         )
@@ -73,9 +76,10 @@ const Pagination = memo(({
         size="icon"
         onClick={handleNext}
         disabled={currentPage === totalPages}
-        className="h-10 w-10 rounded-full"
+        className="h-11 w-11 rounded-xl hover:scale-105 transition-transform duration-200 shadow-sm hover:shadow-md"
+        aria-label="Página siguiente"
       >
-        <ChevronRight className="h-4 w-4" />
+        <ChevronRight className="h-5 w-5" />
       </Button>
     </div>
   );

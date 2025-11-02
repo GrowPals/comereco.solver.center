@@ -38,27 +38,35 @@ import { es } from 'date-fns/locale';
 
 const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
     return (
-        <div className="bg-card border rounded-lg p-4 flex flex-col justify-between hover:shadow-lg transition-shadow duration-300">
+        <div className="group relative bg-white border-2 border-slate-200 rounded-2xl p-6 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+            {/* Accent bar on hover */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+
             <div>
-                <div className="flex justify-between items-start">
-                    <h3 className="font-bold text-lg text-foreground">{template.name}</h3>
+                <div className="flex justify-between items-start mb-3">
+                    <div className="flex items-center gap-3">
+                        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm">
+                            <LayoutTemplate className="h-6 w-6 text-blue-600" aria-hidden="true" />
+                        </div>
+                        <h3 className="font-bold text-xl text-slate-900">{template.name}</h3>
+                    </div>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0"><MoreHorizontal className="h-4 w-4" /></Button>
+                            <Button variant="ghost" className="h-9 w-9 p-0 hover:bg-slate-100 rounded-xl"><MoreHorizontal className="h-5 w-5" /></Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent align="end" className="rounded-xl">
                             <DropdownMenuItem onClick={() => onUse(template.id)}><Zap className="mr-2 h-4 w-4" /> Usar Plantilla</DropdownMenuItem>
                             <DropdownMenuItem onClick={() => onEdit(template)}><Edit className="mr-2 h-4 w-4" /> Editar</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => onDelete(template)} className="text-destructive"><Trash2 className="mr-2 h-4 w-4" /> Eliminar</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => onDelete(template)} className="text-red-600"><Trash2 className="mr-2 h-4 w-4" /> Eliminar</DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
-                <p className="text-sm text-muted-foreground mt-1 h-10 line-clamp-2">{template.description || 'Sin descripción'}</p>
+                <p className="text-base text-slate-600 line-clamp-2 min-h-[3rem] leading-relaxed">{template.description || 'Sin descripción'}</p>
             </div>
-            <div className="mt-4 flex justify-between items-center text-xs text-muted-foreground">
-                <span>{template.items?.length || 0} productos</span>
-                <span>Usada {template.usage_count || 0} veces</span>
-                {template.last_used_at && <span>Últ. vez: {format(parseISO(template.last_used_at), 'dd MMM yyyy', { locale: es })}</span>}
+            <div className="mt-6 pt-4 border-t border-slate-200 flex justify-between items-center text-sm">
+                <span className="font-medium text-slate-700">{template.items?.length || 0} productos</span>
+                <span className="text-slate-600">Usada {template.usage_count || 0} veces</span>
+                {template.last_used_at && <span className="text-slate-500 text-xs">Últ: {format(parseISO(template.last_used_at), 'dd MMM', { locale: es })}</span>}
             </div>
         </div>
     );
@@ -76,18 +84,18 @@ const TemplateFormModal = ({ template, isOpen, onClose, onSave }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>{template ? 'Editar Plantilla' : 'Crear Nueva Plantilla'}</DialogTitle>
-          {!template && <DialogDescription>Crea una plantilla desde cero. Añade productos desde la página de la plantilla.</DialogDescription>}
+          <DialogTitle className="text-2xl font-bold">{template ? 'Editar Plantilla' : 'Crear Nueva Plantilla'}</DialogTitle>
+          {!template && <DialogDescription className="text-base">Crea una plantilla desde cero. Añade productos desde la página de la plantilla.</DialogDescription>}
         </DialogHeader>
         <div className="space-y-4 py-4">
-          <div><Label htmlFor="name">Nombre de la Plantilla</Label><Input id="name" value={name} onChange={(e) => setName(e.target.value)} /></div>
-          <div><Label htmlFor="description">Descripción</Label><Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} /></div>
+          <div><Label htmlFor="name">Nombre de la Plantilla</Label><Input id="name" value={name} onChange={(e) => setName(e.target.value)} className="rounded-xl" /></div>
+          <div><Label htmlFor="description">Descripción</Label><Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} className="rounded-xl" /></div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Cancelar</Button>
-          <Button onClick={handleSubmit}>Guardar</Button>
+          <Button variant="outline" onClick={onClose} className="rounded-xl">Cancelar</Button>
+          <Button onClick={handleSubmit} className="rounded-xl shadow-lg hover:shadow-xl">Guardar</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -138,29 +146,56 @@ const TemplatesPage = () => {
   return (
     <>
       <Helmet><title>Plantillas - ComerECO</title></Helmet>
-      <div className="p-4 sm:p-6 lg:p-8">
-        <div className="flex justify-between items-center mb-8">
-          <div><h1 className="text-3xl font-bold">Plantillas de Requisición</h1><p className="text-muted-foreground">Reutiliza tus pedidos frecuentes con un solo clic.</p></div>
-          <Button onClick={() => navigate('/catalog')}><FilePlus className="mr-2 h-4 w-4" /> Crear desde Carrito</Button>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto space-y-8">
+          <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-slate-200">
+            <div className="flex items-center gap-4">
+              <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-md">
+                <LayoutTemplate className="h-7 w-7 text-blue-600" aria-hidden="true" />
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold tracking-tight text-slate-900 mb-1">
+                  Plantillas de <span className="bg-gradient-primary bg-clip-text text-transparent">Requisición</span>
+                </h1>
+                <p className="text-base text-slate-600">Reutiliza tus pedidos frecuentes con un solo clic.</p>
+              </div>
+            </div>
+            <Button onClick={() => navigate('/catalog')} size="lg" className="shadow-lg hover:shadow-xl whitespace-nowrap">
+              <FilePlus className="mr-2 h-5 w-5" /> Crear desde Carrito
+            </Button>
+          </header>
 
-        {templates && templates.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {templates.map((template) => (
-              <TemplateCard key={template.id} template={template} onEdit={(t) => setFormModal({ isOpen: true, template: t })} onDelete={(t) => setDeleteModal({ isOpen: true, template: t })} onUse={(id) => useTemplateMutation.mutate(id)} />
-            ))}
-          </div>
-        ) : (
-          <EmptyState icon={Bot} title="Aún no tienes plantillas" description="Crea tu primera plantilla guardando un carrito de compras para agilizar tus pedidos futuros." actionButton={<Button onClick={() => navigate('/catalog')}>Ir al Catálogo</Button>} />
-        )}
+          {templates && templates.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {templates.map((template) => (
+                <TemplateCard key={template.id} template={template} onEdit={(t) => setFormModal({ isOpen: true, template: t })} onDelete={(t) => setDeleteModal({ isOpen: true, template: t })} onUse={(id) => useTemplateMutation.mutate(id)} />
+              ))}
+            </div>
+          ) : (
+            <div className="bg-white rounded-2xl shadow-lg p-16 border-2 border-slate-200">
+              <EmptyState
+                icon={Bot}
+                title="Aún no tienes plantillas"
+                description="Crea tu primera plantilla guardando un carrito de compras para agilizar tus pedidos futuros."
+                actionButton={<Button onClick={() => navigate('/catalog')} size="lg" className="shadow-lg hover:shadow-xl">Ir al Catálogo</Button>}
+              />
+            </div>
+          )}
+        </div>
       </div>
 
       {formModal.isOpen && <TemplateFormModal isOpen={formModal.isOpen} onClose={() => setFormModal({ isOpen: false, template: null })} template={formModal.template} onSave={handleSave} />}
       
       <Dialog open={deleteModal.isOpen} onOpenChange={() => setDeleteModal({ isOpen: false, template: null })}>
-        <DialogContent>
-          <DialogHeader><DialogTitle>¿Eliminar plantilla "{deleteModal.template?.name}"?</DialogTitle><DialogDescription>Esta acción no se puede deshacer.</DialogDescription></DialogHeader>
-          <DialogFooter><Button variant="outline" onClick={() => setDeleteModal({ isOpen: false, template: null })}>Cancelar</Button><Button variant="destructive" onClick={() => deleteMutation.mutate(deleteModal.template.id)} disabled={deleteMutation.isPending}>Eliminar</Button></DialogFooter>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">¿Eliminar plantilla "{deleteModal.template?.name}"?</DialogTitle>
+            <DialogDescription className="text-base">Esta acción no se puede deshacer.</DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setDeleteModal({ isOpen: false, template: null })} className="rounded-xl">Cancelar</Button>
+            <Button variant="destructive" onClick={() => deleteMutation.mutate(deleteModal.template.id)} disabled={deleteMutation.isPending} className="rounded-xl">Eliminar</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>

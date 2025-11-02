@@ -9,6 +9,9 @@ const EmptyState = ({
   action,
   className
 }) => {
+  // Instanciar el componente del icono si existe
+  const ActionIcon = action?.icon;
+  
   return (
     <div className={cn("flex flex-col items-center justify-center p-12 text-center", className)}>
       {Icon && (
@@ -36,7 +39,7 @@ const EmptyState = ({
           size="lg"
           className="shadow-button hover:shadow-button-hover"
         >
-          {action.icon && <action.icon className="mr-2 h-5 w-5" />}
+          {ActionIcon && <ActionIcon className="mr-2 h-5 w-5" />}
           {action.label}
         </Button>
       )}

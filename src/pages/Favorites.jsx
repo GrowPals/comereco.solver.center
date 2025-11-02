@@ -12,13 +12,13 @@ const FavoritesPage = () => {
     return (
         <>
             <Helmet><title>Mis Favoritos - ComerECO</title></Helmet>
-            <div className="h-full -mt-20 flex items-center justify-center">
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 flex items-center justify-center">
                 <EmptyState
                     icon={Star}
                     title="Aún no tienes favoritos"
                     description="Explora el catálogo y marca los productos que más te gustan para encontrarlos aquí fácilmente."
                     actionButton={
-                        <Button onClick={() => navigate('/catalog')}>
+                        <Button onClick={() => navigate('/catalog')} size="lg" className="shadow-lg hover:shadow-xl">
                             Explorar Catálogo
                         </Button>
                     }

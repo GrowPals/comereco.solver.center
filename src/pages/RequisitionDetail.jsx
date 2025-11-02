@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { ArrowLeft, Check, X, Send, FileText, MessageSquare } from 'lucide-react';
@@ -41,6 +40,14 @@ const RequisitionDetail = () => {
 
     const [rejectionReason, setRejectionReason] = useState('');
 
+    const handleNavigateBack = useCallback(() => {
+        navigate(-1);
+    }, [navigate]);
+
+    const handleNavigateToRequisitions = useCallback(() => {
+        navigate('/requisitions');
+    }, [navigate]);
+
     useEffect(() => {
         if (isError) {
             toast({ variant: 'destructive', title: 'Error', description: 'No se pudo cargar la requisición.' });
@@ -76,17 +83,31 @@ const RequisitionDetail = () => {
         };
     }, [requisitionId, toast, refetch]);
 
-    const handleReject = () => {
+    const handleReject = useCallback(() => {
         if (!rejectionReason) {
             toast({ variant: 'destructive', title: 'Error', description: 'Debes proporcionar un motivo.' });
             return;
         }
         reject({ requisitionId, reason: rejectionReason });
-    };
+    }, [rejectionReason, reject, requisitionId, toast]);
+
+    const handleSubmit = useCallback(() => {
+        submit(requisitionId);
+    }, [submit, requisitionId]);
+
+    const handleApprove = useCallback(() => {
+        approve(requisitionId);
+    }, [approve, requisitionId]);
 
     // CORREGIDO: Según documentación técnica oficial, el campo es created_by
-    const isOwner = user && requisition && user.id === requisition.created_by;
+    const isOwner = useMemo(() => user && requisition && user.id === requisition.created_by, [user, requisition]);
     const actionLoading = isSubmitting || isApproving || isRejecting;
+
+    // Memoizar formateo de fecha
+    const formattedDate = useMemo(() => {
+        if (!requisition?.created_at) return '';
+        return format(new Date(requisition.created_at), 'dd MMM, yyyy', { locale: es });
+    }, [requisition?.created_at]);
 
     if (isLoading) return <PageLoader />;
     if (isError || !requisition) {
@@ -95,8 +116,8 @@ const RequisitionDetail = () => {
                 <div className="max-w-md mx-auto">
                     <h2 className="text-2xl font-bold mb-2">Requisición no encontrada</h2>
                     <p className="text-muted-foreground mb-4">La requisición que buscas no existe o no tienes permisos para verla.</p>
-                    <Button onClick={() => navigate('/requisitions')}>
-                        <ArrowLeft className="mr-2 h-4 w-4" />
+                    <Button onClick={handleNavigateToRequisitions}>
+                        <ArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" />
                         Volver a Requisiciones
                     </Button>
                 </div>
@@ -108,104 +129,208 @@ const RequisitionDetail = () => {
     const { internal_folio, created_at, business_status, creator, items, total_amount, comments } = requisition;
 
     const statusConfig = {
-        draft: { text: 'Borrador', color: 'bg-gray-500' },
-        submitted: { text: 'Enviada', color: 'bg-blue-500' },
-        approved: { text: 'Aprobada', color: 'bg-green-500' },
-        rejected: { text: 'Rechazada', color: 'bg-red-500' },
-        ordered: { text: 'Ordenada', color: 'bg-purple-500' },
-        cancelled: { text: 'Cancelada', color: 'bg-gray-700' },
+        draft: { text: 'Borrador', variant: 'muted', accent: 'bg-slate-400' },
+        submitted: { text: 'Enviada', variant: 'warning', accent: 'bg-amber-500' },
+        approved: { text: 'Aprobada', variant: 'success', accent: 'bg-gradient-accent' },
+        rejected: { text: 'Rechazada', variant: 'danger', accent: 'bg-red-500' },
+        ordered: { text: 'Ordenada', variant: 'info', accent: 'bg-gradient-primary' },
+        cancelled: { text: 'Cancelada', variant: 'muted', accent: 'bg-slate-500' },
     };
 
-    const currentStatus = statusConfig[business_status] || { text: business_status, color: 'bg-gray-400' };
+    const currentStatus = statusConfig[business_status] || { text: business_status, variant: 'muted', accent: 'bg-slate-400' };
 
     return (
         <>
             <Helmet><title>Detalle de Requisición {internal_folio} - ComerECO</title></Helmet>
-            <div className="p-4 sm:p-6 lg:p-8 space-y-6">
-                <header className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-4">
-                        <Button variant="outline" size="icon" onClick={() => navigate(-1)}><ArrowLeft className="h-4 w-4" /></Button>
-                        <div>
-                            <h1 className="text-2xl font-bold tracking-tight">Requisición {internal_folio}</h1>
-                            <p className="text-sm text-muted-foreground">
-                                Creada por {creator?.full_name || 'Desconocido'} el {format(new Date(created_at), 'dd MMM, yyyy', { locale: es })}
-                            </p>
-                        </div>
-                    </div>
-                     <Badge className={`${currentStatus.color} text-white`}>{currentStatus.text}</Badge>
-                </header>
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8">
+                <div className="max-w-7xl mx-auto space-y-8">
+                    {/* Header with accent bar */}
+                    <header className="relative bg-white rounded-2xl border-2 border-slate-200 p-6 sm:p-8 shadow-lg overflow-hidden">
+                        {/* Top accent bar based on status */}
+                        <div className={`absolute top-0 left-0 right-0 h-1.5 ${currentStatus.accent}`} />
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2 space-y-6">
-                        <Card>
-                            <CardHeader><CardTitle className="flex items-center gap-2"><FileText size={20}/>Ítems de la Requisición</CardTitle></CardHeader>
-                            <CardContent>
-                                <ul className="divide-y divide-border">
-                                    {items.map((item, index) => (
-                                        <li key={item.product?.sku || index} className="py-4 flex justify-between items-center">
-                                            <div>
-                                                <p className="font-semibold">{item.product?.name || 'Producto no encontrado'}</p>
-                                                <p className="text-sm text-muted-foreground">SKU: {item.product?.sku || 'N/A'}</p>
-                                            </div>
-                                            <div className="text-right">
-                                                <p className="font-semibold">{item.quantity} x ${parseFloat(item.unit_price).toFixed(2)}</p>
-                                                <p className="text-sm text-muted-foreground">= ${parseFloat(item.subtotal).toFixed(2)}</p>
-                                            </div>
-                                        </li>
-                                    ))}
-                                </ul>
-                                <Separator className="my-4" />
-                                <div className="flex justify-end">
-                                    <div className="text-right">
-                                        <p className="text-muted-foreground">Total</p>
-                                        <p className="text-2xl font-bold">${parseFloat(total_amount).toFixed(2)}</p>
-                                    </div>
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+                            <div className="flex items-start gap-4 w-full sm:w-auto">
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    onClick={handleNavigateBack}
+                                    aria-label="Volver"
+                                    className="rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105"
+                                >
+                                    <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+                                </Button>
+                                <div className="flex-1">
+                                    <h1 className="text-4xl font-bold tracking-tight text-slate-900 mb-2">
+                                        Requisición <span className="bg-gradient-primary bg-clip-text text-transparent">#{internal_folio}</span>
+                                    </h1>
+                                    <p className="text-base text-slate-600 flex items-center gap-2">
+                                        Creada por <span className="font-semibold text-slate-900">{creator?.full_name || 'Desconocido'}</span> el {formattedDate}
+                                    </p>
                                 </div>
-                            </CardContent>
-                        </Card>
-                        {comments && (
-                            <Card>
-                                <CardHeader><CardTitle className="flex items-center gap-2"><MessageSquare size={20}/>Comentarios</CardTitle></CardHeader>
-                                <CardContent>
-                                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">{comments}</p>
+                            </div>
+                            <Badge variant={currentStatus.variant} className="text-sm px-4 py-2 shadow-sm">
+                                {currentStatus.text}
+                            </Badge>
+                        </div>
+                    </header>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div className="lg:col-span-2 space-y-6">
+                            {/* Items Card */}
+                            <Card className="shadow-md border-2">
+                                <CardHeader className="pb-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm">
+                                            <FileText className="h-6 w-6 text-blue-600" aria-hidden="true" />
+                                        </div>
+                                        <CardTitle className="text-2xl font-bold text-slate-900">Ítems de la Requisición</CardTitle>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    {/* Items List */}
+                                    <div className="space-y-3">
+                                        {items.map((item) => {
+                                            const uniqueKey = item.id || `${item.product_id || 'unknown'}-${item.unit_price || '0'}-${item.quantity || '0'}`;
+                                            return (
+                                                <div
+                                                    key={uniqueKey}
+                                                    className="group relative bg-slate-50 rounded-xl p-4 border-2 border-slate-200 hover:border-blue-300 hover:shadow-md transition-all duration-200"
+                                                >
+                                                    <div className="flex flex-col sm:flex-row justify-between gap-4">
+                                                        <div className="flex-1">
+                                                            <p className="font-bold text-lg text-slate-900 mb-1">
+                                                                {item.product?.name || 'Producto no encontrado'}
+                                                            </p>
+                                                            <p className="text-sm font-medium text-slate-600">
+                                                                SKU: <span className="font-mono bg-white px-2 py-0.5 rounded border border-slate-200">{item.product?.sku || 'N/A'}</span>
+                                                            </p>
+                                                        </div>
+                                                        <div className="text-right sm:min-w-[180px]">
+                                                            <p className="text-base font-semibold text-slate-700 mb-1">
+                                                                {item.quantity} x ${(Number(item.unit_price) || 0).toFixed(2)}
+                                                            </p>
+                                                            <p className="text-xl font-bold text-slate-900">
+                                                                ${(Number(item.subtotal) || 0).toFixed(2)}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
+                                    {/* Total Section */}
+                                    <Separator className="my-6" />
+                                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border-2 border-blue-200">
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-xl font-bold text-slate-900">Total de Requisición</span>
+                                            <span className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+                                                ${(Number(total_amount) || 0).toFixed(2)}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </CardContent>
                             </Card>
-                        )}
-                    </div>
-                    <div className="lg:col-span-1">
-                        <Card>
-                            <CardHeader><CardTitle>Acciones</CardTitle></CardHeader>
-                            <CardContent className="space-y-3">
-                                {isOwner && business_status === 'draft' && (
-                                    <Button className="w-full" onClick={() => submit(requisitionId)} disabled={actionLoading}>
-                                        <Send className="mr-2 h-4 w-4" /> Enviar para Aprobación
-                                    </Button>
-                                )}
-                                {canApproveRequisitions && business_status === 'submitted' && (
-                                    <>
-                                        <Button className="w-full" variant="secondary" onClick={() => approve(requisitionId)} disabled={actionLoading}>
-                                            <Check className="mr-2 h-4 w-4" /> Aprobar
+                            {/* Comments Card */}
+                            {comments && (
+                                <Card className="shadow-md border-2">
+                                    <CardHeader className="pb-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm">
+                                                <MessageSquare className="h-6 w-6 text-blue-600" aria-hidden="true" />
+                                            </div>
+                                            <CardTitle className="text-2xl font-bold text-slate-900">Comentarios</CardTitle>
+                                        </div>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="bg-slate-50 rounded-xl p-5 border-2 border-slate-200">
+                                            <p className="text-base text-slate-700 whitespace-pre-wrap leading-relaxed">{comments}</p>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            )}
+                        </div>
+
+                        {/* Actions Sidebar */}
+                        <div className="lg:col-span-1">
+                            <Card className="shadow-md border-2 sticky top-8">
+                                <CardHeader className="pb-4">
+                                    <CardTitle className="text-2xl font-bold text-slate-900">Acciones</CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    {isOwner && business_status === 'draft' && (
+                                        <Button
+                                            className="w-full shadow-md hover:shadow-lg"
+                                            size="lg"
+                                            onClick={handleSubmit}
+                                            disabled={actionLoading}
+                                        >
+                                            <Send className="mr-2 h-5 w-5" aria-hidden="true" />
+                                            Enviar para Aprobación
                                         </Button>
-                                        <Dialog>
-                                            <DialogTrigger asChild>
-                                                <Button className="w-full" variant="destructive" disabled={actionLoading}><X className="mr-2 h-4 w-4" /> Rechazar</Button>
-                                            </DialogTrigger>
-                                            <DialogContent>
-                                                <DialogHeader>
-                                                    <DialogTitle>Rechazar Requisición</DialogTitle>
-                                                    <DialogDescription>Por favor, especifica el motivo del rechazo.</DialogDescription>
-                                                </DialogHeader>
-                                                <Textarea placeholder="Motivo del rechazo..." value={rejectionReason} onChange={(e) => setRejectionReason(e.target.value)} />
-                                                <DialogFooter>
-                                                    <Button variant="destructive" onClick={handleReject} disabled={!rejectionReason || actionLoading}>Confirmar Rechazo</Button>
-                                                </DialogFooter>
-                                            </DialogContent>
-                                        </Dialog>
-                                    </>
-                                )}
-                                { (actionLoading) && <PageLoader />}
-                            </CardContent>
-                        </Card>
+                                    )}
+                                    {canApproveRequisitions && business_status === 'submitted' && (
+                                        <>
+                                            <Button
+                                                className="w-full shadow-md hover:shadow-lg"
+                                                variant="accent"
+                                                size="lg"
+                                                onClick={handleApprove}
+                                                disabled={actionLoading}
+                                            >
+                                                <Check className="mr-2 h-5 w-5" aria-hidden="true" />
+                                                Aprobar
+                                            </Button>
+                                            <Dialog>
+                                                <DialogTrigger asChild>
+                                                    <Button
+                                                        className="w-full shadow-md hover:shadow-lg"
+                                                        variant="destructive"
+                                                        size="lg"
+                                                        disabled={actionLoading}
+                                                    >
+                                                        <X className="mr-2 h-5 w-5" aria-hidden="true" />
+                                                        Rechazar
+                                                    </Button>
+                                                </DialogTrigger>
+                                                <DialogContent className="sm:max-w-md">
+                                                    <DialogHeader>
+                                                        <DialogTitle className="text-2xl font-bold">Rechazar Requisición</DialogTitle>
+                                                        <DialogDescription className="text-base">
+                                                            Por favor, especifica el motivo del rechazo para que el solicitante pueda corregir la requisición.
+                                                        </DialogDescription>
+                                                    </DialogHeader>
+                                                    <Textarea
+                                                        placeholder="Escribe el motivo del rechazo..."
+                                                        value={rejectionReason}
+                                                        onChange={(e) => setRejectionReason(e.target.value)}
+                                                        aria-label="Motivo del rechazo"
+                                                        className="min-h-[120px] resize-none"
+                                                    />
+                                                    <DialogFooter>
+                                                        <Button
+                                                            variant="destructive"
+                                                            onClick={handleReject}
+                                                            disabled={!rejectionReason || actionLoading}
+                                                            size="lg"
+                                                            className="w-full shadow-md"
+                                                        >
+                                                            Confirmar Rechazo
+                                                        </Button>
+                                                    </DialogFooter>
+                                                </DialogContent>
+                                            </Dialog>
+                                        </>
+                                    )}
+                                    {actionLoading && (
+                                        <div className="flex items-center justify-center py-8">
+                                            <PageLoader />
+                                        </div>
+                                    )}
+                                </CardContent>
+                            </Card>
+                        </div>
                     </div>
                 </div>
             </div>

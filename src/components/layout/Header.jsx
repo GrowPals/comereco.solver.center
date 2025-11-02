@@ -24,30 +24,30 @@ const Header = memo(({ setSidebarOpen }) => {
     }, [userName]);
 
     return (
-        <header className="sticky top-0 z-20 flex h-20 items-center justify-between gap-4 border-b border-neutral-200 bg-white/95 backdrop-blur-sm shadow-sm px-4 md:px-8" role="banner">
+        <header className="sticky top-0 z-20 flex h-20 items-center justify-between gap-4 border-b border-slate-200 bg-white/80 backdrop-blur-md shadow-sm px-4 md:px-8" role="banner">
             {/* Mobile Menu & Logo */}
             <div className="flex items-center gap-4 lg:hidden">
-                <Button 
-                    variant="ghost" 
-                    size="icon" 
+                <Button
+                    variant="ghost"
+                    size="icon"
                     onClick={() => setSidebarOpen(true)}
-                    className="focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                    className="focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-xl"
                     aria-label="Abrir menú de navegación"
                 >
                     <Menu className="h-6 w-6" aria-hidden="true" />
                 </Button>
-                <Link to="/" className="text-lg font-bold" aria-label="ComerECO - Ir al inicio">
-                    <span className="text-neutral-900">Comer</span>
+                <Link to="/" className="text-xl font-bold tracking-tight" aria-label="ComerECO - Ir al inicio">
+                    <span className="text-slate-900">Comer</span>
                     <span className="bg-gradient-primary bg-clip-text text-transparent">ECO</span>
                 </Link>
             </div>
 
             {/* Search bar (Desktop) */}
             <div className="hidden lg:block relative flex-1 max-w-md">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" aria-hidden="true" />
-                <Input 
-                    placeholder="Buscar requisiciones, productos..." 
-                    className="pl-12 bg-neutral-50/50 border-neutral-200 focus-visible:bg-white"
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" aria-hidden="true" />
+                <Input
+                    placeholder="Buscar requisiciones, productos..."
+                    className="pl-12 bg-slate-50 border-slate-200 focus-visible:bg-white rounded-xl h-11"
                     aria-label="Buscar en la aplicación"
                 />
             </div>
@@ -58,16 +58,16 @@ const Header = memo(({ setSidebarOpen }) => {
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <button className="flex items-center gap-3 cursor-pointer rounded-xl px-3 py-2 hover:bg-neutral-100 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                        <button className="flex items-center gap-3 cursor-pointer rounded-xl px-3 py-2 hover:bg-slate-100 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                             aria-label={`Menú de usuario: ${userName}`}
                             aria-haspopup="true"
                         >
-                            <Avatar className="h-9 w-9 ring-2 ring-primary-100">
+                            <Avatar className="h-10 w-10 ring-2 ring-blue-100">
                                 <AvatarImage alt={`Avatar de ${userName}`} src={user?.avatar_url} />
-                                <AvatarFallback className="bg-gradient-primary text-white font-semibold">{userInitials}</AvatarFallback>
+                                <AvatarFallback className="bg-gradient-primary text-white font-semibold text-sm">{userInitials}</AvatarFallback>
                             </Avatar>
-                            <span className="hidden md:inline font-semibold text-sm text-neutral-900">{userName}</span>
-                            <ChevronDown className="hidden md:inline h-4 w-4 text-neutral-500" aria-hidden="true" />
+                            <span className="hidden md:inline font-semibold text-sm text-slate-900">{userName}</span>
+                            <ChevronDown className="hidden md:inline h-4 w-4 text-slate-500" aria-hidden="true" />
                         </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56" align="end" role="menu">

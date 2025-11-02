@@ -15,12 +15,12 @@ export const SupabaseAuthProvider = ({ children }) => {
   // Según REFERENCIA_TECNICA_BD_SUPABASE.md, debemos evitar embeds ambiguos y usar consultas separadas
   const fetchUserProfile = useCallback(async (authUser) => {
     if (!authUser) {
-      console.log('🔍 fetchUserProfile: No authUser provided');
+      logger.debug('fetchUserProfile: No authUser provided');
       setUser(null);
       return null;
     }
 
-    console.log('🔍 fetchUserProfile: Starting for user:', {
+    logger.debug('fetchUserProfile: Starting for user:', {
       id: authUser.id,
       email: authUser.email
     });
@@ -34,14 +34,13 @@ export const SupabaseAuthProvider = ({ children }) => {
         .single();
 
       if (profileError) {
-        console.error('❌ Error fetching user profile:', profileError);
-        console.error('❌ Profile error details:', {
+        logger.error('Error fetching user profile:', profileError);
+        logger.error('Profile error details:', {
           code: profileError.code,
           message: profileError.message,
           details: profileError.details,
           hint: profileError.hint
         });
-        logger.error('Error fetching user profile:', profileError);
 
         // CRÍTICO: NO hacer signOut automáticamente
         // Esto permite que el usuario vea el error y podamos diagnosticar
@@ -53,17 +52,17 @@ export const SupabaseAuthProvider = ({ children }) => {
           hasProfile: false,
           profileError: profileError.message
         };
-        console.log('⚠️ Setting user without profile:', userWithError);
+        logger.warn('Setting user without profile:', userWithError);
         setUser(userWithError);
         return null;
       }
 
-      console.log('✅ Profile fetched successfully:', profile);
+      logger.debug('Profile fetched successfully:', profile);
 
       // Luego obtener la empresa por separado para evitar el embed ambiguo
       let company = null;
       if (profile.company_id) {
-        console.log('🔍 Fetching company:', profile.company_id);
+        logger.debug('Fetching company:', profile.company_id);
         const { data: companyData, error: companyError } = await supabase
           .from('companies')
           .select('id, name, bind_location_id, bind_price_list_id')
@@ -71,20 +70,19 @@ export const SupabaseAuthProvider = ({ children }) => {
           .single();
 
         if (companyError) {
-          console.error('⚠️ Error fetching company:', companyError);
-          logger.error('Error fetching company:', companyError);
+          logger.warn('Error fetching company:', companyError);
         }
 
         if (!companyError && companyData) {
           company = companyData;
-          console.log('✅ Company fetched:', company.name);
+          logger.debug('Company fetched:', company.name);
         }
       } else {
-        console.warn('⚠️ Profile has no company_id');
+        logger.warn('Profile has no company_id');
       }
 
       const userWithCompany = { ...authUser, ...profile, company, hasProfile: true };
-      console.log('✅ Complete user object:', {
+      logger.debug('Complete user object:', {
         id: userWithCompany.id,
         email: userWithCompany.email,
         role_v2: userWithCompany.role_v2,
@@ -93,8 +91,7 @@ export const SupabaseAuthProvider = ({ children }) => {
       setUser(userWithCompany);
       return userWithCompany;
     } catch (e) {
-      console.error('💥 Unexpected error in fetchUserProfile:', e);
-      logger.error('Unexpected error fetching profile:', e);
+      logger.error('Unexpected error in fetchUserProfile:', e);
 
       // Setear user con datos mínimos para diagnóstico
       const userWithError = {

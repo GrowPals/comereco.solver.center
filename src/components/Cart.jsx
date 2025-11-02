@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, memo, useCallback } from 'react';
 import { useCart } from '@/hooks/useCart';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -16,15 +16,40 @@ import { createTemplate } from '@/services/templateService';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import OptimizedImage from '@/components/OptimizedImage';
 
-const CartItem = ({ item }) => {
+const CartItem = memo(({ item }) => {
   const { updateQuantity, removeFromCart } = useCart();
+
+  const handleIncrease = useCallback(() => {
+    const newQuantity = (item.quantity || 0) + 1;
+    updateQuantity(item.id, newQuantity);
+  }, [item.id, item.quantity, updateQuantity]);
+
+  const handleDecrease = useCallback(() => {
+    const newQuantity = Math.max(0, (item.quantity || 0) - 1);
+    if (newQuantity === 0) {
+      removeFromCart(item.id);
+    } else {
+      updateQuantity(item.id, newQuantity);
+    }
+  }, [item.id, item.quantity, updateQuantity, removeFromCart]);
+
+  const handleRemove = useCallback(() => {
+    removeFromCart(item.id);
+  }, [item.id, removeFromCart]);
+
+  // Memoizar cálculos
+  const itemPrice = useMemo(() => Number(item.price) || 0, [item.price]);
+  const itemQuantity = useMemo(() => Number(item.quantity) || 0, [item.quantity]);
+  const subtotal = useMemo(() => itemPrice * itemQuantity, [itemPrice, itemQuantity]);
+
+  if (!item) return null;
 
   return (
     <div className="flex items-start gap-4 py-4" role="listitem">
       <div className="w-20 h-20 bg-muted rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0">
         <OptimizedImage
           src={item.image_url}
-          alt={`Imagen de ${item.name}`}
+          alt={`Imagen de ${item.name || 'producto'}`}
           fallback="/placeholder.png"
           loading="lazy"
           className="w-full h-full object-contain p-2"
@@ -34,10 +59,10 @@ const CartItem = ({ item }) => {
       <div className="flex-1 flex flex-col gap-2 min-w-0">
         <div>
           <p className="font-semibold text-sm leading-tight text-foreground line-clamp-2">
-            {item.name}
+            {item.name || 'Producto sin nombre'}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
-            ${(item.price || 0).toFixed(2)} / {item.unit}
+            ${itemPrice.toFixed(2)} / {item.unit || 'unidad'}
           </p>
         </div>
 
@@ -45,20 +70,21 @@ const CartItem = ({ item }) => {
           <Button
             variant="outline"
             size="icon"
-            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+            onClick={handleDecrease}
             className="w-8 h-8 rounded-full border-primary/50 text-primary/50 hover:bg-primary/10 transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-            aria-label={`Reducir cantidad de ${item.name}`}
+            aria-label={`Reducir cantidad de ${item.name || 'producto'}`}
+            disabled={itemQuantity <= 1}
           >
             <Minus size={14} aria-hidden="true" />
           </Button>
-          <span className="w-12 text-center font-semibold text-sm text-foreground" aria-label={`Cantidad: ${item.quantity}`}>
-            {item.quantity}
+          <span className="w-12 text-center font-semibold text-sm text-foreground" aria-label={`Cantidad: ${itemQuantity}`}>
+            {itemQuantity}
           </span>
           <Button
             size="icon"
-            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+            onClick={handleIncrease}
             className="w-8 h-8 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-            aria-label={`Aumentar cantidad de ${item.name}`}
+            aria-label={`Aumentar cantidad de ${item.name || 'producto'}`}
           >
             <Plus size={14} aria-hidden="true" />
           </Button>
@@ -67,21 +93,23 @@ const CartItem = ({ item }) => {
 
       <div className="text-right flex flex-col items-end gap-2 flex-shrink-0">
         <p className="font-bold text-sm text-foreground">
-          ${((item.price || 0) * (item.quantity || 0)).toFixed(2)}
+          ${subtotal.toFixed(2)}
         </p>
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => removeFromCart(item.id)}
+          onClick={handleRemove}
           className="w-8 h-8 rounded-full hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-destructive focus:ring-offset-2"
-          aria-label={`Eliminar ${item.name} del carrito`}
+          aria-label={`Eliminar ${item.name || 'producto'} del carrito`}
         >
           <Trash2 size={16} aria-hidden="true" />
         </Button>
       </div>
     </div>
   );
-};
+});
+
+CartItem.displayName = 'CartItem';
 
 const SaveTemplateModal = ({ isOpen, onOpenChange, cartItems }) => {
   const { user } = useSupabaseAuth();
