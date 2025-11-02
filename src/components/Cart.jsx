@@ -1,11 +1,11 @@
 
 import React, { useState } from 'react';
-import { useCart } from '@/context/CartContext'; // Cambiado a context
+import { useCart } from '@/context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { X, ShoppingCart, Trash2, Plus, Minus, BookmarkPlus, ArrowRight, Package } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast.js'; // La ruta correcta es con guion
+import { X, ShoppingCart, Trash2, Plus, Minus, BookmarkPlus, ArrowRight, Package, Loader2 } from 'lucide-react';
+import { useToast } from '@/components/ui/useToast';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { saveTemplate } from '@/services/templateService';
+import { createTemplate } from '@/services/templateService';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 
 const CartItem = ({ item }) => {
@@ -79,11 +79,12 @@ const CartItem = ({ item }) => {
   );
 };
 
-const SaveTemplateModal = ({ isOpen, onOpenChange, cart }) => {
+const SaveTemplateModal = ({ isOpen, onOpenChange, cartItems }) => {
   const { user } = useSupabaseAuth();
   const { toast } = useToast();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = async () => {
     if (!user) {
@@ -103,10 +104,24 @@ const SaveTemplateModal = ({ isOpen, onOpenChange, cart }) => {
       return;
     }
 
+    setIsSaving(true);
     try {
+        const templateItems = cartItems.map(item => ({
+            product_id: item.id,
+            quantity: item.quantity,
+            unit_price: item.price,
+            product_name: item.name
+        }));
+
+        await createTemplate({
+            name,
+            description,
+            items: templateItems
+        });
+
         toast({
-          title: '🚧 Funcionalidad en desarrollo',
-          description: 'La creación de plantillas estará disponible pronto.',
+            title: '✅ Plantilla Guardada',
+            description: `La plantilla "${name}" ha sido creada con éxito.`,
         });
         setName('');
         setDescription('');
@@ -114,9 +129,11 @@ const SaveTemplateModal = ({ isOpen, onOpenChange, cart }) => {
     } catch (error) {
         toast({
             title: 'Error al guardar',
-            description: 'No se pudo guardar la plantilla. Inténtalo de nuevo.',
+            description: error.message || 'No se pudo guardar la plantilla. Inténtalo de nuevo.',
             variant: 'destructive',
         });
+    } finally {
+        setIsSaving(false);
     }
   };
 
@@ -157,12 +174,13 @@ const SaveTemplateModal = ({ isOpen, onOpenChange, cart }) => {
         </div>
         <DialogFooter className="gap-2">
           <DialogClose asChild>
-            <Button type="button" variant="outline" className="rounded-xl">
+            <Button type="button" variant="outline" className="rounded-xl" disabled={isSaving}>
               Cancelar
             </Button>
           </DialogClose>
-          <Button type="button" onClick={handleSave} className="rounded-xl">
-            Guardar
+          <Button type="button" onClick={handleSave} className="rounded-xl" disabled={isSaving}>
+            {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isSaving ? 'Guardando...' : 'Guardar'}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -206,7 +224,7 @@ const Cart = () => {
 
   return (
     <>
-      <SaveTemplateModal isOpen={isTemplateModalOpen} onOpenChange={setTemplateModalOpen} cart={{items, subtotal, tax, total}} />
+      <SaveTemplateModal isOpen={isTemplateModalOpen} onOpenChange={setTemplateModalOpen} cartItems={items} />
       <AnimatePresence>
         {isCartOpen && (
           <>

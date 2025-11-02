@@ -1,30 +1,34 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Send, X } from 'lucide-react';
-import { useForm, FormProvider } from 'react-hook-form';
-import { useCart } from '@/hooks/useCart';
-import { useRequisition } from '@/context/RequisitionContext';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast.js';
+import { useLocation, useNavigate } from 'react-router-dom';
 import MultiStepProgressBar from '@/components/MultiStepProgressBar';
+import GeneralDataStep from '@/components/requisition-steps/GeneralDataStep';
 import ItemsStep from '@/components/requisition-steps/ItemsStep';
 import ReviewStep from '@/components/requisition-steps/ReviewStep';
 import ConfirmationStep from '@/components/requisition-steps/ConfirmationStep';
-import GeneralDataStep from '@/components/requisition-steps/GeneralDataStep';
+import { Button } from '@/components/ui/button';
+import { RequisitionProvider, useRequisition } from '@/context/RequisitionContext';
+import { createRequisition } from '@/services/requisitionService';
+import { createTemplate } from '@/services/templateService';
+import { useToast } from '@/components/ui/useToast';
+import { useCart } from '@/context/CartContext';
+import { useForm, FormProvider } from 'react-hook-form';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
+import { ArrowLeft } from 'lucide-react';
 
-const steps = ['Datos', 'Artículos', 'Revisar', 'Enviar'];
 
-const NewRequisitionPage = () => {
-    const [currentStep, setCurrentStep] = useState(1);
-    const [lastRequisitionId, setLastRequisitionId] = useState(null);
-    const { items } = useCart();
-    const { createRequisition, loading: requisitionLoading } = useRequisition();
-    const { toast } = useToast();
+const steps = ['Datos Generales', 'Añadir Ítems', 'Revisar y Enviar'];
+
+const NewRequisitionContent = () => {
+    const [currentStep, setCurrentStep] = useState(0);
     const navigate = useNavigate();
-
+    const location = useLocation();
+    const queryClient = useQueryClient();
+    const { user } = useSupabaseAuth();
+    const { items: cartItems, clearCart } = useCart();
+    const { toast } = useToast();
     const methods = useForm({
         defaultValues: {
             title: '',
@@ -33,122 +37,90 @@ const NewRequisitionPage = () => {
             priority: 'Normal',
             requiredDate: null,
             costCenter: '',
-        },
+        }
     });
+
+    const isCreatingTemplate = location.state?.fromTemplates || false;
+
+    const createRequisitionMutation = useMutation({
+        mutationFn: createRequisition,
+        onSuccess: (newRequisitionId) => {
+            toast({ title: 'Éxito', description: 'Tu requisición ha sido creada y enviada.' });
+            queryClient.invalidateQueries(['requisitions']);
+            clearCart();
+            methods.reset();
+            navigate(`/requisitions/${newRequisitionId}`, { replace: true });
+        },
+        onError: (error) => {
+            toast({ variant: 'destructive', title: 'Error al enviar', description: error.message });
+        }
+    });
+
+    const handleNext = () => setCurrentStep(prev => Math.min(prev + 1, steps.length));
+    const handleBack = () => setCurrentStep(prev => Math.max(prev - 1, 0));
     
-    const { trigger, handleSubmit } = methods;
+    const onSubmit = (formData) => {
+        if (cartItems.length === 0) {
+            toast({ variant: 'destructive', title: 'Carrito Vacío', description: 'Debes agregar al menos un producto.' });
+            return;
+        }
 
-    const nextStep = async () => {
-        let isValid = true;
-        if (currentStep === 1) {
-            isValid = await trigger(['title', 'category', 'requiredDate']);
-        }
-        if (currentStep === 2 && items.length === 0) {
-            isValid = false;
-            toast({
-                variant: 'destructive',
-                title: 'Carrito vacío',
-                description: 'Debes agregar al menos un artículo para continuar.',
-            });
-        }
-        
-        if (isValid && currentStep < steps.length) {
-            setCurrentStep(currentStep + 1);
-        }
+        const payload = {
+            comments: formData.description,
+            items: cartItems.map(item => ({ product_id: item.id, quantity: item.quantity })),
+            // Aquí se podrían agregar más datos del formulario si el backend lo requiere.
+        };
+        createRequisitionMutation.mutate(payload);
     };
 
-    const prevStep = () => {
-        if (currentStep > 1) {
-            setCurrentStep(currentStep - 1);
-        }
-    };
-    
-    const goToStep = (step) => {
-        if (step < currentStep) {
-            setCurrentStep(step);
-        }
-    };
-
-    const onSubmit = async (data) => {
-        const result = await createRequisition(data);
-        if (result && result.id) {
-            setLastRequisitionId(result.id);
-            setCurrentStep(currentStep + 1); // Go to confirmation step
+    const renderStep = () => {
+        switch (currentStep) {
+            case 0: return <GeneralDataStep />;
+            case 1: return <ItemsStep />;
+            case 2: return <ReviewStep onEdit={(step) => setCurrentStep(step - 1)} />;
+            default: return null;
         }
     };
 
     return (
-        <div className="bg-card h-screen overflow-y-auto">
-            <Helmet><title>Nueva Requisición - ComerECO</title></Helmet>
-            <div className="p-4 sm:p-6 lg:p-8 space-y-8 max-w-5xl mx-auto relative">
-                <Button variant="ghost" size="icon" className="absolute top-4 right-4 z-20" onClick={() => navigate('/dashboard')}>
-                    <X className="w-6 h-6" />
-                </Button>
-
-                {currentStep <= steps.length && (
-                    <div className="space-y-2 pt-8 sm:pt-0">
-                        <h1 className="text-3xl font-bold text-foreground">Crear Nueva Requisición</h1>
-                        <p className="text-muted-foreground">Sigue los pasos para completar tu solicitud.</p>
-                    </div>
-                )}
-                
-                {currentStep < 5 && <div className="px-0 sm:px-4"><MultiStepProgressBar steps={steps} currentStep={currentStep} onStepClick={goToStep} /></div>}
-                
-                <FormProvider {...methods}>
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 pb-24">
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={currentStep}
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -20 }}
-                                transition={{ duration: 0.2 }}
-                            >
-                                {currentStep === 1 && <GeneralDataStep />}
-                                {currentStep === 2 && <ItemsStep />}
-                                {currentStep === 3 && <ReviewStep onEdit={goToStep} />}
-                                {currentStep === 4 && (
-                                     <div className="text-center p-8 bg-background rounded-lg shadow-md border">
-                                        <Send className="mx-auto h-16 w-16 text-secondary mb-4"/>
-                                        <h2 className="text-2xl font-bold">Todo listo para enviar</h2>
-                                        <p className="text-muted-foreground mt-2">Revisa por última vez. Una vez enviada, no podrás editar la requisición.</p>
-                                    </div>
-                                )}
-                                {currentStep === 5 && lastRequisitionId && <ConfirmationStep requisitionId={lastRequisitionId}/>}
-                            </motion.div>
-                        </AnimatePresence>
-                         
-                         {currentStep < 4 && (
-                             <div className="fixed bottom-0 left-0 right-0 bg-card/80 backdrop-blur-sm border-t py-4 px-4 sm:px-8 z-10">
-                                <div className="max-w-5xl mx-auto flex justify-between items-center">
-                                    <Button type="button" variant="outline" onClick={prevStep} disabled={currentStep === 1 || requisitionLoading}>
-                                        <ArrowLeft className="w-4 h-4 mr-2" /> Anterior
-                                    </Button>
-                                    <Button type="button" variant="secondary" onClick={nextStep}>
-                                        Siguiente <ArrowRight className="w-4 h-4 ml-2" />
-                                    </Button>
-                                </div>
-                            </div>
-                         )}
-
-                        {currentStep === 4 && (
-                            <div className="fixed bottom-0 left-0 right-0 bg-card/80 backdrop-blur-sm border-t py-4 px-4 sm:px-8 z-10">
-                                <div className="max-w-5xl mx-auto flex justify-between items-center">
-                                     <Button type="button" variant="outline" onClick={prevStep} disabled={requisitionLoading}>
-                                        <ArrowLeft className="w-4 h-4 mr-2" /> Volver a Revisar
-                                    </Button>
-                                    <Button type="submit" variant="secondary" disabled={items.length === 0 || requisitionLoading}>
-                                        {requisitionLoading ? 'Enviando...' : 'Confirmar y Enviar'}
-                                        <Send className="w-4 h-4 ml-2" />
-                                    </Button>
-                                </div>
-                            </div>
-                        )}
-                    </form>
-                </FormProvider>
+      <FormProvider {...methods}>
+        <div className="flex flex-col h-screen">
+            <header className="p-4 border-b flex items-center gap-4">
+                <Button variant="ghost" size="icon" onClick={() => navigate(-1)}><ArrowLeft /></Button>
+                <h1 className="text-xl font-bold">{isCreatingTemplate ? 'Crear Nueva Plantilla' : 'Crear Nueva Requisición'}</h1>
+            </header>
+            <div className="p-4 sm:p-6 lg:p-8 flex-grow overflow-y-auto">
+                <div className="mb-8">
+                    <MultiStepProgressBar steps={steps} currentStep={currentStep + 1} />
+                </div>
+                <div className="max-w-4xl mx-auto">
+                    {renderStep()}
+                </div>
             </div>
+             <footer className="p-4 border-t bg-card flex justify-between items-center sticky bottom-0">
+                <Button variant="outline" onClick={handleBack} disabled={currentStep === 0}>
+                    Atrás
+                </Button>
+                {currentStep < steps.length - 1 ? (
+                    <Button onClick={handleNext} disabled={currentStep === 1 && cartItems.length === 0}>Siguiente</Button>
+                ) : (
+                    <Button onClick={methods.handleSubmit(onSubmit)} isLoading={createRequisitionMutation.isPending}>
+                        {isCreatingTemplate ? 'Guardar Plantilla' : 'Confirmar y Enviar'}
+                    </Button>
+                )}
+            </footer>
         </div>
+      </FormProvider>
     );
 };
+
+const NewRequisitionPage = () => (
+    <>
+        <Helmet><title>Nueva Requisición - ComerECO</title></Helmet>
+        <RequisitionProvider>
+            <NewRequisitionContent />
+        </RequisitionProvider>
+    </>
+);
 
 export default NewRequisitionPage;

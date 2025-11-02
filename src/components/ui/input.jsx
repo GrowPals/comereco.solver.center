@@ -1,28 +1,29 @@
 
-import React from 'react';
-import { cn } from '@/lib/utils';
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
 
 const Input = React.forwardRef(({ className, type, icon, ...props }, ref) => {
   return (
     <div className="relative w-full">
       {icon && (
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--neutral-60)]">
-          {React.cloneElement(icon, { className: 'h-5 w-5' })}
+        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+          {React.cloneElement(icon, { className: 'h-4 w-4' })}
         </div>
       )}
       <input
         type={type}
         className={cn(
-          'flex h-12 w-full px-4 py-3 rounded-xl bg-white border-2 border-[var(--neutral-10)] text-[var(--neutral-100)] placeholder:text-[var(--neutral-50)] text-sm focus:outline-none focus:border-[var(--primary-50)] focus:ring-4 focus:ring-[var(--primary-00)] disabled:bg-[var(--neutral-10)] disabled:cursor-not-allowed transition-all duration-200',
-          icon ? 'pl-12' : 'px-4',
+          "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          icon ? "pl-10" : "px-3",
           className
         )}
         ref={ref}
         {...props}
       />
     </div>
-  );
-});
-Input.displayName = 'Input';
+  )
+})
+Input.displayName = "Input"
 
-export { Input };
+export { Input }

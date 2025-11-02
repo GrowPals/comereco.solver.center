@@ -3,118 +3,102 @@ import { supabase } from '@/lib/customSupabaseClient';
 import logger from '@/utils/logger';
 
 /**
- * Obtiene todas las plantillas para el usuario autenticado.
+ * Obtiene todas las plantillas del usuario actual.
  * @returns {Promise<Array>} Lista de plantillas.
  */
-export async function getTemplates() {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return [];
-
-  const { data, error } = await supabase
-    .from('requisition_templates')
-    .select('*')
-    .eq('user_id', user.id)
-    .order('is_favorite', { ascending: false })
-    .order('last_used_at', { ascending: false, nullsFirst: false })
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    logger.error('Error fetching templates from Supabase:', error);
-    return [];
-  }
-  return data;
-}
-
-/**
- * Guarda una nueva plantilla en la base de datos.
- * @param {string} name - Nombre de la plantilla.
- * @param {Array} items - Items del carrito para guardar.
- * @param {string} description - Descripción opcional.
- * @returns {Promise<object|null>} La plantilla creada.
- */
-export async function saveTemplate(name, items, description = '') {
-  const { data: { user: authUser } } = await supabase.auth.getUser();
-  const { data: profile } = await supabase.from('profiles').select('company_id').eq('id', authUser.id).single();
-
-  if (!authUser || !profile) {
-    logger.error('User not found for saving template');
-    return null;
-  }
-  
-  const newTemplate = {
-    user_id: authUser.id,
-    company_id: profile.company_id,
-    name,
-    description,
-    items, // Directamente el array de items del carrito
-  };
-
-  const { data, error } = await supabase
-    .from('requisition_templates')
-    .insert(newTemplate)
-    .select()
-    .single();
-
-  if (error) {
-    logger.error('Error saving template to Supabase:', error);
-    return null;
-  }
-  return data;
-}
-
-/**
- * Elimina una plantilla de la base de datos.
- * @param {string} templateId - El ID de la plantilla a eliminar.
- */
-export async function deleteTemplate(templateId) {
-  const { error } = await supabase
-    .from('requisition_templates')
-    .delete()
-    .eq('id', templateId);
-
-  if (error) {
-    logger.error('Error deleting template from Supabase:', error);
-    throw error;
-  }
-}
-
-/**
- * Actualiza una plantilla existente (ej. marcar como favorita).
- * @param {string} templateId - El ID de la plantilla.
- * @param {boolean} isFavorite - El nuevo estado de favorito.
- * @returns {Promise<object|null>} La plantilla actualizada.
- */
-export async function toggleFavorite(templateId, isFavorite) {
+export const getTemplates = async () => {
     const { data, error } = await supabase
-    .from('requisition_templates')
-    .update({ is_favorite: isFavorite })
-    .eq('id', templateId)
-    .select()
-    .single();
+        .from('requisition_templates')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-  if (error) {
-    logger.error('Error updating favorite status:', error);
-    throw error;
-  }
-  return data;
-}
-
+    if (error) {
+        logger.error('Error fetching templates:', error);
+        throw new Error('No se pudieron cargar las plantillas.');
+    }
+    return data;
+};
 
 /**
- * Llama a la función RPC para usar una plantilla, lo que crea una requisición
- * e incrementa los contadores de forma atómica.
- * @param {string} templateId - El ID de la plantilla a usar.
- * @returns {Promise<string|null>} El ID de la nueva requisición.
+ * Crea una nueva plantilla de requisición.
+ * @param {object} templateData - { name, description, items, project_id (opcional) }
+ * @returns {Promise<object>} La plantilla creada.
  */
-export async function createRequisitionFromTemplate(templateId) {
+export const createTemplate = async (templateData) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Usuario no autenticado.');
+    
+    const { data: profile } = await supabase.from('profiles').select('company_id').eq('id', user.id).single();
+    if (!profile) throw new Error('Perfil de usuario no encontrado.');
+
+    const { data, error } = await supabase
+        .from('requisition_templates')
+        .insert([{
+            ...templateData,
+            user_id: user.id,
+            company_id: profile.company_id,
+        }])
+        .select()
+        .single();
+    
+    if (error) {
+        logger.error('Error creating template:', error);
+        throw new Error(`Error al crear plantilla: ${error.message}`);
+    }
+    return data;
+};
+
+/**
+ * Actualiza una plantilla existente.
+ * @param {object} templateData - Datos a actualizar, debe incluir el id.
+ * @returns {Promise<object>} La plantilla actualizada.
+ */
+export const updateTemplate = async (templateData) => {
+    const { id, ...updateData } = templateData;
+    const { data, error } = await supabase
+        .from('requisition_templates')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
+    
+    if (error) {
+        logger.error('Error updating template:', error);
+        throw new Error(`Error al actualizar plantilla: ${error.message}`);
+    }
+    return data;
+};
+
+/**
+ * Elimina una plantilla.
+ * @param {string} templateId - ID de la plantilla a eliminar.
+ */
+export const deleteTemplate = async (templateId) => {
+    const { error } = await supabase
+        .from('requisition_templates')
+        .delete()
+        .eq('id', templateId);
+    
+    if (error) {
+        logger.error('Error deleting template:', error);
+        throw new Error(`Error al eliminar plantilla: ${error.message}`);
+    }
+};
+
+/**
+ * Llama al RPC para crear una requisición borrador desde una plantilla.
+ * @param {string} templateId - El ID de la plantilla a usar.
+ * @returns {Promise<string>} El ID de la nueva requisición creada.
+ */
+export const useTemplateForRequisition = async (templateId) => {
     const { data, error } = await supabase.rpc('use_requisition_template', {
-        p_template_id: templateId
+        p_template_id: templateId,
     });
 
     if (error) {
-        logger.error('Error calling use_requisition_template RPC:', error);
-        throw error;
+        logger.error('Error in use_requisition_template RPC:', error);
+        throw new Error(error.message || 'Error al usar la plantilla.');
     }
-
-    return data; // El ID de la nueva requisición
-}
+    
+    return data; // El RPC devuelve el ID de la nueva requisición
+};

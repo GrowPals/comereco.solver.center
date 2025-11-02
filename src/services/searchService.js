@@ -2,46 +2,25 @@
 import { supabase } from '@/lib/customSupabaseClient';
 import logger from '@/utils/logger';
 
-/**
- * Realiza una búsqueda global en productos, requisiciones y usuarios.
- * @param {string} query - El término de búsqueda.
- * @returns {Promise<{productos: any[], requisiciones: any[], usuarios: any[]}>}
- */
-export const performGlobalSearch = async (query) => {
-  if (!query || query.trim().length < 2) {
+export const performGlobalSearch = async (query, companyId) => {
+  const sanitizedQuery = typeof query === 'string' ? query.trim() : '';
+
+  if (!sanitizedQuery || sanitizedQuery.length < 2 || !companyId) {
     return { productos: [], requisiciones: [], usuarios: [] };
   }
-
-  const searchTerm = `%${query.trim()}%`;
+  
+  const searchTerm = `%${sanitizedQuery}%`;
 
   try {
-    // Usamos Promise.all para ejecutar las búsquedas en paralelo para máxima eficiencia
     const [productosRes, requisicionesRes, usuariosRes] = await Promise.all([
-      // Búsqueda en Productos
-      supabase
-        .from('products')
-        .select('id, name, sku, image_url')
-        .or(`name.ilike.${searchTerm},sku.ilike.${searchTerm}`)
-        .limit(5),
-      
-      // Búsqueda en Requisiciones
-      supabase
-        .from('requisitions')
-        .select('id, internal_folio, comments, profiles(full_name)')
-        .or(`internal_folio.ilike.${searchTerm},comments.ilike.${searchTerm}`)
-        .limit(5),
-
-      // Búsqueda en Usuarios (perfiles)
-      supabase
-        .from('profiles')
-        .select('id, full_name, role')
-        .or(`full_name.ilike.${searchTerm}`) // El email está en auth.users, así que solo buscamos por nombre aquí
-        .limit(5),
+      supabase.from('products').select('id, name, sku, image_url').or(`name.ilike.${searchTerm},sku.ilike.${searchTerm}`).limit(5),
+      supabase.from('requisitions').select('id, internal_folio, comments').or(`internal_folio.ilike.${searchTerm},comments.ilike.${searchTerm}`).limit(5),
+      supabase.from('profiles').select('id, full_name, role_v2, avatar_url').eq('company_id', companyId).or(`full_name.ilike.${searchTerm}`).limit(5),
     ]);
 
-    if (productosRes.error) logger.error('Error en búsqueda de productos:', productosRes.error.message);
-    if (requisicionesRes.error) logger.error('Error en búsqueda de requisiciones:', requisicionesRes.error.message);
-    if (usuariosRes.error) logger.error('Error en búsqueda de usuarios:', usuariosRes.error.message);
+    if (productosRes.error) logger.error('Search error (products):', productosRes.error.message);
+    if (requisicionesRes.error) logger.error('Search error (requisitions):', requisicionesRes.error.message);
+    if (usuariosRes.error) logger.error('Search error (users):', usuariosRes.error.message);
 
     return {
       productos: productosRes.data || [],
@@ -49,7 +28,7 @@ export const performGlobalSearch = async (query) => {
       usuarios: usuariosRes.data || [],
     };
   } catch (error) {
-    logger.error('Error fatal en la búsqueda global:', error);
+    logger.error('Global search failed:', error);
     return { productos: [], requisiciones: [], usuarios: [] };
   }
 };

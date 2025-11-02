@@ -1,131 +1,221 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useForm } from 'react-hook-form';
+import { ShoppingCart, CreditCard, MessageSquare, AlertTriangle, Save } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
-import { useRequisition } from '@/context/RequisitionContext';
-import { Helmet } from 'react-helmet';
+import { useToast } from '@/components/ui/useToast';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Loader2, ArrowLeft, Send } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast.js';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { createRequisitionFromCart } from '@/services/requisitionService';
+import { getMyProjects } from '@/services/projectService';
+import EmptyState from '@/components/EmptyState';
+import PageLoader from '@/components/PageLoader';
+import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { createTemplate } from '@/services/templateService';
 
-const InfoRow = ({ label, value }) => (
-    <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
-        <span className="font-semibold text-muted-foreground">{label}:</span>
-        <span className="font-bold text-right">{value}</span>
-    </div>
-);
+const CheckoutPage = () => {
+    const { cart, total, clearCart } = useCart();
+    const { user } = useSupabaseAuth();
+    const { toast } = useToast();
+    const navigate = useNavigate();
+    const queryClient = useQueryClient();
+    const { register, handleSubmit, control, formState: { errors } } = useForm();
+    
+    const [isTemplateModalOpen, setTemplateModalOpen] = useState(false);
+    const [templateName, setTemplateName] = useState('');
+    const [templateDescription, setTemplateDescription] = useState('');
 
-export default function CheckoutPage() {
-  const navigate = useNavigate();
-  const { items: cartItems, subtotal, vat, total, clearCart } = useCart();
-  const { user } = useSupabaseAuth();
-  const { toast } = useToast();
-  const { createRequisition, loading: requisitionLoading } = useRequisition();
-  
-  const [comments, setComments] = useState('');
+    const { data: projects, isLoading: isLoadingProjects } = useQuery({
+        queryKey: ['myProjects'],
+        queryFn: getMyProjects,
+    });
 
-  useEffect(() => {
-    if (cartItems.length === 0) {
-      toast({
-        title: "Carrito vacío",
-        description: "Serás redirigido al catálogo.",
-      });
-      navigate('/catalog');
+    const createRequisitionMutation = useMutation({
+        mutationFn: createRequisitionFromCart,
+        onSuccess: (data) => {
+            toast({
+                title: '¡Requisición Creada!',
+                description: `Tu requisición ${data.internal_folio} ha sido creada como borrador.`,
+                variant: 'success',
+            });
+            clearCart();
+            queryClient.invalidateQueries(['cart']);
+            queryClient.invalidateQueries(['requisitions']);
+            navigate(`/requisitions/${data.id}`);
+        },
+        onError: (error) => {
+            toast({
+                title: 'Error al crear requisición',
+                description: error.message || 'No se pudo completar la operación.',
+                variant: 'destructive',
+            });
+        },
+    });
+
+    const createTemplateMutation = useMutation({
+        mutationFn: createTemplate,
+        onSuccess: () => {
+            toast({ title: 'Plantilla guardada', description: 'Tu plantilla ha sido creada exitosamente.', variant: 'success' });
+            setTemplateModalOpen(false);
+            setTemplateName('');
+            setTemplateDescription('');
+            queryClient.invalidateQueries(['templates']);
+        },
+        onError: (error) => {
+            toast({ title: 'Error al guardar', description: error.message, variant: 'destructive' });
+        }
+    });
+
+    const onSubmit = (formData) => {
+        if (cart.length === 0) {
+            toast({ title: 'Carrito vacío', description: 'Agrega productos para crear una requisición.', variant: 'destructive' });
+            return;
+        }
+        createRequisitionMutation.mutate({
+            projectId: formData.projectId,
+            comments: formData.comments,
+            items: cart.map(item => ({ product_id: item.product.id, quantity: item.quantity })),
+        });
+    };
+    
+    const handleSaveTemplate = () => {
+        if (!templateName) {
+            toast({ title: 'Nombre requerido', description: 'Por favor, dale un nombre a tu plantilla.', variant: 'destructive'});
+            return;
+        }
+        const items = cart.map(item => ({ product_id: item.product.id, quantity: item.quantity }));
+        createTemplateMutation.mutate({
+            name: templateName,
+            description: templateDescription,
+            items: items,
+            project_id: null,
+        });
+    };
+
+    if (isLoadingProjects) return <PageLoader />;
+    if (cart.length === 0 && !createRequisitionMutation.isSuccess) {
+        return (
+            <div className="h-screen -mt-20">
+                <EmptyState
+                    icon={ShoppingCart}
+                    title="Tu carrito está vacío"
+                    description="Parece que no has agregado productos. ¡Explora el catálogo para empezar!"
+                    actionButton={<Button onClick={() => navigate('/catalog')}>Ir al Catálogo</Button>}
+                />
+            </div>
+        );
     }
-  }, [cartItems.length, navigate, toast]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const result = await createRequisition({ comments });
-    if (result) {
-        // La navegación y limpieza del carrito se maneja dentro del contexto
-        // si la creación es exitosa.
-        navigate(`/requisitions/${result.id}?from=checkout`);
-    }
-  };
+    return (
+        <>
+            <Helmet><title>Finalizar Compra - ComerECO</title></Helmet>
+            <div className="container mx-auto max-w-4xl py-8 px-4">
+                <h1 className="text-3xl font-bold mb-2">Finalizar Compra</h1>
+                <p className="text-muted-foreground mb-8">Revisa tu pedido y completa la información para generar la requisición.</p>
 
-  if (cartItems.length === 0) return null;
-
-  return (
-    <>
-        <Helmet>
-            <title>Confirmar Requisición - ComerECO</title>
-        </Helmet>
-        <div className="bg-muted min-h-screen p-4 md:p-8">
-            <div className="max-w-4xl mx-auto">
-                <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Volver al catálogo
-                </Button>
-                <Card className="overflow-hidden">
-                    <div className="bg-primary text-primary-foreground p-6 text-center">
-                        <h1 className="text-3xl font-bold">Confirmar Requisición</h1>
-                        <p className="opacity-80 mt-1">Revisa los detalles y envía tu solicitud.</p>
+                <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {/* Columna Izquierda: Detalles de Requisición */}
+                    <div className="space-y-6">
+                        <div>
+                            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2"><CreditCard /> Detalles de la Requisición</h2>
+                            <div className="bg-card p-6 rounded-lg border space-y-4">
+                                <div>
+                                    <Label htmlFor="projectId" className={errors.projectId ? 'text-destructive' : ''}>Proyecto</Label>
+                                    <Select name="projectId" control={control} onValueChange={(value) => {
+                                        const { onChange } = register('projectId', { required: 'Debes seleccionar un proyecto' });
+                                        onChange({ target: { value } });
+                                    }}>
+                                        <SelectTrigger id="projectId" className={errors.projectId ? 'border-destructive' : ''}>
+                                            <SelectValue placeholder="Selecciona un proyecto" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {projects?.length > 0 ? (
+                                                projects.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)
+                                            ) : (
+                                                <div className="p-4 text-sm text-center text-muted-foreground">No perteneces a ningún proyecto.</div>
+                                            )}
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.projectId && <p className="mt-1 text-sm text-destructive flex items-center gap-1"><AlertTriangle size={14} />{errors.projectId.message}</p>}
+                                </div>
+                                <div>
+                                    <Label htmlFor="comments">Comentarios (Opcional)</Label>
+                                    <Textarea id="comments" {...register('comments')} placeholder="Instrucciones especiales, justificación, etc." />
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2"><Save /> Acciones Adicionales</h2>
+                             <div className="bg-card p-6 rounded-lg border">
+                                <Button type="button" variant="outline" className="w-full" onClick={() => setTemplateModalOpen(true)} disabled={cart.length === 0}>
+                                    Guardar como Plantilla
+                                </Button>
+                             </div>
+                        </div>
                     </div>
 
-                    <form onSubmit={handleSubmit}>
-                        <CardContent className="p-6 space-y-8">
-                            <section>
-                                <h2 className="text-xl font-semibold mb-4 border-b pb-2">📋 Información General</h2>
-                                <div className="grid sm:grid-cols-2 gap-4 mt-4">
-                                    <InfoRow label="Compañía" value={user?.company?.name || 'N/A'} />
-                                    <InfoRow label="Solicitado por" value={user?.full_name || 'N/A'} />
-                                </div>
-                            </section>
-
-                            <section>
-                                <h2 className="text-xl font-semibold mb-4 border-b pb-2">📝 Comentarios</h2>
-                                <div className="space-y-4 mt-4">
-                                    <div>
-                                        <label htmlFor="comments" className="font-semibold mb-2 block">Comentarios <span className="text-muted-foreground font-normal">(opcional)</span></label>
-                                        <Textarea id="comments" value={comments} onChange={(e) => setComments(e.target.value)} placeholder="Instrucciones especiales de entrega, notas para el aprobador, etc." rows={3} />
+                    {/* Columna Derecha: Resumen de Pedido */}
+                    <div className="space-y-6">
+                        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2"><ShoppingCart /> Resumen del Pedido</h2>
+                        <div className="bg-card p-4 rounded-lg border space-y-3 max-h-96 overflow-y-auto">
+                            {cart.map(item => (
+                                <div key={item.product.id} className="flex items-center gap-4 text-sm">
+                                    <img class="w-14 h-14 rounded-md object-cover" alt={item.product.name} src="https://images.unsplash.com/photo-1695561115667-c2e975c7cf22" />
+                                    <div className="flex-grow">
+                                        <p className="font-semibold line-clamp-1">{item.product.name}</p>
+                                        <p className="text-muted-foreground">Cantidad: {item.quantity}</p>
                                     </div>
+                                    <p className="font-semibold">${(item.quantity * item.product.price).toFixed(2)}</p>
                                 </div>
-                            </section>
-
-                            <section>
-                                <h2 className="text-xl font-semibold mb-4 border-b pb-2">📦 Resumen del Pedido ({cartItems.length} productos)</h2>
-                                <div className="bg-muted/50 rounded-lg p-4 mt-4 space-y-2">
-                                    {cartItems.map(i => (
-                                        <div key={i.id} className="flex justify-between items-center py-2 border-b last:border-none">
-                                            <div>
-                                                <p className="font-semibold">{i.name}</p>
-                                                <p className="text-sm text-muted-foreground">{i.quantity} {i.unit} x ${i.price.toFixed(2)}</p>
-                                            </div>
-                                            <p className="font-bold">${(i.price * i.quantity).toFixed(2)}</p>
-                                        </div>
-                                    ))}
-                                    <Separator className="my-4" />
-                                    <div className="space-y-2 pt-2 text-sm">
-                                        <div className="flex justify-between"><span>Subtotal:</span><span>${subtotal.toFixed(2)}</span></div>
-                                        <div className="flex justify-between"><span>IVA (16%):</span><span>${vat.toFixed(2)}</span></div>
-                                    </div>
-                                    <Separator className="my-4" />
-                                    <div className="flex justify-between text-xl font-bold pt-2">
-                                        <span>Total:</span>
-                                        <span>${total.toFixed(2)} MXN</span>
-                                    </div>
-                                </div>
-                            </section>
-                        </CardContent>
-
-                        <CardFooter className="bg-muted/30 p-6 flex justify-end">
-                            <Button type="submit" disabled={requisitionLoading} size="lg" className="w-full sm:w-auto">
-                                {requisitionLoading ? (
-                                    <>
-                                        <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Procesando...
-                                    </>
-                                ) : <><Send className="mr-2 h-4 w-4" /> Enviar Requisición</>}
-                            </Button>
-                        </CardFooter>
-                    </form>
-                </Card>
+                            ))}
+                        </div>
+                        <div className="bg-card p-6 rounded-lg border space-y-3 text-lg">
+                            <div className="flex justify-between items-center">
+                                <span className="text-muted-foreground">Subtotal:</span>
+                                <span className="font-semibold">${total.toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between items-center font-bold">
+                                <span>Total:</span>
+                                <span>${total.toFixed(2)}</span>
+                            </div>
+                        </div>
+                        <Button type="submit" size="lg" className="w-full" isLoading={createRequisitionMutation.isPending}>
+                            Crear Requisición
+                        </Button>
+                    </div>
+                </form>
             </div>
-        </div>
-    </>
-  );
-}
+            
+            <Dialog open={isTemplateModalOpen} onOpenChange={setTemplateModalOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Guardar como Plantilla</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                        <div>
+                            <Label htmlFor="template-name">Nombre de la Plantilla</Label>
+                            <Input id="template-name" value={templateName} onChange={e => setTemplateName(e.target.value)} placeholder="Ej: Suministros de oficina mensuales"/>
+                        </div>
+                        <div>
+                            <Label htmlFor="template-desc">Descripción (Opcional)</Label>
+                            <Textarea id="template-desc" value={templateDescription} onChange={e => setTemplateDescription(e.target.value)} placeholder="Contenido de esta plantilla..."/>
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setTemplateModalOpen(false)}>Cancelar</Button>
+                        <Button onClick={handleSaveTemplate} isLoading={createTemplateMutation.isPending}>Guardar Plantilla</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </>
+    );
+};
+
+export default CheckoutPage;

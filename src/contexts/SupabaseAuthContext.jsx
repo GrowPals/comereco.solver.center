@@ -1,116 +1,102 @@
 
-import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
+import React, { createContext, useState, useEffect, useContext, useCallback, useMemo } from 'react';
 import { supabase } from '@/lib/customSupabaseClient';
-import { useToast } from '@/components/ui/use-toast.js';
+import PageLoader from '@/components/PageLoader';
 import logger from '@/utils/logger';
 
-const AuthContext = createContext(undefined);
+const AuthContext = createContext();
 
 export const SupabaseAuthProvider = ({ children }) => {
-  const { toast } = useToast();
   const [session, setSession] = useState(null);
-  const [profile, setProfile] = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchProfile = useCallback(async (user) => {
-    if (!user) {
-      setProfile(null);
-      return;
+  // FIX: Esta función ahora se llamará para enriquecer el usuario de auth
+  const fetchUserProfile = useCallback(async (authUser) => {
+    if (!authUser) {
+      setUser(null);
+      return null;
     }
     try {
-      const { data, error } = await supabase
+      const { data: profile, error } = await supabase
         .from('profiles')
-        .select(`
-          *,
-          company:company_id ( name, bind_location_id, bind_price_list_id )
-        `)
-        .eq('id', user.id)
+        .select(`*, company:companies(*)`)
+        .eq('id', authUser.id)
         .single();
-      
-      if (error) throw error;
 
-      // Fusionamos la información del perfil y de la compañía
-      const userProfile = {
-        ...data,
-        company: data.company
-      };
-      
-      setProfile(userProfile);
-    } catch (error) {
-      logger.error('Error fetching profile with company:', error.message);
-      setProfile(null);
+      if (error) {
+        logger.error('Error fetching user profile:', error);
+        await supabase.auth.signOut();
+        setUser(null);
+        return null;
+      } else {
+        const userWithCompany = { ...authUser, ...profile };
+        setUser(userWithCompany);
+        return userWithCompany;
+      }
+    } catch (e) {
+      logger.error('Unexpected error fetching profile:', e);
+      setUser(null);
+      return null;
     }
   }, []);
 
-  const handleSession = useCallback(async (session) => {
-    setSession(session);
-    await fetchProfile(session?.user);
-    setLoading(false);
-  }, [fetchProfile]);
-  
   useEffect(() => {
-    const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      handleSession(session);
+    const initializeSession = async () => {
+      setLoading(true);
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) {
+        logger.error('Error getting session:', error);
+      }
+      setSession(session);
+      // FIX: Llamar a fetchUserProfile al inicializar
+      await fetchUserProfile(session?.user);
+      setLoading(false);
     };
 
-    getInitialSession();
+    initializeSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        handleSession(session);
-      }
-    );
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setLoading(true);
+      setSession(session);
+      // FIX: Llamar a fetchUserProfile en cada cambio de estado de auth
+      await fetchUserProfile(session?.user);
+      setLoading(false);
+    });
 
-    return () => subscription.unsubscribe();
-  }, [handleSession]);
-  
-  const updateUser = useCallback(async (updateData) => {
-    if (!profile) return;
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .update(updateData)
-        .eq('id', profile.id)
-        .select()
-        .single();
-      if (error) throw error;
-      setProfile(prev => ({ ...prev, ...data }));
-    } catch (error) {
-      logger.error('Error updating profile:', error);
-      throw error;
-    }
-  }, [profile]);
-  
-  const authAction = useCallback(async (action, credentials) => {
-    setLoading(true);
-    const { error } = await action(credentials);
-    if (error) {
-      toast({
-        variant: "destructive",
-        title: "Authentication Failed",
-        description: error.message || "Something went wrong.",
-      });
-    }
-    setLoading(false);
+    return () => {
+      authListener?.subscription?.unsubscribe();
+    };
+  }, [fetchUserProfile]);
+
+  const signIn = useCallback(async ({ email, password }) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
     return { error };
-  }, [toast]);
+  }, []);
   
-  const signUp = (email, password, options) => authAction(supabase.auth.signUp, { email, password, options });
-  const signIn = (email, password) => authAction(supabase.auth.signInWithPassword, { email, password });
-  const signOut = () => authAction(supabase.auth.signOut);
+  const signOut = useCallback(async () => {
+    const { error } = await supabase.auth.signOut();
+    if (!error) {
+      setUser(null);
+      setSession(null);
+    }
+    return { error };
+  }, []);
+
 
   const value = useMemo(() => ({
-    user: profile,
     session,
+    user,
     loading,
-    signUp,
     signIn,
     signOut,
-    updateUser
-  }), [profile, session, loading, signUp, signIn, signOut, updateUser]);
+  }), [session, user, loading, signIn, signOut]);
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {loading ? <PageLoader /> : children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useSupabaseAuth = () => {

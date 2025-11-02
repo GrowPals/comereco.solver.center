@@ -82,3 +82,4 @@ const Pagination = ({
 };
 
 export default Pagination;
+export { Pagination };

@@ -1,85 +1,43 @@
 
-import { useState, useEffect, useCallback } from 'react';
-import { getProducts, getCategories } from '@/services/productService';
-import logger from '@/utils/logger';
+import { useQuery } from '@tanstack/react-query';
+import { getProducts, getProductById, getUniqueProductCategories } from '@/services/productService';
 
-export function useProducts() {
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
-  const [filters, setFilters] = useState({
-    searchTerm: '',
-    category: 'all',
-    sortBy: 'name',
-    sortAsc: true,
+/**
+ * Hook para obtener una lista paginada y filtrada de productos.
+ * @param {object} filters - Objeto con los filtros a aplicar.
+ * @param {string} filters.searchTerm - Término de búsqueda.
+ * @param {string} filters.category - Categoría de producto.
+ * @param {number} filters.page - Página actual.
+ * @param {number} filters.pageSize - Tamaño de la página.
+ */
+export const useProducts = (filters) => {
+  return useQuery({
+    queryKey: ['products', filters],
+    queryFn: () => getProducts(filters),
+    placeholderData: (previousData) => previousData,
+    keepPreviousData: true,
   });
+};
 
-  const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 12,
-    total: 0,
+/**
+ * Hook para obtener los detalles de un solo producto por su ID.
+ * @param {string} productId - El ID del producto.
+ */
+export const useProductDetails = (productId) => {
+  return useQuery({
+    queryKey: ['product', productId],
+    queryFn: () => getProductById(productId),
+    enabled: !!productId, // Solo ejecuta la query si productId no es nulo
   });
+};
 
-  // Cargar categorías una sola vez al montar el hook
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const cats = await getCategories();
-        setCategories(['all', ...cats]);
-      } catch (err) {
-        logger.error("Failed to fetch categories:", err);
-      }
-    };
-    fetchCategories();
-  }, []);
-
-  // Función para buscar productos, se activa cuando cambian los filtros o la página
-  const fetchProducts = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const { data, count } = await getProducts({
-        ...filters,
-        page: pagination.page,
-        limit: pagination.limit,
-      });
-      setProducts(data);
-      setPagination(prev => ({ ...prev, total: count }));
-    } catch (e) {
-      setError('No se pudieron cargar los productos. Intenta de nuevo más tarde.');
-      logger.error('Failed to fetch products:', e);
-    } finally {
-      setLoading(false);
-    }
-  }, [filters, pagination.page, pagination.limit]);
-
-  // Efecto que llama a `fetchProducts` cuando es necesario
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
-
-  // Función para actualizar un filtro y resetear a la primera página
-  const updateFilter = (key, value) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
-    setPagination(prev => ({ ...prev, page: 1 }));
-  };
-
-  // Función para cambiar de página
-  const setPage = (pageNumber) => {
-    setPagination(prev => ({ ...prev, page: pageNumber }));
-  };
-  
-  return {
-    products,
-    categories,
-    loading,
-    error,
-    pagination,
-    filters,
-    updateFilter,
-    setPage,
-    refetch: fetchProducts,
-  };
-}
+/**
+ * Hook para obtener la lista de categorías de productos únicas.
+ */
+export const useProductCategories = () => {
+    return useQuery({
+        queryKey: ['productCategories'],
+        queryFn: getUniqueProductCategories,
+        staleTime: 1000 * 60 * 60, // Cache por 1 hora
+    });
+};

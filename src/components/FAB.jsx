@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Plus } from 'lucide-react';
@@ -9,7 +10,7 @@ const FAB = () => {
       asChild
       size="icon"
       className="fixed bottom-24 right-4 h-14 w-14 rounded-full shadow-lg lg:hidden"
-      aria-label="Crear nueva requisición"
+      aria-label="Ir al catálogo para crear una requisición"
     >
       <Link to="/catalog">
         <Plus className="h-6 w-6" />

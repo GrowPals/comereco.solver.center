@@ -23,10 +23,13 @@ const notificationIcons = {
 // Servicios de Notificaciones (Lógica de Supabase)
 // =================================================================
 
-const getNotifications = async () => {
+const getNotifications = async (userId) => {
+    if (!userId) return [];
+    
     const { data, error } = await supabase
         .from('notifications')
         .select('*')
+        .eq('user_id', userId)
         .order('created_at', { ascending: false })
         .limit(20);
 
@@ -34,7 +37,7 @@ const getNotifications = async () => {
         logger.error('Error fetching notifications:', error);
         return [];
     }
-    return data;
+    return data || [];
 };
 
 const markNotificationAsRead = async (id) => {
@@ -98,20 +101,44 @@ const NotificationCenter = () => {
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
-        if (user) {
-            getNotifications().then(setNotifications);
-
-            const channel = supabase
-                .channel('public:notifications')
-                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` }, (payload) => {
-                    setNotifications(prev => [payload.new, ...prev]);
-                })
-                .subscribe();
-
-            return () => {
-                supabase.removeChannel(channel);
-            };
+        if (!user?.id) return;
+        
+        const isValidUUID = (str) => {
+            if (!str) return false;
+            const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+            return uuidRegex.test(str);
+        };
+    
+        if (!isValidUUID(user.id)) {
+            logger.error('Invalid user ID format for notifications');
+            return;
         }
+    
+        getNotifications(user.id).then(setNotifications);
+    
+        const channel = supabase
+            .channel(`notifications-user-${user.id}`)
+            .on('postgres_changes', { 
+                event: 'INSERT', 
+                schema: 'public', 
+                table: 'notifications',
+                filter: `user_id=eq.${user.id}`
+            }, (payload) => {
+                setNotifications(prev => [payload.new, ...prev.slice(0, 19)]);
+            })
+            .subscribe((status, err) => {
+                if (status === 'SUBSCRIBED') {
+                    logger.info(`Subscribed to notifications for user ${user.id}`);
+                } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+                    logger.error('Error subscribing to notifications channel', err);
+                }
+            });
+    
+        return () => {
+            if (channel) {
+                supabase.removeChannel(channel).catch(err => logger.error('Failed to remove notifications channel', err));
+            }
+        };
     }, [user]);
     
     const unreadCount = useMemo(() => notifications.filter(n => !n.is_read).length, [notifications]);
@@ -122,7 +149,7 @@ const NotificationCenter = () => {
             markNotificationAsRead(id);
             setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
         }
-        setOpen(false); // Close popover on click
+        setOpen(false);
     };
 
     return (

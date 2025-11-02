@@ -1,152 +1,184 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { useRequisitions } from '@/hooks/useRequisitions';
-import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext'; 
-import { Card, CardContent } from '@/components/ui/card';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { Check, X, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Search, Check, X, ThumbsUp, Loader2 } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription, DialogTrigger, DialogClose } from '@/components/ui/dialog';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/components/ui/use-toast.js';
-import { motion, AnimatePresence } from 'framer-motion';
-import RequisitionCard from '@/components/RequisitionCard'; // Reutilizamos el card
-import logger from '@/utils/logger';
+import { useToast } from '@/components/ui/useToast';
+import { fetchPendingApprovals, updateRequisitionStatus } from '@/services/requisitionService';
+import PageLoader from '@/components/PageLoader';
+import EmptyState from '@/components/EmptyState';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
-
-const ApprovalsPage = () => {
-    const { user } = useSupabaseAuth(); 
-    const { requisitions, loading, updateStatus } = useRequisitions();
+const Approvals = () => {
+    const navigate = useNavigate();
     const { toast } = useToast();
-    const [searchTerm, setSearchTerm] = useState('');
-    const [actionState, setActionState] = useState({}); // { [id]: 'approving' | 'rejecting' }
+    const queryClient = useQueryClient();
 
-    const pendingRequisitions = useMemo(() => {
-        if (!user) return [];
-        // Filtramos por el nuevo 'business_status'
-        return requisitions
-            .filter(req => req.business_status === 'submitted')
-            .filter(req => 
-                (req.internal_folio && req.internal_folio.toLowerCase().includes(searchTerm.toLowerCase())) || 
-                (req.requester?.full_name && req.requester.full_name.toLowerCase().includes(searchTerm.toLowerCase()))
-            );
-    }, [requisitions, user, searchTerm]);
+    const [rejectionModal, setRejectionModal] = useState({ isOpen: false, requisitionId: null });
+    const [rejectionReason, setRejectionReason] = useState('');
 
-    const handleUpdateStatus = async (id, newStatus, reason = null) => {
-        const action = newStatus === 'approved' ? 'approving' : 'rejecting';
-        setActionState(prev => ({...prev, [id]: action}));
-        
-        try {
-            await updateStatus(id, newStatus);
+    const { data: requisitions, isLoading } = useQuery({
+        queryKey: ['pendingApprovals'],
+        queryFn: fetchPendingApprovals,
+    });
+
+    const mutation = useMutation({
+        mutationFn: ({ requisitionId, status, reason }) => updateRequisitionStatus(requisitionId, status, reason),
+        onSuccess: (data, variables) => {
+            queryClient.invalidateQueries(['pendingApprovals']);
+            queryClient.invalidateQueries(['requisitions']);
             toast({
-                title: `Requisición ${newStatus === 'approved' ? 'Aprobada' : 'Rechazada'}`,
-                description: `El folio #${id.substring(0,8)}... ha cambiado de estado.`,
+                title: 'Éxito',
+                description: `La requisición ha sido ${variables.status === 'approved' ? 'aprobada' : 'rechazada'}.`,
             });
-        } catch(err) {
-            logger.error(`Failed to ${newStatus} requisition ${id}`, err);
-            toast({
-                title: 'Error en la operación',
-                description: err.message || 'No se pudo actualizar el estado.',
-                variant: 'destructive',
-            });
-        } finally {
-            setActionState(prev => {
-                const newState = {...prev};
-                delete newState[id];
-                return newState;
-            });
-        }
+            if (rejectionModal.isOpen) {
+                handleCloseRejectionModal();
+            }
+        },
+        onError: (error) => {
+            toast({ variant: 'destructive', title: 'Error', description: error.message });
+        },
+    });
+
+    const handleApprove = (requisitionId) => {
+        mutation.mutate({ requisitionId, status: 'approved' });
     };
-    
+
+    const handleOpenRejectionModal = (requisitionId) => {
+        setRejectionModal({ isOpen: true, requisitionId });
+    };
+
+    const handleCloseRejectionModal = () => {
+        setRejectionModal({ isOpen: false, requisitionId: null });
+        setRejectionReason('');
+    };
+
+    const handleReject = () => {
+        if (!rejectionReason) {
+            toast({ variant: 'destructive', title: 'Error', description: 'Debes proporcionar una razón para el rechazo.' });
+            return;
+        }
+        mutation.mutate({
+            requisitionId: rejectionModal.requisitionId,
+            status: 'rejected',
+            reason: rejectionReason,
+        });
+    };
+
+    if (isLoading) {
+        return <div className="p-8"><PageLoader /></div>;
+    }
+
     return (
         <>
-            <Helmet><title>Bandeja de Aprobaciones - ComerECO</title></Helmet>
-            <div className="p-6 lg:p-8 space-y-8">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div>
-                        <h1 className="text-3xl lg:text-4xl font-extrabold text-foreground tracking-tight">Bandeja de Aprobaciones</h1>
-                        <p className="text-muted-foreground mt-1">Tienes {pendingRequisitions.length} requisiciones pendientes de revisión.</p>
-                    </div>
+            <Helmet>
+                <title>Aprobaciones Pendientes - ComerECO</title>
+            </Helmet>
+            <div className="p-4 md:p-8">
+                <div className="flex justify-between items-center mb-6">
+                    <h1 className="text-3xl font-bold">Aprobaciones Pendientes</h1>
                 </div>
-
-                <div className="relative">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                    <Input
-                        placeholder="Buscar por folio o solicitante..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="h-12 rounded-xl text-base pl-12"
+                
+                {requisitions?.length === 0 ? (
+                    <EmptyState
+                        icon={<Check className="h-16 w-16" />}
+                        title="¡Todo al día!"
+                        description="No tienes requisiciones pendientes de aprobación en este momento."
                     />
-                </div>
-
-                <AnimatePresence>
-                    {loading && pendingRequisitions.length === 0 ? (
-                         <div className="text-center p-10"><Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" /></div>
-                    ) : pendingRequisitions.length > 0 ? (
-                        <motion.div className="space-y-6" layout>
-                            {pendingRequisitions.map(req => (
-                                <motion.div key={req.id} layout initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
-                                    <Card className="overflow-hidden">
-                                        <div className="relative group">
-                                            <RequisitionCard requisition={req} />
-                                            <div className="absolute top-0 right-0 bottom-0 flex items-center justify-end p-4 bg-gradient-to-l from-card via-card/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                <div className="flex items-center gap-2">
-                                                     <Dialog>
-                                                        <DialogTrigger asChild>
-                                                            <Button variant="destructive" size="icon" disabled={!!actionState[req.id]} aria-label="Rechazar">
-                                                                <X className="w-5 h-5"/>
-                                                            </Button>
-                                                        </DialogTrigger>
-                                                        <DialogContent>
-                                                            <DialogHeader>
-                                                                <DialogTitle>Rechazar Requisición {req.internal_folio}</DialogTitle>
-                                                                <DialogDescription>Por favor, escribe el motivo del rechazo. El usuario será notificado.</DialogDescription>
-                                                            </DialogHeader>
-                                                            <form onSubmit={(e) => {
-                                                                e.preventDefault();
-                                                                const reason = e.target.elements.reason.value;
-                                                                if(reason) {
-                                                                    handleUpdateStatus(req.id, 'rejected', reason);
-                                                                    const closeButton = e.target.closest('.relative').querySelector('button[aria-label="Close"]');
-                                                                    if(closeButton) closeButton.click();
-                                                                }
-                                                            }}>
-                                                                <Textarea id="reason" placeholder="Ej: Ítem duplicado, excede presupuesto..." required className="my-4"/>
-                                                                <DialogFooter>
-                                                                    <DialogClose asChild><Button type="button" variant="ghost">Cancelar</Button></DialogClose>
-                                                                    <Button type="submit" variant="destructive" disabled={actionState[req.id] === 'rejecting'}>
-                                                                        {actionState[req.id] === 'rejecting' ? <Loader2 className="w-4 h-4 animate-spin"/> : 'Confirmar Rechazo'}
-                                                                    </Button>
-                                                                </DialogFooter>
-                                                            </form>
-                                                        </DialogContent>
-                                                     </Dialog>
-                                                     <Button variant="primary" size="icon" onClick={() => handleUpdateStatus(req.id, 'approved')} disabled={!!actionState[req.id]} aria-label="Aprobar">
-                                                        {actionState[req.id] === 'approving' ? <Loader2 className="w-4 h-4 animate-spin"/> : <Check className="w-5 h-5"/>}
-                                                     </Button>
-                                                </div>
+                ) : (
+                    <div className="bg-card rounded-lg shadow-sm border">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Folio</TableHead>
+                                    <TableHead>Solicitante</TableHead>
+                                    <TableHead>Fecha</TableHead>
+                                    <TableHead className="text-right">Monto</TableHead>
+                                    <TableHead className="text-center">Acciones</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {requisitions?.map((req) => (
+                                    <TableRow key={req.id} className="cursor-pointer hover:bg-muted/50" onClick={() => navigate(`/requisitions/${req.id}`)}>
+                                        <TableCell className="font-medium">{req.internal_folio}</TableCell>
+                                        <TableCell>{req.requester.full_name}</TableCell>
+                                        <TableCell>{format(new Date(req.created_at), "d MMM, yyyy", { locale: es })}</TableCell>
+                                        <TableCell className="text-right">${req.total_amount.toLocaleString('es-MX')}</TableCell>
+                                        <TableCell className="text-center">
+                                            <div className="flex justify-center items-center space-x-2">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="text-green-500 hover:text-green-600 hover:bg-green-100"
+                                                    onClick={(e) => { e.stopPropagation(); handleApprove(req.id); }}
+                                                    disabled={mutation.isLoading}
+                                                >
+                                                    <Check className="h-5 w-5" />
+                                                </Button>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="text-red-500 hover:text-red-600 hover:bg-red-100"
+                                                    onClick={(e) => { e.stopPropagation(); handleOpenRejectionModal(req.id); }}
+                                                    disabled={mutation.isLoading}
+                                                >
+                                                    <X className="h-5 w-5" />
+                                                </Button>
                                             </div>
-                                        </div>
-                                    </Card>
-                                </motion.div>
-                            ))}
-                        </motion.div>
-                    ) : (
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                            <Card className="text-center py-20">
-                                <CardContent>
-                                    <ThumbsUp className="mx-auto h-16 w-16 text-primary" />
-                                    <h3 className="mt-6 text-xl font-bold">¡Todo en orden!</h3>
-                                    <p className="mt-2 text-base text-muted-foreground">No tienes requisiciones pendientes por aprobar. Buen trabajo.</p>
-                                </CardContent>
-                            </Card>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+                )}
             </div>
+            
+            <Dialog open={rejectionModal.isOpen} onOpenChange={handleCloseRejectionModal}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Rechazar Requisición</DialogTitle>
+                        <DialogDescription>
+                            Por favor, proporciona una razón para el rechazo. Esta será visible para el solicitante.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4">
+                        <Textarea
+                            placeholder="Ej: Productos no disponibles, excede presupuesto..."
+                            value={rejectionReason}
+                            onChange={(e) => setRejectionReason(e.target.value)}
+                        />
+                    </div>
+                    <DialogFooter>
+                        <Button variant="ghost" onClick={handleCloseRejectionModal}>Cancelar</Button>
+                        <Button variant="destructive" onClick={handleReject} isLoading={mutation.isLoading}>
+                            Rechazar
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
     );
 };
 
-export default ApprovalsPage;
+export default Approvals;

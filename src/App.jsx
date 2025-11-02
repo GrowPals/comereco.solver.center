@@ -1,24 +1,19 @@
 
-import React, { useState, Suspense, lazy, useEffect } from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { SupabaseAuthProvider, useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
-import { ThemeProvider } from '@/context/ThemeContext';
-import { CartProvider } from '@/context/CartContext';
-import { useCart } from '@/hooks/useCart';
-import { RequisitionProvider } from '@/context/RequisitionContext';
-import { FavoritesProvider } from '@/context/FavoritesContext';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
+import { useUserPermissions } from '@/hooks/useUserPermissions';
 
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
 import BottomNav from '@/components/layout/BottomNav';
-import FAB from '@/components/FAB';
 import Cart from '@/components/Cart';
-import { Toaster } from '@/components/ui/toaster';
 import PageLoader from '@/components/PageLoader';
-import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from './lib/customSupabaseClient';
-import { useToast } from './components/ui/use-toast.js';
+import AppProviders from '@/context/AppProviders';
 
+import { AnimatePresence } from 'framer-motion';
+
+// Lazy loading de las páginas
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
 const RequisitionsPage = lazy(() => import('@/pages/Requisitions'));
 const RequisitionDetail = lazy(() => import('@/pages/RequisitionDetail'));
@@ -30,15 +25,20 @@ const SettingsPage = lazy(() => import('@/pages/Settings'));
 const CatalogPage = lazy(() => import('@/pages/Catalog'));
 const NotificationsPage = lazy(() => import('@/pages/Notifications'));
 const CheckoutPage = lazy(() => import('@/pages/Checkout'));
-const HistoryPage = lazy(() => import('@/pages/History'));
 const TemplatesPage = lazy(() => import('@/pages/Templates'));
-const NewRequisitionPage = lazy(() => import('@/pages/NewRequisition'));
+const ProjectsPage = lazy(() => import('@/pages/Projects'));
+const ManageProductsPage = lazy(() => import('@/pages/admin/ManageProducts'));
+const ReportsPage = lazy(() => import('@/pages/admin/Reports'));
+const FavoritesPage = lazy(() => import('@/pages/Favorites'));
 
-function PrivateRoute({ children, requiredRoles }) {
-  const { session, loading, user } = useSupabaseAuth();
+
+// Componente para rutas privadas
+function PrivateRoute({ children, permissionCheck }) {
+  const { session, loading } = useSupabaseAuth();
+  const permissions = useUserPermissions();
   const location = useLocation();
 
-  if (loading) {
+  if (loading || permissions.isLoadingPermissions) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
         <PageLoader />
@@ -50,53 +50,19 @@ function PrivateRoute({ children, requiredRoles }) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
   
-  if (requiredRoles && user && !requiredRoles.some(role => user.role === role)) {
+  if (permissionCheck && !permissionCheck(permissions)) {
+    // Si el chequeo de permisos falla, redirige al dashboard.
     return <Navigate to="/dashboard" replace />;
   }
 
   return children;
 }
 
+// Layout principal de la aplicación
 const AppLayout = () => {
-  const [isSidebarOpen, setSidebarOpen] = useState(() => window.innerWidth > 1024);
-  const [isMobileNavOpen, setMobileNavOpen] = useState(false);
+  const [isSidebarOpen, setSidebarOpen] = React.useState(() => window.innerWidth > 1024);
+  const [isMobileNavOpen, setMobileNavOpen] = React.useState(false);
   const location = useLocation();
-  const { user } = useSupabaseAuth();
-  const { toast } = useToast();
-  const { refetch: refetchCart } = useCart();
-
-  useEffect(() => {
-    if (!user) return;
-
-    const companyChannel = supabase.channel(`company:${user.company_id}`);
-
-    companyChannel
-      .on('broadcast', { event: 'cart_updated' }, (payload) => {
-        console.log('Cart update received!', payload);
-        toast({
-          title: 'Carrito Actualizado',
-          description: 'Otro miembro del equipo ha actualizado el carrito.',
-        });
-        refetchCart();
-      })
-      .on('broadcast', { event: 'requisition_updated' }, (payload) => {
-        console.log('Requisition update received!', payload);
-        toast({
-          title: 'Requisiciones Actualizadas',
-          description: `La requisición #${payload.internal_folio} ha sido actualizada.`,
-        });
-      })
-      .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          console.log(`Subscribed to company channel: company:${user.company_id}`);
-        }
-      });
-
-    return () => {
-      supabase.removeChannel(companyChannel);
-    };
-  }, [user, toast, refetchCart]);
-
 
   const handleToggleSidebar = () => {
     if (window.innerWidth < 1024) {
@@ -106,7 +72,7 @@ const AppLayout = () => {
     }
   };
 
-  const pathsWithoutNav = ['/checkout', '/requisitions/new'];
+  const pathsWithoutNav = ['/checkout'];
   const showNav = !pathsWithoutNav.some(path => location.pathname.startsWith(path));
 
   const contentMargin = isSidebarOpen ? 'lg:ml-64' : 'lg:ml-20';
@@ -121,7 +87,7 @@ const AppLayout = () => {
       )}
       
       <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${contentMargin}`}>
-        {showNav && <Header isSidebarOpen={isSidebarOpen} setSidebarOpen={handleToggleSidebar} />}
+        {showNav && <Header setSidebarOpen={handleToggleSidebar} />}
         
         <main className="flex-1 overflow-y-auto pb-24 lg:pb-0" id="main-content">
             <Suspense fallback={<div className="h-full"><PageLoader /></div>}>
@@ -129,17 +95,41 @@ const AppLayout = () => {
                     <Routes location={location} key={location.pathname}>
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/requisitions" element={<RequisitionsPage />} />
-                        <Route path="/requisitions/new" element={<NewRequisitionPage />} />
                         <Route path="/requisitions/:id" element={<RequisitionDetail />} />
                         <Route path="/profile" element={<ProfilePage />} />
-                        <Route path="/approvals" element={<PrivateRoute requiredRoles={['admin_corp', 'super_admin']}><ApprovalsPage /></PrivateRoute>} />
+                        
+                        <Route path="/approvals" element={
+                          <PrivateRoute permissionCheck={(p) => p.canApproveRequisitions}>
+                            <ApprovalsPage />
+                          </PrivateRoute>
+                        } />
+                        <Route path="/users" element={
+                          <PrivateRoute permissionCheck={(p) => p.canManageUsers}>
+                            <UsersPage />
+                          </PrivateRoute>
+                        } />
+                        <Route path="/projects" element={
+                          <PrivateRoute>
+                            <ProjectsPage />
+                          </PrivateRoute>
+                        } />
+                         <Route path="/products/manage" element={
+                          <PrivateRoute permissionCheck={(p) => p.isAdmin}>
+                            <ManageProductsPage />
+                          </PrivateRoute>
+                        } />
+                        <Route path="/reports" element={
+                          <PrivateRoute permissionCheck={(p) => p.isAdmin}>
+                            <ReportsPage />
+                          </PrivateRoute>
+                        } />
+
                         <Route path="/settings" element={<SettingsPage />} />
                         <Route path="/catalog" element={<CatalogPage />} />
                         <Route path="/notifications" element={<NotificationsPage />} />
                         <Route path="/checkout" element={<CheckoutPage />} />
-                        <Route path="/history" element={<HistoryPage />} />
                         <Route path="/templates" element={<TemplatesPage />} />
-                        <Route path="/users" element={<PrivateRoute requiredRoles={['admin_corp', 'super_admin']}><UsersPage /></PrivateRoute>} />
+                        <Route path="/favorites" element={<FavoritesPage />} />
                         
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />
                         <Route path="*" element={<Navigate to="/dashboard" replace />} />
@@ -152,8 +142,8 @@ const AppLayout = () => {
             <>
                 <div className="lg:hidden">
                     <BottomNav />
-                    <FAB />
                 </div>
+                <Cart />
             </>
         )}
       </div>
@@ -161,40 +151,24 @@ const AppLayout = () => {
   );
 };
 
-const Root = () => {
-    return (
-        <ThemeProvider>
-            <SupabaseAuthProvider>
-                <CartProvider>
-                    <RequisitionProvider>
-                        <FavoritesProvider>
-                            <Suspense fallback={<PageLoader />}>
-                                <Routes>
-                                  <Route path="/login" element={<LoginPage />} />
-                                  <Route 
-                                    path="/*"
-                                    element={
-                                      <PrivateRoute>
-                                        <AppLayout />
-                                      </PrivateRoute>
-                                    } 
-                                  />
-                                </Routes>
-                            </Suspense>
-                            <Cart />
-                            <Toaster />
-                        </FavoritesProvider>
-                    </RequisitionProvider>
-                </CartProvider>
-            </SupabaseAuthProvider>
-        </ThemeProvider>
-    );
-}
-
-
+// Componente Raíz que ahora usa AppProviders
 const App = () => (
   <Router>
-    <Root />
+    <AppProviders>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route 
+            path="/*"
+            element={
+              <PrivateRoute>
+                <AppLayout />
+              </PrivateRoute>
+            } 
+          />
+        </Routes>
+      </Suspense>
+    </AppProviders>
   </Router>
 );
 

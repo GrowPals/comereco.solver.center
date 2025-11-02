@@ -1,86 +1,32 @@
 
-import { useState, useEffect, useCallback } from 'react';
-import { getRequisitions as getRequisitionsService, updateRequisitionBusinessStatus } from '@/services/requisitionService';
-import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext'; 
-import logger from '@/utils/logger';
+import { useQuery } from '@tanstack/react-query';
+import { fetchRequisitions, fetchRequisitionDetails } from '@/services/requisitionService';
 
-export function useRequisitions() {
-  const [requisitions, setRequisitions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 10,
-    total: 0,
-    totalPages: 1,
+/**
+ * Hook para obtener una lista paginada y filtrada de requisiciones.
+ * @param {object} filters - Objeto con los filtros a aplicar.
+ * @param {number} filters.page - Página actual.
+ * @param {number} filters.pageSize - Tamaño de la página.
+ * @param {string} filters.sortBy - Campo de ordenamiento.
+ * @param {boolean} filters.ascending - Dirección de ordenamiento.
+ */
+export const useRequisitions = (filters = { page: 1, pageSize: 10, sortBy: 'created_at', ascending: false }) => {
+  return useQuery({
+    queryKey: ['requisitions', filters],
+    queryFn: () => fetchRequisitions(filters.page, filters.pageSize, filters.sortBy, filters.ascending),
+    placeholderData: (previousData) => previousData,
+    keepPreviousData: true,
   });
-  
-  const { user } = useSupabaseAuth(); 
+};
 
-  const fetchRequisitions = useCallback(async (currentPage) => {
-    if (!user) {
-        setLoading(false);
-        return;
-    };
-
-    setLoading(true);
-    setError(null);
-    try {
-      const { data, count } = await getRequisitionsService({
-        page: currentPage,
-        limit: pagination.limit,
-      });
-      
-      setRequisitions(data);
-      const totalPages = Math.ceil(count / pagination.limit);
-      setPagination(prev => ({ ...prev, page: currentPage, total: count, totalPages }));
-
-    } catch (e) {
-      setError('Error al cargar las requisiciones.');
-      logger.error('Fallo en fetchRequisitions:', e);
-    } finally {
-      setLoading(false);
-    }
-  }, [user, pagination.limit]);
-
-  useEffect(() => {
-    if (user) {
-      fetchRequisitions(1);
-    }
-  }, [user, fetchRequisitions]);
-
-  const goToPage = (pageNumber) => {
-    if (pageNumber > 0 && pageNumber <= pagination.totalPages) {
-      fetchRequisitions(pageNumber);
-    }
-  };
-
-  const refetch = () => {
-      fetchRequisitions(pagination.page);
-  }
-
-  const updateStatus = async (requisitionId, newStatus) => {
-    try {
-        const updatedRequisition = await updateRequisitionBusinessStatus(requisitionId, newStatus);
-        setRequisitions(prevRequisitions => 
-            prevRequisitions.map(req => 
-                req.id === requisitionId ? { ...req, business_status: updatedRequisition.business_status, integration_status: updatedRequisition.integration_status } : req
-            )
-        );
-        return updatedRequisition;
-    } catch (error) {
-        logger.error(`Error updating status for requisition ${requisitionId}:`, error);
-        throw error;
-    }
-  };
-
-  return {
-    requisitions,
-    loading,
-    error,
-    pagination,
-    goToPage,
-    refetch,
-    updateStatus,
-  };
-}
+/**
+ * Hook para obtener los detalles de una sola requisición por su ID.
+ * @param {string} requisitionId - El ID de la requisición.
+ */
+export const useRequisitionDetails = (requisitionId) => {
+  return useQuery({
+    queryKey: ['requisition', requisitionId],
+    queryFn: () => fetchRequisitionDetails(requisitionId),
+    enabled: !!requisitionId, // Solo ejecuta la query si requisitionId no es nulo
+  });
+};

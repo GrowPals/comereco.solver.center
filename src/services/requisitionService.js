@@ -3,90 +3,184 @@ import { supabase } from '@/lib/customSupabaseClient';
 import logger from '@/utils/logger';
 
 /**
- * Obtiene una lista de requisiciones con filtros y paginación.
- * La lógica de permisos (RLS) de Supabase se encarga de filtrar por usuario/rol.
- * @param {object} options - Opciones de paginación.
- * @returns {Promise<{data: Array, count: number}>} Lista de requisiciones y conteo total.
+ * Obtiene todas las requisiciones. La RLS de Supabase filtra según el rol.
+ * @param {number} page - Página actual (default: 1)
+ * @param {number} pageSize - Tamaño de la página (default: 10)
+ * @param {string} sortBy - Campo de ordenamiento (default: 'created_at')
+ * @param {boolean} ascending - Dirección de ordenamiento (default: false)
+ * @returns {Promise<Array>} Lista de requisiciones.
  */
-export const getRequisitions = async ({ page = 1, limit = 10 }) => {
-    const from = (page - 1) * limit;
-    const to = from + limit - 1;
+export const fetchRequisitions = async (page = 1, pageSize = 10, sortBy = 'created_at', ascending = false) => {
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
 
-    // La consulta ahora pide ambos estados: 'business_status' y 'integration_status'
-    let query = supabase
+    const { data, error, count } = await supabase
         .from('requisitions')
         .select(`
             id,
             internal_folio,
-            business_status,
-            integration_status,
             created_at,
             total_amount,
-            requester:requester_id ( full_name, avatar_url )
+            business_status,
+            project:project_id ( name ),
+            creator:created_by ( full_name, avatar_url )
         `, { count: 'exact' })
-        .order('created_at', { ascending: false })
+        .order(sortBy, { ascending })
         .range(from, to);
-    
-    const { data, error, count } = await query;
-    if (error) {
-        logger.error("Error al obtener requisiciones:", error);
-        throw error;
-    }
 
-    return { data: data || [], count: count || 0 };
+    if (error) {
+        logger.error("Error fetching requisitions:", error);
+        throw new Error("No se pudieron cargar las requisiciones.");
+    }
+    return { data, total: count };
 };
 
-
 /**
- * Obtiene una requisición por su ID con todos sus detalles.
- * La seguridad (RLS) de Supabase asegura que el usuario solo puede ver lo que le corresponde.
- * @param {string} id - El UUID de la requisición.
- * @returns {Promise<object|null>} La requisición detallada.
+ * Obtiene el detalle de una requisición específica.
+ * @param {string} id - ID de la requisición.
+ * @returns {Promise<object>} Detalle de la requisición.
  */
-export const getRequisitionById = async (id) => {
+export const fetchRequisitionDetails = async (id) => {
     const { data, error } = await supabase
         .from('requisitions')
         .select(`
             *,
-            requester:requester_id ( id, full_name, role ),
-            company:company_id ( id, name ),
+            project:project_id ( id, name ),
+            creator:created_by ( id, full_name, avatar_url ),
+            approver:approved_by ( id, full_name, avatar_url ),
             items:requisition_items (
-                *,
-                product:product_id ( id, name, sku, image_url, unit )
+                id,
+                quantity,
+                unit_price,
+                subtotal,
+                product:products (id, name, sku, image_url)
             )
         `)
         .eq('id', id)
         .single();
+
+    if (error) {
+        logger.error("Error fetching requisition details:", error);
+        throw new Error("No se pudo cargar el detalle de la requisición.");
+    }
+    return data;
+};
+
+
+/**
+ * Llama al RPC para crear una requisición completa desde el carrito.
+ * @param {object} requisitionData - { projectId, comments, items }
+ * @returns {Promise<object>} La nueva requisición creada.
+ */
+export const createRequisitionFromCart = async ({ projectId, comments, items }) => {
+    if (!projectId) throw new Error("El proyecto es requerido.");
+    if (!items || items.length === 0) throw new Error("No se puede crear una requisición sin productos.");
+
+    const { data, error } = await supabase.rpc('create_full_requisition', {
+        p_project_id: projectId,
+        p_comments: comments,
+        p_items: items,
+    });
     
     if (error) {
-        logger.error('Error fetching requisition by ID:', error);
-        // El código 'PGRST116' significa "no rows returned"
-        if (error.code === 'PGRST116') return null;
-        throw error;
+        logger.error('Error in create_full_requisition RPC:', error);
+        throw new Error(error.message || 'Error al crear la requisición.');
     }
 
+    // El RPC devuelve el ID, hacemos una consulta para obtener el objeto completo
+    const { data: newRequisition, error: fetchError } = await supabase
+        .from('requisitions')
+        .select('id, internal_folio')
+        .eq('id', data)
+        .single();
+    
+    if (fetchError) {
+         logger.error('Error fetching new requisition after creation:', fetchError);
+         throw new Error('La requisición fue creada pero no se pudo recuperar.');
+    }
+
+    // Limpiar el carrito del usuario después de crear la requisición
+    const { error: cartError } = await supabase.rpc('clear_user_cart');
+    if (cartError) {
+        logger.error('Error clearing user cart:', cartError);
+        // No lanzamos error aquí para no confundir al usuario, solo log.
+    }
+
+    return newRequisition;
+};
+
+/**
+ * Obtiene las requisiciones pendientes de aprobación para el supervisor.
+ * @returns {Promise<Array>} Lista de requisiciones pendientes.
+ */
+export const fetchPendingApprovals = async () => {
+    const { data, error } = await supabase
+        .from('requisitions')
+        .select(`
+            id,
+            internal_folio,
+            created_at,
+            total_amount,
+            project:project_id ( name ),
+            creator:created_by ( full_name, avatar_url )
+        `)
+        .eq('business_status', 'submitted')
+        .order('created_at', { ascending: true });
+    
+    if (error) {
+        logger.error('Error fetching pending approvals:', error);
+        throw new Error('No se pudieron cargar las aprobaciones pendientes.');
+    }
     return data;
 };
 
 /**
- * Actualiza el estado de negocio de una requisición.
- * La lógica de transición y permisos está protegida por el trigger de la BD.
- * @param {string} requisitionId - El UUID de la requisición.
- * @param {string} newBusinessStatus - El nuevo estado de negocio.
- * @returns {Promise<object|null>} La requisición actualizada.
+ * Envía una requisición para aprobación (cambia el estado a 'submitted').
+ * @param {string} requisitionId - ID de la requisición.
+ * @returns {Promise<object>} Requisición actualizada.
  */
-export const updateRequisitionBusinessStatus = async (requisitionId, newBusinessStatus) => {
+export const submitRequisition = async (requisitionId) => {
     const { data, error } = await supabase
         .from('requisitions')
-        .update({ business_status: newBusinessStatus })
+        .update({ business_status: 'submitted' })
         .eq('id', requisitionId)
         .select()
         .single();
-    
+
     if (error) {
-        logger.error('Error updating requisition status:', error.message);
-        throw new Error(error.message);
+        logger.error('Error submitting requisition:', error);
+        throw new Error('No se pudo enviar la requisición.');
     }
-    
+    return data;
+};
+
+/**
+ * Actualiza el estado de una requisición (aprobación/rechazo).
+ * @param {string} requisitionId - ID de la requisición.
+ * @param {string} status - Nuevo estado ('approved' o 'rejected').
+ * @param {string} reason - Razón del rechazo (opcional).
+ * @returns {Promise<object>} Requisición actualizada.
+ */
+export const updateRequisitionStatus = async (requisitionId, status, reason = null) => {
+    const updateData = {
+        business_status: status,
+        updated_at: new Date().toISOString(),
+    };
+
+    if (status === 'rejected' && reason) {
+        updateData.rejection_reason = reason;
+    }
+
+    const { data, error } = await supabase
+        .from('requisitions')
+        .update(updateData)
+        .eq('id', requisitionId)
+        .select()
+        .single();
+
+    if (error) {
+        logger.error('Error updating requisition status:', error);
+        throw new Error(`No se pudo ${status === 'approved' ? 'aprobar' : 'rechazar'} la requisición.`);
+    }
     return data;
 };

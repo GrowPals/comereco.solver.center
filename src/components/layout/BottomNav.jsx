@@ -1,63 +1,77 @@
 
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { cn } from '@/lib/utils';
-import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext'; // CAMBIO CLAVE
-import { LayoutDashboard, FileText, CheckSquare, ShoppingBag, History } from 'lucide-react';
-import { motion } from 'framer-motion';
-
-// CAMBIO CLAVE: Roles actualizados a los de Supabase
-const navItems = [
-  { to: '/dashboard', icon: LayoutDashboard, label: 'Inicio', roles: ['employee', 'admin_corp', 'super_admin'] },
-  { to: '/catalog', icon: ShoppingBag, label: 'Catálogo', roles: ['employee', 'admin_corp', 'super_admin'] },
-  { to: '/requisitions', icon: FileText, label: 'Pedidos', roles: ['employee', 'admin_corp', 'super_admin'] },
-  { to: '/approvals', icon: CheckSquare, label: 'Aprobar', roles: ['admin_corp', 'super_admin'] },
-  { to: '/history', icon: History, label: 'Historial', roles: ['employee', 'admin_corp', 'super_admin'] },
-];
-
-const NavItem = ({ to, icon: Icon, label, isActive }) => {
-  return (
-    <NavLink
-      to={to}
-      className="flex flex-col items-center justify-center gap-1.5 p-2 rounded-lg transition-all duration-200 w-full relative"
-    >
-      <Icon className={cn("w-6 h-6 transition-colors", isActive ? 'text-primary' : 'text-neutral-400')} />
-      <span className={cn("text-xs font-semibold transition-colors", isActive ? 'text-primary' : 'text-neutral-400')}>
-        {label}
-      </span>
-      {isActive && (
-        <motion.div
-          layoutId="bottom-nav-active-indicator"
-          className="absolute -bottom-[17px] h-1 w-10 bg-neutral-900 rounded-full"
-          initial={false}
-          animate={{ opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-        />
-      )}
-    </NavLink>
-  );
-};
+import { Home, List, FolderKanban, ShoppingCart, CheckSquare, Users, LayoutGrid, Star, BarChart, LayoutTemplate } from 'lucide-react';
+import { useUserPermissions } from '@/hooks/useUserPermissions';
+import { useCart } from '@/hooks/useCart';
 
 const BottomNav = () => {
-  const { user } = useSupabaseAuth(); // CAMBIO CLAVE
-  const location = useLocation();
+    const location = useLocation();
+    const { isAdmin, isSupervisor, canCreateRequisitions } = useUserPermissions();
+    const { cart } = useCart();
 
-  if (!user) {
-    return null; // No mostrar nada si el usuario no está cargado
-  }
+    const getNavItems = () => {
+        const baseItems = [
+            { path: '/dashboard', icon: Home, label: 'Inicio' },
+            { path: '/catalog', icon: LayoutGrid, label: 'Catálogo' },
+        ];
 
-  // CAMBIO CLAVE: Usamos user.role y los nuevos roles
-  const filteredNavItems = navItems.filter(item => user.role && item.roles.includes(user.role));
+        if (isAdmin) {
+            return [
+                ...baseItems,
+                { path: '/requisitions', icon: List, label: 'Reqs' },
+                { path: '/projects', icon: FolderKanban, label: 'Proyectos' },
+                { path: '/users', icon: Users, label: 'Usuarios' },
+            ];
+        }
 
-  return (
-    <nav className="fixed bottom-0 left-0 right-0 h-24 bg-card/80 backdrop-blur-lg border-t shadow-top z-40 lg:hidden">
-      <div className="flex justify-around items-center h-full max-w-md mx-auto px-2 pt-1">
-        {filteredNavItems.slice(0, 5).map(item => (
-          <NavItem key={item.to} {...item} isActive={location.pathname.startsWith(item.to)} />
-        ))}
-      </div>
-    </nav>
-  );
+        if (isSupervisor) {
+            return [
+                ...baseItems,
+                { path: '/approvals', icon: CheckSquare, label: 'Aprobar' },
+                { path: '/projects', icon: FolderKanban, label: 'Proyectos' },
+                { path: '/requisitions', icon: List, label: 'Mis Reqs' },
+            ];
+        }
+
+        // User role
+        return [
+            ...baseItems,
+            { path: '/requisitions', icon: List, label: 'Mis Reqs' },
+            { path: '/templates', icon: LayoutTemplate, label: 'Plantillas' },
+            { path: '/favorites', icon: Star, label: 'Favoritos' },
+        ];
+    };
+
+    const navItems = getNavItems();
+    const isActive = (path) => location.pathname === path || (path !== '/dashboard' && location.pathname.startsWith(path));
+
+    return (
+        <nav className="fixed bottom-0 left-0 right-0 bg-card border-t border-border z-50 lg:hidden">
+            <div className="grid h-16 grid-cols-5 max-w-full mx-auto">
+                {navItems.map((item, index) => (
+                    <NavLink
+                        key={index}
+                        to={item.path}
+                        className={({ isActive: isLinkActive }) =>
+                            `inline-flex flex-col items-center justify-center px-2 group transition-colors duration-200 ${isLinkActive || isActive(item.path) ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                            }`
+                        }
+                    >
+                        <div className="relative">
+                            <item.icon className="w-6 h-6 mb-1" />
+                            {item.path === '/catalog' && cart.length > 0 && (
+                                <span className="absolute -top-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                                    {cart.length}
+                                </span>
+                            )}
+                        </div>
+                        <span className="text-xs font-medium">{item.label}</span>
+                    </NavLink>
+                ))}
+            </div>
+        </nav>
+    );
 };
 
 export default BottomNav;
