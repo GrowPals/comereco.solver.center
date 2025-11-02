@@ -1,7 +1,8 @@
-const { fontFamily } = require("tailwindcss/defaultTheme")
+import defaultTheme from "tailwindcss/defaultTheme";
+import tailwindcssAnimate from "tailwindcss-animate";
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   darkMode: ["class"],
   content: [
     './index.html',
@@ -138,7 +139,7 @@ module.exports = {
       },
 
       fontFamily: {
-        sans: ["Inter", ...fontFamily.sans],
+        sans: ["Inter", ...defaultTheme.fontFamily.sans],
         mono: ["'Fira Code'", "'Courier New'", "monospace"],
       },
 
@@ -196,7 +197,7 @@ module.exports = {
     },
   },
   plugins: [
-    require("tailwindcss-animate"),
+    tailwindcssAnimate,
     // Plugin para clases semánticas de tipografía
     function({ addComponents }) {
       addComponents({
