@@ -14,10 +14,16 @@ const NavItem = ({ to, icon: Icon, children, isSidebarOpen }) => {
     return (
         <NavLink to={to}>
             {({ isPending }) => (
-                <div className={`flex items-center p-3 my-1 rounded-lg transition-colors duration-200 ${isActive ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent hover:text-foreground'}`}>
-                    <Icon className="h-6 w-6" />
-                    <span className={`ml-4 transition-opacity duration-300 ${isSidebarOpen ? 'opacity-100' : 'opacity-0 hidden'}`}>{children}</span>
-                    {isPending && <span className="animate-pulse">...</span>}
+                <div className={`flex items-center p-3 my-1 rounded-lg transition-all duration-200 relative group ${
+                    isActive
+                        ? 'bg-gradient-primary text-white shadow-md'
+                        : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
+                }`}>
+                    <Icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-neutral-500 group-hover:text-primary-600'} transition-colors`} />
+                    <span className={`ml-4 font-medium text-sm transition-opacity duration-300 ${isSidebarOpen ? 'opacity-100' : 'opacity-0 hidden'}`}>
+                        {children}
+                    </span>
+                    {isPending && <span className="ml-2 animate-pulse">...</span>}
                 </div>
             )}
         </NavLink>
