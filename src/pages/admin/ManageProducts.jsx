@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getAdminProducts, createProduct, updateProduct } from '@/services/productService';
@@ -27,7 +27,7 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
     });
     const isActive = watch('is_active');
 
-    React.useEffect(() => {
+    useEffect(() => {
         if(product) {
             Object.keys(product).forEach(key => setValue(key, product[key]));
         }

@@ -1,5 +1,5 @@
 
-import React, { Suspense, lazy, useEffect } from 'react';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
@@ -67,8 +67,8 @@ function PrivateRoute({ children, permissionCheck }) {
 
 // Layout principal de la aplicación
 const AppLayout = () => {
-  const [isSidebarOpen, setSidebarOpen] = React.useState(() => window.innerWidth > 1024);
-  const [isMobileNavOpen, setMobileNavOpen] = React.useState(false);
+  const [isSidebarOpen, setSidebarOpen] = useState(() => window.innerWidth > 1024);
+  const [isMobileNavOpen, setMobileNavOpen] = useState(false);
   const location = useLocation();
   const queryClient = useQueryClient();
   const { session } = useSupabaseAuth();

@@ -21,7 +21,7 @@ const toastIcons = {
 
 const Toast = ({ id, title, message, variant = 'info', onClose }) => {
   const { Icon, className } = toastIcons[variant];
-  const [isExiting, setIsExiting] = React.useState(false);
+  const [isExiting, setIsExiting] = useState(false);
 
   const handleClose = () => {
     setIsExiting(true);
