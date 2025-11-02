@@ -236,7 +236,14 @@ export default defineConfig({
 	customLogger: logger,
 	plugins: [
 		...(isDev ? [inlineEditPlugin(), editModeDevPlugin(), iframeRouteRestorationPlugin()] : []),
-		react(),
+		react({
+			jsxRuntime: 'automatic',
+			jsxImportSource: 'react',
+			babel: {
+				plugins: [],
+				presets: [],
+			},
+		}),
 		addTransformIndexHtml
 	],
 	server: {
@@ -246,7 +253,12 @@ export default defineConfig({
 		},
 		allowedHosts: true,
 	},
+	optimizeDeps: {
+		include: ['react', 'react-dom', 'react/jsx-runtime'],
+		force: false,
+	},
 	resolve: {
+		dedupe: ['react', 'react-dom'],
 		extensions: ['.jsx', '.js', '.tsx', '.ts', '.json', ],
 		alias: {
 			'@': path.resolve(__dirname, './src'),
@@ -268,12 +280,19 @@ export default defineConfig({
 				manualChunks: (id) => {
 					// Vendor chunks más específicos para mejor caching
 					if (id.includes('node_modules')) {
-						// React core
-						if (id.includes('react') && !id.includes('react-dom') && !id.includes('react-router')) {
+						// CRÍTICO: React y React-DOM deben estar juntos y cargarse primero
+						// Capturar TODOS los módulos relacionados con React core
+						if (
+							id.includes('node_modules/react/') || 
+							id.includes('node_modules/react-dom/') ||
+							id.includes('node_modules/react/index.js') ||
+							id.includes('node_modules/react-dom/index.js') ||
+							(id.includes('node_modules/react') && !id.includes('react-router') && !id.includes('react-hook-form') && !id.includes('react-day-picker') && !id.includes('react-chartjs') && !id.includes('react-helmet') && !id.includes('react-intersection-observer'))
+						) {
 							return 'react-vendor';
 						}
-						// React DOM y Router
-						if (id.includes('react-dom') || id.includes('react-router')) {
+						// React Router debe depender de react-vendor
+						if (id.includes('react-router')) {
 							return 'react-vendor';
 						}
 						// Radix UI components

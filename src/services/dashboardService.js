@@ -61,7 +61,7 @@ export const getRecentRequisitions = async () => {
         throw new Error(formatErrorMessage(error));
     }
 
-    // Enriquecer con datos de proyecto si es necesario
+    // Optimizado: Enriquecer solo si hay datos y proyectos
     if (data && data.length > 0) {
         const projectIds = [...new Set(data.map(r => r.project_id).filter(Boolean))];
         if (projectIds.length > 0) {
@@ -70,10 +70,12 @@ export const getRecentRequisitions = async () => {
                 .select('id, name')
                 .in('id', projectIds);
 
-            const projectsMap = new Map((projects || []).map(p => [p.id, p]));
-            data.forEach(req => {
-                req.project = req.project_id ? projectsMap.get(req.project_id) : null;
-            });
+            if (projects) {
+                const projectsMap = new Map(projects.map(p => [p.id, p]));
+                data.forEach(req => {
+                    req.project = req.project_id ? projectsMap.get(req.project_id) : null;
+                });
+            }
         }
     }
 

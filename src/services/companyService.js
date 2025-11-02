@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/customSupabaseClient';
-import { getCachedSession } from '@/lib/supabaseHelpers';
+import { getCachedSession, getCachedCompanyId } from '@/lib/supabaseHelpers';
 import logger from '@/utils/logger';
 import { formatErrorMessage } from '@/utils/errorHandler';
 
@@ -76,15 +76,10 @@ export const getMyCompany = async () => {
     throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
   }
 
-  // Obtener company_id del perfil del usuario
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('company_id')
-    .eq('id', session.user.id)
-    .single();
-
-  if (profileError || !profile) {
-    logger.error('Error fetching user profile:', profileError);
+  // Optimizado: Usar helper cacheado para obtener company_id
+  const { companyId, error: companyError } = await getCachedCompanyId();
+  if (companyError || !companyId) {
+    logger.error('Error fetching user profile:', companyError);
     throw new Error("No se pudo obtener la información del usuario.");
   }
 
@@ -92,7 +87,7 @@ export const getMyCompany = async () => {
   const { data, error } = await supabase
     .from('companies')
     .select('id, name, bind_location_id, bind_price_list_id, created_at')
-    .eq('id', profile.company_id)
+    .eq('id', companyId)
     .single();
 
   if (error) {

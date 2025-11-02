@@ -1,6 +1,6 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
-import { getCachedSession } from '@/lib/supabaseHelpers';
+import { getCachedSession, getCachedCompanyId } from '@/lib/supabaseHelpers';
 import { formatErrorMessage } from '@/utils/errorHandler';
 import logger from '@/utils/logger';
 
@@ -80,20 +80,12 @@ export const fetchProductById = async (productId) => {
 };
 
 export const fetchProductCategories = async () => {
-    // Obtener el company_id del usuario actual
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return [];
+    // Optimizado: Usar helper cacheado para obtener company_id
+    const { companyId, error: companyError } = await getCachedCompanyId();
+    if (companyError || !companyId) return [];
     
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('company_id')
-        .eq('id', user.id)
-        .single();
-    
-    if (!profile?.company_id) return [];
-
     const { data, error } = await supabase.rpc('get_unique_product_categories', {
-        p_company_id: profile.company_id
+        company_id_param: companyId
     });
     if (error) {
         logger.error("Error fetching categories:", error);
@@ -155,20 +147,10 @@ export const createProduct = async (productData) => {
         throw new Error("El stock debe ser un número entero mayor o igual a 0.");
     }
 
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) {
-        throw new Error("Usuario no autenticado.");
-    }
-
-    const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('company_id')
-        .eq('id', user.id)
-        .single();
-    
-    if (profileError || !profile) {
-        logger.error('Error fetching user profile:', profileError);
-        throw new Error("No se pudo obtener el perfil del usuario.");
+    // Optimizado: Usar helper cacheado para obtener company_id
+    const { companyId, error: companyError } = await getCachedCompanyId();
+    if (companyError || !companyId) {
+        throw new Error("No se pudo obtener la información de la empresa.");
     }
     
     // Bind ID no se maneja en el MVP, se puede poner un placeholder
@@ -178,7 +160,7 @@ export const createProduct = async (productData) => {
         .from('products')
         .insert([{ 
             ...productData, 
-            company_id: profile.company_id, 
+            company_id: companyId, 
             bind_id,
             name: productData.name.trim(),
             sku: productData.sku.trim(),

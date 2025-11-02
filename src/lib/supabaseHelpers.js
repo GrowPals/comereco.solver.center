@@ -56,3 +56,52 @@ if (typeof window !== 'undefined') {
   });
 }
 
+/**
+ * Helper optimizado para obtener company_id del usuario actual
+ * Cachea el resultado para evitar queries repetidas en el mismo tick
+ */
+let companyIdCache = null;
+let companyIdCacheTime = 0;
+const COMPANY_ID_CACHE_DURATION = 10000; // 10 segundos
+
+export const getCachedCompanyId = async () => {
+  const now = Date.now();
+  
+  // Si tenemos cache válido, retornarlo
+  if (companyIdCache && (now - companyIdCacheTime) < COMPANY_ID_CACHE_DURATION) {
+    return companyIdCache;
+  }
+
+  const { session, error: sessionError } = await getCachedSession();
+  if (sessionError || !session) {
+    companyIdCache = null;
+    companyIdCacheTime = 0;
+    return { companyId: null, error: sessionError };
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('company_id')
+    .eq('id', session.user.id)
+    .single();
+
+  if (profileError || !profile) {
+    companyIdCache = null;
+    companyIdCacheTime = 0;
+    return { companyId: null, error: profileError };
+  }
+
+  companyIdCache = { companyId: profile.company_id, error: null };
+  companyIdCacheTime = now;
+  
+  return companyIdCache;
+};
+
+// Limpiar cache de company_id cuando cambia la sesión
+if (typeof window !== 'undefined') {
+  supabase.auth.onAuthStateChange(() => {
+    companyIdCache = null;
+    companyIdCacheTime = 0;
+  });
+}
+

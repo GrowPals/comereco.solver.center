@@ -1,6 +1,6 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
-import { getCachedSession } from '@/lib/supabaseHelpers';
+import { getCachedSession, getCachedCompanyId } from '@/lib/supabaseHelpers';
 import logger from '@/utils/logger';
 import { formatErrorMessage } from '@/utils/errorHandler';
 
@@ -17,15 +17,10 @@ export const fetchUsersInCompany = async () => {
     throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
   }
 
-  // Obtener company_id del perfil actual
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('company_id')
-    .eq('id', session.user.id)
-    .single();
-    
-  if (profileError || !profile) {
-    logger.error("Error fetching current user's company", profileError);
+  // Optimizado: Usar helper cacheado para obtener company_id
+  const { companyId, error: companyError } = await getCachedCompanyId();
+  if (companyError || !companyId) {
+    logger.error("Error fetching current user's company", companyError);
     return [];
   }
 
@@ -33,7 +28,7 @@ export const fetchUsersInCompany = async () => {
   const { data, error } = await supabase
     .from('profiles')
     .select('id, company_id, full_name, avatar_url, role_v2, updated_at')
-    .eq('company_id', profile.company_id);
+    .eq('company_id', companyId);
 
   if (error) {
     logger.error('Error fetching users in company', error);
@@ -61,10 +56,15 @@ export const inviteUser = async (email, role) => {
         throw new Error("El rol es requerido.");
     }
 
-    // Validar sesión antes de hacer queries
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) {
+    // Optimizado: Usar helpers cacheados
+    const { session, error: sessionError } = await getCachedSession();
+    if (sessionError || !session) {
         throw new Error("Usuario no autenticado.");
+    }
+
+    const { companyId, error: companyError } = await getCachedCompanyId();
+    if (companyError || !companyId) {
+        throw new Error('No se pudo obtener la información de la compañía.');
     }
 
     // Validar que el rol sea válido según REFERENCIA_TECNICA_BD_SUPABASE.md
@@ -73,24 +73,13 @@ export const inviteUser = async (email, role) => {
         throw new Error(`Rol inválido. Debe ser uno de: ${validRoles.join(', ')}`);
     }
 
-    const { data: companyData, error: companyError } = await supabase
-        .from('profiles')
-        .select('company_id')
-        .eq('id', user.id)
-        .single();
-
-    if (companyError || !companyData) {
-        logger.error('Error fetching company data:', companyError);
-        throw new Error('No se pudo obtener la información de la compañía.');
-    }
-
     // FIX: La llamada correcta es a `supabase.auth.admin.inviteUserByEmail`
     // FIX: Los metadatos deben estar dentro de `user_metadata`
     const { data, error } = await supabase.auth.admin.inviteUserByEmail(email.trim().toLowerCase(), {
         data: {
             // Esto se usará en el trigger handle_new_user para crear el perfil
             role_v2: role, 
-            company_id: companyData.company_id,
+            company_id: companyId,
         },
     });
 

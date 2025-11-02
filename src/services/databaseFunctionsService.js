@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/customSupabaseClient';
-import { getCachedSession } from '@/lib/supabaseHelpers';
+import { getCachedSession, getCachedCompanyId } from '@/lib/supabaseHelpers';
 import logger from '@/utils/logger';
 import { formatErrorMessage } from '@/utils/errorHandler';
 
@@ -155,25 +155,14 @@ export const clearUserCart = async () => {
  * @returns {Promise<Array>} Lista de categorías.
  */
 export const getUniqueProductCategories = async () => {
-  const { session, error: sessionError } = await getCachedSession();
-  if (sessionError || !session) {
-    throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+  const { companyId, error: companyError } = await getCachedCompanyId();
+  if (companyError || !companyId) {
+    throw new Error("No se pudo obtener la información de la empresa.");
   }
 
-  // Primero obtener company_id del usuario
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('company_id')
-    .eq('id', session.user.id)
-    .single();
-
-  if (profileError || !profile) {
-    logger.error('Error fetching user profile:', profileError);
-    throw new Error("No se pudo obtener la información del usuario.");
-  }
-
+  // Optimizado: Usar el parámetro correcto del RPC y el helper cacheado
   const { data, error } = await supabase.rpc('get_unique_product_categories', {
-    company_id_param: profile.company_id
+    company_id_param: companyId
   });
 
   if (error) {

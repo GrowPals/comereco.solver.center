@@ -1,6 +1,6 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
-import { getCachedSession } from '@/lib/supabaseHelpers';
+import { getCachedSession, getCachedCompanyId } from '@/lib/supabaseHelpers';
 import logger from '@/utils/logger';
 import { formatErrorMessage } from '@/utils/errorHandler';
 
@@ -53,20 +53,14 @@ export const createTemplate = async (templateData) => {
         throw new Error("El nombre de la plantilla debe tener al menos 2 caracteres.");
     }
     
-    // Validar sesión antes de hacer queries
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) {
+    // Optimizado: Usar helpers cacheados
+    const { session, error: sessionError } = await getCachedSession();
+    if (sessionError || !session) {
         throw new Error('Usuario no autenticado.');
     }
     
-    const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('company_id')
-        .eq('id', user.id)
-        .single();
-        
-    if (profileError || !profile) {
-        logger.error('Error fetching user profile:', profileError);
+    const { companyId, error: companyError } = await getCachedCompanyId();
+    if (companyError || !companyId) {
         throw new Error('Perfil de usuario no encontrado.');
     }
 
@@ -92,8 +86,8 @@ export const createTemplate = async (templateData) => {
             ...templateData,
             name: templateData.name.trim(),
             description: templateData.description?.trim() || '',
-            user_id: user.id,
-            company_id: profile.company_id,
+            user_id: session.user.id,
+            company_id: companyId,
             items: templateData.items || [],
         }])
         .select()

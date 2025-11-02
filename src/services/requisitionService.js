@@ -5,6 +5,48 @@ import { formatErrorMessage } from '@/utils/errorHandler';
 import logger from '@/utils/logger';
 
 /**
+ * Helper optimizado para enriquecer requisiciones con relaciones (proyectos, creadores, etc.)
+ * Evita duplicación de código y mejora performance con batch queries
+ */
+const enrichRequisitionsWithRelations = async (requisitions, relations = ['project', 'creator']) => {
+    if (!requisitions || requisitions.length === 0) return [];
+
+    const projectIds = new Set();
+    const creatorIds = new Set();
+
+    // Recopilar IDs únicos
+    requisitions.forEach(req => {
+        if (req.project_id) projectIds.add(req.project_id);
+        if (req.created_by) creatorIds.add(req.created_by);
+    });
+
+    // Batch queries paralelas para mejor performance
+    const [projectsResult, creatorsResult] = await Promise.all([
+        relations.includes('project') && projectIds.size > 0
+            ? supabase.from('projects').select('id, name, description, status').in('id', [...projectIds])
+            : Promise.resolve({ data: null }),
+        relations.includes('creator') && creatorIds.size > 0
+            ? supabase.from('profiles').select('id, full_name, avatar_url, role_v2').in('id', [...creatorIds])
+            : Promise.resolve({ data: null })
+    ]);
+
+    // Crear maps para lookup rápido
+    const projectsMap = new Map((projectsResult.data || []).map(p => [p.id, p]));
+    const creatorsMap = new Map((creatorsResult.data || []).map(c => [c.id, c]));
+
+    // Enriquecer datos
+    return requisitions.map(req => ({
+        ...req,
+        project: req.project_id && relations.includes('project') 
+            ? projectsMap.get(req.project_id) || null 
+            : req.project || null,
+        creator: req.created_by && relations.includes('creator')
+            ? creatorsMap.get(req.created_by) || null
+            : req.creator || null,
+    }));
+};
+
+/**
  * Obtiene todas las requisiciones. La RLS de Supabase filtra según el rol.
  * @param {number} page - Página actual (default: 1)
  * @param {number} pageSize - Tamaño de la página (default: 10)
@@ -50,40 +92,10 @@ export const fetchRequisitions = async (page = 1, pageSize = 10, sortBy = 'creat
         throw new Error(formatErrorMessage(error));
     }
 
-    // Optimizar: Hacer batch queries en lugar de queries individuales
-    const projectIds = [...new Set((data || []).map(r => r.project_id).filter(Boolean))];
-    const creatorIds = [...new Set((data || []).map(r => r.created_by).filter(Boolean))];
-
-    // Batch query para proyectos
-    let projectsMap = new Map();
-    if (projectIds.length > 0) {
-        const { data: projects } = await supabase
-            .from('projects')
-            .select('id, name, description, status')
-            .in('id', projectIds);
-        if (projects) {
-            projects.forEach(p => projectsMap.set(p.id, p));
-        }
-    }
-
-    // Batch query para creadores
-    let creatorsMap = new Map();
-    if (creatorIds.length > 0) {
-        const { data: creators } = await supabase
-            .from('profiles')
-            .select('id, full_name, avatar_url, role_v2')
-            .in('id', creatorIds);
-        if (creators) {
-            creators.forEach(c => creatorsMap.set(c.id, c));
-        }
-    }
-
-    // Enriquecer datos con los maps
-    const enrichedData = (data || []).map(req => ({
-        ...req,
-        project: req.project_id ? projectsMap.get(req.project_id) || null : null,
-        creator: req.created_by ? creatorsMap.get(req.created_by) || null : null,
-    }));
+    // Optimizar: Enriquecer datos solo si hay requisiciones
+    const enrichedData = (data || []).length > 0 
+        ? await enrichRequisitionsWithRelations(data, ['project', 'creator'])
+        : [];
 
     return { data: enrichedData || [], total: count || 0 };
 };
@@ -96,9 +108,10 @@ export const fetchRequisitions = async (page = 1, pageSize = 10, sortBy = 'creat
 export const fetchRequisitionDetails = async (id) => {
     // FIX: Evitar embeds ambiguos - consultas separadas según REFERENCIA_TECNICA_BD_SUPABASE.md
     // Primero obtener la requisición base
+    // Optimizado: Seleccionar solo campos necesarios para evitar datos innecesarios
     const { data: requisition, error: reqError } = await supabase
         .from('requisitions')
-        .select('*')
+        .select('id, internal_folio, created_at, updated_at, total_amount, comments, business_status, integration_status, project_id, created_by, approved_by, company_id, bind_folio, bind_synced_at, bind_error_message, bind_sync_attempts, approved_at, rejected_at, rejection_reason')
         .eq('id', id)
         .single();
 
@@ -299,40 +312,10 @@ export const fetchPendingApprovals = async () => {
         throw new Error(formatErrorMessage(error));
     }
 
-    // Optimizar: Hacer batch queries en lugar de queries individuales
-    const projectIds = [...new Set((requisitions || []).map(r => r.project_id).filter(Boolean))];
-    const creatorIds = [...new Set((requisitions || []).map(r => r.created_by).filter(Boolean))];
-
-    // Batch query para proyectos
-    let projectsMap = new Map();
-    if (projectIds.length > 0) {
-        const { data: projects } = await supabase
-            .from('projects')
-            .select('id, name')
-            .in('id', projectIds);
-        if (projects) {
-            projects.forEach(p => projectsMap.set(p.id, p));
-        }
-    }
-
-    // Batch query para creadores
-    let creatorsMap = new Map();
-    if (creatorIds.length > 0) {
-        const { data: creators } = await supabase
-            .from('profiles')
-            .select('id, full_name, avatar_url, role_v2')
-            .in('id', creatorIds);
-        if (creators) {
-            creators.forEach(c => creatorsMap.set(c.id, c));
-        }
-    }
-
-    // Enriquecer datos con los maps
-    const enrichedRequisitions = (requisitions || []).map(req => ({
-        ...req,
-        project: req.project_id ? projectsMap.get(req.project_id) || null : null,
-        creator: req.created_by ? creatorsMap.get(req.created_by) || null : null,
-    }));
+    // Optimizar: Reutilizar función helper para enriquecer datos
+    const enrichedRequisitions = (requisitions || []).length > 0
+        ? await enrichRequisitionsWithRelations(requisitions, ['project', 'creator'])
+        : [];
 
     return enrichedRequisitions;
 };
@@ -364,21 +347,8 @@ export const submitRequisition = async (requisitionId) => {
         throw new Error('No se pudo enviar la requisición.');
     }
     
-    // La función de BD retorna un objeto con success y requisition_id
-    // Obtener la requisición actualizada para retornarla
-    const { data: requisition, error: fetchError } = await supabase
-        .from('requisitions')
-        .select('*')
-        .eq('id', requisitionId)
-        .single();
-
-    if (fetchError) {
-        logger.error('Error fetching updated requisition:', fetchError);
-        // Retornar el resultado de la función aunque no podamos obtener la requisición completa
-        return data;
-    }
-    
-    return requisition || data;
+    // La función RPC ya retorna toda la información necesaria, no necesitamos query adicional
+    return data;
 };
 
 /**
@@ -408,19 +378,8 @@ export const updateRequisitionStatus = async (requisitionId, status, reason = nu
             throw new Error(formatErrorMessage(error));
         }
 
-        // Obtener la requisición actualizada
-        const { data: requisition, error: fetchError } = await supabase
-            .from('requisitions')
-            .select('*')
-            .eq('id', requisitionId)
-            .single();
-
-        if (fetchError) {
-            logger.error('Error fetching updated requisition:', fetchError);
-            return data;
-        }
-
-        return requisition || data;
+        // La función RPC ya retorna la requisición actualizada, no necesitamos query adicional
+        return data;
     } else if (status === 'rejected') {
         if (!reason || !reason.trim()) {
             throw new Error("La razón del rechazo es requerida.");
@@ -437,19 +396,8 @@ export const updateRequisitionStatus = async (requisitionId, status, reason = nu
             throw new Error(formatErrorMessage(error));
         }
 
-        // Obtener la requisición actualizada
-        const { data: requisition, error: fetchError } = await supabase
-            .from('requisitions')
-            .select('*')
-            .eq('id', requisitionId)
-            .single();
-
-        if (fetchError) {
-            logger.error('Error fetching updated requisition:', fetchError);
-            return data;
-        }
-
-        return requisition || data;
+        // La función RPC ya retorna la requisición actualizada, no necesitamos query adicional
+        return data;
     } else {
         throw new Error(`Estado no válido: ${status}. Solo se permiten 'approved' o 'rejected'.`);
     }

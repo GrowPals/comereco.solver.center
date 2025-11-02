@@ -1,6 +1,6 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
-import { getCachedSession } from '@/lib/supabaseHelpers';
+import { getCachedSession, getCachedCompanyId } from '@/lib/supabaseHelpers';
 import logger from '@/utils/logger';
 import { formatErrorMessage } from '@/utils/errorHandler';
 
@@ -72,9 +72,10 @@ export const getMyProjects = async () => {
   if (!memberships || memberships.length === 0) return [];
 
   const projectIds = memberships.map(m => m.project_id);
+  // Optimizado: Solo seleccionar campos necesarios
   const { data: projects, error: projectsError } = await supabase
     .from('projects')
-    .select('*')
+    .select('id, company_id, name, description, status, supervisor_id, created_by, created_at, updated_at, active')
     .in('id', projectIds);
 
   if (projectsError) {
@@ -100,20 +101,14 @@ export const createProject = async (projectData) => {
     throw new Error("El nombre del proyecto debe tener al menos 2 caracteres.");
   }
 
-  // Validar sesión antes de hacer queries
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
-  if (userError || !user) {
+  // Optimizado: Usar helpers cacheados
+  const { session, error: sessionError } = await getCachedSession();
+  if (sessionError || !session) {
     throw new Error("Usuario no autenticado.");
   }
 
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('company_id')
-    .eq('id', user.id)
-    .single();
-  
-  if (profileError || !profile) {
-    logger.error('Error fetching user profile:', profileError);
+  const { companyId, error: companyError } = await getCachedCompanyId();
+  if (companyError || !companyId) {
     throw new Error('No se pudo obtener el perfil del usuario.');
   }
   
@@ -123,8 +118,8 @@ export const createProject = async (projectData) => {
     name: projectData.name.trim(),
     description: projectData.description?.trim() || '',
     status: projectData.status || 'active',
-    company_id: profile.company_id,
-    created_by: user.id
+    company_id: companyId,
+    created_by: session.user.id
   };
   
   const { data, error } = await supabase
