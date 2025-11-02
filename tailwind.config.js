@@ -119,16 +119,8 @@ module.exports = {
         'lg': '0 4px 12px rgba(0, 0, 0, 0.08)',
         'xl': '0 8px 24px rgba(0, 0, 0, 0.12)',
         '2xl': '0 16px 48px rgba(0, 0, 0, 0.16)',
-        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
-        'card-hover': '0 8px 24px rgba(0, 0, 0, 0.12)',
-        'floating': '0 8px 16px rgba(0, 0, 0, 0.08)',
-        'button': '0 4px 12px rgba(0, 192, 93, 0.3)',
-        'button-hover': '0 6px 16px rgba(0, 192, 93, 0.4)',
-        'top': '0 -4px 12px rgba(0, 0, 0, 0.04)',
-        'glow-primary': 'var(--glow-primary)',
-        'glow-success': 'var(--glow-success)',
-        'glow-warning': 'var(--glow-warning)',
-        'glow-error': 'var(--glow-error)',
+        'card': '0 1px 3px rgba(0, 0, 0, 0.1)',
+        'card-hover': '0 4px 12px rgba(0, 0, 0, 0.15)',
       },
 
       spacing: {
@@ -147,14 +139,7 @@ module.exports = {
       },
 
       backgroundImage: {
-        'gradient-primary': 'var(--gradient-primary)',
-        'gradient-primary-intense': 'var(--gradient-primary-intense)',
-        'gradient-dark': 'var(--gradient-dark)',
-        'gradient-surface': 'var(--gradient-surface)',
-        'gradient-success': 'var(--gradient-success)',
-        'gradient-warning': 'var(--gradient-warning)',
-        'gradient-error': 'var(--gradient-error)',
-        'gradient-info': 'var(--gradient-info)',
+        // Simplified - removing complex gradients
       },
 
       keyframes: {
@@ -166,30 +151,11 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: 0 },
         },
-        "pulse-glow": {
-          '0%, 100%': {
-            boxShadow: '0 4px 16px rgba(0, 192, 93, 0.4)',
-          },
-          '50%': {
-            boxShadow: 'var(--glow-primary)',
-          },
-        },
-        "fade-in": {
-          from: { opacity: 0 },
-          to: { opacity: 1 },
-        },
-        "slide-up": {
-          from: { transform: 'translateY(20px)', opacity: 0 },
-          to: { transform: 'translateY(0)', opacity: 1 },
-        },
       },
 
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
-        "fade-in": "fade-in 0.3s ease-out",
-        "slide-up": "slide-up 0.4s ease-out",
       },
 
       transitionDuration: {

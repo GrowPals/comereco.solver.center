@@ -1,8 +1,12 @@
-# INSTRUCCIONES PARA MODIFICAR customSupabaseClient.js MANUALMENTE
+# INSTRUCCIONES PARA CONFIGURAR VARIABLES DE ENTORNO
 
-## 🚨 IMPORTANTE
+## ✅ CONFIGURACIÓN ACTUALIZADA
 
-El archivo `src/lib/customSupabaseClient.js` está protegido y debe modificarse **manualmente** fuera del entorno de Cursor.
+El archivo `src/lib/customSupabaseClient.js` ha sido configurado correctamente según mejores prácticas:
+- ✅ No hay valores hardcodeados
+- ✅ Validación de variables de entorno
+- ✅ Configuración óptima de auth (persistSession, autoRefreshToken, detectSessionInUrl)
+- ✅ Configuración de storage y real-time optimizada
 
 ## PASO 1: Crear archivo .env
 
@@ -10,43 +14,23 @@ Crea un archivo `.env` en la raíz del proyecto con el siguiente contenido:
 
 ```env
 VITE_SUPABASE_URL=https://azjaehrdzdfgrumbqmuc.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6amFlaHJkemRmZ3J1bWJxbXVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5MDQwNDIsImV4cCI6MjA3NzQ4MDA0Mn0.DVhyeFbF0egeLWKwUQiM8wL5fpeO4WtDHT6Zlz9vZo8
-```
-
-## PASO 2: Crear archivo .env.example
-
-Crea un archivo `.env.example` en la raíz del proyecto con valores de ejemplo (sin claves reales):
-
-```env
-VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
 VITE_SUPABASE_ANON_KEY=tu_clave_anon_aqui
 ```
 
-## PASO 3: Modificar src/lib/customSupabaseClient.js
+**Para obtener tu clave anon:**
+1. Ve a tu proyecto en Supabase Dashboard: https://supabase.com/dashboard/project/azjaehrdzdfgrumbqmuc
+2. Ve a Settings > API
+3. Copia la "anon/public" key (puedes usar la legacy o la nueva clave publishable)
 
-**Reemplaza el contenido actual** con:
+## PASO 2: Verificar archivo .env.example
 
-```javascript
-import { createClient } from '@supabase/supabase-js';
+El archivo `.env.example` ya existe en la raíz del proyecto con el formato correcto. Úsalo como referencia.
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(
-    'Variables de entorno de Supabase no configuradas. ' +
-    'Asegúrate de tener VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY en tu archivo .env'
-  );
-}
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-```
-
-## PASO 4: Verificar .gitignore
+## PASO 3: Verificar .gitignore
 
 El archivo `.gitignore` ya está actualizado para incluir `.env` y sus variantes.
 
-## PASO 5: Verificar que funciona
+## PASO 4: Verificar que funciona
 
 1. Reinicia el servidor de desarrollo (`npm run dev`)
 2. Verifica que la aplicación carga correctamente

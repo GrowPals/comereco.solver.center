@@ -1,8 +1,7 @@
 
-import React, { useState } from 'react';
-import { useCart } from '@/context/CartContext';
+import React, { useState, useMemo } from 'react';
+import { useCart } from '@/hooks/useCart';
 import { useNavigate } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { X, ShoppingCart, Trash2, Plus, Minus, BookmarkPlus, ArrowRight, Package, Loader2 } from 'lucide-react';
 import { useToast } from '@/components/ui/useToast';
@@ -189,7 +188,7 @@ const SaveTemplateModal = ({ isOpen, onOpenChange, cartItems }) => {
 };
 
 const Cart = () => {
-  const { isCartOpen, toggleCart, items, clearCart, subtotal, totalItems } = useCart();
+  const { isCartOpen, toggleCart, items, clearCart, subtotal, totalItems, vat, total } = useCart();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isTemplateModalOpen, setTemplateModalOpen] = useState(false);
@@ -216,139 +215,110 @@ const Cart = () => {
     navigate('/catalog');
   };
 
-  const tax = subtotal * 0.16;
-  const total = subtotal + tax;
-
-  const backdropVariants = { visible: { opacity: 1 }, hidden: { opacity: 0 } };
-  const cartVariants = { visible: { x: 0 }, hidden: { x: '100%' } };
-
   return (
     <>
       <SaveTemplateModal isOpen={isTemplateModalOpen} onOpenChange={setTemplateModalOpen} cartItems={items} />
-      <AnimatePresence>
-        {isCartOpen && (
-          <>
-            <motion.div
-              variants={backdropVariants}
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-              onClick={toggleCart}
-              className="fixed inset-0 bg-black/60 z-40"
-              transition={{ duration: 0.3 }}
-            />
+      {isCartOpen && (
+        <>
+          <div
+            onClick={toggleCart}
+            className="fixed inset-0 bg-black/60 z-40 transition-opacity"
+          />
+          <div className="fixed top-0 right-0 h-full w-full max-w-md bg-background shadow-2xl z-50 flex flex-col transition-transform">
+            <header className="flex items-center justify-between px-5 py-4 border-b">
+              <div className="flex items-center gap-3">
+                <ShoppingCart className="w-6 h-6 text-primary" />
+                <h2 className="text-xl font-bold text-foreground">Tu Carrito</h2>
+                {totalItems > 0 && (
+                  <Badge variant="default" className="rounded-full">
+                    {totalItems}
+                  </Badge>
+                )}
+              </div>
+              <Button variant="ghost" size="icon" onClick={toggleCart} className="rounded-full">
+                <X className="w-6 h-6" />
+              </Button>
+            </header>
 
-            <motion.div
-              variants={cartVariants}
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-              className="fixed top-0 right-0 h-full w-full max-w-md bg-background shadow-2xl z-50 flex flex-col"
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            >
-              <header className="flex items-center justify-between px-5 py-4 border-b">
-                <div className="flex items-center gap-3">
-                  <ShoppingCart className="w-6 h-6 text-primary" />
-                  <h2 className="text-xl font-bold text-foreground">Tu Carrito</h2>
-                  {totalItems > 0 && (
-                    <Badge variant="default" className="rounded-full">
-                      {totalItems}
-                    </Badge>
+            <div className="flex-1 relative">
+              <ScrollArea className="absolute inset-0">
+                <div className="px-5">
+                  {items.length > 0 ? (
+                    items.map((item, index) => (
+                      <div key={item.id}>
+                        <CartItem item={item} />
+                        {index < items.length - 1 && <Separator className="my-1"/>}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-full text-center py-20 gap-4">
+                      <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
+                        <Package className="w-12 h-12" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-foreground">
+                        Tu carrito está vacío
+                      </h3>
+                      <p className="text-muted-foreground text-sm max-w-xs">
+                        Parece que aún no has agregado productos. ¡Explora para empezar!
+                      </p>
+                      <Button onClick={handleExplore} className="rounded-xl mt-2">
+                        Explorar Catálogo
+                      </Button>
+                    </div>
                   )}
                 </div>
-                <Button variant="ghost" size="icon" onClick={toggleCart} className="rounded-full">
-                  <X className="w-6 h-6" />
-                </Button>
-              </header>
+              </ScrollArea>
+            </div>
 
-              <div className="flex-1 relative">
-                <ScrollArea className="absolute inset-0">
-                  <div className="px-5">
-                    {items.length > 0 ? (
-                      <AnimatePresence>
-                        {items.map((item, index) => (
-                          <motion.div
-                            layout
-                            key={item.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                          >
-                            <CartItem item={item} />
-                            {index < items.length -1 && <Separator className="my-1"/>}
-                          </motion.div>
-                        ))}
-                      </AnimatePresence>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center h-full text-center py-20 gap-4">
-                        <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
-                          <Package className="w-12 h-12" />
-                        </div>
-                        <h3 className="text-lg font-semibold text-foreground">
-                          Tu carrito está vacío
-                        </h3>
-                        <p className="text-muted-foreground text-sm max-w-xs">
-                          Parece que aún no has agregado productos. ¡Explora para empezar!
-                        </p>
-                        <Button onClick={handleExplore} className="rounded-xl mt-2">
-                          Explorar Catálogo
-                        </Button>
-                      </div>
-                    )}
+            {items.length > 0 && (
+              <footer className="px-5 py-6 border-t bg-background space-y-4">
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between text-foreground">
+                    <span>Subtotal</span>
+                    <span className="font-semibold">${subtotal.toFixed(2)}</span>
                   </div>
-                </ScrollArea>
-              </div>
-
-              {items.length > 0 && (
-                <footer className="px-5 py-6 border-t bg-background space-y-4">
-                  <div className="space-y-3 text-sm">
-                    <div className="flex justify-between text-foreground">
-                      <span>Subtotal</span>
-                      <span className="font-semibold">${subtotal.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between text-foreground">
-                      <span>IVA (16%)</span>
-                      <span className="font-semibold">${tax.toFixed(2)}</span>
-                    </div>
-                    <Separator />
-                    <div className="flex justify-between font-bold text-base text-foreground">
-                      <span>Total</span>
-                      <span className="text-lg">${total.toFixed(2)} <span className="text-xs font-normal text-muted-foreground">MXN</span></span>
-                    </div>
+                  <div className="flex justify-between text-foreground">
+                    <span>IVA (16%)</span>
+                    <span className="font-semibold">${vat.toFixed(2)}</span>
                   </div>
+                  <Separator />
+                  <div className="flex justify-between font-bold text-base text-foreground">
+                    <span>Total</span>
+                    <span className="text-lg">${total.toFixed(2)} <span className="text-xs font-normal text-muted-foreground">MXN</span></span>
+                  </div>
+                </div>
 
-                  <div className="space-y-2">
-                     <Button
-                      variant="outline"
-                      className="w-full rounded-xl"
-                      onClick={() => setTemplateModalOpen(true)}
+                <div className="space-y-2">
+                   <Button
+                    variant="outline"
+                    className="w-full rounded-xl"
+                    onClick={() => setTemplateModalOpen(true)}
+                  >
+                    <BookmarkPlus className="mr-2" size={18} />
+                    Guardar como plantilla
+                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="destructive"
+                      onClick={handleClearCart}
+                      className="rounded-xl"
                     >
-                      <BookmarkPlus className="mr-2" size={18} />
-                      Guardar como plantilla
+                      <Trash2 size={16} />
                     </Button>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="destructive"
-                        onClick={handleClearCart}
-                        className="rounded-xl"
-                      >
-                        <Trash2 size={16} />
-                      </Button>
-                      <Button
-                        className="flex-1 rounded-xl"
-                        onClick={handleCheckout}
-                      >
-                        Finalizar Compra
-                        <ArrowRight className="ml-2" size={18} />
-                      </Button>
-                    </div>
+                    <Button
+                      className="flex-1 rounded-xl"
+                      onClick={handleCheckout}
+                    >
+                      Finalizar Compra
+                      <ArrowRight className="ml-2" size={18} />
+                    </Button>
                   </div>
-                </footer>
-              )}
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+                </div>
+              </footer>
+            )}
+          </div>
+        </>
+      )}
     </>
   );
 };

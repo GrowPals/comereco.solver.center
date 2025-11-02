@@ -1,5 +1,6 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
+import { getCachedSession } from '@/lib/supabaseHelpers';
 import logger from '@/utils/logger';
 
 /**
@@ -9,8 +10,8 @@ import logger from '@/utils/logger';
  * @returns {Promise<Array>} Lista de proyectos.
  */
 export const getAllProjects = async () => {
-  // Validar sesión antes de hacer queries
-  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+  // Validar sesión antes de hacer queries (usando cache)
+  const { session, error: sessionError } = await getCachedSession();
   if (sessionError || !session) {
     throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
   }
@@ -45,18 +46,22 @@ export const getAllProjects = async () => {
 };
 
 /**
+ * CORREGIDO: Valida sesión antes de hacer queries
  * Obtiene los proyectos donde el usuario actual es miembro.
  * FIX: Evitar embeds ambiguos según REFERENCIA_TECNICA_BD_SUPABASE.md
  * @returns {Promise<Array>} Lista de proyectos.
  */
 export const getMyProjects = async () => {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return [];
+  // Validar sesión antes de hacer queries (usando cache)
+  const { session, error: sessionError } = await getCachedSession();
+  if (sessionError || !session) {
+    throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+  }
   
   const { data: memberships, error } = await supabase
     .from('project_members')
     .select('project_id')
-    .eq('user_id', user.id);
+    .eq('user_id', session.user.id);
 
   if (error) {
     logger.error('Error fetching my projects:', error);
@@ -117,11 +122,19 @@ export const createProject = async (projectData) => {
 };
 
 /**
+ * CORREGIDO: Valida sesión antes de hacer queries
  * Actualiza un proyecto existente.
+ * RLS verifica permisos según rol (admin puede editar todos, supervisor solo los suyos).
  * @param {object} projectData - Datos a actualizar, debe incluir el id.
  * @returns {Promise<object>} El proyecto actualizado.
  */
 export const updateProject = async (projectData) => {
+  // Validar sesión antes de hacer queries (usando cache)
+  const { session, error: sessionError } = await getCachedSession();
+  if (sessionError || !session) {
+    throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+  }
+
   const { id, ...updateData } = projectData;
   const { data, error } = await supabase
     .from('projects')
@@ -129,32 +142,55 @@ export const updateProject = async (projectData) => {
     .eq('id', id)
     .select()
     .single();
-  if (error) throw new Error(`Error al actualizar proyecto: ${error.message}`);
+  if (error) {
+    logger.error('Error updating project:', error);
+    throw new Error(`Error al actualizar proyecto: ${error.message}`);
+  }
   return data;
 };
 
 /**
+ * CORREGIDO: Valida sesión antes de hacer queries
  * Elimina un proyecto.
+ * RLS verifica permisos según rol (admin puede eliminar todos, supervisor solo los suyos).
  * @param {string} projectId - ID del proyecto a eliminar.
  */
 export const deleteProject = async (projectId) => {
+  // Validar sesión antes de hacer queries (usando cache)
+  const { session, error: sessionError } = await getCachedSession();
+  if (sessionError || !session) {
+    throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+  }
+
   const { error } = await supabase.from('projects').delete().eq('id', projectId);
-  if (error) throw new Error(`Error al eliminar proyecto: ${error.message}`);
+  if (error) {
+    logger.error('Error deleting project:', error);
+    throw new Error(`Error al eliminar proyecto: ${error.message}`);
+  }
 };
 
 /**
+ * CORREGIDO: Valida sesión antes de hacer queries
  * Obtiene los miembros de un proyecto.
  * FIX: Evitar embeds ambiguos según REFERENCIA_TECNICA_BD_SUPABASE.md
+ * RLS filtra automáticamente según permisos (solo usuarios que pueden ver el proyecto).
  * @param {string} projectId - ID del proyecto.
  * @returns {Promise<Array>} Lista de miembros.
  */
 export const getProjectMembers = async (projectId) => {
+    // Validar sesión antes de hacer queries (usando cache)
+    const { session, error: sessionError } = await getCachedSession();
+    if (sessionError || !session) {
+        throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+    }
+
     const { data: memberships, error: membersError } = await supabase
         .from('project_members')
         .select('user_id, role_in_project, added_at')
         .eq('project_id', projectId);
     
     if (membersError) {
+        logger.error('Error fetching project members:', membersError);
         throw new Error(`Error al obtener miembros: ${membersError.message}`);
     }
 
@@ -167,6 +203,7 @@ export const getProjectMembers = async (projectId) => {
         .in('id', userIds);
 
     if (usersError) {
+        logger.error('Error fetching users for project members:', usersError);
         throw new Error(`Error al obtener usuarios: ${usersError.message}`);
     }
 
@@ -181,26 +218,74 @@ export const getProjectMembers = async (projectId) => {
 };
 
 /**
+ * CORREGIDO: Valida sesión antes de hacer queries
  * Agrega un miembro a un proyecto.
+ * RLS verifica permisos según rol (admin y supervisor del proyecto pueden agregar miembros).
  * @param {string} projectId - ID del proyecto.
  * @param {string} userId - ID del usuario a agregar.
+ * @param {string} roleInProject - Rol en el proyecto (default: 'member').
  */
-export const addProjectMember = async (projectId, userId) => {
+export const addProjectMember = async (projectId, userId, roleInProject = 'member') => {
+    // Validar sesión antes de hacer queries (usando cache)
+    const { session, error: sessionError } = await getCachedSession();
+    if (sessionError || !session) {
+        throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+    }
+
     const { error } = await supabase
         .from('project_members')
-        .insert({ project_id: projectId, user_id: userId, role_in_project: 'member' });
-    if (error) throw new Error(`Error al agregar miembro: ${error.message}`);
+        .insert({ project_id: projectId, user_id: userId, role_in_project: roleInProject });
+    if (error) {
+        logger.error('Error adding project member:', error);
+        throw new Error(`Error al agregar miembro: ${error.message}`);
+    }
 };
 
 /**
+ * CORREGIDO: Valida sesión antes de hacer queries
  * Elimina un miembro de un proyecto.
+ * RLS verifica permisos según rol (admin y supervisor del proyecto pueden eliminar miembros).
  * @param {string} projectId - ID del proyecto.
  * @param {string} userId - ID del usuario a eliminar.
  */
 export const removeProjectMember = async (projectId, userId) => {
+    // Validar sesión antes de hacer queries (usando cache)
+    const { session, error: sessionError } = await getCachedSession();
+    if (sessionError || !session) {
+        throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+    }
+
     const { error } = await supabase
         .from('project_members')
         .delete()
         .match({ project_id: projectId, user_id: userId });
-    if (error) throw new Error(`Error al eliminar miembro: ${error.message}`);
+    if (error) {
+        logger.error('Error removing project member:', error);
+        throw new Error(`Error al eliminar miembro: ${error.message}`);
+    }
+};
+
+/**
+ * NUEVO: Actualiza el rol de un miembro en un proyecto.
+ * RLS verifica permisos según rol (admin y supervisor del proyecto pueden actualizar roles).
+ * @param {string} projectId - ID del proyecto.
+ * @param {string} userId - ID del usuario a actualizar.
+ * @param {string} roleInProject - Nuevo rol en el proyecto ('member', 'lead', etc.).
+ */
+export const updateProjectMemberRole = async (projectId, userId, roleInProject) => {
+    // Validar sesión antes de hacer queries (usando cache)
+    const { session, error: sessionError } = await getCachedSession();
+    if (sessionError || !session) {
+        throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+    }
+
+    const { error } = await supabase
+        .from('project_members')
+        .update({ role_in_project: roleInProject })
+        .match({ project_id: projectId, user_id: userId });
+    
+    if (error) {
+        logger.error('Error updating project member role:', error);
+        throw new Error(`Error al actualizar rol del miembro: ${error.message}`);
+    }
 };

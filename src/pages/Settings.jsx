@@ -1,20 +1,17 @@
 
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Settings, Bell, Lock, Palette, Eye, User, Briefcase, Trash2, Smartphone, Monitor, ChevronRight, Loader2 } from 'lucide-react';
+import { Settings, Bell, Lock, Palette, Eye, Monitor, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Slider } from '@/components/ui/slider';
-import { useToast } from '@/components/ui/useToast';
-import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
+import { useToastNotification } from '@/components/ui/toast-notification';
 import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const TABS = [
     { id: 'general', name: 'General', icon: Settings },
@@ -46,15 +43,12 @@ const SettingsCard = ({ title, description, children, onSave, isSaving }) => (
 const SettingsPage = () => {
     const [activeTab, setActiveTab] = useState('general');
     const [isSaving, setIsSaving] = useState(false);
-    const { toast } = useToast();
+    const toast = useToastNotification();
 
     const handleSave = (section) => {
         setIsSaving(true);
         setTimeout(() => {
-            toast({
-                title: 'Configuración Guardada',
-                description: `Tus preferencias de ${section} han sido actualizadas.`,
-            });
+            toast.success('Configuración Guardada', `Tus preferencias de ${section} han sido actualizadas.`);
             setIsSaving(false);
         }, 1000);
     };
@@ -73,8 +67,8 @@ const SettingsPage = () => {
     return (
         <>
             <Helmet><title>Configuración - ComerECO</title></Helmet>
-            <div className="flex flex-col lg:flex-row min-h-screen bg-muted">
-                <aside className="w-full lg:w-64 bg-background lg:border-r border-b lg:border-b-0">
+            <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50">
+                    <aside className="w-full lg:w-64 bg-background lg:border-r border-b lg:border-b-0">
                     <div className="p-4 hidden lg:block border-b">
                         <h2 className="text-lg font-semibold">Configuración</h2>
                     </div>
@@ -107,20 +101,11 @@ const SettingsPage = () => {
                             </button>
                         ))}
                     </nav>
-                </aside>
-                <main className="flex-1 p-4 sm:p-6 lg:p-8">
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={activeTab}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                        >
-                            {renderContent()}
-                        </motion.div>
-                    </AnimatePresence>
-                </main>
-            </div>
+                    </aside>
+                    <main className="flex-1 p-4 sm:p-6 lg:p-8">
+                        {renderContent()}
+                    </main>
+                </div>
         </>
     );
 };
@@ -170,7 +155,16 @@ const PrivacySettings = ({ onSave, isSaving }) => (
 
 const SecuritySettings = () => (
     <SettingsCard title="Seguridad" description="Gestiona la seguridad de tu cuenta.">
-        <Button variant="outline">Cambiar Contraseña</Button>
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button variant="outline">Cambiar Contraseña</Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>Actualiza tu contraseña de acceso</p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
         <div className="pt-4 border-t">
             <h3 className="font-semibold">Sesiones Activas</h3>
             <p className="text-sm text-muted-foreground mb-4">Estas son las sesiones activas en tu cuenta.</p>
@@ -178,7 +172,16 @@ const SecuritySettings = () => (
                 <div className="flex items-center gap-3"><Monitor className="h-5 w-5"/><div><p className="font-medium">Chrome en Windows</p><p className="text-xs text-muted-foreground">Este dispositivo</p></div></div>
                 <Badge variant="default" className="bg-green-500">Activa</Badge>
             </div>
-            <Button variant="destructive" className="w-full mt-4">Cerrar todas las demás sesiones</Button>
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button variant="destructive" className="w-full mt-4">Cerrar todas las demás sesiones</Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>Cierra sesión en todos los dispositivos excepto este</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
         </div>
     </SettingsCard>
 );

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useForm } from 'react-hook-form';
 import { Plus, MoreHorizontal, User as UserIcon, Shield, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -49,32 +50,59 @@ const roleMapping = {
 };
 
 const UserForm = ({ user, onSave, onCancel, isLoading }) => {
-    const [email, setEmail] = useState(user?.email || '');
-    const [role, setRole] = useState(user?.role_v2 || 'user'); // Asegúrate de usar role_v2 aquí
-    const [fullName, setFullName] = useState(user?.full_name || '');
+    const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm({
+        mode: 'onBlur',
+        defaultValues: {
+            email: user?.email || '',
+            role: user?.role_v2 || 'user',
+            full_name: user?.full_name || ''
+        }
+    });
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onSave({ id: user?.id, email, role, full_name: fullName });
+    const role = watch('role');
+
+    const onSubmit = (data) => {
+        onSave({ id: user?.id, email: data.email, role: data.role, full_name: data.full_name });
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {!user && (
                  <div>
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                    <Input 
+                        id="email" 
+                        type="email" 
+                        {...register('email', { 
+                            required: 'El email es requerido',
+                            pattern: {
+                                value: /^\S+@\S+$/i,
+                                message: 'Formato de email inválido'
+                            }
+                        })} 
+                    />
+                    {errors.email && <p className="text-destructive text-sm mt-1">{errors.email.message}</p>}
                 </div>
             )}
              {user && (
                  <div>
                     <Label htmlFor="fullName">Nombre Completo</Label>
-                    <Input id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+                    <Input 
+                        id="fullName" 
+                        {...register('full_name', { 
+                            required: 'El nombre completo es requerido',
+                            minLength: {
+                                value: 2,
+                                message: 'El nombre debe tener al menos 2 caracteres'
+                            }
+                        })} 
+                    />
+                    {errors.full_name && <p className="text-destructive text-sm mt-1">{errors.full_name.message}</p>}
                 </div>
             )}
             <div>
                 <Label htmlFor="role">Rol</Label>
-                 <Select value={role} onValueChange={setRole}>
+                 <Select value={role} onValueChange={(value) => setValue('role', value)}>
                     <SelectTrigger>
                         <SelectValue placeholder="Selecciona un rol" />
                     </SelectTrigger>

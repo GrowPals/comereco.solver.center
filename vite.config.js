@@ -265,24 +265,52 @@ export default defineConfig({
 				'@babel/types'
 			],
 			output: {
-				manualChunks: {
-					// Vendor chunks
-					'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-					'ui-vendor': [
-						'@radix-ui/react-accordion',
-						'@radix-ui/react-alert-dialog',
-						'@radix-ui/react-dialog',
-						'@radix-ui/react-dropdown-menu',
-						'@radix-ui/react-select',
-						'@radix-ui/react-tabs',
-						'@radix-ui/react-toast'
-					],
-					'chart-vendor': ['chart.js', 'react-chartjs-2'],
-					'form-vendor': ['react-hook-form', 'react-day-picker'],
-					'animation-vendor': ['framer-motion'],
-					'supabase-vendor': ['@supabase/supabase-js'],
-					'query-vendor': ['@tanstack/react-query'],
-					'utils-vendor': ['date-fns', 'clsx', 'tailwind-merge', 'class-variance-authority']
+				manualChunks: (id) => {
+					// Vendor chunks más específicos para mejor caching
+					if (id.includes('node_modules')) {
+						// React core
+						if (id.includes('react') && !id.includes('react-dom') && !id.includes('react-router')) {
+							return 'react-vendor';
+						}
+						// React DOM y Router
+						if (id.includes('react-dom') || id.includes('react-router')) {
+							return 'react-vendor';
+						}
+						// Radix UI components
+						if (id.includes('@radix-ui')) {
+							return 'ui-vendor';
+						}
+						// Charts
+						if (id.includes('chart.js') || id.includes('react-chartjs')) {
+							return 'chart-vendor';
+						}
+						// Forms
+						if (id.includes('react-hook-form') || id.includes('react-day-picker')) {
+							return 'form-vendor';
+						}
+						// Animation - solo si se usa
+						if (id.includes('framer-motion')) {
+							return 'animation-vendor';
+						}
+						// Supabase
+						if (id.includes('@supabase')) {
+							return 'supabase-vendor';
+						}
+						// React Query
+						if (id.includes('@tanstack/react-query')) {
+							return 'query-vendor';
+						}
+						// Utilidades
+						if (id.includes('date-fns') || id.includes('clsx') || id.includes('tailwind-merge') || id.includes('class-variance-authority')) {
+							return 'utils-vendor';
+						}
+						// Lucide icons - pueden ser pesados
+						if (id.includes('lucide-react')) {
+							return 'icons-vendor';
+						}
+						// Otros vendors
+						return 'vendor';
+					}
 				},
 				chunkSizeWarningLimit: 1000
 			}

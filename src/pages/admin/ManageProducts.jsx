@@ -19,7 +19,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 
 const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
-    const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm({ defaultValues: product || { name: '', sku: '', price: 0, stock: 0, is_active: true } });
+    const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm({ 
+        mode: 'onBlur',
+        defaultValues: product || { name: '', sku: '', price: 0, stock: 0, is_active: true } 
+    });
     const isActive = watch('is_active');
 
     React.useEffect(() => {
@@ -46,13 +49,32 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
                         </div>
                         <div>
                             <Label htmlFor="price">Precio</Label>
-                            <Input id="price" type="number" step="0.01" {...register('price', { required: true, valueAsNumber: true, min: 0 })} />
+                            <Input 
+                                id="price" 
+                                type="number" 
+                                step="0.01" 
+                                {...register('price', { 
+                                    required: 'El precio es requerido', 
+                                    valueAsNumber: true, 
+                                    min: { value: 0, message: 'El precio debe ser mayor o igual a 0' }
+                                })} 
+                            />
+                            {errors.price && <p className="text-destructive text-sm mt-1">{errors.price.message}</p>}
                         </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <Label htmlFor="stock">Stock</Label>
-                            <Input id="stock" type="number" {...register('stock', { required: true, valueAsNumber: true, min: 0 })} />
+                            <Input 
+                                id="stock" 
+                                type="number" 
+                                {...register('stock', { 
+                                    required: 'El stock es requerido', 
+                                    valueAsNumber: true, 
+                                    min: { value: 0, message: 'El stock debe ser mayor o igual a 0' }
+                                })} 
+                            />
+                            {errors.stock && <p className="text-destructive text-sm mt-1">{errors.stock.message}</p>}
                         </div>
                         <div>
                             <Label htmlFor="category">Categoría</Label>

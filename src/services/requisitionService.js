@@ -1,5 +1,6 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
+import { getCachedSession } from '@/lib/supabaseHelpers';
 import logger from '@/utils/logger';
 
 /**
@@ -15,8 +16,8 @@ import logger from '@/utils/logger';
  * RLS filtra automáticamente según el rol del usuario
  */
 export const fetchRequisitions = async (page = 1, pageSize = 10, sortBy = 'created_at', ascending = false) => {
-    // Validar sesión antes de hacer queries
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    // Validar sesión antes de hacer queries (usando cache)
+    const { session, error: sessionError } = await getCachedSession();
     if (sessionError || !session) {
         throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
     }
@@ -48,38 +49,40 @@ export const fetchRequisitions = async (page = 1, pageSize = 10, sortBy = 'creat
         throw new Error("No se pudieron cargar las requisiciones.");
     }
 
-    // Enriquecer con datos de proyecto y creador si es necesario
-    // Evitar embeds ambiguos usando consultas separadas
-    const enrichedData = await Promise.all(
-        (data || []).map(async (req) => {
-            let project = null;
-            let creator = null;
+    // Optimizar: Hacer batch queries en lugar de queries individuales
+    const projectIds = [...new Set((data || []).map(r => r.project_id).filter(Boolean))];
+    const creatorIds = [...new Set((data || []).map(r => r.created_by).filter(Boolean))];
 
-            if (req.project_id) {
-                const { data: projectData } = await supabase
-                    .from('projects')
-                    .select('id, name, description, status')
-                    .eq('id', req.project_id)
-                    .single();
-                project = projectData;
-            }
+    // Batch query para proyectos
+    let projectsMap = new Map();
+    if (projectIds.length > 0) {
+        const { data: projects } = await supabase
+            .from('projects')
+            .select('id, name, description, status')
+            .in('id', projectIds);
+        if (projects) {
+            projects.forEach(p => projectsMap.set(p.id, p));
+        }
+    }
 
-            if (req.created_by) {
-                const { data: creatorData } = await supabase
-                    .from('profiles')
-                    .select('id, full_name, avatar_url, role_v2')
-                    .eq('id', req.created_by)
-                    .single();
-                creator = creatorData;
-            }
+    // Batch query para creadores
+    let creatorsMap = new Map();
+    if (creatorIds.length > 0) {
+        const { data: creators } = await supabase
+            .from('profiles')
+            .select('id, full_name, avatar_url, role_v2')
+            .in('id', creatorIds);
+        if (creators) {
+            creators.forEach(c => creatorsMap.set(c.id, c));
+        }
+    }
 
-            return {
-                ...req,
-                project,
-                creator
-            };
-        })
-    );
+    // Enriquecer datos con los maps
+    const enrichedData = (data || []).map(req => ({
+        ...req,
+        project: req.project_id ? projectsMap.get(req.project_id) || null : null,
+        creator: req.created_by ? creatorsMap.get(req.created_by) || null : null,
+    }));
 
     return { data: enrichedData, total: count };
 };
@@ -111,9 +114,10 @@ export const fetchRequisitionDetails = async (id) => {
 
     if (itemsError) {
         logger.error("Error fetching requisition items:", itemsError);
+        // Continuar con items vacío si hay error, pero loguear el problema
     }
 
-    // Obtener productos para los items
+    // Obtener productos para los items (batch query)
     const productIds = items?.map(item => item.product_id).filter(Boolean) || [];
     let productsMap = {};
     if (productIds.length > 0) {
@@ -122,59 +126,55 @@ export const fetchRequisitionDetails = async (id) => {
             .select('id, name, sku, image_url, unit')
             .in('id', productIds);
 
-        if (!productsError && products) {
+        if (productsError) {
+            logger.error("Error fetching products for requisition items:", productsError);
+            // Continuar sin productos si hay error (producto puede haber sido eliminado)
+        } else if (products) {
             productsMap = products.reduce((acc, p) => ({ ...acc, [p.id]: p }), {});
         }
     }
 
-    // Obtener información del proyecto si existe
-    let project = null;
-    if (requisition.project_id) {
-        const { data: projectData, error: projectError } = await supabase
+    // Optimizar: Batch queries para proyecto, creador y aprobador
+    const relatedIds = {
+        project: requisition.project_id ? [requisition.project_id] : [],
+        creator: requisition.created_by ? [requisition.created_by] : [],
+        approver: requisition.approved_by ? [requisition.approved_by] : []
+    };
+
+    const allProfileIds = [...new Set([...relatedIds.creator, ...relatedIds.approver])];
+    
+    // Batch query para perfiles (creador y aprobador)
+    let profilesMap = {};
+    if (allProfileIds.length > 0) {
+        const { data: profiles, error: profilesError } = await supabase
+            .from('profiles')
+            .select('id, full_name, avatar_url, role_v2')
+            .in('id', allProfileIds);
+        
+        if (!profilesError && profiles) {
+            profiles.forEach(p => profilesMap[p.id] = p);
+        }
+    }
+
+    // Batch query para proyectos
+    let projectsMap = {};
+    if (relatedIds.project.length > 0) {
+        const { data: projects, error: projectError } = await supabase
             .from('projects')
             .select('id, name')
-            .eq('id', requisition.project_id)
-            .single();
+            .in('id', relatedIds.project);
         
-        if (!projectError && projectData) {
-            project = projectData;
-        }
-    }
-
-    // Obtener información del creador - campo correcto según documentación: created_by
-    let creator = null;
-    if (requisition.created_by) {
-        const { data: creatorData, error: creatorError } = await supabase
-            .from('profiles')
-            .select('id, full_name, avatar_url, role_v2')
-            .eq('id', requisition.created_by)
-            .single();
-        
-        if (!creatorError && creatorData) {
-            creator = creatorData;
-        }
-    }
-
-    // Obtener información del aprobador si existe
-    let approver = null;
-    if (requisition.approved_by) {
-        const { data: approverData, error: approverError } = await supabase
-            .from('profiles')
-            .select('id, full_name, avatar_url, role_v2')
-            .eq('id', requisition.approved_by)
-            .single();
-        
-        if (!approverError && approverData) {
-            approver = approverData;
+        if (!projectError && projects) {
+            projects.forEach(p => projectsMap[p.id] = p);
         }
     }
 
     // Combinar datos
     return {
         ...requisition,
-        project,
-        creator,
-        approver,
+        project: requisition.project_id ? projectsMap[requisition.project_id] || null : null,
+        creator: requisition.created_by ? profilesMap[requisition.created_by] || null : null,
+        approver: requisition.approved_by ? profilesMap[requisition.approved_by] || null : null,
         items: items?.map(item => ({
             ...item,
             product: productsMap[item.product_id] || null
@@ -236,6 +236,12 @@ export const createRequisitionFromCart = async ({ projectId, comments, items }) 
  * @returns {Promise<Array>} Lista de requisiciones pendientes.
  */
 export const fetchPendingApprovals = async () => {
+    // Validar sesión antes de hacer queries (usando cache)
+    const { session, error: sessionError } = await getCachedSession();
+    if (sessionError || !session) {
+        throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+    }
+    
     // CORREGIDO: Usar created_by según REFERENCIA_TECNICA_BD_SUPABASE.md
     const { data: requisitions, error } = await supabase
         .from('requisitions')
@@ -248,37 +254,40 @@ export const fetchPendingApprovals = async () => {
         throw new Error('No se pudieron cargar las aprobaciones pendientes.');
     }
 
-    // Enriquecer con datos de proyecto y creador
-    const enrichedRequisitions = await Promise.all(
-        (requisitions || []).map(async (req) => {
-            let project = null;
-            let creator = null;
+    // Optimizar: Hacer batch queries en lugar de queries individuales
+    const projectIds = [...new Set((requisitions || []).map(r => r.project_id).filter(Boolean))];
+    const creatorIds = [...new Set((requisitions || []).map(r => r.created_by).filter(Boolean))];
 
-            if (req.project_id) {
-                const { data: projectData } = await supabase
-                    .from('projects')
-                    .select('name')
-                    .eq('id', req.project_id)
-                    .single();
-                project = projectData;
-            }
+    // Batch query para proyectos
+    let projectsMap = new Map();
+    if (projectIds.length > 0) {
+        const { data: projects } = await supabase
+            .from('projects')
+            .select('id, name')
+            .in('id', projectIds);
+        if (projects) {
+            projects.forEach(p => projectsMap.set(p.id, p));
+        }
+    }
 
-            if (req.created_by) {
-                const { data: creatorData } = await supabase
-                    .from('profiles')
-                    .select('id, full_name, avatar_url, role_v2')
-                    .eq('id', req.created_by)
-                    .single();
-                creator = creatorData;
-            }
+    // Batch query para creadores
+    let creatorsMap = new Map();
+    if (creatorIds.length > 0) {
+        const { data: creators } = await supabase
+            .from('profiles')
+            .select('id, full_name, avatar_url, role_v2')
+            .in('id', creatorIds);
+        if (creators) {
+            creators.forEach(c => creatorsMap.set(c.id, c));
+        }
+    }
 
-            return {
-                ...req,
-                project,
-                creator
-            };
-        })
-    );
+    // Enriquecer datos con los maps
+    const enrichedRequisitions = (requisitions || []).map(req => ({
+        ...req,
+        project: req.project_id ? projectsMap.get(req.project_id) || null : null,
+        creator: req.created_by ? creatorsMap.get(req.created_by) || null : null,
+    }));
 
     return enrichedRequisitions;
 };

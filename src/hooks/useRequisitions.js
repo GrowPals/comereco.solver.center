@@ -14,6 +14,8 @@ export const useRequisitions = (filters = { page: 1, pageSize: 10, sortBy: 'crea
   return useQuery({
     queryKey: ['requisitions', filters],
     queryFn: () => fetchRequisitions(filters.page, filters.pageSize, filters.sortBy, filters.ascending),
+    staleTime: 1000 * 60 * 2, // 2 minutos - requisiciones pueden cambiar frecuentemente
+    gcTime: 1000 * 60 * 10, // 10 minutos en cache
     placeholderData: (previousData) => previousData,
     keepPreviousData: true,
   });
@@ -28,5 +30,7 @@ export const useRequisitionDetails = (requisitionId) => {
     queryKey: ['requisition', requisitionId],
     queryFn: () => fetchRequisitionDetails(requisitionId),
     enabled: !!requisitionId, // Solo ejecuta la query si requisitionId no es nulo
+    staleTime: 1000 * 60 * 5, // 5 minutos - detalles cambian menos frecuentemente
+    gcTime: 1000 * 60 * 15,
   });
 };

@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/components/ui/useToast';
+import { useToastNotification } from '@/components/ui/toast-notification';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/lib/customSupabaseClient';
 import logger from '@/utils/logger';
@@ -29,7 +29,7 @@ const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name })
 
 const ProfilePage = () => {
   const { user, loading: authLoading, updateUser } = useSupabaseAuth();
-  const { toast } = useToast();
+  const toast = useToastNotification();
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({ full_name: '' });
   const [stats, setStats] = useState({ created: 0, approved: 0 });
@@ -79,7 +79,7 @@ const ProfilePage = () => {
 
     } catch (error) {
       logger.error('Failed to load profile data:', error);
-      toast({ variant: 'destructive', title: 'Error', description: 'No se pudieron cargar los datos del perfil.' });
+      toast.error('Error', 'No se pudieron cargar los datos del perfil.');
     } finally {
       setLoading(false);
     }
@@ -97,10 +97,10 @@ const ProfilePage = () => {
   const handleSave = async () => {
     try {
       await updateUser({ full_name: profileData.full_name });
-      toast({ title: 'Éxito', description: 'Tu perfil ha sido actualizado.' });
+      toast.success('Éxito', 'Tu perfil ha sido actualizado.');
       setIsEditing(false);
     } catch (error) {
-      toast({ variant: 'destructive', title: 'Error', description: 'No se pudo actualizar tu perfil.' });
+      toast.error('Error', 'No se pudo actualizar tu perfil.');
     }
   };
 
@@ -123,7 +123,8 @@ const ProfilePage = () => {
   return (
     <>
       <Helmet><title>Mi Perfil - ComerECO</title></Helmet>
-      <div className="p-4 sm:p-6 lg:p-8 space-y-6">
+
+      <div className="p-4 sm:p-6 lg:p-8 space-y-6 bg-gray-50 min-h-screen">
         <Card className="overflow-hidden">
           <div className="bg-muted/30 h-24" />
           <CardContent className="p-6 pt-0">

@@ -1,16 +1,16 @@
 
-import React from 'react';
+import React, { useMemo, memo } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Home, List, FolderKanban, ShoppingCart, CheckSquare, Users, LayoutGrid, Star, BarChart, LayoutTemplate } from 'lucide-react';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
 import { useCart } from '@/hooks/useCart';
 
-const BottomNav = () => {
+const BottomNav = memo(() => {
     const location = useLocation();
     const { isAdmin, isSupervisor, canCreateRequisitions } = useUserPermissions();
-    const { cart } = useCart();
+    const { totalItems } = useCart();
 
-    const getNavItems = () => {
+    const navItems = useMemo(() => {
         const baseItems = [
             { path: '/dashboard', icon: Home, label: 'Inicio' },
             { path: '/catalog', icon: LayoutGrid, label: 'Catálogo' },
@@ -41,9 +41,8 @@ const BottomNav = () => {
             { path: '/templates', icon: LayoutTemplate, label: 'Plantillas' },
             { path: '/favorites', icon: Star, label: 'Favoritos' },
         ];
-    };
+    }, [isAdmin, isSupervisor]);
 
-    const navItems = getNavItems();
     const isActive = (path) => location.pathname === path || (path !== '/dashboard' && location.pathname.startsWith(path));
 
     return (
@@ -60,9 +59,9 @@ const BottomNav = () => {
                     >
                         <div className="relative">
                             <item.icon className="w-6 h-6 mb-1" />
-                            {item.path === '/catalog' && cart.length > 0 && (
+                            {item.path === '/catalog' && totalItems > 0 && (
                                 <span className="absolute -top-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                                    {cart.length}
+                                    {totalItems || 0}
                                 </span>
                             )}
                         </div>
@@ -72,6 +71,8 @@ const BottomNav = () => {
             </div>
         </nav>
     );
-};
+});
+
+BottomNav.displayName = 'BottomNav';
 
 export default BottomNav;

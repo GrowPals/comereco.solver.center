@@ -14,8 +14,11 @@ export const useProducts = (filters) => {
   return useQuery({
     queryKey: ['products', filters],
     queryFn: () => getProducts(filters),
+    staleTime: 1000 * 60 * 10, // 10 minutos - productos cambian poco
+    gcTime: 1000 * 60 * 30, // 30 minutos en cache
     placeholderData: (previousData) => previousData,
     keepPreviousData: true,
+    retry: 2,
   });
 };
 
@@ -28,6 +31,8 @@ export const useProductDetails = (productId) => {
     queryKey: ['product', productId],
     queryFn: () => getProductById(productId),
     enabled: !!productId, // Solo ejecuta la query si productId no es nulo
+    staleTime: 1000 * 60 * 15, // 15 minutos - detalles cambian poco
+    gcTime: 1000 * 60 * 30,
   });
 };
 
@@ -38,6 +43,7 @@ export const useProductCategories = () => {
     return useQuery({
         queryKey: ['productCategories'],
         queryFn: getUniqueProductCategories,
-        staleTime: 1000 * 60 * 60, // Cache por 1 hora
+        staleTime: 1000 * 60 * 60, // Cache por 1 hora - categorías raramente cambian
+        gcTime: 1000 * 60 * 60 * 2, // 2 horas en cache
     });
 };

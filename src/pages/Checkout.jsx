@@ -21,12 +21,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { createTemplate } from '@/services/templateService';
 
 const CheckoutPage = () => {
-    const { cart, total, clearCart } = useCart();
+    const { items, subtotal, total, clearCart } = useCart();
     const { user } = useSupabaseAuth();
     const { toast } = useToast();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const { register, handleSubmit, control, formState: { errors } } = useForm();
+    const { register, handleSubmit, control, formState: { errors } } = useForm({
+        mode: 'onBlur',
+        defaultValues: {
+            projectId: '',
+            comments: ''
+        }
+    });
     
     const [isTemplateModalOpen, setTemplateModalOpen] = useState(false);
     const [templateName, setTemplateName] = useState('');
@@ -74,14 +80,14 @@ const CheckoutPage = () => {
     });
 
     const onSubmit = (formData) => {
-        if (cart.length === 0) {
+        if (items.length === 0) {
             toast({ title: 'Carrito vacío', description: 'Agrega productos para crear una requisición.', variant: 'destructive' });
             return;
         }
         createRequisitionMutation.mutate({
             projectId: formData.projectId,
             comments: formData.comments,
-            items: cart.map(item => ({ product_id: item.product.id, quantity: item.quantity })),
+            items: items.map(item => ({ product_id: item.id, quantity: item.quantity })),
         });
     };
     
@@ -90,17 +96,17 @@ const CheckoutPage = () => {
             toast({ title: 'Nombre requerido', description: 'Por favor, dale un nombre a tu plantilla.', variant: 'destructive'});
             return;
         }
-        const items = cart.map(item => ({ product_id: item.product.id, quantity: item.quantity }));
+        const templateItems = items.map(item => ({ product_id: item.id, quantity: item.quantity }));
         createTemplateMutation.mutate({
             name: templateName,
             description: templateDescription,
-            items: items,
+            items: templateItems,
             project_id: null,
         });
     };
 
     if (isLoadingProjects) return <PageLoader />;
-    if (cart.length === 0 && !createRequisitionMutation.isSuccess) {
+    if (items.length === 0 && !createRequisitionMutation.isSuccess) {
         return (
             <div className="h-screen -mt-20">
                 <EmptyState
@@ -154,7 +160,7 @@ const CheckoutPage = () => {
                         <div>
                              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2"><Save /> Acciones Adicionales</h2>
                              <div className="bg-card p-6 rounded-lg border">
-                                <Button type="button" variant="outline" className="w-full" onClick={() => setTemplateModalOpen(true)} disabled={cart.length === 0}>
+                                <Button type="button" variant="outline" className="w-full" onClick={() => setTemplateModalOpen(true)} disabled={items.length === 0}>
                                     Guardar como Plantilla
                                 </Button>
                              </div>
@@ -165,23 +171,27 @@ const CheckoutPage = () => {
                     <div className="space-y-6">
                         <h2 className="text-xl font-semibold mb-4 flex items-center gap-2"><ShoppingCart /> Resumen del Pedido</h2>
                         <div className="bg-card p-4 rounded-lg border space-y-3 max-h-96 overflow-y-auto">
-                            {cart.map(item => (
-                                <div key={item.product.id} className="flex items-center gap-4 text-sm">
-                                    <img class="w-14 h-14 rounded-md object-cover" alt={item.product.name} src="https://images.unsplash.com/photo-1695561115667-c2e975c7cf22" />
+                            {items.map(item => (
+                                <div key={item.id} className="flex items-center gap-4 text-sm">
+                                    <img className="w-14 h-14 rounded-md object-cover" alt={item.name} src={item.image_url || '/placeholder.png'} />
                                     <div className="flex-grow">
-                                        <p className="font-semibold line-clamp-1">{item.product.name}</p>
+                                        <p className="font-semibold line-clamp-1">{item.name}</p>
                                         <p className="text-muted-foreground">Cantidad: {item.quantity}</p>
                                     </div>
-                                    <p className="font-semibold">${(item.quantity * item.product.price).toFixed(2)}</p>
+                                    <p className="font-semibold">${(item.quantity * (item.price || 0)).toFixed(2)}</p>
                                 </div>
                             ))}
                         </div>
                         <div className="bg-card p-6 rounded-lg border space-y-3 text-lg">
                             <div className="flex justify-between items-center">
                                 <span className="text-muted-foreground">Subtotal:</span>
-                                <span className="font-semibold">${total.toFixed(2)}</span>
+                                <span className="font-semibold">${subtotal.toFixed(2)}</span>
                             </div>
-                            <div className="flex justify-between items-center font-bold">
+                            <div className="flex justify-between items-center">
+                                <span className="text-muted-foreground">IVA (16%):</span>
+                                <span className="font-semibold">${((total - subtotal) || 0).toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between items-center font-bold border-t pt-3">
                                 <span>Total:</span>
                                 <span>${total.toFixed(2)}</span>
                             </div>

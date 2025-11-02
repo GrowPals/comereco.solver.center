@@ -154,11 +154,33 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Focus visible for accessibility */
+  :focus-visible {
+    outline: 2px solid var(--primary-500);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Better text selection */
+  ::selection {
+    background-color: var(--primary-200);
+    color: var(--neutral-900);
+  }
+
+  ::-moz-selection {
+    background-color: var(--primary-200);
+    color: var(--neutral-900);
   }
 }
 
@@ -166,21 +188,25 @@
 
   /* Scrollbar personalizado */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
   }
 
   ::-webkit-scrollbar-track {
-    background: transparent;
+    background: var(--neutral-100);
+    border-radius: 8px;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--neutral-10));
-    border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+    border-radius: 8px;
+    border: 2px solid var(--neutral-100);
+    transition: all 0.2s ease;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--neutral-20));
+    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+    border: 2px solid var(--neutral-50);
   }
 
   /* ============ SOMBRAS PROFESIONALES ============ */

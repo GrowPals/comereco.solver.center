@@ -23,10 +23,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import PageLoader from '@/components/PageLoader';
 
 const notificationIcons = {
-    approved: { icon: CheckCheck, color: 'bg-green-100 text-green-800' },
-    rejected: { icon: X, color: 'bg-red-100 text-red-700' },
-    submitted: { icon: Bell, color: 'bg-blue-100 text-blue-700' },
-    commented: { icon: Bell, color: 'bg-yellow-100 text-yellow-800' },
+    success: { icon: CheckCheck, color: 'bg-green-100 text-green-800' },
+    warning: { icon: Bell, color: 'bg-yellow-100 text-yellow-800' },
+    danger: { icon: X, color: 'bg-red-100 text-red-700' },
+    info: { icon: Bell, color: 'bg-blue-100 text-blue-700' },
     default: { icon: Bell, color: 'bg-gray-100 text-gray-800' },
 };
 
@@ -136,7 +136,7 @@ const NotificationsPage = () => {
                     <Button onClick={() => confirmAction('markAllRead', allNotifications.filter(n => !n.is_read).map(n => n.id))} disabled={unreadCount === 0}><CheckCheck className="mr-2 h-4 w-4" /> Marcar todo como leído</Button>
                 </header>
 
-                <Card className="p-4"><div className="flex flex-col sm:flex-row gap-4 items-center"><div className="relative w-full sm:max-w-xs"><Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" /><Input placeholder="Buscar..." value={filters.query} onChange={e => setFilters(p => ({...p, query: e.target.value}))} className="pl-10" /></div><Select value={filters.type} onValueChange={v => setFilters(p => ({...p, type: v}))}><SelectTrigger className="w-full sm:w-[180px]"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Todos los tipos</SelectItem><SelectItem value="approved">Aprobaciones</SelectItem><SelectItem value="rejected">Rechazos</SelectItem><SelectItem value="submitted">Nuevas</SelectItem></SelectContent></Select><Button variant="ghost" onClick={() => setFilters({ query: '', type: 'all' })} className="w-full sm:w-auto"><X className="mr-2 h-4 w-4"/>Limpiar</Button></div></Card>
+                <Card className="p-4"><div className="flex flex-col sm:flex-row gap-4 items-center"><div className="relative w-full sm:max-w-xs"><Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" /><Input placeholder="Buscar..." value={filters.query} onChange={e => setFilters(p => ({...p, query: e.target.value}))} className="pl-10" /></div><Select value={filters.type} onValueChange={v => setFilters(p => ({...p, type: v}))}><SelectTrigger className="w-full sm:w-[180px]"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Todos los tipos</SelectItem><SelectItem value="success">Éxito</SelectItem><SelectItem value="warning">Advertencia</SelectItem><SelectItem value="danger">Error</SelectItem><SelectItem value="info">Información</SelectItem></SelectContent></Select><Button variant="ghost" onClick={() => setFilters({ query: '', type: 'all' })} className="w-full sm:w-auto"><X className="mr-2 h-4 w-4"/>Limpiar</Button></div></Card>
 
                 <Tabs value={activeTab} onValueChange={setActiveTab}><TabsList className="grid w-full grid-cols-2"><TabsTrigger value="all">Todas</TabsTrigger><TabsTrigger value="unread">No Leídas {unreadCount > 0 && <span className="ml-2 bg-primary text-primary-foreground h-5 w-5 text-xs rounded-full flex items-center justify-center">{unreadCount}</span>}</TabsTrigger></TabsList></Tabs>
                 

@@ -1,5 +1,6 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
+import { getCachedSession } from '@/lib/supabaseHelpers';
 import logger from '@/utils/logger';
 
 /**
@@ -9,8 +10,8 @@ import logger from '@/utils/logger';
  * @returns {Promise<Array>} Una lista de perfiles de usuario.
  */
 export const fetchUsersInCompany = async () => {
-  // Validar sesión antes de hacer queries
-  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+  // Validar sesión antes de hacer queries (usando cache)
+  const { session, error: sessionError } = await getCachedSession();
   if (sessionError || !session) {
     throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
   }
@@ -98,8 +99,8 @@ export const inviteUser = async (email, role) => {
  * @returns {Promise<Object>} El perfil de usuario actualizado.
  */
 export const updateUserProfile = async (userId, updateData) => {
-  // Validar sesión antes de hacer queries
-  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+  // Validar sesión antes de hacer queries (usando cache)
+  const { session, error: sessionError } = await getCachedSession();
   if (sessionError || !session) {
     throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
   }

@@ -1,7 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet';
-import { motion } from 'framer-motion';
 import { LayoutGrid, List, Filter, X, Loader2 } from 'lucide-react';
 
 import { useProducts, useProductCategories } from '@/hooks/useProducts';
@@ -62,18 +61,14 @@ const CatalogPage = () => {
         <title>Catálogo de Productos - ComerECO</title>
         <meta name="description" content="Explore nuestro catálogo completo de productos." />
       </Helmet>
-      <div className="p-4 sm:p-6 lg:p-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <header className="mb-8">
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">Catálogo de Productos</h1>
-            <p className="mt-2 text-muted-foreground">Encuentra todo lo que necesitas para tus proyectos.</p>
-          </header>
 
-          <div className="flex flex-col md:flex-row gap-4 mb-6 sticky top-0 bg-background/80 backdrop-blur-sm py-4 z-10">
+      <div className="p-4 sm:p-6 lg:p-8 bg-white min-h-screen">
+        <header className="mb-8">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Catálogo de Productos</h1>
+          <p className="mt-2 text-gray-600">Encuentra todo lo que necesitas para tus proyectos.</p>
+        </header>
+
+        <div className="flex flex-col md:flex-row gap-4 mb-6 sticky top-0 bg-white py-4 z-10 border-b">
             <div className="relative flex-grow">
               <Input
                 placeholder="Buscar por nombre de producto..."
@@ -81,7 +76,7 @@ const CatalogPage = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pr-10"
               />
-              {isFetching && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 animate-spin text-muted-foreground" />}
+              {isFetching && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 animate-spin text-gray-400" />}
             </div>
             <div className="flex gap-2">
               <Select value={category} onValueChange={setCategory}>
@@ -138,16 +133,11 @@ const CatalogPage = () => {
 
           {!isLoading && !isError && products.length > 0 && (
             <>
-              <motion.div
-                layout
-                className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4' : 'grid-cols-1'}`}
-              >
+              <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4' : 'grid-cols-1'}`}>
                 {products.map(product => (
-                  <motion.div layout key={product.id}>
-                    <ProductCard product={product} viewMode={viewMode} />
-                  </motion.div>
+                  <ProductCard key={product.id} product={product} />
                 ))}
-              </motion.div>
+              </div>
 
               {totalPages > 1 && (
                 <Pagination
@@ -159,7 +149,6 @@ const CatalogPage = () => {
               )}
             </>
           )}
-        </motion.div>
       </div>
     </>
   );

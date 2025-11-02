@@ -5,11 +5,11 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, AlertTriangle } from 'lucide-react';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { RippleButton } from '@/components/ui/ripple-button';
+import { FloatingInput } from '@/components/ui/floating-input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/useToast';
+import { useToastNotification } from '@/components/ui/toast-notification';
 import logger from '@/utils/logger';
 
 const LoginPage = () => {
@@ -22,7 +22,7 @@ const LoginPage = () => {
     const { signIn, session } = useSupabaseAuth();
     const navigate = useNavigate();
     const location = useLocation();
-    const { toast } = useToast();
+    const toast = useToastNotification();
     const from = location.state?.from?.pathname || "/dashboard";
 
     const [isLoading, setIsLoading] = useState(false);
@@ -47,11 +47,7 @@ const LoginPage = () => {
                 handleRememberChange(formData.remember);
                 await new Promise(resolve => setTimeout(resolve, 100));
 
-                toast({
-                  title: '¡Bienvenido de vuelta!',
-                  description: `Has iniciado sesión correctamente.`,
-                  variant: 'success'
-                });
+                toast.success('¡Bienvenido de vuelta!', 'Has iniciado sesión correctamente.');
             } else {
                 const errorMessage = error.message?.includes('Invalid login credentials')
                   ? 'Email o contraseña incorrectos.'
@@ -59,11 +55,7 @@ const LoginPage = () => {
                 setAuthError(errorMessage);
                 setIsShaking(true);
                 setTimeout(() => setIsShaking(false), 500);
-                toast({
-                  title: 'Error al iniciar sesión',
-                  description: errorMessage,
-                  variant: 'destructive'
-                });
+                toast.error('Error al iniciar sesión', errorMessage);
             }
         } catch (err) {
             logger.error('Error during login:', err);
@@ -127,37 +119,30 @@ const LoginPage = () => {
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                             {/* Email Input */}
                             <div>
-                                <Label htmlFor="email" className="text-sm font-semibold text-neutral-900 mb-2 block">Email</Label>
-                                <Input
+                                <FloatingInput
                                     id="email"
                                     type="email"
-                                    placeholder="tu@email.com"
+                                    label="Email"
                                     icon={<Mail />}
-                                    className={errors.email ? 'border-error focus-visible:border-error focus-visible:ring-error/30' : ''}
+                                    error={errors.email?.message}
                                     {...register('email', {
                                         required: 'El email es requerido',
                                         pattern: { value: /^\S+@\S+$/i, message: 'Formato de email inválido' }
                                     })}
                                     disabled={isLoading}
                                 />
-                                {errors.email && (
-                                    <p className="mt-2 text-sm text-error flex items-center gap-1.5">
-                                        <AlertTriangle className="w-4 h-4"/>
-                                        {errors.email.message}
-                                    </p>
-                                )}
                             </div>
 
                             {/* Password Input */}
                             <div>
-                                <Label htmlFor="password" className="text-sm font-semibold text-neutral-900 mb-2 block">Contraseña</Label>
                                 <div className="relative">
-                                    <Input
+                                    <FloatingInput
                                         id="password"
                                         type={showPassword ? 'text' : 'password'}
-                                        placeholder="••••••••"
+                                        label="Contraseña"
                                         icon={<Lock />}
-                                        className={`pr-12 ${errors.password ? 'border-error focus-visible:border-error focus-visible:ring-error/30' : ''}`}
+                                        error={errors.password?.message}
+                                        className="pr-12"
                                         {...register('password', {
                                             required: 'La contraseña es requerida'
                                         })}
@@ -166,18 +151,12 @@ const LoginPage = () => {
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-900 transition-colors duration-200"
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-900 transition-colors duration-200 z-10"
                                         disabled={isLoading}
                                     >
                                         {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                                     </button>
                                 </div>
-                                {errors.password && (
-                                    <p className="mt-2 text-sm text-error flex items-center gap-1.5">
-                                        <AlertTriangle className="w-4 h-4"/>
-                                        {errors.password.message}
-                                    </p>
-                                )}
                             </div>
 
                             {/* Auth Error */}
@@ -208,10 +187,7 @@ const LoginPage = () => {
                                 </div>
                                 <Link
                                     to="#"
-                                    onClick={() => toast({
-                                        title: "Función no implementada",
-                                        description: "La recuperación de contraseña estará disponible pronto."
-                                    })}
+                                    onClick={() => toast.info("Función no implementada", "La recuperación de contraseña estará disponible pronto.")}
                                     className="text-sm text-primary-600 hover:text-primary-700 hover:underline transition-all duration-200 font-medium"
                                 >
                                     ¿Olvidaste tu contraseña?
@@ -219,14 +195,14 @@ const LoginPage = () => {
                             </div>
 
                             {/* Submit Button */}
-                            <Button
+                            <RippleButton
                                 type="submit"
                                 size="lg"
                                 className="w-full"
-                                isLoading={isLoading}
+                                disabled={isLoading}
                             >
-                                Iniciar Sesión
-                            </Button>
+                                {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+                            </RippleButton>
                         </form>
                     </motion.div>
 

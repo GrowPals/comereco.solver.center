@@ -10,8 +10,7 @@ import BottomNav from '@/components/layout/BottomNav';
 import Cart from '@/components/Cart';
 import PageLoader from '@/components/PageLoader';
 import AppProviders from '@/context/AppProviders';
-
-import { AnimatePresence } from 'framer-motion';
+import { ToastProvider } from '@/components/ui/toast-notification';
 
 // Lazy loading de las páginas
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
@@ -78,7 +77,7 @@ const AppLayout = () => {
   const contentMargin = isSidebarOpen ? 'lg:ml-64' : 'lg:ml-20';
 
   return (
-    <div className="flex h-screen bg-background text-foreground">
+    <div className="flex h-screen bg-white text-gray-900">
       {showNav && (
         <>
           <Sidebar isSidebarOpen={isSidebarOpen} isMobileNavOpen={isMobileNavOpen} setMobileNavOpen={setMobileNavOpen} />
@@ -91,8 +90,7 @@ const AppLayout = () => {
         
         <main className="flex-1 overflow-y-auto pb-24 lg:pb-0" id="main-content">
             <Suspense fallback={<div className="h-full"><PageLoader /></div>}>
-                <AnimatePresence mode="wait">
-                    <Routes location={location} key={location.pathname}>
+                <Routes location={location}>
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/requisitions" element={<RequisitionsPage />} />
                         <Route path="/requisitions/:id" element={<RequisitionDetail />} />
@@ -134,7 +132,6 @@ const AppLayout = () => {
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />
                         <Route path="*" element={<Navigate to="/dashboard" replace />} />
                     </Routes>
-                </AnimatePresence>
             </Suspense>
         </main>
 
@@ -155,19 +152,21 @@ const AppLayout = () => {
 const App = () => (
   <Router>
     <AppProviders>
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route 
-            path="/*"
-            element={
-              <PrivateRoute>
-                <AppLayout />
-              </PrivateRoute>
-            } 
-          />
-        </Routes>
-      </Suspense>
+      <ToastProvider>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route
+              path="/*"
+              element={
+                <PrivateRoute>
+                  <AppLayout />
+                </PrivateRoute>
+              }
+            />
+          </Routes>
+        </Suspense>
+      </ToastProvider>
     </AppProviders>
   </Router>
 );

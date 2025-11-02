@@ -1,5 +1,6 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
+import { getCachedSession } from '@/lib/supabaseHelpers';
 import logger from '@/utils/logger';
 
 /**
@@ -7,8 +8,8 @@ import logger from '@/utils/logger';
  * RLS filtra automáticamente por company_id según REFERENCIA_TECNICA_BD_SUPABASE.md
  */
 export const fetchProducts = async ({ pageParam = 0, searchTerm = '', category = '', availability = '' }) => {
-    // Validar sesión antes de hacer queries
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    // Validar sesión antes de hacer queries (usando cache)
+    const { session, error: sessionError } = await getCachedSession();
     if (sessionError || !session) {
         throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
     }
@@ -50,6 +51,12 @@ export const fetchProducts = async ({ pageParam = 0, searchTerm = '', category =
 };
 
 export const fetchProductById = async (productId) => {
+    // Validar sesión antes de hacer queries (usando cache)
+    const { session, error: sessionError } = await getCachedSession();
+    if (sessionError || !session) {
+        throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+    }
+
     const { data, error } = await supabase
         .from('products')
         .select('*')
@@ -94,7 +101,8 @@ export const fetchProductCategories = async () => {
  * RLS filtra automáticamente por company_id
  */
 export const getAdminProducts = async () => {
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    // Validar sesión antes de hacer queries (usando cache)
+    const { session, error: sessionError } = await getCachedSession();
     if (sessionError || !session) {
         throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
     }
@@ -164,7 +172,8 @@ export const getProducts = async (filters = {}) => {
     const result = await fetchProducts({ pageParam, searchTerm, category });
     return {
         data: result.products,
-        total: result.totalCount,
+        count: result.totalCount, // Cambiado de 'total' a 'count' para consistencia
+        total: result.totalCount, // Mantener ambos para compatibilidad
     };
 };
 

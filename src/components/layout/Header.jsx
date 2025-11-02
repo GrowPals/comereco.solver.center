@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useMemo, useCallback, memo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, ChevronDown, LogOut, Search, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,17 +9,19 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import NotificationCenter from '@/components/layout/NotificationCenter';
 
-const Header = ({ setSidebarOpen }) => {
+const Header = memo(({ setSidebarOpen }) => {
     const { user, signOut } = useSupabaseAuth();
     const navigate = useNavigate();
 
-    const handleLogout = async () => {
+    const handleLogout = useCallback(async () => {
         await signOut();
         navigate('/login');
-    };
+    }, [signOut, navigate]);
 
-    const userName = user?.full_name || 'Usuario';
-    const userInitials = userName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    const userName = useMemo(() => user?.full_name || 'Usuario', [user?.full_name]);
+    const userInitials = useMemo(() => {
+        return userName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    }, [userName]);
 
     return (
         <header className="sticky top-0 z-20 flex h-20 items-center justify-between gap-4 border-b border-neutral-200 bg-white/95 backdrop-blur-sm shadow-sm px-4 md:px-8">
@@ -69,6 +71,8 @@ const Header = ({ setSidebarOpen }) => {
             </div>
         </header>
     );
-};
+});
+
+Header.displayName = 'Header';
 
 export default Header;

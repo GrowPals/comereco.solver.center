@@ -1,28 +1,28 @@
 
-import React from 'react';
+import React, { memo, useMemo, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-const Pagination = ({
+const Pagination = memo(({
   currentPage,
   totalPages,
   onPageChange,
   className,
 }) => {
-  const handlePrevious = () => {
+  const handlePrevious = useCallback(() => {
     if (currentPage > 1) {
       onPageChange(currentPage - 1);
     }
-  };
+  }, [currentPage, onPageChange]);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (currentPage < totalPages) {
       onPageChange(currentPage + 1);
     }
-  };
+  }, [currentPage, totalPages, onPageChange]);
 
-  const getPageNumbers = () => {
+  const pageNumbers = useMemo(() => {
     const pages = [];
     if (totalPages <= 5) {
       for (let i = 1; i <= totalPages; i++) {
@@ -38,7 +38,7 @@ const Pagination = ({
       }
     }
     return pages;
-  };
+  }, [currentPage, totalPages]);
 
   return (
     <div className={cn('flex items-center justify-center space-x-2 py-4', className)}>
@@ -51,7 +51,7 @@ const Pagination = ({
       >
         <ChevronLeft className="h-4 w-4" />
       </Button>
-      {getPageNumbers().map((page, index) =>
+      {pageNumbers.map((page, index) =>
         typeof page === 'number' ? (
           <Button
             key={index}
@@ -79,7 +79,9 @@ const Pagination = ({
       </Button>
     </div>
   );
-};
+});
+
+Pagination.displayName = 'Pagination';
 
 export default Pagination;
 export { Pagination };
