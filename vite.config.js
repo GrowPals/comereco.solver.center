@@ -299,41 +299,17 @@ export default defineConfig({
 				'@babel/types'
 			],
 			output: {
-				// Separar React y todas sus dependencias en su propio chunk
+				// SOLUCIÓN DEFINITIVA: TODO en un solo vendor chunk
+				// Esto elimina completamente los problemas de orden de carga entre chunks
+				// porque no hay dependencias entre chunks de vendor
 				manualChunks: (id) => {
-					// React core - DEBE estar primero
-					if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
-						return 'react-vendor';
-					}
-					// Todas las librerías que dependen de React deben estar en react-vendor también
-					// Esto asegura que React esté disponible cuando estas librerías se ejecuten
-					if (
-						id.includes('node_modules/@tanstack/react-query') ||
-						id.includes('node_modules/react-router') ||
-						id.includes('node_modules/react-hook-form') ||
-						id.includes('node_modules/react-helmet') ||
-						id.includes('node_modules/react-intersection-observer') ||
-						id.includes('node_modules/react-chartjs-2') ||
-						id.includes('node_modules/react-day-picker') ||
-						id.includes('node_modules/@radix-ui') ||
-						id.includes('node_modules/framer-motion') ||
-						id.includes('node_modules/lucide-react')
-					) {
-						return 'react-vendor';
-					}
-					// Otros vendor dependencies (sin React)
+					// TODO de node_modules va a un solo chunk vendor
 					if (id.includes('node_modules')) {
 						return 'vendor';
 					}
 				},
-				// Asegurar orden de carga: react-vendor debe cargarse primero
-				chunkFileNames: (chunkInfo) => {
-					if (chunkInfo.name === 'react-vendor') {
-						return 'assets/react-vendor-[hash].js';
-					}
-					return 'assets/[name]-[hash].js';
-				},
-				// Asegurar que los chunks se carguen en el orden correcto
+				// Configuración de nombres de archivos
+				chunkFileNames: 'assets/[name]-[hash].js',
 				entryFileNames: 'assets/[name]-[hash].js',
 				assetFileNames: 'assets/[name]-[hash].[ext]',
 				chunkSizeWarningLimit: 1000,

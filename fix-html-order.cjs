@@ -47,11 +47,10 @@ try {
     // Remover duplicados
     const uniqueScripts = [...new Set(allScripts)];
 
-    // Clasificar scripts
-    const reactVendor = uniqueScripts.find(s =>
-        s.includes('react-vendor') ||
-        s.includes('react-core') ||
-        s.match(/react-[a-f0-9]+\.js/)
+    // Clasificar scripts - Ahora solo hay vendor y index
+    const vendorScript = uniqueScripts.find(s =>
+        s.includes('vendor') ||
+        s.match(/vendor-[a-f0-9]+\.js/)
     );
 
     const mainScript = uniqueScripts.find(s =>
@@ -59,13 +58,8 @@ try {
         s.match(/index-[a-f0-9]+\.js/)
     );
 
-    const otherScripts = uniqueScripts.filter(s =>
-        s !== reactVendor &&
-        s !== mainScript
-    );
-
-    if (!reactVendor) {
-        console.log('⚠️  React vendor chunk not found');
+    if (!vendorScript) {
+        console.log('⚠️  Vendor chunk not found');
         console.log('   Scripts found:', uniqueScripts);
         console.log('   Continuing without reordering...');
         process.exit(0);
@@ -82,17 +76,21 @@ try {
     html = html.replace(/<script type="module" crossorigin src="[^"]+"><\/script>(\n)?/g, '');
     html = html.replace(/<link rel="modulepreload" crossorigin href="[^"]+">(\n)?/g, '');
 
-    // Construir el nuevo orden de scripts (SIN preload, todos como scripts normales)
-    // Esto asegura que se ejecuten en el orden correcto
+    // Construir el nuevo orden de scripts
+    // CRÍTICO: Vendor necesita modulepreload para cargarse ANTES que index
+    // Vendor contiene React y todas las dependencias, debe estar completamente cargado antes
     const orderedScripts = [
-        reactVendor,      // 1. React PRIMERO
-        ...otherScripts,  // 2. Otros vendors
-        mainScript        // 3. App principal ÚLTIMO
+        vendorScript,  // 1. Vendor (incluye React + todas las librerías)
+        mainScript     // 2. App principal ÚLTIMO
     ];
 
-    const newScripts = orderedScripts
+    // Vendor DEBE tener modulepreload para que se cargue y ejecute ANTES que index
+    const vendorPreload = `  <link rel="modulepreload" crossorigin href="${vendorScript}">`;
+    const scriptsTags = orderedScripts
         .map(script => `  <script type="module" crossorigin src="${script}"></script>`)
         .join('\n');
+    
+    const newScripts = vendorPreload + '\n' + scriptsTags;
 
     // Insertar los nuevos scripts después del <title>
     const titleMatch = html.match(/<title>.*?<\/title>/);
@@ -110,9 +108,9 @@ try {
     console.log('✅ Script loading order fixed successfully!\n');
     console.log('📋 Load order:');
     orderedScripts.forEach((script, i) => {
-        const label = i === 0 ? 'React core (FIRST)' :
+        const label = i === 0 ? 'Vendor (FIRST - contains React)' :
                      i === orderedScripts.length - 1 ? 'Main app (LAST)' :
-                     'Vendor';
+                     'Other';
         console.log(`   ${i + 1}. ${script} - ${label}`);
     });
     console.log('\n✨ Build completed successfully!\n');
