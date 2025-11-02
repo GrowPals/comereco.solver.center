@@ -254,14 +254,28 @@ export default defineConfig({
 		allowedHosts: true,
 	},
 	optimizeDeps: {
-		include: ['react', 'react-dom', 'react/jsx-runtime'],
+		include: [
+			'react',
+			'react-dom',
+			'react/jsx-runtime',
+			'react/jsx-dev-runtime',
+			'react-router-dom',
+			'react-dom/client'
+		],
 		force: false,
+		esbuildOptions: {
+			define: {
+				global: 'globalThis',
+			},
+		},
 	},
 	resolve: {
 		dedupe: ['react', 'react-dom'],
 		extensions: ['.jsx', '.js', '.tsx', '.ts', '.json', ],
 		alias: {
 			'@': path.resolve(__dirname, './src'),
+			'react': path.resolve(__dirname, './node_modules/react'),
+			'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
 		},
 	},
 	build: {
@@ -269,6 +283,9 @@ export default defineConfig({
 		minify: 'esbuild',
 		cssMinify: true,
 		sourcemap: false,
+		commonjsOptions: {
+			transformMixedEsModules: true,
+		},
 		rollupOptions: {
 			external: [
 				'@babel/parser',
@@ -277,61 +294,38 @@ export default defineConfig({
 				'@babel/types'
 			],
 			output: {
+				// Separar React en su propio chunk para asegurar carga correcta
 				manualChunks: (id) => {
-					// Vendor chunks más específicos para mejor caching
+					// React y React-DOM siempre en un chunk separado y estable
+					if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+						return 'react-vendor';
+					}
+					// React Router y dependencias relacionadas
+					if (id.includes('node_modules/react-router')) {
+						return 'react-router-vendor';
+					}
+					// Radix UI components (muchos componentes)
+					if (id.includes('node_modules/@radix-ui')) {
+						return 'radix-vendor';
+					}
+					// Otros vendor dependencies
 					if (id.includes('node_modules')) {
-						// CRÍTICO: React y React-DOM deben estar juntos y cargarse primero
-						// Capturar TODOS los módulos relacionados con React core
-						if (
-							id.includes('node_modules/react/') || 
-							id.includes('node_modules/react-dom/') ||
-							id.includes('node_modules/react/index.js') ||
-							id.includes('node_modules/react-dom/index.js') ||
-							(id.includes('node_modules/react') && !id.includes('react-router') && !id.includes('react-hook-form') && !id.includes('react-day-picker') && !id.includes('react-chartjs') && !id.includes('react-helmet') && !id.includes('react-intersection-observer'))
-						) {
-							return 'react-vendor';
-						}
-						// React Router debe depender de react-vendor
-						if (id.includes('react-router')) {
-							return 'react-vendor';
-						}
-						// Radix UI components
-						if (id.includes('@radix-ui')) {
-							return 'ui-vendor';
-						}
-						// Charts
-						if (id.includes('chart.js') || id.includes('react-chartjs')) {
-							return 'chart-vendor';
-						}
-						// Forms
-						if (id.includes('react-hook-form') || id.includes('react-day-picker')) {
-							return 'form-vendor';
-						}
-						// Animation - solo si se usa
-						if (id.includes('framer-motion')) {
-							return 'animation-vendor';
-						}
-						// Supabase
-						if (id.includes('@supabase')) {
-							return 'supabase-vendor';
-						}
-						// React Query
-						if (id.includes('@tanstack/react-query')) {
-							return 'query-vendor';
-						}
-						// Utilidades
-						if (id.includes('date-fns') || id.includes('clsx') || id.includes('tailwind-merge') || id.includes('class-variance-authority')) {
-							return 'utils-vendor';
-						}
-						// Lucide icons - pueden ser pesados
-						if (id.includes('lucide-react')) {
-							return 'icons-vendor';
-						}
-						// Otros vendors
 						return 'vendor';
 					}
 				},
-				chunkSizeWarningLimit: 1000
+				// Asegurar orden de carga: react-vendor debe cargarse primero
+				chunkFileNames: (chunkInfo) => {
+					if (chunkInfo.name === 'react-vendor') {
+						return 'assets/react-vendor-[hash].js';
+					}
+					return 'assets/[name]-[hash].js';
+				},
+				// Asegurar que los chunks se carguen en el orden correcto
+				entryFileNames: 'assets/[name]-[hash].js',
+				assetFileNames: 'assets/[name]-[hash].[ext]',
+				chunkSizeWarningLimit: 1000,
+				// Prevenir code splitting problemático
+				inlineDynamicImports: false,
 			}
 		},
 		chunkSizeWarningLimit: 1000
