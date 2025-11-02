@@ -1,0 +1,195 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Paleta Oficial */
+    --primary-100: #002348;
+    --primary-90: #00355F;
+    --primary-80: #034877;
+    --primary-70: #07508F;
+    --primary-60: #0B64C0;
+    --primary-50: #3086F4;
+    --primary-40: #57A7FD;
+    --primary-30: #83BFFF;
+    --primary-20: #A0CFFF;
+    --primary-10: #C2DFFF;
+    --primary-00: #EFFFFF;
+
+    --neutral-100: #0A0D14;
+    --neutral-90: #1A1D29;
+    --neutral-80: #21252F;
+    --neutral-70: #282C3A;
+    --neutral-60: #7E8899;
+    --neutral-50: #92979E;
+    --neutral-40: #A7ABB2;
+    --neutral-30: #B9BCC1;
+    --neutral-20: #CCCED0;
+    --neutral-10: #E2E4E6;
+    --neutral-00: #FFFFFF;
+
+    --danger-50: #FF5A5C;
+    --danger-10: #FFD9DA;
+    --danger-00: #FFF4F4;
+    --danger-text: #6A1C22;
+    --danger-border: #E14244;
+    --danger-hover: #E14244;
+
+    --warning-50: #FFAD3B;
+    --warning-10: #FFF4E3;
+    --warning-00: #FFFBF4;
+    --warning-text: #834300;
+    --warning-border: #FF9212;
+    --warning-hover: #E67A00;
+
+    --success-50: #28E888;
+    --success-10: #CCFFE5;
+    --success-00: #F0FFF7;
+    --success-text: #1C5A2D;
+    --success-border: #51C279;
+    --success-hover: #3AA55E;
+
+    --info-50: #4AC9FF;
+    --info-10: #DCFAFF;
+    --info-00: #F1FEFF;
+    --info-text: #005A8A;
+    --info-border: #009FE1;
+
+    /* Mapeo de Tailwind */
+    --background: var(--neutral-00);
+    --foreground: var(--neutral-90);
+
+    --card: var(--neutral-00);
+    --card-foreground: var(--neutral-90);
+
+    --popover: var(--neutral-00);
+    --popover-foreground: var(--neutral-90);
+
+    --primary: var(--primary-50);
+    --primary-foreground: var(--neutral-00);
+
+    --secondary: var(--primary-10);
+    --secondary-foreground: var(--primary-80);
+
+    --destructive: var(--danger-50);
+    --destructive-foreground: var(--neutral-00);
+
+    --muted: var(--neutral-10);
+    --muted-foreground: var(--neutral-60);
+
+    --accent: var(--primary-00);
+    --accent-foreground: var(--primary-60);
+
+    --border: var(--neutral-10);
+    --input: var(--neutral-10);
+    --ring: var(--primary-20);
+
+    /* Radios */
+    --radius-sm: 0.5rem;
+    /* 8px */
+    --radius-md: 0.75rem;
+    /* 12px */
+    --radius-lg: 1rem;
+    /* 16px */
+    --radius-xl: 1.5rem;
+    /* 24px */
+    --radius-2xl: 2rem;
+    /* 32px */
+    --radius: var(--radius-xl);
+  }
+
+  .dark {
+    /* Dark mode colors - invertido y ajustado */
+    --background: var(--neutral-100);
+    --foreground: var(--neutral-00);
+
+    --card: var(--neutral-90);
+    --card-foreground: var(--neutral-00);
+
+    --popover: var(--neutral-90);
+    --popover-foreground: var(--neutral-00);
+
+    --primary: var(--primary-50);
+    --primary-foreground: var(--neutral-00);
+
+    --secondary: var(--primary-80);
+    --secondary-foreground: var(--neutral-00);
+
+    --destructive: var(--danger-50);
+    --destructive-foreground: var(--neutral-00);
+
+    --muted: var(--neutral-80);
+    --muted-foreground: var(--neutral-30);
+
+    --accent: var(--primary-90);
+    --accent-foreground: var(--neutral-00);
+
+    --border: var(--neutral-80);
+    --input: var(--neutral-80);
+    --ring: var(--primary-60);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+
+  /* Scrollbar personalizado */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--neutral-10));
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--neutral-20));
+  }
+
+  /* Sombras Suaves */
+  .shadow-card {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  .shadow-card-hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  }
+
+  .shadow-floating {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  }
+
+  .shadow-button {
+    box-shadow: 0 4px 12px rgba(48, 134, 244, 0.25);
+  }
+
+  .shadow-button-hover {
+    box-shadow: 0 6px 16px rgba(48, 134, 244, 0.35);
+  }
+
+  .shadow-top {
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.04);
+  }
+}
