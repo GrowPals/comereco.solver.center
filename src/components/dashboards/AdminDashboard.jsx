@@ -25,9 +25,13 @@ const AdminDashboard = ({ user }) => {
 
     return (
         <div className="space-y-8">
-            <div>
-                <h1 className="text-3xl font-bold">Dashboard Ejecutivo</h1>
-                <p className="text-muted-foreground">Vista general de la compañía: {user.company?.name || ''}</p>
+            <div className="flex flex-col gap-2">
+                <h1 className="text-4xl font-bold text-neutral-900">
+                    Dashboard <span className="bg-gradient-primary bg-clip-text text-transparent">Ejecutivo</span>
+                </h1>
+                <p className="text-base text-neutral-600">
+                    Vista general de la compañía: <span className="font-semibold text-neutral-900">{user.company?.name || ''}</span>
+                </p>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">

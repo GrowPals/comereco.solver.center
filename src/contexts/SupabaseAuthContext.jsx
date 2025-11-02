@@ -15,9 +15,16 @@ export const SupabaseAuthProvider = ({ children }) => {
   // Según REFERENCIA_TECNICA_BD_SUPABASE.md, debemos evitar embeds ambiguos y usar consultas separadas
   const fetchUserProfile = useCallback(async (authUser) => {
     if (!authUser) {
+      console.log('🔍 fetchUserProfile: No authUser provided');
       setUser(null);
       return null;
     }
+
+    console.log('🔍 fetchUserProfile: Starting for user:', {
+      id: authUser.id,
+      email: authUser.email
+    });
+
     try {
       // Primero obtener el perfil
       const { data: profile, error: profileError } = await supabase
@@ -27,32 +34,75 @@ export const SupabaseAuthProvider = ({ children }) => {
         .single();
 
       if (profileError) {
+        console.error('❌ Error fetching user profile:', profileError);
+        console.error('❌ Profile error details:', {
+          code: profileError.code,
+          message: profileError.message,
+          details: profileError.details,
+          hint: profileError.hint
+        });
         logger.error('Error fetching user profile:', profileError);
-        await supabase.auth.signOut();
-        setUser(null);
+
+        // CRÍTICO: NO hacer signOut automáticamente
+        // Esto permite que el usuario vea el error y podamos diagnosticar
+        // await supabase.auth.signOut(); // COMENTADO
+
+        // Setear user con datos mínimos para permitir diagnóstico
+        const userWithError = {
+          ...authUser,
+          hasProfile: false,
+          profileError: profileError.message
+        };
+        console.log('⚠️ Setting user without profile:', userWithError);
+        setUser(userWithError);
         return null;
       }
+
+      console.log('✅ Profile fetched successfully:', profile);
 
       // Luego obtener la empresa por separado para evitar el embed ambiguo
       let company = null;
       if (profile.company_id) {
+        console.log('🔍 Fetching company:', profile.company_id);
         const { data: companyData, error: companyError } = await supabase
           .from('companies')
           .select('id, name, bind_location_id, bind_price_list_id')
           .eq('id', profile.company_id)
           .single();
-        
+
+        if (companyError) {
+          console.error('⚠️ Error fetching company:', companyError);
+          logger.error('Error fetching company:', companyError);
+        }
+
         if (!companyError && companyData) {
           company = companyData;
+          console.log('✅ Company fetched:', company.name);
         }
+      } else {
+        console.warn('⚠️ Profile has no company_id');
       }
 
-      const userWithCompany = { ...authUser, ...profile, company };
+      const userWithCompany = { ...authUser, ...profile, company, hasProfile: true };
+      console.log('✅ Complete user object:', {
+        id: userWithCompany.id,
+        email: userWithCompany.email,
+        role_v2: userWithCompany.role_v2,
+        company: userWithCompany.company?.name || 'No company'
+      });
       setUser(userWithCompany);
       return userWithCompany;
     } catch (e) {
+      console.error('💥 Unexpected error in fetchUserProfile:', e);
       logger.error('Unexpected error fetching profile:', e);
-      setUser(null);
+
+      // Setear user con datos mínimos para diagnóstico
+      const userWithError = {
+        ...authUser,
+        hasProfile: false,
+        profileError: e.message
+      };
+      setUser(userWithError);
       return null;
     }
   }, []);
@@ -86,9 +136,35 @@ export const SupabaseAuthProvider = ({ children }) => {
   }, [fetchUserProfile]);
 
   const signIn = useCallback(async ({ email, password }) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error };
-  }, []);
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      
+      if (error) {
+        return { error };
+      }
+
+      // CORREGIDO: Actualizar sesión y cargar perfil inmediatamente después del login
+      if (data.session) {
+        setSession(data.session);
+        setLoading(false); // Asegurar que loading sea false después del login
+        // Cargar el perfil del usuario inmediatamente después del login
+        // Si falla, no bloqueamos el login pero logueamos el error
+        try {
+          await fetchUserProfile(data.session.user);
+        } catch (profileError) {
+          logger.error('Error loading user profile after login:', profileError);
+          // No bloqueamos el login aunque falle el perfil
+          // El usuario podrá intentar recargar su perfil más tarde
+        }
+      }
+
+      return { error: null };
+    } catch (err) {
+      logger.error('Unexpected error during sign in:', err);
+      setLoading(false); // Asegurar que loading sea false incluso en caso de error
+      return { error: err };
+    }
+  }, [fetchUserProfile]);
   
   const signOut = useCallback(async () => {
     const { error } = await supabase.auth.signOut();

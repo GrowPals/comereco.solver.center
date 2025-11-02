@@ -36,7 +36,7 @@ const Dashboard = () => {
     return (
         <>
             <Helmet><title>{getTitle()} - ComerECO</title></Helmet>
-            <div className="p-4 sm:p-6 lg:p-8">
+            <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-primary-50/10 p-4 sm:p-6 lg:p-8">
                 {renderDashboardByRole()}
             </div>
         </>

@@ -27,16 +27,20 @@ const UserDashboard = ({ user }) => {
 
     return (
         <div className="space-y-8">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold">¡Hola, {user.full_name?.split(' ')[0]}!</h1>
-                    <p className="text-muted-foreground">Aquí tienes un resumen de tu actividad.</p>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+                <div className="flex flex-col gap-2">
+                    <h1 className="text-4xl font-bold text-neutral-900">
+                        ¡Hola, <span className="bg-gradient-primary bg-clip-text text-transparent">{user.full_name?.split(' ')[0]}</span>!
+                    </h1>
+                    <p className="text-base text-neutral-600">
+                        Aquí tienes un resumen de tu actividad.
+                    </p>
                 </div>
-                <Button size="lg" onClick={() => navigate('/catalog')}>
+                <Button size="lg" className="whitespace-nowrap" onClick={() => navigate('/catalog')}>
                     <ShoppingCart className="mr-2 h-5 w-5" /> Crear Nueva Requisición
                 </Button>
             </div>
-            
+
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                 <StatCard title="Borradores" value={stats?.draft_count || 0} icon={FileText} isLoading={isLoading} />
                 <StatCard title="Pendientes" value={stats?.submitted_count || 0} icon={Hourglass} isLoading={isLoading} />

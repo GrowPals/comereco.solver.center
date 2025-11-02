@@ -22,33 +22,36 @@ const Header = ({ setSidebarOpen }) => {
     const userInitials = userName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
 
     return (
-        <header className="sticky top-0 z-20 flex h-20 items-center justify-between gap-4 border-b bg-white px-4 md:px-8">
+        <header className="sticky top-0 z-20 flex h-20 items-center justify-between gap-4 border-b border-neutral-200 bg-white/95 backdrop-blur-sm shadow-sm px-4 md:px-8">
             {/* Mobile Menu & Logo */}
             <div className="flex items-center gap-4 lg:hidden">
                 <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)}>
                     <Menu className="h-6 w-6" />
                 </Button>
-                <Link to="/" className="text-lg font-bold text-primary">ComerEco</Link>
+                <Link to="/" className="text-lg font-bold">
+                    <span className="text-neutral-900">Comer</span>
+                    <span className="bg-gradient-primary bg-clip-text text-transparent">ECO</span>
+                </Link>
             </div>
-            
+
             {/* Search bar (Desktop) */}
             <div className="hidden lg:block relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" />
-                <Input placeholder="Buscar requisiciones, productos..." className="pl-10" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" />
+                <Input placeholder="Buscar requisiciones, productos..." className="pl-12 bg-neutral-50/50 border-neutral-200 focus-visible:bg-white" />
             </div>
 
             {/* Right side actions */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
                 <NotificationCenter />
-                
+
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <div className="flex items-center gap-2 cursor-pointer rounded-full p-1 hover:bg-neutral-10 transition-colors">
-                            <Avatar className="h-9 w-9">
+                        <div className="flex items-center gap-3 cursor-pointer rounded-xl px-3 py-2 hover:bg-neutral-100 transition-all duration-200">
+                            <Avatar className="h-9 w-9 ring-2 ring-primary-100">
                                 <AvatarImage alt={`Avatar de ${userName}`} src={user?.avatar_url} />
-                                <AvatarFallback>{userInitials}</AvatarFallback>
+                                <AvatarFallback className="bg-gradient-primary text-white font-semibold">{userInitials}</AvatarFallback>
                             </Avatar>
-                            <span className="hidden md:inline font-semibold text-sm">{userName}</span>
+                            <span className="hidden md:inline font-semibold text-sm text-neutral-900">{userName}</span>
                             <ChevronDown className="hidden md:inline h-4 w-4 text-neutral-500" />
                         </div>
                     </DropdownMenuTrigger>
@@ -57,7 +60,7 @@ const Header = ({ setSidebarOpen }) => {
                             <Link to="/profile"><User className="mr-2 h-4 w-4" /> Mi Perfil</Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive focus:bg-destructive-subtle">
+                        <DropdownMenuItem onClick={handleLogout} className="text-error focus:text-error focus:bg-error-light">
                             <LogOut className="mr-2 h-4 w-4" />
                             <span>Cerrar Sesión</span>
                         </DropdownMenuItem>

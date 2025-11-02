@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { Clock } from 'lucide-react';
 
 const RecentRequisitions = () => {
     const navigate = useNavigate();
@@ -29,8 +30,13 @@ const RecentRequisitions = () => {
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>Últimas Requisiciones</CardTitle>
+            <CardHeader className="pb-4">
+                <div className="flex items-center gap-2">
+                    <div className="h-8 w-8 rounded-lg bg-gradient-primary flex items-center justify-center">
+                        <Clock className="h-4 w-4 text-white" />
+                    </div>
+                    <CardTitle className="text-lg">Últimas Requisiciones</CardTitle>
+                </div>
             </CardHeader>
             <CardContent>
                 <Table>

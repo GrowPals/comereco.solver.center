@@ -1,0 +1,1786 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ComerECO Design System - Technical Reference</title>
+    <style>
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* PRIMARY GRADIENT PALETTE */
+            --primary-50: #E6F9F0;
+            --primary-100: #B3F0D4;
+            --primary-200: #66E0A8;
+            --primary-300: #33D68E;
+            --primary-500: #00C05D;
+            --primary-600: #00A651;
+            --primary-700: #008C45;
+            --primary-800: #006633;
+            --primary-900: #004422;
+
+            /* GRADIENTS */
+            --gradient-primary: linear-gradient(135deg, #00C05D 0%, #00A651 100%);
+            --gradient-primary-intense: linear-gradient(135deg, #00C05D 0%, #008C45 100%);
+            --gradient-dark: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+            --gradient-surface: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+            --gradient-glow: radial-gradient(circle at center, rgba(0, 192, 93, 0.15) 0%, transparent 70%);
+
+            /* NEUTRAL SCALE */
+            --neutral-50: #F8FAFC;
+            --neutral-100: #F1F5F9;
+            --neutral-200: #E2E8F0;
+            --neutral-300: #CBD5E1;
+            --neutral-400: #94A3B8;
+            --neutral-500: #64748B;
+            --neutral-600: #475569;
+            --neutral-700: #334155;
+            --neutral-800: #1E293B;
+            --neutral-900: #0F172A;
+
+            /* SEMANTIC GRADIENTS */
+            --gradient-success: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            --gradient-warning: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            --gradient-error: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+            --gradient-info: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+
+            /* GLOW EFFECTS */
+            --glow-primary: 0 0 20px rgba(0, 192, 93, 0.4), 0 0 40px rgba(0, 192, 93, 0.2);
+            --glow-success: 0 0 20px rgba(16, 185, 129, 0.4), 0 0 40px rgba(16, 185, 129, 0.2);
+            --glow-warning: 0 0 20px rgba(245, 158, 11, 0.4), 0 0 40px rgba(245, 158, 11, 0.2);
+            --glow-error: 0 0 20px rgba(239, 68, 68, 0.4), 0 0 40px rgba(239, 68, 68, 0.2);
+
+            /* SHADOWS */
+            --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --shadow-2xl: 0 16px 48px rgba(0, 0, 0, 0.16);
+
+            /* SPACING SCALE (4px base) */
+            --space-0_5: 2px;
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            --space-8: 32px;
+            --space-10: 40px;
+            --space-12: 48px;
+            --space-16: 64px;
+            --space-20: 80px;
+
+            /* RADIUS SCALE */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-2xl: 24px;
+            --radius-pill: 32px;
+            --radius-full: 9999px;
+
+            /* TYPOGRAPHY */
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'SF Pro Display', sans-serif;
+            --font-mono: 'Fira Code', 'Courier New', monospace;
+
+            /* TRANSITIONS */
+            --transition-fast: 150ms ease-in-out;
+            --transition-base: 200ms ease-in-out;
+            --transition-slow: 300ms ease-in-out;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--neutral-50);
+            color: var(--neutral-900);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ============================================
+           LAYOUT STRUCTURE
+           ============================================ */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--space-12) var(--space-6);
+        }
+
+        /* HERO SECTION */
+        .hero {
+            background: var(--gradient-primary);
+            padding: var(--space-16) var(--space-8);
+            border-radius: var(--radius-2xl);
+            margin-bottom: var(--space-16);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: var(--gradient-glow);
+            animation: rotate 20s linear infinite;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: var(--space-4);
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero p {
+            font-size: 20px;
+            opacity: 0.95;
+        }
+
+        /* NAVIGATION */
+        .nav {
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 100;
+            padding: var(--space-4) var(--space-6);
+            box-shadow: var(--shadow-sm);
+            margin: calc(var(--space-12) * -1) calc(var(--space-6) * -1) var(--space-12);
+            display: flex;
+            gap: var(--space-6);
+            overflow-x: auto;
+            border-bottom: 2px solid var(--neutral-100);
+        }
+
+        .nav-link {
+            color: var(--neutral-600);
+            text-decoration: none;
+            font-weight: 600;
+            white-space: nowrap;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-base);
+            position: relative;
+        }
+
+        .nav-link:hover {
+            background: var(--neutral-50);
+            color: var(--primary-600);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform var(--transition-base);
+        }
+
+        .nav-link:hover::after {
+            transform: scaleX(1);
+        }
+
+        /* SECTIONS */
+        .section {
+            margin-bottom: var(--space-20);
+        }
+
+        .section-header {
+            margin-bottom: var(--space-8);
+            padding-bottom: var(--space-4);
+            border-bottom: 2px solid var(--neutral-200);
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin-bottom: var(--space-2);
+        }
+
+        .section-description {
+            font-size: 16px;
+            color: var(--neutral-500);
+        }
+
+        /* ============================================
+           COLOR SYSTEM
+           ============================================ */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-6);
+        }
+
+        .color-family {
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-slow);
+        }
+
+        .color-family:hover {
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-4px);
+        }
+
+        .color-family-header {
+            padding: var(--space-5);
+            background: var(--gradient-surface);
+            border-bottom: 1px solid var(--neutral-100);
+        }
+
+        .color-family-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: var(--space-1);
+        }
+
+        .color-family-desc {
+            font-size: 14px;
+            color: var(--neutral-500);
+        }
+
+        .color-swatch {
+            padding: var(--space-6) var(--space-5);
+            border-bottom: 1px solid var(--neutral-100);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all var(--transition-base);
+            cursor: pointer;
+        }
+
+        .color-swatch:hover {
+            padding-left: var(--space-6);
+        }
+
+        .color-swatch:last-child {
+            border-bottom: none;
+        }
+
+        .color-info {
+            flex: 1;
+        }
+
+        .color-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: var(--space-1);
+        }
+
+        .color-value {
+            font-size: 12px;
+            color: var(--neutral-500);
+            font-family: var(--font-mono);
+        }
+
+        .color-preview {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Gradient swatches */
+        .gradient-swatch {
+            height: 120px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition-slow);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gradient-swatch:hover {
+            box-shadow: var(--shadow-2xl);
+            transform: scale(1.02);
+        }
+
+        .gradient-swatch::before {
+            content: attr(data-gradient);
+            position: absolute;
+            bottom: var(--space-3);
+            left: var(--space-3);
+            right: var(--space-3);
+            font-size: 11px;
+            font-family: var(--font-mono);
+            opacity: 0;
+            transition: opacity var(--transition-base);
+        }
+
+        .gradient-swatch:hover::before {
+            opacity: 0.9;
+        }
+
+        /* ============================================
+           TYPOGRAPHY SYSTEM
+           ============================================ */
+        .type-scale {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-8);
+            box-shadow: var(--shadow-md);
+        }
+
+        .type-example {
+            padding: var(--space-6) 0;
+            border-bottom: 1px solid var(--neutral-100);
+        }
+
+        .type-example:last-child {
+            border-bottom: none;
+        }
+
+        .type-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+            padding: var(--space-3) var(--space-4);
+            background: var(--neutral-50);
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--primary-500);
+        }
+
+        .type-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary-600);
+        }
+
+        .type-specs {
+            font-size: 12px;
+            color: var(--neutral-500);
+            font-family: var(--font-mono);
+        }
+
+        /* ============================================
+           COMPONENT LIBRARY
+           ============================================ */
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--space-6);
+        }
+
+        .component-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-8);
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-slow);
+        }
+
+        .component-card:hover {
+            box-shadow: var(--shadow-xl);
+        }
+
+        .component-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--neutral-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-4);
+        }
+
+        /* BUTTONS */
+        .btn {
+            padding: 14px 28px;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-family: var(--font-sans);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 192, 93, 0.3);
+        }
+
+        .btn-primary:hover {
+            box-shadow: var(--glow-primary);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--gradient-surface);
+            color: var(--neutral-700);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary-500);
+            color: var(--primary-600);
+        }
+
+        .btn-outline:hover {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--glow-primary);
+        }
+
+        .btn-pill {
+            border-radius: var(--radius-pill);
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+
+        .btn-fab {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-full);
+            padding: 0;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(0, 192, 93, 0.4);
+        }
+
+        .btn-fab:hover {
+            box-shadow: var(--glow-primary);
+            transform: scale(1.1);
+        }
+
+        .btn-glow {
+            background: var(--gradient-primary-intense);
+            color: white;
+            box-shadow: var(--glow-primary);
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        /* CARDS */
+        .card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-slow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform var(--transition-slow);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-gradient {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 8px 24px rgba(0, 192, 93, 0.3);
+        }
+
+        .card-gradient:hover {
+            box-shadow: var(--glow-primary);
+        }
+
+        /* INPUTS */
+        .input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--neutral-200);
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            font-family: var(--font-sans);
+            transition: all var(--transition-base);
+            background: white;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(0, 192, 93, 0.1), var(--glow-primary);
+        }
+
+        .input::placeholder {
+            color: var(--neutral-400);
+        }
+
+        /* GLOW EFFECTS */
+        .glow-primary {
+            box-shadow: var(--glow-primary);
+        }
+
+        .glow-success {
+            box-shadow: var(--glow-success);
+        }
+
+        .glow-warning {
+            box-shadow: var(--glow-warning);
+        }
+
+        .glow-error {
+            box-shadow: var(--glow-error);
+        }
+
+        /* ============================================
+           SHADOWS & ELEVATIONS
+           ============================================ */
+        .shadow-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: var(--space-8);
+        }
+
+        .shadow-box {
+            background: white;
+            height: 140px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--neutral-600);
+            transition: all var(--transition-slow);
+            cursor: pointer;
+        }
+
+        .shadow-box:hover {
+            transform: translateY(-8px);
+        }
+
+        .shadow-level {
+            font-size: 18px;
+            margin-bottom: var(--space-2);
+        }
+
+        .shadow-name {
+            font-size: 12px;
+            opacity: 0.6;
+        }
+
+        /* ============================================
+           CODE BLOCKS
+           ============================================ */
+        .code-block {
+            background: var(--gradient-dark);
+            color: var(--neutral-400);
+            padding: var(--space-5);
+            border-radius: var(--radius-md);
+            font-family: var(--font-mono);
+            font-size: 13px;
+            overflow-x: auto;
+            margin-top: var(--space-4);
+            box-shadow: var(--shadow-lg);
+            line-height: 1.6;
+        }
+
+        .code-comment {
+            color: #6B7280;
+        }
+
+        .code-property {
+            color: #60A5FA;
+        }
+
+        .code-value {
+            color: #34D399;
+        }
+
+        .code-keyword {
+            color: #FB7185;
+        }
+
+        /* ============================================
+           SPACING SYSTEM
+           ============================================ */
+        .spacing-grid {
+            display: grid;
+            gap: var(--space-4);
+        }
+
+        .spacing-row {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: var(--space-5);
+            display: flex;
+            align-items: center;
+            gap: var(--space-6);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-base);
+        }
+
+        .spacing-row:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .spacing-visual {
+            background: var(--gradient-primary);
+            border-radius: var(--space-1);
+            transition: all var(--transition-slow);
+            box-shadow: 0 0 10px rgba(0, 192, 93, 0.3);
+        }
+
+        .spacing-row:hover .spacing-visual {
+            box-shadow: var(--glow-primary);
+        }
+
+        .spacing-info {
+            flex: 1;
+        }
+
+        .spacing-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: var(--space-1);
+        }
+
+        .spacing-value {
+            font-size: 14px;
+            color: var(--neutral-500);
+            font-family: var(--font-mono);
+        }
+
+        /* ============================================
+           GRID SYSTEM
+           ============================================ */
+        .grid-demo {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-8);
+            box-shadow: var(--shadow-md);
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+
+        .grid-item {
+            background: var(--gradient-primary);
+            color: white;
+            padding: var(--space-5);
+            border-radius: var(--radius-sm);
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(0, 192, 93, 0.2);
+            transition: all var(--transition-base);
+        }
+
+        .grid-item:hover {
+            box-shadow: var(--glow-primary);
+            transform: scale(1.05);
+        }
+
+        /* ============================================
+           UTILITIES
+           ============================================ */
+        .note {
+            background: var(--neutral-50);
+            border-left: 4px solid var(--primary-500);
+            padding: var(--space-4) var(--space-5);
+            border-radius: var(--radius-sm);
+            margin: var(--space-6) 0;
+        }
+
+        .note-title {
+            font-weight: 600;
+            color: var(--primary-600);
+            margin-bottom: var(--space-2);
+        }
+
+        .note-content {
+            color: var(--neutral-600);
+            font-size: 14px;
+        }
+
+        /* ============================================
+           ANIMATIONS
+           ============================================ */
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 4px 16px rgba(0, 192, 93, 0.4);
+            }
+            50% {
+                box-shadow: var(--glow-primary);
+            }
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .color-grid,
+            .component-grid,
+            .shadow-showcase {
+                grid-template-columns: 1fr;
+            }
+
+            .nav {
+                gap: var(--space-4);
+            }
+        }
+
+        /* ============================================
+           GRID COLUMN UTILITIES
+           ============================================ */
+        .col-1 { grid-column: span 1; }
+        .col-2 { grid-column: span 2; }
+        .col-3 { grid-column: span 3; }
+        .col-4 { grid-column: span 4; }
+        .col-5 { grid-column: span 5; }
+        .col-6 { grid-column: span 6; }
+        .col-7 { grid-column: span 7; }
+        .col-8 { grid-column: span 8; }
+        .col-9 { grid-column: span 9; }
+        .col-10 { grid-column: span 10; }
+        .col-11 { grid-column: span 11; }
+        .col-12 { grid-column: span 12; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HERO -->
+        <div class="hero">
+            <div class="hero-content">
+                <h1>ComerECO Design System</h1>
+                <p>Professional Technical Reference - Optimized for Cursor AI</p>
+            </div>
+        </div>
+
+        <!-- NAVIGATION -->
+        <div class="nav">
+            <a href="#colores" class="nav-link">Colores</a>
+            <a href="#gradientes" class="nav-link">Gradientes</a>
+            <a href="#tipografia" class="nav-link">Tipografía</a>
+            <a href="#espaciado" class="nav-link">Espaciado</a>
+            <a href="#componentes" class="nav-link">Componentes</a>
+            <a href="#sombras" class="nav-link">Sombras</a>
+            <a href="#efectos" class="nav-link">Efectos</a>
+            <a href="#grid" class="nav-link">Grid</a>
+            <a href="#variables" class="nav-link">Variables CSS</a>
+        </div>
+
+        <!-- SECTION: COLOR SYSTEM -->
+        <div class="section" id="colores">
+            <div class="section-header">
+                <h2 class="section-title">Sistema de Colores</h2>
+                <p class="section-description">Paleta completa basada en verde ComerECO #00C05D</p>
+            </div>
+
+            <div class="color-grid">
+                <!-- PRIMARY COLORS -->
+                <div class="color-family">
+                    <div class="color-family-header">
+                        <h3 class="color-family-title">Primary Green Scale</h3>
+                        <p class="color-family-desc">Escala principal de verde corporativo</p>
+                    </div>
+                    <div class="color-swatch" style="background: #E6F9F0;">
+                        <div class="color-info">
+                            <div class="color-name">Primary 50</div>
+                            <div class="color-value">#E6F9F0 | rgb(230, 249, 240)</div>
+                        </div>
+                        <div class="color-preview" style="background: #E6F9F0;"></div>
+                    </div>
+                    <div class="color-swatch" style="background: #B3F0D4;">
+                        <div class="color-info">
+                            <div class="color-name">Primary 100</div>
+                            <div class="color-value">#B3F0D4 | rgb(179, 240, 212)</div>
+                        </div>
+                        <div class="color-preview" style="background: #B3F0D4;"></div>
+                    </div>
+                    <div class="color-swatch" style="background: #66E0A8;">
+                        <div class="color-info">
+                            <div class="color-name">Primary 200</div>
+                            <div class="color-value">#66E0A8 | rgb(102, 224, 168)</div>
+                        </div>
+                        <div class="color-preview" style="background: #66E0A8;"></div>
+                    </div>
+                    <div class="color-swatch" style="background: #33D68E;">
+                        <div class="color-info">
+                            <div class="color-name">Primary 300</div>
+                            <div class="color-value">#33D68E | rgb(51, 214, 142)</div>
+                        </div>
+                        <div class="color-preview" style="background: #33D68E;"></div>
+                    </div>
+                    <div class="color-swatch" style="background: #00C05D; color: white;">
+                        <div class="color-info">
+                            <div class="color-name" style="color: white;">Primary 500 - BASE</div>
+                            <div class="color-value" style="color: rgba(255,255,255,0.8);">#00C05D | rgb(0, 192, 93)</div>
+                        </div>
+                        <div class="color-preview" style="background: #00C05D;"></div>
+                    </div>
+                    <div class="color-swatch" style="background: #00A651; color: white;">
+                        <div class="color-info">
+                            <div class="color-name" style="color: white;">Primary 600</div>
+                            <div class="color-value" style="color: rgba(255,255,255,0.8);">#00A651 | rgb(0, 166, 81)</div>
+                        </div>
+                        <div class="color-preview" style="background: #00A651;"></div>
+                    </div>
+                    <div class="color-swatch" style="background: #008C45; color: white;">
+                        <div class="color-info">
+                            <div class="color-name" style="color: white;">Primary 700</div>
+                            <div class="color-value" style="color: rgba(255,255,255,0.8);">#008C45 | rgb(0, 140, 69)</div>
+                        </div>
+                        <div class="color-preview" style="background: #008C45;"></div>
+                    </div>
+                    <div class="color-swatch" style="background: #006633; color: white;">
+                        <div class="color-info">
+                            <div class="color-name" style="color: white;">Primary 800</div>
+                            <div class="color-value" style="color: rgba(255,255,255,0.8);">#006633 | rgb(0, 102, 51)</div>
+                        </div>
+                        <div class="color-preview" style="background: #006633;"></div>
+                    </div>
+                </div>
+
+                <!-- NEUTRAL COLORS -->
+                <div class="color-family">
+                    <div class="color-family-header">
+                        <h3 class="color-family-title">Neutral Scale</h3>
+                        <p class="color-family-desc">Grises para texto, bordes y backgrounds</p>
+                    </div>
+                    <div class="color-swatch" style="background: #F8FAFC;">
+                        <div class="color-info">
+                            <div class="color-name">Neutral 50</div>
+                            <div class="color-value">#F8FAFC | rgb(248, 250, 252)</div>
+                        </div>
+                        <div class="color-preview" style="background: #F8FAFC; border: 1px solid #E2E8F0;"></div>
+                    </div>
+                    <div class="color-swatch" style="background: #F1F5F9;">
+                        <div class="color-info">
+                            <div class="color-name">Neutral 100</div>
+                            <div class="color-value">#F1F5F9 | rgb(241, 245, 249)</div>
+                        </div>
+                        <div class="color-preview" style="background: #F1F5F9;"></div>
+                    </div>
+                    <div class="color-swatch" style="background: #E2E8F0;">
+                        <div class="color-info">
+                            <div class="color-name">Neutral 200</div>
+                            <div class="color-value">#E2E8F0 | rgb(226, 232, 240)</div>
+                        </div>
+                        <div class="color-preview" style="background: #E2E8F0;"></div>
+                    </div>
+                    <div class="color-swatch" style="background: #CBD5E1;">
+                        <div class="color-info">
+                            <div class="color-name">Neutral 300</div>
+                            <div class="color-value">#CBD5E1 | rgb(203, 213, 225)</div>
+                        </div>
+                        <div class="color-preview" style="background: #CBD5E1;"></div>
+                    </div>
+                    <div class="color-swatch" style="background: #94A3B8;">
+                        <div class="color-info">
+                            <div class="color-name">Neutral 400</div>
+                            <div class="color-value">#94A3B8 | rgb(148, 163, 184)</div>
+                        </div>
+                        <div class="color-preview" style="background: #94A3B8;"></div>
+                    </div>
+                    <div class="color-swatch" style="background: #64748B; color: white;">
+                        <div class="color-info">
+                            <div class="color-name" style="color: white;">Neutral 500</div>
+                            <div class="color-value" style="color: rgba(255,255,255,0.8);">#64748B | rgb(100, 116, 139)</div>
+                        </div>
+                        <div class="color-preview" style="background: #64748B;"></div>
+                    </div>
+                    <div class="color-swatch" style="background: #475569; color: white;">
+                        <div class="color-info">
+                            <div class="color-name" style="color: white;">Neutral 600</div>
+                            <div class="color-value" style="color: rgba(255,255,255,0.8);">#475569 | rgb(71, 85, 105)</div>
+                        </div>
+                        <div class="color-preview" style="background: #475569;"></div>
+                    </div>
+                    <div class="color-swatch" style="background: #334155; color: white;">
+                        <div class="color-info">
+                            <div class="color-name" style="color: white;">Neutral 700</div>
+                            <div class="color-value" style="color: rgba(255,255,255,0.8);">#334155 | rgb(51, 65, 85)</div>
+                        </div>
+                        <div class="color-preview" style="background: #334155;"></div>
+                    </div>
+                    <div class="color-swatch" style="background: #1E293B; color: white;">
+                        <div class="color-info">
+                            <div class="color-name" style="color: white;">Neutral 800</div>
+                            <div class="color-value" style="color: rgba(255,255,255,0.8);">#1E293B | rgb(30, 41, 59)</div>
+                        </div>
+                        <div class="color-preview" style="background: #1E293B;"></div>
+                    </div>
+                    <div class="color-swatch" style="background: #0F172A; color: white;">
+                        <div class="color-info">
+                            <div class="color-name" style="color: white;">Neutral 900</div>
+                            <div class="color-value" style="color: rgba(255,255,255,0.8);">#0F172A | rgb(15, 23, 42)</div>
+                        </div>
+                        <div class="color-preview" style="background: #0F172A;"></div>
+                    </div>
+                </div>
+
+                <!-- SEMANTIC COLORS -->
+                <div class="color-family">
+                    <div class="color-family-header">
+                        <h3 class="color-family-title">Semantic Colors</h3>
+                        <p class="color-family-desc">Colores para estados y feedback</p>
+                    </div>
+                    <div class="color-swatch" style="background: #10B981; color: white;">
+                        <div class="color-info">
+                            <div class="color-name" style="color: white;">Success</div>
+                            <div class="color-value" style="color: rgba(255,255,255,0.8);">#10B981 | rgb(16, 185, 129)</div>
+                        </div>
+                        <div class="color-preview" style="background: #10B981;"></div>
+                    </div>
+                    <div class="color-swatch" style="background: #F59E0B; color: white;">
+                        <div class="color-info">
+                            <div class="color-name" style="color: white;">Warning</div>
+                            <div class="color-value" style="color: rgba(255,255,255,0.8);">#F59E0B | rgb(245, 158, 11)</div>
+                        </div>
+                        <div class="color-preview" style="background: #F59E0B;"></div>
+                    </div>
+                    <div class="color-swatch" style="background: #EF4444; color: white;">
+                        <div class="color-info">
+                            <div class="color-name" style="color: white;">Error</div>
+                            <div class="color-value" style="color: rgba(255,255,255,0.8);">#EF4444 | rgb(239, 68, 68)</div>
+                        </div>
+                        <div class="color-preview" style="background: #EF4444;"></div>
+                    </div>
+                    <div class="color-swatch" style="background: #3B82F6; color: white;">
+                        <div class="color-info">
+                            <div class="color-name" style="color: white;">Info</div>
+                            <div class="color-value" style="color: rgba(255,255,255,0.8);">#3B82F6 | rgb(59, 130, 246)</div>
+                        </div>
+                        <div class="color-preview" style="background: #3B82F6;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: GRADIENTS -->
+        <div class="section" id="gradientes">
+            <div class="section-header">
+                <h2 class="section-title">Sistema de Gradientes</h2>
+                <p class="section-description">Degradados modernos para backgrounds y efectos visuales</p>
+            </div>
+
+            <div class="color-grid">
+                <div class="gradient-swatch" 
+                     style="background: linear-gradient(135deg, #00C05D 0%, #00A651 100%);"
+                     data-gradient="linear-gradient(135deg, #00C05D 0%, #00A651 100%)">
+                    Primary Gradient
+                </div>
+                <div class="gradient-swatch" 
+                     style="background: linear-gradient(135deg, #00C05D 0%, #008C45 100%);"
+                     data-gradient="linear-gradient(135deg, #00C05D 0%, #008C45 100%)">
+                    Primary Intense
+                </div>
+                <div class="gradient-swatch" 
+                     style="background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);"
+                     data-gradient="linear-gradient(135deg, #0F172A 0%, #1E293B 100%)">
+                    Dark Gradient
+                </div>
+                <div class="gradient-swatch" 
+                     style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);"
+                     data-gradient="linear-gradient(135deg, #10B981 0%, #059669 100%)">
+                    Success Gradient
+                </div>
+                <div class="gradient-swatch" 
+                     style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);"
+                     data-gradient="linear-gradient(135deg, #F59E0B 0%, #D97706 100%)">
+                    Warning Gradient
+                </div>
+                <div class="gradient-swatch" 
+                     style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);"
+                     data-gradient="linear-gradient(135deg, #EF4444 0%, #DC2626 100%)">
+                    Error Gradient
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="code-comment">/* CSS Variables - Gradients */</span>
+<span class="code-property">--gradient-primary</span>: <span class="code-value">linear-gradient(135deg, #00C05D 0%, #00A651 100%)</span>;
+<span class="code-property">--gradient-primary-intense</span>: <span class="code-value">linear-gradient(135deg, #00C05D 0%, #008C45 100%)</span>;
+<span class="code-property">--gradient-dark</span>: <span class="code-value">linear-gradient(135deg, #0F172A 0%, #1E293B 100%)</span>;
+<span class="code-property">--gradient-surface</span>: <span class="code-value">linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)</span>;
+<span class="code-property">--gradient-glow</span>: <span class="code-value">radial-gradient(circle, rgba(0,192,93,0.15) 0%, transparent 70%)</span>;
+
+<span class="code-comment">/* Semantic Gradients */</span>
+<span class="code-property">--gradient-success</span>: <span class="code-value">linear-gradient(135deg, #10B981 0%, #059669 100%)</span>;
+<span class="code-property">--gradient-warning</span>: <span class="code-value">linear-gradient(135deg, #F59E0B 0%, #D97706 100%)</span>;
+<span class="code-property">--gradient-error</span>: <span class="code-value">linear-gradient(135deg, #EF4444 0%, #DC2626 100%)</span>;
+<span class="code-property">--gradient-info</span>: <span class="code-value">linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)</span>;
+            </div>
+        </div>
+
+        <!-- SECTION: TYPOGRAPHY -->
+        <div class="section" id="tipografia">
+            <div class="section-header">
+                <h2 class="section-title">Sistema Tipográfico</h2>
+                <p class="section-description">Escala modular con proporción 1.25x (Cuarta Perfecta)</p>
+            </div>
+
+            <div class="type-scale">
+                <div class="type-example">
+                    <div class="type-meta">
+                        <div class="type-label">Display XL</div>
+                        <div class="type-specs">font-size: 64px | font-weight: 700 | line-height: 1.1</div>
+                    </div>
+                    <div style="font-size: 64px; font-weight: 700; line-height: 1.1;">
+                        Transformando el Comercio
+                    </div>
+                </div>
+
+                <div class="type-example">
+                    <div class="type-meta">
+                        <div class="type-label">Display L</div>
+                        <div class="type-specs">font-size: 48px | font-weight: 700 | line-height: 1.2</div>
+                    </div>
+                    <div style="font-size: 48px; font-weight: 700; line-height: 1.2;">
+                        Sistema de Diseño Profesional
+                    </div>
+                </div>
+
+                <div class="type-example">
+                    <div class="type-meta">
+                        <div class="type-label">Heading 1</div>
+                        <div class="type-specs">font-size: 40px | font-weight: 700 | line-height: 1.2</div>
+                    </div>
+                    <div style="font-size: 40px; font-weight: 700; line-height: 1.2;">
+                        Título Principal de Sección
+                    </div>
+                </div>
+
+                <div class="type-example">
+                    <div class="type-meta">
+                        <div class="type-label">Heading 2</div>
+                        <div class="type-specs">font-size: 32px | font-weight: 600 | line-height: 1.3</div>
+                    </div>
+                    <div style="font-size: 32px; font-weight: 600; line-height: 1.3;">
+                        Subtítulo de Componente Mayor
+                    </div>
+                </div>
+
+                <div class="type-example">
+                    <div class="type-meta">
+                        <div class="type-label">Heading 3</div>
+                        <div class="type-specs">font-size: 24px | font-weight: 600 | line-height: 1.4</div>
+                    </div>
+                    <div style="font-size: 24px; font-weight: 600; line-height: 1.4;">
+                        Encabezado de Card o Módulo
+                    </div>
+                </div>
+
+                <div class="type-example">
+                    <div class="type-meta">
+                        <div class="type-label">Heading 4</div>
+                        <div class="type-specs">font-size: 20px | font-weight: 600 | line-height: 1.4</div>
+                    </div>
+                    <div style="font-size: 20px; font-weight: 600; line-height: 1.4;">
+                        Subtítulo Secundario
+                    </div>
+                </div>
+
+                <div class="type-example">
+                    <div class="type-meta">
+                        <div class="type-label">Body Large</div>
+                        <div class="type-specs">font-size: 18px | font-weight: 400 | line-height: 1.6</div>
+                    </div>
+                    <div style="font-size: 18px; font-weight: 400; line-height: 1.6;">
+                        Texto destacado para contenido principal. Ideal para intros y descripciones importantes.
+                    </div>
+                </div>
+
+                <div class="type-example">
+                    <div class="type-meta">
+                        <div class="type-label">Body Regular - BASE</div>
+                        <div class="type-specs">font-size: 16px | font-weight: 400 | line-height: 1.6</div>
+                    </div>
+                    <div style="font-size: 16px; font-weight: 400; line-height: 1.6;">
+                        Texto estándar para contenido general. Tamaño base para párrafos y contenido de lectura.
+                    </div>
+                </div>
+
+                <div class="type-example">
+                    <div class="type-meta">
+                        <div class="type-label">Body Small</div>
+                        <div class="type-specs">font-size: 14px | font-weight: 400 | line-height: 1.5</div>
+                    </div>
+                    <div style="font-size: 14px; font-weight: 400; line-height: 1.5;">
+                        Texto secundario para labels, metadata y información complementaria.
+                    </div>
+                </div>
+
+                <div class="type-example">
+                    <div class="type-meta">
+                        <div class="type-label">Caption</div>
+                        <div class="type-specs">font-size: 12px | font-weight: 500 | line-height: 1.4</div>
+                    </div>
+                    <div style="font-size: 12px; font-weight: 500; line-height: 1.4; color: var(--neutral-500);">
+                        Texto muy pequeño para timestamps, ayudas o información terciaria
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="code-comment">/* Typography Scale */</span>
+<span class="code-property">--text-xs</span>: <span class="code-value">12px</span>;      <span class="code-comment">/* Caption */</span>
+<span class="code-property">--text-sm</span>: <span class="code-value">14px</span>;      <span class="code-comment">/* Small */</span>
+<span class="code-property">--text-base</span>: <span class="code-value">16px</span>;    <span class="code-comment">/* Base ⭐ */</span>
+<span class="code-property">--text-lg</span>: <span class="code-value">18px</span>;      <span class="code-comment">/* Large */</span>
+<span class="code-property">--text-xl</span>: <span class="code-value">20px</span>;      <span class="code-comment">/* H4 */</span>
+<span class="code-property">--text-2xl</span>: <span class="code-value">24px</span>;     <span class="code-comment">/* H3 */</span>
+<span class="code-property">--text-3xl</span>: <span class="code-value">32px</span>;     <span class="code-comment">/* H2 */</span>
+<span class="code-property">--text-4xl</span>: <span class="code-value">40px</span>;     <span class="code-comment">/* H1 */</span>
+<span class="code-property">--text-5xl</span>: <span class="code-value">48px</span>;     <span class="code-comment">/* Display L */</span>
+<span class="code-property">--text-6xl</span>: <span class="code-value">64px</span>;     <span class="code-comment">/* Display XL */</span>
+
+<span class="code-comment">/* Font Weights */</span>
+<span class="code-property">--font-normal</span>: <span class="code-value">400</span>;
+<span class="code-property">--font-medium</span>: <span class="code-value">500</span>;
+<span class="code-property">--font-semibold</span>: <span class="code-value">600</span>;
+<span class="code-property">--font-bold</span>: <span class="code-value">700</span>;
+            </div>
+        </div>
+
+        <!-- SECTION: SPACING -->
+        <div class="section" id="espaciado">
+            <div class="section-header">
+                <h2 class="section-title">Sistema de Espaciado</h2>
+                <p class="section-description">Escala base 4px con progresión exponencial</p>
+            </div>
+
+            <div class="spacing-grid">
+                <div class="spacing-row">
+                    <div class="spacing-visual" style="width: 2px; height: 40px;"></div>
+                    <div class="spacing-info">
+                        <div class="spacing-name">0.5 Unit - Hairline</div>
+                        <div class="spacing-value">2px | var(--space-0_5)</div>
+                    </div>
+                </div>
+
+                <div class="spacing-row">
+                    <div class="spacing-visual" style="width: 4px; height: 40px;"></div>
+                    <div class="spacing-info">
+                        <div class="spacing-name">1 Unit</div>
+                        <div class="spacing-value">4px | var(--space-1)</div>
+                    </div>
+                </div>
+
+                <div class="spacing-row">
+                    <div class="spacing-visual" style="width: 8px; height: 40px;"></div>
+                    <div class="spacing-info">
+                        <div class="spacing-name">2 Units</div>
+                        <div class="spacing-value">8px | var(--space-2)</div>
+                    </div>
+                </div>
+
+                <div class="spacing-row">
+                    <div class="spacing-visual" style="width: 12px; height: 40px;"></div>
+                    <div class="spacing-info">
+                        <div class="spacing-name">3 Units</div>
+                        <div class="spacing-value">12px | var(--space-3)</div>
+                    </div>
+                </div>
+
+                <div class="spacing-row">
+                    <div class="spacing-visual" style="width: 16px; height: 40px;"></div>
+                    <div class="spacing-info">
+                        <div class="spacing-name">4 Units - BASE</div>
+                        <div class="spacing-value">16px | var(--space-4)</div>
+                    </div>
+                </div>
+
+                <div class="spacing-row">
+                    <div class="spacing-visual" style="width: 20px; height: 40px;"></div>
+                    <div class="spacing-info">
+                        <div class="spacing-name">5 Units</div>
+                        <div class="spacing-value">20px | var(--space-5)</div>
+                    </div>
+                </div>
+
+                <div class="spacing-row">
+                    <div class="spacing-visual" style="width: 24px; height: 40px;"></div>
+                    <div class="spacing-info">
+                        <div class="spacing-name">6 Units</div>
+                        <div class="spacing-value">24px | var(--space-6)</div>
+                    </div>
+                </div>
+
+                <div class="spacing-row">
+                    <div class="spacing-visual" style="width: 32px; height: 40px;"></div>
+                    <div class="spacing-info">
+                        <div class="spacing-name">8 Units</div>
+                        <div class="spacing-value">32px | var(--space-8)</div>
+                    </div>
+                </div>
+
+                <div class="spacing-row">
+                    <div class="spacing-visual" style="width: 48px; height: 40px;"></div>
+                    <div class="spacing-info">
+                        <div class="spacing-name">12 Units</div>
+                        <div class="spacing-value">48px | var(--space-12)</div>
+                    </div>
+                </div>
+
+                <div class="spacing-row">
+                    <div class="spacing-visual" style="width: 64px; height: 40px;"></div>
+                    <div class="spacing-info">
+                        <div class="spacing-name">16 Units</div>
+                        <div class="spacing-value">64px | var(--space-16)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="code-comment">/* Spacing System - Base 4px */</span>
+<span class="code-property">--space-0_5</span>: <span class="code-value">2px</span>;    <span class="code-comment">/* hairline */</span>
+<span class="code-property">--space-1</span>: <span class="code-value">4px</span>;      <span class="code-comment">/* micro */</span>
+<span class="code-property">--space-2</span>: <span class="code-value">8px</span>;      <span class="code-comment">/* tight */</span>
+<span class="code-property">--space-3</span>: <span class="code-value">12px</span>;     <span class="code-comment">/* compact */</span>
+<span class="code-property">--space-4</span>: <span class="code-value">16px</span>;     <span class="code-comment">/* base ⭐ */</span>
+<span class="code-property">--space-5</span>: <span class="code-value">20px</span>;     <span class="code-comment">/* comfortable */</span>
+<span class="code-property">--space-6</span>: <span class="code-value">24px</span>;     <span class="code-comment">/* spacious */</span>
+<span class="code-property">--space-8</span>: <span class="code-value">32px</span>;     <span class="code-comment">/* loose */</span>
+<span class="code-property">--space-10</span>: <span class="code-value">40px</span>;    <span class="code-comment">/* relaxed */</span>
+<span class="code-property">--space-12</span>: <span class="code-value">48px</span>;    <span class="code-comment">/* section */</span>
+<span class="code-property">--space-16</span>: <span class="code-value">64px</span>;    <span class="code-comment">/* hero */</span>
+<span class="code-property">--space-20</span>: <span class="code-value">80px</span>;    <span class="code-comment">/* major */</span>
+            </div>
+
+            <div class="note">
+                <div class="note-title">Regla de espaciado</div>
+                <div class="note-content">
+                    Solo usar múltiplos de 4px. Elementos relacionados usan espaciado pequeño (8-16px). Secciones diferentes usan espaciado grande (24-48px).
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: COMPONENTS -->
+        <div class="section" id="componentes">
+            <div class="section-header">
+                <h2 class="section-title">Biblioteca de Componentes</h2>
+                <p class="section-description">Elementos base reutilizables con efectos de resplandor</p>
+            </div>
+
+            <h3 style="margin-bottom: var(--space-6); color: var(--primary-600); font-size: 24px; font-weight: 600;">Botones</h3>
+            <div class="component-grid">
+                <div class="component-card">
+                    <div class="component-label">Primary Button</div>
+                    <button class="btn btn-primary">Agregar al Carrito</button>
+                    <div class="code-block">
+<span class="code-property">background</span>: <span class="code-value">var(--gradient-primary)</span>;
+<span class="code-property">box-shadow</span>: <span class="code-value">0 4px 12px rgba(0,192,93,0.3)</span>;
+<span class="code-property">border-radius</span>: <span class="code-value">var(--radius-md)</span>;
+<span class="code-property">padding</span>: <span class="code-value">14px 28px</span>;
+                    </div>
+                </div>
+
+                <div class="component-card">
+                    <div class="component-label">Secondary Button</div>
+                    <button class="btn btn-secondary">Ver Detalles</button>
+                    <div class="code-block">
+<span class="code-property">background</span>: <span class="code-value">var(--gradient-surface)</span>;
+<span class="code-property">color</span>: <span class="code-value">var(--neutral-700)</span>;
+<span class="code-property">box-shadow</span>: <span class="code-value">var(--shadow-sm)</span>;
+                    </div>
+                </div>
+
+                <div class="component-card">
+                    <div class="component-label">Outline Button</div>
+                    <button class="btn btn-outline">Cancelar</button>
+                    <div class="code-block">
+<span class="code-property">border</span>: <span class="code-value">2px solid var(--primary-500)</span>;
+<span class="code-property">background</span>: <span class="code-value">transparent</span>;
+<span class="code-property">color</span>: <span class="code-value">var(--primary-600)</span>;
+                    </div>
+                </div>
+
+                <div class="component-card">
+                    <div class="component-label">Pill Button</div>
+                    <button class="btn btn-primary btn-pill">Filtrar</button>
+                    <div class="code-block">
+<span class="code-property">border-radius</span>: <span class="code-value">var(--radius-pill)</span>;
+<span class="code-property">padding</span>: <span class="code-value">10px 20px</span>;
+<span class="code-property">font-size</span>: <span class="code-value">14px</span>;
+                    </div>
+                </div>
+
+                <div class="component-card">
+                    <div class="component-label">FAB (Floating Action Button)</div>
+                    <button class="btn btn-primary btn-fab">+</button>
+                    <div class="code-block">
+<span class="code-property">width</span>: <span class="code-value">56px</span>;
+<span class="code-property">height</span>: <span class="code-value">56px</span>;
+<span class="code-property">border-radius</span>: <span class="code-value">var(--radius-full)</span>;
+<span class="code-property">box-shadow</span>: <span class="code-value">var(--glow-primary)</span>;
+                    </div>
+                </div>
+
+                <div class="component-card">
+                    <div class="component-label">Glow Button (Animated)</div>
+                    <button class="btn btn-glow">Comprar Ahora</button>
+                    <div class="code-block">
+<span class="code-property">background</span>: <span class="code-value">var(--gradient-primary-intense)</span>;
+<span class="code-property">box-shadow</span>: <span class="code-value">var(--glow-primary)</span>;
+<span class="code-property">animation</span>: <span class="code-value">pulse-glow 2s infinite</span>;
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin: var(--space-12) 0 var(--space-6); color: var(--primary-600); font-size: 24px; font-weight: 600;">Cards</h3>
+            <div class="component-grid">
+                <div class="component-card">
+                    <div class="component-label">Base Card</div>
+                    <div class="card">
+                        <h4 style="margin-bottom: var(--space-2); font-weight: 600;">Título de Card</h4>
+                        <p style="color: var(--neutral-500); font-size: 14px;">Contenido de ejemplo con sombra y hover effect.</p>
+                    </div>
+                    <div class="code-block">
+<span class="code-property">background</span>: <span class="code-value">white</span>;
+<span class="code-property">border-radius</span>: <span class="code-value">var(--radius-lg)</span>;
+<span class="code-property">padding</span>: <span class="code-value">var(--space-6)</span>;
+<span class="code-property">box-shadow</span>: <span class="code-value">var(--shadow-md)</span>;
+                    </div>
+                </div>
+
+                <div class="component-card">
+                    <div class="component-label">Gradient Card</div>
+                    <div class="card-gradient">
+                        <h4 style="margin-bottom: var(--space-2); font-weight: 600;">Card con Degradado</h4>
+                        <p style="opacity: 0.9; font-size: 14px;">Card destacada con efecto de resplandor.</p>
+                    </div>
+                    <div class="code-block">
+<span class="code-property">background</span>: <span class="code-value">var(--gradient-primary)</span>;
+<span class="code-property">color</span>: <span class="code-value">white</span>;
+<span class="code-property">box-shadow</span>: <span class="code-value">0 8px 24px rgba(0,192,93,0.3)</span>;
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin: var(--space-12) 0 var(--space-6); color: var(--primary-600); font-size: 24px; font-weight: 600;">Inputs</h3>
+            <div class="component-grid">
+                <div class="component-card">
+                    <div class="component-label">Text Input</div>
+                    <input type="text" class="input" placeholder="Ingresa tu email...">
+                    <div class="code-block">
+<span class="code-property">border</span>: <span class="code-value">2px solid var(--neutral-200)</span>;
+<span class="code-property">border-radius</span>: <span class="code-value">var(--radius-md)</span>;
+<span class="code-property">padding</span>: <span class="code-value">14px 16px</span>;
+
+<span class="code-comment">/* Focus State */</span>
+<span class="code-keyword">:focus</span> {
+  <span class="code-property">border-color</span>: <span class="code-value">var(--primary-500)</span>;
+  <span class="code-property">box-shadow</span>: <span class="code-value">var(--glow-primary)</span>;
+}
+                    </div>
+                </div>
+
+                <div class="component-card">
+                    <div class="component-label">Search Input</div>
+                    <div style="position: relative;">
+                        <input type="search" class="input" placeholder="Buscar productos..." style="padding-left: 44px;">
+                        <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--neutral-400);">🔍</span>
+                    </div>
+                    <div class="code-block">
+<span class="code-property">padding-left</span>: <span class="code-value">44px</span>;
+<span class="code-property">background</span>: <span class="code-value">white</span>;
+
+<span class="code-comment">/* Icon positioning */</span>
+<span class="code-property">position</span>: <span class="code-value">absolute</span>;
+<span class="code-property">left</span>: <span class="code-value">16px</span>;
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: SHADOWS -->
+        <div class="section" id="sombras">
+            <div class="section-header">
+                <h2 class="section-title">Sistema de Sombras</h2>
+                <p class="section-description">6 niveles de elevación para crear profundidad</p>
+            </div>
+
+            <div class="shadow-showcase">
+                <div class="shadow-box" style="box-shadow: var(--shadow-xs);">
+                    <div class="shadow-level">XS</div>
+                    <div class="shadow-name">Minimal</div>
+                </div>
+                <div class="shadow-box" style="box-shadow: var(--shadow-sm);">
+                    <div class="shadow-level">SM</div>
+                    <div class="shadow-name">Surface</div>
+                </div>
+                <div class="shadow-box" style="box-shadow: var(--shadow-md);">
+                    <div class="shadow-level">MD</div>
+                    <div class="shadow-name">Card</div>
+                </div>
+                <div class="shadow-box" style="box-shadow: var(--shadow-lg);">
+                    <div class="shadow-level">LG</div>
+                    <div class="shadow-name">Raised</div>
+                </div>
+                <div class="shadow-box" style="box-shadow: var(--shadow-xl);">
+                    <div class="shadow-level">XL</div>
+                    <div class="shadow-name">Modal</div>
+                </div>
+                <div class="shadow-box" style="box-shadow: var(--shadow-2xl);">
+                    <div class="shadow-level">2XL</div>
+                    <div class="shadow-name">Overlay</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="code-comment">/* Shadow System */</span>
+<span class="code-property">--shadow-xs</span>: <span class="code-value">0 1px 2px rgba(0,0,0,0.05)</span>;
+<span class="code-property">--shadow-sm</span>: <span class="code-value">0 1px 3px rgba(0,0,0,0.04)</span>;
+<span class="code-property">--shadow-md</span>: <span class="code-value">0 2px 8px rgba(0,0,0,0.06)</span>;   <span class="code-comment">/* Default for cards */</span>
+<span class="code-property">--shadow-lg</span>: <span class="code-value">0 4px 12px rgba(0,0,0,0.08)</span>;
+<span class="code-property">--shadow-xl</span>: <span class="code-value">0 8px 24px rgba(0,0,0,0.12)</span>;
+<span class="code-property">--shadow-2xl</span>: <span class="code-value">0 16px 48px rgba(0,0,0,0.16)</span>;
+            </div>
+        </div>
+
+        <!-- SECTION: GLOW EFFECTS -->
+        <div class="section" id="efectos">
+            <div class="section-header">
+                <h2 class="section-title">Efectos de Resplandor</h2>
+                <p class="section-description">Box-shadow con glow para elementos destacados</p>
+            </div>
+
+            <div class="shadow-showcase">
+                <div class="shadow-box glow-primary" style="background: var(--gradient-primary); color: white;">
+                    <div class="shadow-level">Primary</div>
+                    <div class="shadow-name">Glow</div>
+                </div>
+                <div class="shadow-box glow-success" style="background: var(--gradient-success); color: white;">
+                    <div class="shadow-level">Success</div>
+                    <div class="shadow-name">Glow</div>
+                </div>
+                <div class="shadow-box glow-warning" style="background: var(--gradient-warning); color: white;">
+                    <div class="shadow-level">Warning</div>
+                    <div class="shadow-name">Glow</div>
+                </div>
+                <div class="shadow-box glow-error" style="background: var(--gradient-error); color: white;">
+                    <div class="shadow-level">Error</div>
+                    <div class="shadow-name">Glow</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="code-comment">/* Glow Effects - Multi-layer shadows */</span>
+<span class="code-property">--glow-primary</span>: <span class="code-value">0 0 20px rgba(0,192,93,0.4), 0 0 40px rgba(0,192,93,0.2)</span>;
+<span class="code-property">--glow-success</span>: <span class="code-value">0 0 20px rgba(16,185,129,0.4), 0 0 40px rgba(16,185,129,0.2)</span>;
+<span class="code-property">--glow-warning</span>: <span class="code-value">0 0 20px rgba(245,158,11,0.4), 0 0 40px rgba(245,158,11,0.2)</span>;
+<span class="code-property">--glow-error</span>: <span class="code-value">0 0 20px rgba(239,68,68,0.4), 0 0 40px rgba(239,68,68,0.2)</span>;
+
+<span class="code-comment">/* Usage */</span>
+<span class="code-keyword">.btn-primary:hover</span> {
+  <span class="code-property">box-shadow</span>: <span class="code-value">var(--glow-primary)</span>;
+}
+            </div>
+
+            <div class="note">
+                <div class="note-title">Uso de efectos de resplandor</div>
+                <div class="note-content">
+                    Los efectos glow se aplican en hover states de botones primarios, FABs, y elementos destacados. Usar con moderación para mantener jerarquía visual.
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: GRID -->
+        <div class="section" id="grid">
+            <div class="section-header">
+                <h2 class="section-title">Sistema de Grid</h2>
+                <p class="section-description">Grid de 12 columnas responsive y adaptativo</p>
+            </div>
+
+            <div class="grid-demo">
+                <h4 style="margin-bottom: var(--space-4); color: var(--neutral-600); font-weight: 600;">12 Columnas Base</h4>
+                <div class="grid-container">
+                    <div class="grid-item col-1">1</div>
+                    <div class="grid-item col-1">1</div>
+                    <div class="grid-item col-1">1</div>
+                    <div class="grid-item col-1">1</div>
+                    <div class="grid-item col-1">1</div>
+                    <div class="grid-item col-1">1</div>
+                    <div class="grid-item col-1">1</div>
+                    <div class="grid-item col-1">1</div>
+                    <div class="grid-item col-1">1</div>
+                    <div class="grid-item col-1">1</div>
+                    <div class="grid-item col-1">1</div>
+                    <div class="grid-item col-1">1</div>
+                </div>
+
+                <h4 style="margin: var(--space-8) 0 var(--space-4); color: var(--neutral-600); font-weight: 600;">Layout 6-6 (Two Column)</h4>
+                <div class="grid-container">
+                    <div class="grid-item col-6">6 cols</div>
+                    <div class="grid-item col-6">6 cols</div>
+                </div>
+
+                <h4 style="margin: var(--space-8) 0 var(--space-4); color: var(--neutral-600); font-weight: 600;">Layout 4-8 (Sidebar + Content)</h4>
+                <div class="grid-container">
+                    <div class="grid-item col-4">4 cols</div>
+                    <div class="grid-item col-8">8 cols</div>
+                </div>
+
+                <h4 style="margin: var(--space-8) 0 var(--space-4); color: var(--neutral-600); font-weight: 600;">Layout 3 Columnas</h4>
+                <div class="grid-container">
+                    <div class="grid-item col-4">4 cols</div>
+                    <div class="grid-item col-4">4 cols</div>
+                    <div class="grid-item col-4">4 cols</div>
+                </div>
+
+                <h4 style="margin: var(--space-8) 0 var(--space-4); color: var(--neutral-600); font-weight: 600;">Layout 4 Columnas (Product Grid)</h4>
+                <div class="grid-container">
+                    <div class="grid-item col-3">3</div>
+                    <div class="grid-item col-3">3</div>
+                    <div class="grid-item col-3">3</div>
+                    <div class="grid-item col-3">3</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="code-comment">/* Grid System CSS */</span>
+<span class="code-keyword">.grid-container</span> {
+  <span class="code-property">display</span>: <span class="code-value">grid</span>;
+  <span class="code-property">grid-template-columns</span>: <span class="code-value">repeat(12, 1fr)</span>;
+  <span class="code-property">gap</span>: <span class="code-value">var(--space-4)</span>;
+}
+
+<span class="code-comment">/* Column Utilities */</span>
+<span class="code-keyword">.col-1</span> { <span class="code-property">grid-column</span>: <span class="code-value">span 1</span>; }
+<span class="code-keyword">.col-3</span> { <span class="code-property">grid-column</span>: <span class="code-value">span 3</span>; }
+<span class="code-keyword">.col-4</span> { <span class="code-property">grid-column</span>: <span class="code-value">span 4</span>; }
+<span class="code-keyword">.col-6</span> { <span class="code-property">grid-column</span>: <span class="code-value">span 6</span>; }
+<span class="code-keyword">.col-8</span> { <span class="code-property">grid-column</span>: <span class="code-value">span 8</span>; }
+<span class="code-keyword">.col-12</span> { <span class="code-property">grid-column</span>: <span class="code-value">span 12</span>; }
+
+<span class="code-comment">/* Responsive Breakpoints */</span>
+<span class="code-keyword">@media</span> (max-width: <span class="code-value">640px</span>) {
+  <span class="code-keyword">.grid-container</span> {
+    <span class="code-property">grid-template-columns</span>: <span class="code-value">repeat(2, 1fr)</span>;
+  }
+}
+
+<span class="code-keyword">@media</span> (min-width: <span class="code-value">641px</span>) and (max-width: <span class="code-value">1024px</span>) {
+  <span class="code-keyword">.grid-container</span> {
+    <span class="code-property">grid-template-columns</span>: <span class="code-value">repeat(4, 1fr)</span>;
+  }
+}
+            </div>
+        </div>
+
+        <!-- SECTION: CSS VARIABLES -->
+        <div class="section" id="variables">
+            <div class="section-header">
+                <h2 class="section-title">Variables CSS Completas</h2>
+                <p class="section-description">Sistema completo de design tokens para implementación</p>
+            </div>
+
+            <div class="code-block">
+<span class="code-keyword">:root</span> {
+  <span class="code-comment">/* ============ PRIMARY COLORS ============ */</span>
+  <span class="code-property">--primary-50</span>: <span class="code-value">#E6F9F0</span>;
+  <span class="code-property">--primary-100</span>: <span class="code-value">#B3F0D4</span>;
+  <span class="code-property">--primary-200</span>: <span class="code-value">#66E0A8</span>;
+  <span class="code-property">--primary-300</span>: <span class="code-value">#33D68E</span>;
+  <span class="code-property">--primary-500</span>: <span class="code-value">#00C05D</span>; <span class="code-comment">/* BASE */</span>
+  <span class="code-property">--primary-600</span>: <span class="code-value">#00A651</span>;
+  <span class="code-property">--primary-700</span>: <span class="code-value">#008C45</span>;
+  <span class="code-property">--primary-800</span>: <span class="code-value">#006633</span>;
+
+  <span class="code-comment">/* ============ GRADIENTS ============ */</span>
+  <span class="code-property">--gradient-primary</span>: <span class="code-value">linear-gradient(135deg, #00C05D 0%, #00A651 100%)</span>;
+  <span class="code-property">--gradient-primary-intense</span>: <span class="code-value">linear-gradient(135deg, #00C05D 0%, #008C45 100%)</span>;
+  <span class="code-property">--gradient-dark</span>: <span class="code-value">linear-gradient(135deg, #0F172A 0%, #1E293B 100%)</span>;
+  <span class="code-property">--gradient-surface</span>: <span class="code-value">linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)</span>;
+
+  <span class="code-comment">/* ============ NEUTRAL COLORS ============ */</span>
+  <span class="code-property">--neutral-50</span>: <span class="code-value">#F8FAFC</span>;
+  <span class="code-property">--neutral-100</span>: <span class="code-value">#F1F5F9</span>;
+  <span class="code-property">--neutral-200</span>: <span class="code-value">#E2E8F0</span>;
+  <span class="code-property">--neutral-300</span>: <span class="code-value">#CBD5E1</span>;
+  <span class="code-property">--neutral-400</span>: <span class="code-value">#94A3B8</span>;
+  <span class="code-property">--neutral-500</span>: <span class="code-value">#64748B</span>;
+  <span class="code-property">--neutral-600</span>: <span class="code-value">#475569</span>;
+  <span class="code-property">--neutral-700</span>: <span class="code-value">#334155</span>;
+  <span class="code-property">--neutral-800</span>: <span class="code-value">#1E293B</span>;
+  <span class="code-property">--neutral-900</span>: <span class="code-value">#0F172A</span>;
+
+  <span class="code-comment">/* ============ SEMANTIC COLORS ============ */</span>
+  <span class="code-property">--success</span>: <span class="code-value">#10B981</span>;
+  <span class="code-property">--warning</span>: <span class="code-value">#F59E0B</span>;
+  <span class="code-property">--error</span>: <span class="code-value">#EF4444</span>;
+  <span class="code-property">--info</span>: <span class="code-value">#3B82F6</span>;
+
+  <span class="code-comment">/* ============ GLOW EFFECTS ============ */</span>
+  <span class="code-property">--glow-primary</span>: <span class="code-value">0 0 20px rgba(0,192,93,0.4), 0 0 40px rgba(0,192,93,0.2)</span>;
+  <span class="code-property">--glow-success</span>: <span class="code-value">0 0 20px rgba(16,185,129,0.4), 0 0 40px rgba(16,185,129,0.2)</span>;
+  <span class="code-property">--glow-warning</span>: <span class="code-value">0 0 20px rgba(245,158,11,0.4), 0 0 40px rgba(245,158,11,0.2)</span>;
+  <span class="code-property">--glow-error</span>: <span class="code-value">0 0 20px rgba(239,68,68,0.4), 0 0 40px rgba(239,68,68,0.2)</span>;
+
+  <span class="code-comment">/* ============ SHADOWS ============ */</span>
+  <span class="code-property">--shadow-xs</span>: <span class="code-value">0 1px 2px rgba(0,0,0,0.05)</span>;
+  <span class="code-property">--shadow-sm</span>: <span class="code-value">0 1px 3px rgba(0,0,0,0.04)</span>;
+  <span class="code-property">--shadow-md</span>: <span class="code-value">0 2px 8px rgba(0,0,0,0.06)</span>;
+  <span class="code-property">--shadow-lg</span>: <span class="code-value">0 4px 12px rgba(0,0,0,0.08)</span>;
+  <span class="code-property">--shadow-xl</span>: <span class="code-value">0 8px 24px rgba(0,0,0,0.12)</span>;
+  <span class="code-property">--shadow-2xl</span>: <span class="code-value">0 16px 48px rgba(0,0,0,0.16)</span>;
+
+  <span class="code-comment">/* ============ SPACING ============ */</span>
+  <span class="code-property">--space-0_5</span>: <span class="code-value">2px</span>;
+  <span class="code-property">--space-1</span>: <span class="code-value">4px</span>;
+  <span class="code-property">--space-2</span>: <span class="code-value">8px</span>;
+  <span class="code-property">--space-3</span>: <span class="code-value">12px</span>;
+  <span class="code-property">--space-4</span>: <span class="code-value">16px</span>;
+  <span class="code-property">--space-5</span>: <span class="code-value">20px</span>;
+  <span class="code-property">--space-6</span>: <span class="code-value">24px</span>;
+  <span class="code-property">--space-8</span>: <span class="code-value">32px</span>;
+  <span class="code-property">--space-10</span>: <span class="code-value">40px</span>;
+  <span class="code-property">--space-12</span>: <span class="code-value">48px</span>;
+  <span class="code-property">--space-16</span>: <span class="code-value">64px</span>;
+  <span class="code-property">--space-20</span>: <span class="code-value">80px</span>;
+
+  <span class="code-comment">/* ============ BORDER RADIUS ============ */</span>
+  <span class="code-property">--radius-sm</span>: <span class="code-value">8px</span>;
+  <span class="code-property">--radius-md</span>: <span class="code-value">12px</span>;
+  <span class="code-property">--radius-lg</span>: <span class="code-value">16px</span>;
+  <span class="code-property">--radius-xl</span>: <span class="code-value">20px</span>;
+  <span class="code-property">--radius-2xl</span>: <span class="code-value">24px</span>;
+  <span class="code-property">--radius-pill</span>: <span class="code-value">32px</span>;
+  <span class="code-property">--radius-full</span>: <span class="code-value">9999px</span>;
+
+  <span class="code-comment">/* ============ TYPOGRAPHY ============ */</span>
+  <span class="code-property">--font-sans</span>: <span class="code-value">-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif</span>;
+  <span class="code-property">--font-mono</span>: <span class="code-value">'Fira Code', 'Courier New', monospace</span>;
+
+  <span class="code-comment">/* ============ TRANSITIONS ============ */</span>
+  <span class="code-property">--transition-fast</span>: <span class="code-value">150ms ease-in-out</span>;
+  <span class="code-property">--transition-base</span>: <span class="code-value">200ms ease-in-out</span>;
+  <span class="code-property">--transition-slow</span>: <span class="code-value">300ms ease-in-out</span>;
+}
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div style="background: var(--gradient-dark); color: white; padding: var(--space-12); border-radius: var(--radius-2xl); margin-top: var(--space-16);">
+            <h2 style="font-size: 32px; margin-bottom: var(--space-6); font-weight: 700;">Reglas Fundamentales</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-6);">
+                <div>
+                    <div style="font-weight: 600; margin-bottom: var(--space-2); color: var(--primary-300);">Escala de espaciado</div>
+                    <div style="opacity: 0.8; font-size: 14px;">Solo múltiplos de 4px. Nada arbitrario.</div>
+                </div>
+                <div>
+                    <div style="font-weight: 600; margin-bottom: var(--space-2); color: var(--primary-300);">Border radius mínimo</div>
+                    <div style="opacity: 0.8; font-size: 14px;">Mínimo 8px. Nunca elementos cuadrados perfectos.</div>
+                </div>
+                <div>
+                    <div style="font-weight: 600; margin-bottom: var(--space-2); color: var(--primary-300);">Pesos tipográficos</div>
+                    <div style="opacity: 0.8; font-size: 14px;">Máximo 3 por vista: Regular, Semibold, Bold.</div>
+                </div>
+                <div>
+                    <div style="font-weight: 600; margin-bottom: var(--space-2); color: var(--primary-300);">Sombras sutiles</div>
+                    <div style="opacity: 0.8; font-size: 14px;">Opacidad máxima 0.16. Siempre difuminadas.</div>
+                </div>
+                <div>
+                    <div style="font-weight: 600; margin-bottom: var(--space-2); color: var(--primary-300);">Estados visuales</div>
+                    <div style="opacity: 0.8; font-size: 14px;">Todo elemento interactivo tiene hover/active/focus.</div>
+                </div>
+                <div>
+                    <div style="font-weight: 600; margin-bottom: var(--space-2); color: var(--primary-300);">Touch targets</div>
+                    <div style="opacity: 0.8; font-size: 14px;">Mínimo 44x44px para accesibilidad móvil.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COPYRIGHT -->
+        <div style="text-align: center; padding: var(--space-8) 0; color: var(--neutral-500); border-top: 1px solid var(--neutral-200); margin-top: var(--space-16);">
+            <p style="font-weight: 600;">ComerECO Design System - Technical Reference</p>
+            <p style="font-size: 14px; margin-top: var(--space-2);">Optimizado para Cursor AI y desarrollo profesional</p>
+            <p style="font-size: 12px; margin-top: var(--space-2); opacity: 0.7;">Solver Center Edition - Grupo Solven</p>
+        </div>
+    </div>
+</body>
+</html>

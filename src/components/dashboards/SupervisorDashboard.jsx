@@ -33,9 +33,13 @@ const SupervisorDashboard = ({ user }) => {
 
     return (
         <div className="space-y-8">
-            <div>
-                <h1 className="text-3xl font-bold">Dashboard de Supervisor</h1>
-                <p className="text-muted-foreground">Bienvenido, {user.full_name}. Revisa las requisiciones pendientes.</p>
+            <div className="flex flex-col gap-2">
+                <h1 className="text-4xl font-bold text-neutral-900">
+                    Dashboard de <span className="bg-gradient-primary bg-clip-text text-transparent">Supervisor</span>
+                </h1>
+                <p className="text-base text-neutral-600">
+                    Bienvenido, <span className="font-semibold text-neutral-900">{user.full_name}</span>. Revisa las requisiciones pendientes.
+                </p>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -51,19 +55,32 @@ const SupervisorDashboard = ({ user }) => {
                     <RecentRequisitions />
                 </div>
                 <Card>
-                    <CardHeader><CardTitle>Mis Proyectos</CardTitle></CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardHeader className="pb-4">
+                        <div className="flex items-center gap-2">
+                            <div className="h-8 w-8 rounded-lg bg-gradient-primary flex items-center justify-center">
+                                <FolderKanban className="h-4 w-4 text-white" />
+                            </div>
+                            <CardTitle className="text-lg">Mis Proyectos</CardTitle>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
                         {isLoadingProjects ? (
-                            Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-12 w-full" />)
+                            Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-16 w-full rounded-lg" />)
                         ) : (
                             projects?.map(p => (
-                                <div key={p.id} className="p-3 bg-muted rounded-lg hover:bg-accent transition-colors cursor-pointer" onClick={() => navigate(`/projects`)}>
-                                    <p className="font-semibold text-sm">{p.name}</p>
-                                    <p className="text-xs text-muted-foreground line-clamp-1">{p.description}</p>
+                                <div
+                                    key={p.id}
+                                    className="p-4 bg-gradient-to-br from-neutral-50 to-white border border-neutral-200 rounded-lg hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group"
+                                    onClick={() => navigate(`/projects`)}
+                                >
+                                    <p className="font-semibold text-sm text-neutral-900 group-hover:text-primary-600 transition-colors">{p.name}</p>
+                                    <p className="text-xs text-neutral-500 line-clamp-1 mt-1">{p.description}</p>
                                 </div>
                             ))
                         )}
-                        <Button variant="link" size="sm" className="w-full" onClick={() => navigate('/projects')}>Ver todos los proyectos</Button>
+                        <Button variant="link" size="sm" className="w-full mt-2" onClick={() => navigate('/projects')}>
+                            Ver todos los proyectos →
+                        </Button>
                     </CardContent>
                 </Card>
             </div>
