@@ -19,8 +19,8 @@ const AdminDashboard = ({ user }) => {
         { label: 'Gestionar Reqs', icon: FileText, path: '/requisitions' },
         { label: 'Gestionar Usuarios', icon: Users, path: '/users' },
         { label: 'Gestionar Proyectos', icon: FolderKanban, path: '/projects' },
-        { label: 'Gestionar Productos', icon: ShoppingBag, path: '#' }, // TODO: link a gestionar productos
-        { label: 'Reportes', icon: BarChart2, path: '#', variant: 'secondary' }, // TODO: link a reportes
+        { label: 'Gestionar Productos', icon: ShoppingBag, path: '/products/manage' },
+        { label: 'Reportes', icon: BarChart2, path: '/reports', variant: 'secondary' },
     ];
 
     return (

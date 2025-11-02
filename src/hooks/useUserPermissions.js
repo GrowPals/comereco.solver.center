@@ -14,6 +14,7 @@ import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
  * - `canManageUsers` (boolean): Si el usuario puede gestionar (invitar, editar) otros usuarios.
  * - `canManageProjects` (boolean): Si el usuario puede crear/editar proyectos.
  * - `canApproveRequisitions` (boolean): Si el usuario puede aprobar o rechazar requisiciones.
+ * - `canCreateRequisitions` (boolean): Si el usuario puede crear requisiciones (todos los usuarios autenticados).
  * - `isLoadingPermissions` (boolean): Verdadero mientras se carga la información del usuario.
  */
 export const useUserPermissions = () => {
@@ -35,6 +36,8 @@ export const useUserPermissions = () => {
     const canManageUsers = isAdmin;
     const canManageProjects = isAdmin;
     const canApproveRequisitions = isAdmin || isSupervisor;
+    // Todos los usuarios autenticados pueden crear requisiciones
+    const canCreateRequisitions = !!user;
 
     return {
         userRole,
@@ -44,6 +47,7 @@ export const useUserPermissions = () => {
         canManageUsers,
         canManageProjects,
         canApproveRequisitions,
+        canCreateRequisitions,
         isLoadingPermissions: loading,
     };
 };

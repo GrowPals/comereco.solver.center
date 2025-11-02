@@ -132,8 +132,29 @@ export const getAdminProducts = async () => {
 
 /**
  * CORREGIDO: Valida sesión y maneja errores correctamente
+ * Valida datos antes de crear producto
  */
 export const createProduct = async (productData) => {
+    // Validar datos requeridos
+    if (!productData.name || !productData.name.trim()) {
+        throw new Error("El nombre del producto es requerido.");
+    }
+    if (!productData.sku || !productData.sku.trim()) {
+        throw new Error("El SKU del producto es requerido.");
+    }
+    if (productData.price === undefined || productData.price === null) {
+        throw new Error("El precio del producto es requerido.");
+    }
+    if (typeof productData.price !== 'number' || productData.price < 0) {
+        throw new Error("El precio debe ser un número mayor o igual a 0.");
+    }
+    if (productData.stock === undefined || productData.stock === null) {
+        throw new Error("El stock del producto es requerido.");
+    }
+    if (!Number.isInteger(productData.stock) || productData.stock < 0) {
+        throw new Error("El stock debe ser un número entero mayor o igual a 0.");
+    }
+
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) {
         throw new Error("Usuario no autenticado.");
@@ -155,12 +176,25 @@ export const createProduct = async (productData) => {
 
     const { data, error } = await supabase
         .from('products')
-        .insert([{ ...productData, company_id: profile.company_id, bind_id }])
+        .insert([{ 
+            ...productData, 
+            company_id: profile.company_id, 
+            bind_id,
+            name: productData.name.trim(),
+            sku: productData.sku.trim(),
+            price: Number(productData.price),
+            stock: Math.floor(Number(productData.stock)),
+            is_active: productData.is_active !== undefined ? productData.is_active : true
+        }])
         .select()
         .single();
         
     if (error) {
         logger.error('Error creating product:', error);
+        // Manejar errores específicos de Supabase
+        if (error.code === '23505') { // Unique violation
+            throw new Error("Ya existe un producto con este SKU.");
+        }
         throw new Error(formatErrorMessage(error));
     }
     
@@ -176,10 +210,45 @@ export const updateProduct = async (productData) => {
         throw new Error("Datos del producto inválidos.");
     }
     
+    // Validar datos críticos si se están actualizando
+    if (productData.name !== undefined && (!productData.name || !productData.name.trim())) {
+        throw new Error("El nombre del producto no puede estar vacío.");
+    }
+    if (productData.sku !== undefined && (!productData.sku || !productData.sku.trim())) {
+        throw new Error("El SKU del producto no puede estar vacío.");
+    }
+    if (productData.price !== undefined && (typeof productData.price !== 'number' || productData.price < 0)) {
+        throw new Error("El precio debe ser un número mayor o igual a 0.");
+    }
+    if (productData.stock !== undefined && (!Number.isInteger(productData.stock) || productData.stock < 0)) {
+        throw new Error("El stock debe ser un número entero mayor o igual a 0.");
+    }
+    
     const { id, ...updateData } = productData;
-    const { data, error } = await supabase.from('products').update(updateData).eq('id', id).select().single();
+    
+    // Limpiar y normalizar datos antes de actualizar
+    const cleanedData = { ...updateData };
+    if (cleanedData.name) cleanedData.name = cleanedData.name.trim();
+    if (cleanedData.sku) cleanedData.sku = cleanedData.sku.trim();
+    if (cleanedData.price !== undefined) cleanedData.price = Number(cleanedData.price);
+    if (cleanedData.stock !== undefined) cleanedData.stock = Math.floor(Number(cleanedData.stock));
+    
+    const { data, error } = await supabase
+        .from('products')
+        .update(cleanedData)
+        .eq('id', id)
+        .select()
+        .single();
+        
     if (error) {
         logger.error('Error updating product:', error);
+        // Manejar errores específicos de Supabase
+        if (error.code === '23505') { // Unique violation
+            throw new Error("Ya existe un producto con este SKU.");
+        }
+        if (error.code === 'PGRST116') { // Not found
+            throw new Error("Producto no encontrado.");
+        }
         throw new Error(formatErrorMessage(error));
     }
     

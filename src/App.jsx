@@ -6,6 +6,7 @@ import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
 import { fetchProducts } from '@/services/productService';
 import { fetchRequisitions } from '@/services/requisitionService';
+import { useSessionExpirationHandler } from '@/hooks/useSessionExpirationHandler';
 
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
@@ -51,11 +52,13 @@ function PrivateRoute({ children, permissionCheck }) {
   }
 
   if (!session) {
+    // Guardar la ruta a la que intentó acceder para redirigir después del login
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
   
   if (permissionCheck && !permissionCheck(permissions)) {
-    // Si el chequeo de permisos falla, redirige al dashboard.
+    // Si el chequeo de permisos falla, redirige al dashboard con mensaje.
+    // El usuario verá el dashboard apropiado para su rol.
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -69,6 +72,9 @@ const AppLayout = () => {
   const location = useLocation();
   const queryClient = useQueryClient();
   const { session } = useSupabaseAuth();
+  
+  // Hook para manejar expiración de sesión
+  useSessionExpirationHandler();
 
   // Prefetching inteligente de datos probables
   useEffect(() => {

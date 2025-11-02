@@ -194,8 +194,32 @@ export const fetchRequisitionDetails = async (id) => {
  * @returns {Promise<object>} La nueva requisición creada.
  */
 export const createRequisitionFromCart = async ({ projectId, comments, items }) => {
-    if (!projectId) throw new Error("El proyecto es requerido.");
-    if (!items || items.length === 0) throw new Error("No se puede crear una requisición sin productos.");
+    // Validaciones exhaustivas antes de crear la requisición
+    if (!projectId) {
+        throw new Error("El proyecto es requerido.");
+    }
+    if (!items || !Array.isArray(items) || items.length === 0) {
+        throw new Error("No se puede crear una requisición sin productos.");
+    }
+    
+    // Validar que todos los items tengan los campos requeridos
+    for (const item of items) {
+        if (!item.id) {
+            throw new Error("Uno o más productos no tienen ID válido.");
+        }
+        if (!item.quantity || item.quantity <= 0) {
+            throw new Error("Todos los productos deben tener una cantidad mayor a 0.");
+        }
+        if (!Number.isInteger(item.quantity)) {
+            throw new Error("La cantidad debe ser un número entero.");
+        }
+    }
+
+    // Validar sesión antes de hacer queries (usando cache)
+    const { session, error: sessionError } = await getCachedSession();
+    if (sessionError || !session) {
+        throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+    }
 
     // Transformar items del carrito al formato esperado por el RPC
     const rpcItems = items.map(item => ({
@@ -211,6 +235,13 @@ export const createRequisitionFromCart = async ({ projectId, comments, items }) 
     
     if (error) {
         logger.error('Error in create_full_requisition RPC:', error);
+        // Manejar errores específicos
+        if (error.message?.includes('project') || error.code === '23503') {
+            throw new Error("El proyecto seleccionado no existe o no tienes acceso a él.");
+        }
+        if (error.message?.includes('product') || error.message?.includes('no encontrado')) {
+            throw new Error("Uno o más productos ya no están disponibles.");
+        }
         throw new Error(formatErrorMessage(error));
     }
 
@@ -308,19 +339,21 @@ export const fetchPendingApprovals = async () => {
 
 /**
  * Envía una requisición para aprobación (cambia el estado a 'submitted').
+ * NOTA: Usa la función de BD submit_requisition que maneja la lógica completa.
  * @param {string} requisitionId - ID de la requisición.
- * @returns {Promise<object>} Requisición actualizada.
+ * @returns {Promise<object>} Resultado de la operación.
  */
 export const submitRequisition = async (requisitionId) => {
-    const { data, error } = await supabase
-        .from('requisitions')
-        .update({ 
-            business_status: 'submitted',
-            updated_at: new Date().toISOString()
-        })
-        .eq('id', requisitionId)
-        .select()
-        .single();
+    // Validar sesión antes de hacer queries (usando cache)
+    const { session, error: sessionError } = await getCachedSession();
+    if (sessionError || !session) {
+        throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+    }
+
+    // Usar función de BD que maneja la lógica completa (validaciones, estados, etc.)
+    const { data, error } = await supabase.rpc('submit_requisition', {
+        p_requisition_id: requisitionId
+    });
 
     if (error) {
         logger.error('Error submitting requisition:', error);
@@ -331,57 +364,93 @@ export const submitRequisition = async (requisitionId) => {
         throw new Error('No se pudo enviar la requisición.');
     }
     
-    return data;
+    // La función de BD retorna un objeto con success y requisition_id
+    // Obtener la requisición actualizada para retornarla
+    const { data: requisition, error: fetchError } = await supabase
+        .from('requisitions')
+        .select('*')
+        .eq('id', requisitionId)
+        .single();
+
+    if (fetchError) {
+        logger.error('Error fetching updated requisition:', fetchError);
+        // Retornar el resultado de la función aunque no podamos obtener la requisición completa
+        return data;
+    }
+    
+    return requisition || data;
 };
 
 /**
  * Actualiza el estado de una requisición (aprobación/rechazo).
- * CORREGIDO: Agrega approved_by cuando se aprueba según documentación técnica
+ * NOTA: Usa funciones de BD (approve_requisition/reject_requisition) que manejan la lógica completa.
  * @param {string} requisitionId - ID de la requisición.
  * @param {string} status - Nuevo estado ('approved' o 'rejected').
- * @param {string} reason - Razón del rechazo (opcional).
+ * @param {string} reason - Razón del rechazo (opcional, requerido si status es 'rejected').
  * @returns {Promise<object>} Requisición actualizada.
  */
 export const updateRequisitionStatus = async (requisitionId, status, reason = null) => {
-    // Obtener el usuario actual para approved_by
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-        throw new Error('Usuario no autenticado.');
+    // Validar sesión antes de hacer queries (usando cache)
+    const { session, error: sessionError } = await getCachedSession();
+    if (sessionError || !session) {
+        throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
     }
 
-    const updateData = {
-        business_status: status,
-        updated_at: new Date().toISOString(),
-    };
-
-    // Según documentación: cuando se aprueba, se debe establecer approved_by
     if (status === 'approved') {
-        updateData.approved_by = user.id;
-    }
+        // Usar función de BD que maneja validaciones y lógica completa
+        const { data, error } = await supabase.rpc('approve_requisition', {
+            p_requisition_id: requisitionId,
+            p_comments: reason || null
+        });
 
-    // Si se rechaza, agregar razón y timestamp
-    if (status === 'rejected') {
-        if (reason) {
-            updateData.rejection_reason = reason;
+        if (error) {
+            logger.error('Error approving requisition:', error);
+            throw new Error(formatErrorMessage(error));
         }
-        updateData.rejected_at = new Date().toISOString();
-    }
 
-    const { data, error } = await supabase
-        .from('requisitions')
-        .update(updateData)
-        .eq('id', requisitionId)
-        .select()
-        .single();
+        // Obtener la requisición actualizada
+        const { data: requisition, error: fetchError } = await supabase
+            .from('requisitions')
+            .select('*')
+            .eq('id', requisitionId)
+            .single();
 
-    if (error) {
-        logger.error('Error updating requisition status:', error);
-        throw new Error(formatErrorMessage(error));
+        if (fetchError) {
+            logger.error('Error fetching updated requisition:', fetchError);
+            return data;
+        }
+
+        return requisition || data;
+    } else if (status === 'rejected') {
+        if (!reason || !reason.trim()) {
+            throw new Error("La razón del rechazo es requerida.");
+        }
+
+        // Usar función de BD que maneja validaciones y lógica completa
+        const { data, error } = await supabase.rpc('reject_requisition', {
+            p_requisition_id: requisitionId,
+            p_reason: reason.trim()
+        });
+
+        if (error) {
+            logger.error('Error rejecting requisition:', error);
+            throw new Error(formatErrorMessage(error));
+        }
+
+        // Obtener la requisición actualizada
+        const { data: requisition, error: fetchError } = await supabase
+            .from('requisitions')
+            .select('*')
+            .eq('id', requisitionId)
+            .single();
+
+        if (fetchError) {
+            logger.error('Error fetching updated requisition:', fetchError);
+            return data;
+        }
+
+        return requisition || data;
+    } else {
+        throw new Error(`Estado no válido: ${status}. Solo se permiten 'approved' o 'rejected'.`);
     }
-    
-    if (!data) {
-        throw new Error(`No se pudo ${status === 'approved' ? 'aprobar' : 'rechazar'} la requisición.`);
-    }
-    
-    return data;
 };

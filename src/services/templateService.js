@@ -45,6 +45,14 @@ export const getTemplates = async () => {
  * @returns {Promise<object>} La plantilla creada.
  */
 export const createTemplate = async (templateData) => {
+    // Validar datos requeridos
+    if (!templateData.name || !templateData.name.trim()) {
+        throw new Error("El nombre de la plantilla es requerido.");
+    }
+    if (templateData.name.trim().length < 2) {
+        throw new Error("El nombre de la plantilla debe tener al menos 2 caracteres.");
+    }
+    
     // Validar sesión antes de hacer queries
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) {
@@ -71,10 +79,10 @@ export const createTemplate = async (templateData) => {
     
     if (templateData.items && templateData.items.length > 0) {
         const invalidItems = templateData.items.filter(item => 
-            !item.product_id || typeof item.quantity !== 'number' || item.quantity <= 0
+            !item.product_id || typeof item.quantity !== 'number' || item.quantity <= 0 || !Number.isInteger(item.quantity)
         );
         if (invalidItems.length > 0) {
-            throw new Error('Todos los items deben tener product_id válido y quantity positivo.');
+            throw new Error('Todos los items deben tener product_id válido y quantity positivo (número entero).');
         }
     }
 
@@ -82,6 +90,8 @@ export const createTemplate = async (templateData) => {
         .from('requisition_templates')
         .insert([{
             ...templateData,
+            name: templateData.name.trim(),
+            description: templateData.description?.trim() || '',
             user_id: user.id,
             company_id: profile.company_id,
             items: templateData.items || [],
@@ -91,8 +101,17 @@ export const createTemplate = async (templateData) => {
     
     if (error) {
         logger.error('Error creating template:', error);
+        // Manejar errores específicos
+        if (error.code === '23505') { // Unique violation
+            throw new Error("Ya existe una plantilla con este nombre.");
+        }
         throw new Error(formatErrorMessage(error));
     }
+    
+    if (!data) {
+        throw new Error("No se pudo crear la plantilla.");
+    }
+    
     return data;
 };
 
@@ -104,6 +123,21 @@ export const createTemplate = async (templateData) => {
  * @returns {Promise<object>} La plantilla actualizada.
  */
 export const updateTemplate = async (templateData) => {
+    // Validar datos de entrada
+    if (!templateData || !templateData.id) {
+        throw new Error("Datos de la plantilla inválidos.");
+    }
+    
+    // Validar nombre si se está actualizando
+    if (templateData.name !== undefined) {
+        if (!templateData.name || !templateData.name.trim()) {
+            throw new Error("El nombre de la plantilla no puede estar vacío.");
+        }
+        if (templateData.name.trim().length < 2) {
+            throw new Error("El nombre de la plantilla debe tener al menos 2 caracteres.");
+        }
+    }
+    
     // Validar sesión antes de hacer queries (usando cache)
     const { session, error: sessionError } = await getCachedSession();
     if (sessionError || !session) {
@@ -120,7 +154,10 @@ export const updateTemplate = async (templateData) => {
         .single();
 
     if (fetchError || !existingTemplate) {
-        throw new Error('Plantilla no encontrada.');
+        if (fetchError?.code === 'PGRST116') {
+            throw new Error('Plantilla no encontrada.');
+        }
+        throw new Error(formatErrorMessage(fetchError));
     }
 
     if (existingTemplate.user_id !== session.user.id) {
@@ -135,17 +172,24 @@ export const updateTemplate = async (templateData) => {
         
         if (updateData.items.length > 0) {
             const invalidItems = updateData.items.filter(item => 
-                !item.product_id || typeof item.quantity !== 'number' || item.quantity <= 0
+                !item.product_id || typeof item.quantity !== 'number' || item.quantity <= 0 || !Number.isInteger(item.quantity)
             );
             if (invalidItems.length > 0) {
-                throw new Error('Todos los items deben tener product_id válido y quantity positivo.');
+                throw new Error('Todos los items deben tener product_id válido y quantity positivo (número entero).');
             }
         }
     }
 
+    // Limpiar y normalizar datos
+    const cleanedData = { ...updateData };
+    if (cleanedData.name) cleanedData.name = cleanedData.name.trim();
+    if (cleanedData.description !== undefined) {
+        cleanedData.description = cleanedData.description?.trim() || '';
+    }
+
     const { data, error } = await supabase
         .from('requisition_templates')
-        .update(updateData)
+        .update(cleanedData)
         .eq('id', id)
         .eq('user_id', session.user.id) // Doble verificación de permisos
         .select()
@@ -153,8 +197,16 @@ export const updateTemplate = async (templateData) => {
     
     if (error) {
         logger.error('Error updating template:', error);
+        if (error.code === 'PGRST116') {
+            throw new Error('Plantilla no encontrada.');
+        }
         throw new Error(formatErrorMessage(error));
     }
+    
+    if (!data) {
+        throw new Error("No se pudo actualizar la plantilla.");
+    }
+    
     return data;
 };
 

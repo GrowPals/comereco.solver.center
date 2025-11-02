@@ -9,6 +9,7 @@ import { performGlobalSearch } from '@/services/searchService';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import OptimizedImage from '@/components/OptimizedImage';
+import logger from '@/utils/logger';
 
 const SearchDialog = memo(({ open, onOpenChange }) => {
   const [query, setQuery] = useState('');
@@ -36,7 +37,7 @@ const SearchDialog = memo(({ open, onOpenChange }) => {
         const searchResults = await performGlobalSearch(debouncedQuery, user.company_id);
         setResults(searchResults);
       } catch (error) {
-        console.error('Error en búsqueda:', error);
+        logger.error('Error en búsqueda:', error);
         setResults({ productos: [], requisiciones: [], usuarios: [] });
       } finally {
         setIsLoading(false);

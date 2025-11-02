@@ -131,7 +131,7 @@ const Approvals = () => {
                                                     size="icon"
                                                     className="text-green-500 hover:text-green-600 hover:bg-green-100"
                                                     onClick={(e) => { e.stopPropagation(); handleApprove(req.id); }}
-                                                    disabled={mutation.isLoading}
+                                                    disabled={mutation.isPending}
                                                 >
                                                     <Check className="h-5 w-5" />
                                                 </Button>
@@ -140,7 +140,7 @@ const Approvals = () => {
                                                     size="icon"
                                                     className="text-red-500 hover:text-red-600 hover:bg-red-100"
                                                     onClick={(e) => { e.stopPropagation(); handleOpenRejectionModal(req.id); }}
-                                                    disabled={mutation.isLoading}
+                                                    disabled={mutation.isPending}
                                                 >
                                                     <X className="h-5 w-5" />
                                                 </Button>
@@ -171,7 +171,7 @@ const Approvals = () => {
                     </div>
                     <DialogFooter>
                         <Button variant="ghost" onClick={handleCloseRejectionModal}>Cancelar</Button>
-                        <Button variant="destructive" onClick={handleReject} isLoading={mutation.isLoading}>
+                        <Button variant="destructive" onClick={handleReject} isLoading={mutation.isPending}>
                             Rechazar
                         </Button>
                     </DialogFooter>

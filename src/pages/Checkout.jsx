@@ -87,7 +87,7 @@ const CheckoutPage = () => {
         createRequisitionMutation.mutate({
             projectId: formData.projectId,
             comments: formData.comments,
-            items: items.map(item => ({ product_id: item.id, quantity: item.quantity })),
+            items: items, // Pasar items directamente, el servicio los mapeará correctamente
         });
     };
     

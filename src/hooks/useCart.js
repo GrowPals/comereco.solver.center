@@ -126,6 +126,12 @@ const removeCartItemAPI = async ({ userId, productId }) => {
 };
 
 const clearCartAPI = async () => {
+    // Validar sesión antes de hacer queries
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+        throw new Error('Usuario no autenticado');
+    }
+    
     const { data, error } = await supabase.rpc('clear_user_cart');
     if (error) {
         logger.error('Error clearing cart:', error);
@@ -208,8 +214,10 @@ export const useCart = () => {
     const clearCartMutation = useMutation({
         mutationFn: clearCartAPI,
         ...mutationOptions,
-         onSuccess: () => {
-          toast({ title: 'Carrito vaciado' });
+        onSuccess: () => {
+            toast({ title: 'Carrito vaciado' });
+            // Invalidar todas las queries de cart para asegurar sincronización
+            queryClient.invalidateQueries({ queryKey: ['cart'] });
         }
     });
 

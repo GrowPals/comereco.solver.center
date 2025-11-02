@@ -44,7 +44,10 @@ const RequisitionDetail = () => {
     useEffect(() => {
         if (isError) {
             toast({ variant: 'destructive', title: 'Error', description: 'No se pudo cargar la requisición.' });
-            navigate('/requisitions');
+            // Redirigir después de un breve delay para que el usuario vea el mensaje
+            setTimeout(() => {
+                navigate('/requisitions');
+            }, 2000);
         }
     }, [isError, navigate, toast]);
     
@@ -86,7 +89,20 @@ const RequisitionDetail = () => {
     const actionLoading = isSubmitting || isApproving || isRejecting;
 
     if (isLoading) return <PageLoader />;
-    if (!requisition) return <div className="p-8 text-center">Requisición no encontrada.</div>;
+    if (isError || !requisition) {
+        return (
+            <div className="p-8 text-center">
+                <div className="max-w-md mx-auto">
+                    <h2 className="text-2xl font-bold mb-2">Requisición no encontrada</h2>
+                    <p className="text-muted-foreground mb-4">La requisición que buscas no existe o no tienes permisos para verla.</p>
+                    <Button onClick={() => navigate('/requisitions')}>
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Volver a Requisiciones
+                    </Button>
+                </div>
+            </div>
+        );
+    }
 
     // CORREGIDO: Usar creator en lugar de requester según documentación
     const { internal_folio, created_at, business_status, creator, items, total_amount, comments } = requisition;

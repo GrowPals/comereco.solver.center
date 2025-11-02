@@ -49,7 +49,7 @@ Digitalizar y optimizar el proceso de requisiciones de compra dentro de la compa
    VITE_SUPABASE_ANON_KEY=tu_clave_anon_aqui
    ```
    
-   Consulta `docs/INSTRUCCIONES_VARIABLES_ENTORNO.md` para más detalles.
+   Consulta [`docs/guides/INSTRUCCIONES_VARIABLES_ENTORNO.md`](docs/guides/INSTRUCCIONES_VARIABLES_ENTORNO.md) para más detalles.
 
 4. **Ejecutar en modo desarrollo**
    ```bash
@@ -107,18 +107,25 @@ El proyecto incluye `vercel.json` con la configuración optimizada para Vercel. 
 
 ```
 COMERECO WEBAPP/
-├── src/                 # Código fuente de la aplicación
-│   ├── components/      # Componentes React reutilizables
-│   ├── lib/             # Utilidades y configuraciones
-│   ├── pages/           # Páginas de la aplicación
-│   └── routes/          # Configuración de rutas
-├── public/              # Archivos estáticos
-├── docs/                # Documentación del proyecto
-├── dist/                # Build de producción (generado)
-├── package.json         # Dependencias y scripts
-├── vite.config.js       # Configuración de Vite
-└── vercel.json          # Configuración de Vercel
+├── src/                    # Código fuente de la aplicación
+│   ├── components/         # Componentes React reutilizables
+│   ├── lib/                # Utilidades y configuraciones
+│   ├── pages/              # Páginas de la aplicación
+│   ├── services/           # Servicios y API clients
+│   └── hooks/              # Custom React hooks
+├── public/                 # Archivos estáticos
+├── docs/                   # Documentación completa del proyecto
+│   ├── guides/            # Guías técnicas y de referencia
+│   ├── development/       # Documentación de desarrollo
+│   ├── archive/           # Documentación histórica
+│   └── api/               # Scripts SQL y migraciones
+├── dist/                  # Build de producción (generado)
+├── package.json           # Dependencias y scripts
+├── vite.config.js         # Configuración de Vite
+└── vercel.json            # Configuración de Vercel
 ```
+
+> 📚 **Documentación completa:** Ver [`docs/README.md`](docs/README.md) para el índice completo de documentación.
 
 ## 🧪 Scripts Disponibles
 
@@ -133,27 +140,35 @@ COMERECO WEBAPP/
 - **Cache:** Assets estáticos con cache de 1 año
 - **Build:** Optimizado con esbuild para builds rápidos
 
-Para más detalles, consulta `docs/OPTIMIZACIONES_APLICADAS.md`.
+Para más detalles, consulta [`docs/guides/OPTIMIZACIONES_APLICADAS.md`](docs/guides/OPTIMIZACIONES_APLICADAS.md).
 
-## 🔐 Seguridad
+## 📚 Documentación
+
+La documentación completa está organizada en [`docs/`](docs/README.md). Documentación esencial:
+
+### 🚀 Inicio Rápido
+- **[Guía de Despliegue](docs/guides/GUIA_DESPLIEGUE.md)** - Instrucciones detalladas de despliegue
+- **[Variables de Entorno](docs/guides/INSTRUCCIONES_VARIABLES_ENTORNO.md)** - Configuración de variables
+- **[Deployment Checklist](docs/guides/DEPLOYMENT_CHECKLIST.md)** - Checklist completo para despliegue
+
+### 🏗️ Arquitectura
+- **[Arquitectura de Roles y Permisos](docs/ARQUITECTURA_ROLES_PERMISOS.md)** - Sistema completo de roles
+- **[Documentación Técnica BD](docs/guides/DOCUMENTACION_TECNICA_BD_SUPABASE.md)** - Estructura de la BD
+- **[Implementación Backend](docs/guides/IMPLEMENTACION_BACKEND_SUPABASE.md)** - Guía de implementación
+
+### ⚡ Optimizaciones
+- **[Optimizaciones Aplicadas](docs/guides/OPTIMIZACIONES_APLICADAS.md)** - Detalles de optimizaciones
+
+> 📖 **Ver índice completo:** [`docs/README.md`](docs/README.md)
+
+## 🔐 Seguridad y Mejores Prácticas
 
 - Headers de seguridad configurados en Vercel
 - Variables de entorno para credenciales sensibles
 - Supabase client con configuración optimizada de autenticación
-
-## 📚 Documentación Adicional
-
-- [Guía de Despliegue](docs/GUIA_DESPLIEGUE.md) - Instrucciones detalladas de despliegue
-- [Variables de Entorno](docs/INSTRUCCIONES_VARIABLES_ENTORNO.md) - Configuración de variables
-- [Arquitectura de Roles](docs/ARQUITECTURA_ROLES_PERMISOS.md) - Sistema de permisos
-- [Auditoría de Base de Datos](docs/AUDITORIA_BD_SUPABASE.md) - Estructura de la BD
-- [Optimizaciones Aplicadas](docs/OPTIMIZACIONES_APLICADAS.md) - Detalles de optimizaciones
-- [Verificación Vercel](docs/VERIFICACION_VERCEL.md) - Checklist de verificación
-
-## 🔐 Seguridad
-
-- Las credenciales de Supabase deben estar en variables de entorno
-- Nunca commitees el archivo `.env` al repositorio
+- Row Level Security (RLS) implementado en todas las tablas
+- Autenticación basada en roles y permisos
+- **IMPORTANTE:** Nunca commitees el archivo `.env` al repositorio
 - Usa `.env.example` como plantilla para otros desarrolladores
 
 ## 🤝 Contribución

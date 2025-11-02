@@ -1,5 +1,6 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
+import { getCachedSession } from '@/lib/supabaseHelpers';
 import logger from '@/utils/logger';
 import { formatErrorMessage } from '@/utils/errorHandler';
 
@@ -42,13 +43,16 @@ export const getDashboardStats = async () => {
  * Campo correcto: created_by (no requester_id)
  */
 export const getRecentRequisitions = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return [];
+    // Validar sesión antes de hacer queries (usando cache)
+    const { session, error: sessionError } = await getCachedSession();
+    if (sessionError || !session) {
+        return [];
+    }
 
     const { data, error } = await supabase
         .from('requisitions')
         .select('id, internal_folio, created_at, total_amount, business_status, project_id')
-        .eq('created_by', user.id)
+        .eq('created_by', session.user.id)
         .order('created_at', { ascending: false })
         .limit(5);
 
@@ -82,6 +86,12 @@ export const getRecentRequisitions = async () => {
  * @returns {Promise<Array>} Lista de proyectos.
  */
 export const getSupervisorProjectsActivity = async () => {
+    // Validar sesión antes de hacer queries (usando cache)
+    const { session, error: sessionError } = await getCachedSession();
+    if (sessionError || !session) {
+        return [];
+    }
+
     const { data, error } = await supabase
         .from('projects')
         .select('id, name, description')
@@ -91,5 +101,5 @@ export const getSupervisorProjectsActivity = async () => {
         logger.error('Error fetching supervisor projects activity:', error);
         throw new Error(formatErrorMessage(error));
     }
-    return data;
+    return data || [];
 };

@@ -51,10 +51,10 @@ export const useRequisitionActions = () => {
 
     return {
         submit: submitMutation.mutate,
-        isSubmitting: submitMutation.isLoading,
+        isSubmitting: submitMutation.isPending,
         approve: approveMutation.mutate,
-        isApproving: approveMutation.isLoading,
+        isApproving: approveMutation.isPending,
         reject: rejectMutation.mutate,
-        isRejecting: rejectMutation.isLoading,
+        isRejecting: rejectMutation.isPending,
     };
 };

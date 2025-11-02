@@ -92,6 +92,14 @@ export const getMyProjects = async () => {
  * @returns {Promise<object>} El proyecto creado.
  */
 export const createProject = async (projectData) => {
+  // Validar datos requeridos
+  if (!projectData.name || !projectData.name.trim()) {
+    throw new Error("El nombre del proyecto es requerido.");
+  }
+  if (projectData.name.trim().length < 2) {
+    throw new Error("El nombre del proyecto debe tener al menos 2 caracteres.");
+  }
+
   // Validar sesión antes de hacer queries
   const { data: { user }, error: userError } = await supabase.auth.getUser();
   if (userError || !user) {
@@ -109,16 +117,35 @@ export const createProject = async (projectData) => {
     throw new Error('No se pudo obtener el perfil del usuario.');
   }
   
+  // Limpiar y normalizar datos
+  const cleanedData = {
+    ...projectData,
+    name: projectData.name.trim(),
+    description: projectData.description?.trim() || '',
+    status: projectData.status || 'active',
+    company_id: profile.company_id,
+    created_by: user.id
+  };
+  
   const { data, error } = await supabase
     .from('projects')
-    .insert([{ ...projectData, company_id: profile.company_id, created_by: user.id }])
+    .insert([cleanedData])
     .select()
     .single();
     
   if (error) {
     logger.error('Error creating project:', error);
+    // Manejar errores específicos
+    if (error.code === '23505') { // Unique violation
+      throw new Error("Ya existe un proyecto con este nombre.");
+    }
     throw new Error(formatErrorMessage(error));
   }
+  
+  if (!data) {
+    throw new Error("No se pudo crear el proyecto.");
+  }
+  
   return data;
 };
 
@@ -130,6 +157,21 @@ export const createProject = async (projectData) => {
  * @returns {Promise<object>} El proyecto actualizado.
  */
 export const updateProject = async (projectData) => {
+  // Validar datos de entrada
+  if (!projectData || !projectData.id) {
+    throw new Error("Datos del proyecto inválidos.");
+  }
+  
+  // Validar nombre si se está actualizando
+  if (projectData.name !== undefined) {
+    if (!projectData.name || !projectData.name.trim()) {
+      throw new Error("El nombre del proyecto no puede estar vacío.");
+    }
+    if (projectData.name.trim().length < 2) {
+      throw new Error("El nombre del proyecto debe tener al menos 2 caracteres.");
+    }
+  }
+
   // Validar sesión antes de hacer queries (usando cache)
   const { session, error: sessionError } = await getCachedSession();
   if (sessionError || !session) {
@@ -137,16 +179,37 @@ export const updateProject = async (projectData) => {
   }
 
   const { id, ...updateData } = projectData;
+  
+  // Limpiar y normalizar datos
+  const cleanedData = { ...updateData };
+  if (cleanedData.name) cleanedData.name = cleanedData.name.trim();
+  if (cleanedData.description !== undefined) {
+    cleanedData.description = cleanedData.description?.trim() || '';
+  }
+  
   const { data, error } = await supabase
     .from('projects')
-    .update(updateData)
+    .update(cleanedData)
     .eq('id', id)
     .select()
     .single();
-    if (error) {
-        logger.error('Error updating project:', error);
-        throw new Error(formatErrorMessage(error));
+    
+  if (error) {
+    logger.error('Error updating project:', error);
+    // Manejar errores específicos
+    if (error.code === '23505') { // Unique violation
+      throw new Error("Ya existe un proyecto con este nombre.");
     }
+    if (error.code === 'PGRST116') { // Not found
+      throw new Error("Proyecto no encontrado.");
+    }
+    throw new Error(formatErrorMessage(error));
+  }
+  
+  if (!data) {
+    throw new Error("No se pudo actualizar el proyecto.");
+  }
+  
   return data;
 };
 

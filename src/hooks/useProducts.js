@@ -16,8 +16,7 @@ export const useProducts = (filters) => {
     queryFn: () => getProducts(filters),
     staleTime: 1000 * 60 * 10, // 10 minutos - productos cambian poco
     gcTime: 1000 * 60 * 30, // 30 minutos en cache
-    placeholderData: (previousData) => previousData,
-    keepPreviousData: true,
+    placeholderData: (previousData) => previousData, // Mantiene datos previos mientras carga
     retry: 2,
   });
 };

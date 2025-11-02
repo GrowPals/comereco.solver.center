@@ -257,7 +257,7 @@ const Users = () => {
                         user={editingUser} 
                         onSave={handleSaveUser} 
                         onCancel={() => setIsFormOpen(false)}
-                        isLoading={inviteMutation.isLoading || updateMutation.isLoading}
+                        isLoading={inviteMutation.isPending || updateMutation.isPending}
                     />
                 </DialogContent>
             </Dialog>
