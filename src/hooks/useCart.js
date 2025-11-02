@@ -7,13 +7,33 @@ import { useState } from 'react';
 import logger from '@/utils/logger';
 
 const fetchCartAPI = async (userId) => {
-    const { data, error } = await supabase
+    // FIX: Evitar embeds ambiguos según REFERENCIA_TECNICA_BD_SUPABASE.md
+    // Obtener items del carrito primero
+    const { data: cartItems, error: cartError } = await supabase
         .from('user_cart_items')
-        .select(`quantity, product:products(*)`)
+        .select('quantity, product_id')
         .eq('user_id', userId);
     
-    if (error) throw error;
-    return data.map(item => ({ ...item.product, quantity: item.quantity }));
+    if (cartError) throw cartError;
+    if (!cartItems || cartItems.length === 0) return [];
+
+    // Obtener productos por separado
+    const productIds = cartItems.map(item => item.product_id);
+    const { data: products, error: productsError } = await supabase
+        .from('products')
+        .select('*')
+        .in('id', productIds);
+    
+    if (productsError) throw productsError;
+
+    // Combinar datos
+    const productsMap = {};
+    products?.forEach(p => { productsMap[p.id] = p; });
+
+    return cartItems.map(item => ({
+        ...productsMap[item.product_id],
+        quantity: item.quantity
+    })).filter(item => item.id); // Filtrar productos que no se encontraron
 };
 
 const upsertCartItemAPI = async ({ userId, productId, quantity }) => {

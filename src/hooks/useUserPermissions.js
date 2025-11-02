@@ -8,7 +8,6 @@ import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
  * 
  * @returns {object} Un objeto que contiene:
  * - `userRole` (string): El rol del usuario ('admin', 'supervisor', 'user').
- * - `isSuperAdmin` (boolean): Verdadero si el usuario es Super Administrador.
  * - `isAdmin` (boolean): Verdadero si el usuario es Administrador de la compañía.
  * - `isSupervisor` (boolean): Verdadero si el usuario es Supervisor.
  * - `isUser` (boolean): Verdadero si el usuario tiene el rol base de usuario.
@@ -20,23 +19,25 @@ import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 export const useUserPermissions = () => {
     const { user, loading } = useSupabaseAuth();
 
-    // ⚠️ Usa role_v2 según la especificación, no 'role'
+    // ⚠️ Usa role_v2 según la especificación, no 'role' (LEGACY)
+    // FIX: role_v2 solo tiene: 'admin', 'supervisor', 'user' (NO 'super_admin')
+    // Según REFERENCIA_TECNICA_BD_SUPABASE.md
     const userRole = user?.role_v2;
 
-    // Roles directos
-    const isSuperAdmin = userRole === 'super_admin';
+    // Roles directos según role_v2 (admin | supervisor | user)
     const isAdmin = userRole === 'admin';
     const isSupervisor = userRole === 'supervisor';
     const isUser = userRole === 'user';
     
     // Capacidades basadas en roles
-    const canManageUsers = isSuperAdmin || isAdmin;
-    const canManageProjects = isSuperAdmin || isAdmin;
-    const canApproveRequisitions = isSuperAdmin || isAdmin || isSupervisor;
+    // FIX: Eliminado isSuperAdmin ya que 'super_admin' no existe en role_v2
+    // Si necesitas funcionalidad de super admin, debe manejarse vía políticas RLS o campo adicional
+    const canManageUsers = isAdmin;
+    const canManageProjects = isAdmin;
+    const canApproveRequisitions = isAdmin || isSupervisor;
 
     return {
         userRole,
-        isSuperAdmin,
         isAdmin,
         isSupervisor,
         isUser,

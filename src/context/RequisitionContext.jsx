@@ -6,7 +6,7 @@ import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 const RequisitionContext = createContext();
 
 const initialState = {
-    requester_id: '',
+    created_by: '', // CORREGIDO: Según documentación técnica oficial, el campo es created_by
     project_id: null,
     comments: '',
     items: [],
@@ -23,7 +23,7 @@ export const RequisitionProvider = ({ children }) => {
         if (user && !isInitialized) {
             setRequisition(prev => ({
                 ...prev,
-                requester_id: user.id,
+                created_by: user.id,
                 items: cartItems.map(item => ({ ...item, product_id: item.id }))
             }));
             setIsInitialized(true);
@@ -62,7 +62,7 @@ export const RequisitionProvider = ({ children }) => {
     const resetRequisition = () => {
         setRequisition({
             ...initialState,
-            requester_id: user?.id || ''
+            created_by: user?.id || ''
         });
     };
 

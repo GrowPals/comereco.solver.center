@@ -10,10 +10,22 @@ import logger from '@/utils/logger';
  * @param {boolean} ascending - Dirección de ordenamiento (default: false)
  * @returns {Promise<Array>} Lista de requisiciones.
  */
+/**
+ * CORREGIDO: Valida sesión y evita embeds ambiguos
+ * RLS filtra automáticamente según el rol del usuario
+ */
 export const fetchRequisitions = async (page = 1, pageSize = 10, sortBy = 'created_at', ascending = false) => {
+    // Validar sesión antes de hacer queries
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !session) {
+        throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+    }
+
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 
+    // CORREGIDO: Según documentación técnica oficial, el campo es created_by (no requester_id)
+    // Hacer joins explícitos para evitar ambigüedades según mejores prácticas
     const { data, error, count } = await supabase
         .from('requisitions')
         .select(`
@@ -22,8 +34,11 @@ export const fetchRequisitions = async (page = 1, pageSize = 10, sortBy = 'creat
             created_at,
             total_amount,
             business_status,
-            project:project_id ( name ),
-            creator:created_by ( full_name, avatar_url )
+            integration_status,
+            project_id,
+            created_by,
+            approved_by,
+            company_id
         `, { count: 'exact' })
         .order(sortBy, { ascending })
         .range(from, to);
@@ -32,7 +47,41 @@ export const fetchRequisitions = async (page = 1, pageSize = 10, sortBy = 'creat
         logger.error("Error fetching requisitions:", error);
         throw new Error("No se pudieron cargar las requisiciones.");
     }
-    return { data, total: count };
+
+    // Enriquecer con datos de proyecto y creador si es necesario
+    // Evitar embeds ambiguos usando consultas separadas
+    const enrichedData = await Promise.all(
+        (data || []).map(async (req) => {
+            let project = null;
+            let creator = null;
+
+            if (req.project_id) {
+                const { data: projectData } = await supabase
+                    .from('projects')
+                    .select('id, name, description, status')
+                    .eq('id', req.project_id)
+                    .single();
+                project = projectData;
+            }
+
+            if (req.created_by) {
+                const { data: creatorData } = await supabase
+                    .from('profiles')
+                    .select('id, full_name, avatar_url, role_v2')
+                    .eq('id', req.created_by)
+                    .single();
+                creator = creatorData;
+            }
+
+            return {
+                ...req,
+                project,
+                creator
+            };
+        })
+    );
+
+    return { data: enrichedData, total: count };
 };
 
 /**
@@ -41,29 +90,96 @@ export const fetchRequisitions = async (page = 1, pageSize = 10, sortBy = 'creat
  * @returns {Promise<object>} Detalle de la requisición.
  */
 export const fetchRequisitionDetails = async (id) => {
-    const { data, error } = await supabase
+    // FIX: Evitar embeds ambiguos - consultas separadas según REFERENCIA_TECNICA_BD_SUPABASE.md
+    // Primero obtener la requisición base
+    const { data: requisition, error: reqError } = await supabase
         .from('requisitions')
-        .select(`
-            *,
-            project:project_id ( id, name ),
-            creator:created_by ( id, full_name, avatar_url ),
-            approver:approved_by ( id, full_name, avatar_url ),
-            items:requisition_items (
-                id,
-                quantity,
-                unit_price,
-                subtotal,
-                product:products (id, name, sku, image_url)
-            )
-        `)
+        .select('*')
         .eq('id', id)
         .single();
 
-    if (error) {
-        logger.error("Error fetching requisition details:", error);
+    if (reqError) {
+        logger.error("Error fetching requisition details:", reqError);
         throw new Error("No se pudo cargar el detalle de la requisición.");
     }
-    return data;
+
+    // Obtener items de la requisición
+    const { data: items, error: itemsError } = await supabase
+        .from('requisition_items')
+        .select('id, product_id, quantity, unit_price, subtotal')
+        .eq('requisition_id', id);
+
+    if (itemsError) {
+        logger.error("Error fetching requisition items:", itemsError);
+    }
+
+    // Obtener productos para los items
+    const productIds = items?.map(item => item.product_id).filter(Boolean) || [];
+    let productsMap = {};
+    if (productIds.length > 0) {
+        const { data: products, error: productsError } = await supabase
+            .from('products')
+            .select('id, name, sku, image_url, unit')
+            .in('id', productIds);
+
+        if (!productsError && products) {
+            productsMap = products.reduce((acc, p) => ({ ...acc, [p.id]: p }), {});
+        }
+    }
+
+    // Obtener información del proyecto si existe
+    let project = null;
+    if (requisition.project_id) {
+        const { data: projectData, error: projectError } = await supabase
+            .from('projects')
+            .select('id, name')
+            .eq('id', requisition.project_id)
+            .single();
+        
+        if (!projectError && projectData) {
+            project = projectData;
+        }
+    }
+
+    // Obtener información del creador - campo correcto según documentación: created_by
+    let creator = null;
+    if (requisition.created_by) {
+        const { data: creatorData, error: creatorError } = await supabase
+            .from('profiles')
+            .select('id, full_name, avatar_url, role_v2')
+            .eq('id', requisition.created_by)
+            .single();
+        
+        if (!creatorError && creatorData) {
+            creator = creatorData;
+        }
+    }
+
+    // Obtener información del aprobador si existe
+    let approver = null;
+    if (requisition.approved_by) {
+        const { data: approverData, error: approverError } = await supabase
+            .from('profiles')
+            .select('id, full_name, avatar_url, role_v2')
+            .eq('id', requisition.approved_by)
+            .single();
+        
+        if (!approverError && approverData) {
+            approver = approverData;
+        }
+    }
+
+    // Combinar datos
+    return {
+        ...requisition,
+        project,
+        creator,
+        approver,
+        items: items?.map(item => ({
+            ...item,
+            product: productsMap[item.product_id] || null
+        })) || []
+    };
 };
 
 
@@ -76,10 +192,16 @@ export const createRequisitionFromCart = async ({ projectId, comments, items }) 
     if (!projectId) throw new Error("El proyecto es requerido.");
     if (!items || items.length === 0) throw new Error("No se puede crear una requisición sin productos.");
 
+    // Transformar items del carrito al formato esperado por el RPC
+    const rpcItems = items.map(item => ({
+        product_id: item.id,
+        quantity: item.quantity
+    }));
+
     const { data, error } = await supabase.rpc('create_full_requisition', {
         p_project_id: projectId,
-        p_comments: comments,
-        p_items: items,
+        p_comments: comments || '',
+        p_items: rpcItems,
     });
     
     if (error) {
@@ -114,16 +236,10 @@ export const createRequisitionFromCart = async ({ projectId, comments, items }) 
  * @returns {Promise<Array>} Lista de requisiciones pendientes.
  */
 export const fetchPendingApprovals = async () => {
-    const { data, error } = await supabase
+    // CORREGIDO: Usar created_by según REFERENCIA_TECNICA_BD_SUPABASE.md
+    const { data: requisitions, error } = await supabase
         .from('requisitions')
-        .select(`
-            id,
-            internal_folio,
-            created_at,
-            total_amount,
-            project:project_id ( name ),
-            creator:created_by ( full_name, avatar_url )
-        `)
+        .select('id, internal_folio, created_at, total_amount, project_id, created_by')
         .eq('business_status', 'submitted')
         .order('created_at', { ascending: true });
     
@@ -131,7 +247,40 @@ export const fetchPendingApprovals = async () => {
         logger.error('Error fetching pending approvals:', error);
         throw new Error('No se pudieron cargar las aprobaciones pendientes.');
     }
-    return data;
+
+    // Enriquecer con datos de proyecto y creador
+    const enrichedRequisitions = await Promise.all(
+        (requisitions || []).map(async (req) => {
+            let project = null;
+            let creator = null;
+
+            if (req.project_id) {
+                const { data: projectData } = await supabase
+                    .from('projects')
+                    .select('name')
+                    .eq('id', req.project_id)
+                    .single();
+                project = projectData;
+            }
+
+            if (req.created_by) {
+                const { data: creatorData } = await supabase
+                    .from('profiles')
+                    .select('id, full_name, avatar_url, role_v2')
+                    .eq('id', req.created_by)
+                    .single();
+                creator = creatorData;
+            }
+
+            return {
+                ...req,
+                project,
+                creator
+            };
+        })
+    );
+
+    return enrichedRequisitions;
 };
 
 /**
@@ -142,7 +291,10 @@ export const fetchPendingApprovals = async () => {
 export const submitRequisition = async (requisitionId) => {
     const { data, error } = await supabase
         .from('requisitions')
-        .update({ business_status: 'submitted' })
+        .update({ 
+            business_status: 'submitted',
+            updated_at: new Date().toISOString()
+        })
         .eq('id', requisitionId)
         .select()
         .single();
@@ -156,19 +308,35 @@ export const submitRequisition = async (requisitionId) => {
 
 /**
  * Actualiza el estado de una requisición (aprobación/rechazo).
+ * CORREGIDO: Agrega approved_by cuando se aprueba según documentación técnica
  * @param {string} requisitionId - ID de la requisición.
  * @param {string} status - Nuevo estado ('approved' o 'rejected').
  * @param {string} reason - Razón del rechazo (opcional).
  * @returns {Promise<object>} Requisición actualizada.
  */
 export const updateRequisitionStatus = async (requisitionId, status, reason = null) => {
+    // Obtener el usuario actual para approved_by
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+        throw new Error('Usuario no autenticado.');
+    }
+
     const updateData = {
         business_status: status,
         updated_at: new Date().toISOString(),
     };
 
-    if (status === 'rejected' && reason) {
-        updateData.rejection_reason = reason;
+    // Según documentación: cuando se aprueba, se debe establecer approved_by
+    if (status === 'approved') {
+        updateData.approved_by = user.id;
+    }
+
+    // Si se rechaza, agregar razón y timestamp
+    if (status === 'rejected') {
+        if (reason) {
+            updateData.rejection_reason = reason;
+        }
+        updateData.rejected_at = new Date().toISOString();
     }
 
     const { data, error } = await supabase

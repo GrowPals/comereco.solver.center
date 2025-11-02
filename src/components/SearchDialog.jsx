@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useDebounce } from '@/hooks/useDebounce';
 import { performGlobalSearch } from '@/services/searchService';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 
 const SearchDialog = ({ open, onOpenChange }) => {
   const [query, setQuery] = useState('');
@@ -15,9 +16,10 @@ const SearchDialog = ({ open, onOpenChange }) => {
   const [isLoading, setIsLoading] = useState(false);
   const debouncedQuery = useDebounce(query, 300);
   const navigate = useNavigate();
+  const { user } = useSupabaseAuth();
 
   useEffect(() => {
-    if (!debouncedQuery.trim()) {
+    if (!debouncedQuery.trim() || !user?.company_id) {
       setResults({ productos: [], requisiciones: [], usuarios: [] });
       setIsLoading(false);
       return;
@@ -25,13 +27,13 @@ const SearchDialog = ({ open, onOpenChange }) => {
 
     const search = async () => {
       setIsLoading(true);
-      const searchResults = await performGlobalSearch(debouncedQuery);
+      const searchResults = await performGlobalSearch(debouncedQuery, user.company_id);
       setResults(searchResults);
       setIsLoading(false);
     };
 
     search();
-  }, [debouncedQuery]);
+  }, [debouncedQuery, user?.company_id]);
 
   const handleSelect = (path) => {
     onOpenChange(false);
@@ -96,7 +98,7 @@ const SearchDialog = ({ open, onOpenChange }) => {
                     {results.productos.length > 0 && (
                       <ResultSection title="Productos" icon={Package} items={results.productos} onSelect={handleSelect} renderItem={(item) => (
                         <>
-                          <img src={item.image_url} alt={item.name} className="w-10 h-10 rounded-lg object-cover bg-muted" src="https://images.unsplash.com/photo-1635865165118-917ed9e20936" />
+                          <img src={item.image_url || "https://images.unsplash.com/photo-1635865165118-917ed9e20936"} alt={item.name} className="w-10 h-10 rounded-lg object-cover bg-muted" />
                           <div>
                             <p className="font-medium truncate">{item.name}</p>
                             <p className="text-xs text-muted-foreground">SKU: {item.sku}</p>
@@ -123,7 +125,7 @@ const SearchDialog = ({ open, onOpenChange }) => {
                            <User className="h-6 w-6 text-indigo-500 shrink-0" />
                           <div>
                             <p className="font-medium truncate">{item.full_name}</p>
-                            <p className="text-xs text-muted-foreground capitalize">{item.role.replace('_', ' ')}</p>
+                            <p className="text-xs text-muted-foreground capitalize">{item.role_v2 || 'user'}</p>
                           </div>
                         </>
                       )} pathResolver={(item) => `/users#user-${item.id}`} />

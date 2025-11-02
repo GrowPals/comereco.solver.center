@@ -51,12 +51,12 @@ const RequisitionCard = ({ requisition }) => {
               </p>
             </div>
             
-            {/* Solicitante */}
+            {/* Solicitante - CORREGIDO: Usar creator según documentación técnica */}
             <div className="md:col-span-3 flex items-center gap-2">
                 <User className="w-5 h-5 text-muted-foreground shrink-0"/>
                 <div>
                     <p className="text-sm text-muted-foreground">Solicita</p>
-                    <p className="font-semibold truncate">{requisition.requester?.full_name || 'No disponible'}</p>
+                    <p className="font-semibold truncate">{requisition.creator?.full_name || 'No disponible'}</p>
                 </div>
             </div>
 

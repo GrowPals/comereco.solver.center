@@ -121,7 +121,7 @@ const Approvals = () => {
                                 {requisitions?.map((req) => (
                                     <TableRow key={req.id} className="cursor-pointer hover:bg-muted/50" onClick={() => navigate(`/requisitions/${req.id}`)}>
                                         <TableCell className="font-medium">{req.internal_folio}</TableCell>
-                                        <TableCell>{req.requester.full_name}</TableCell>
+                                        <TableCell>{req.creator?.full_name || 'N/A'}</TableCell>
                                         <TableCell>{format(new Date(req.created_at), "d MMM, yyyy", { locale: es })}</TableCell>
                                         <TableCell className="text-right">${req.total_amount.toLocaleString('es-MX')}</TableCell>
                                         <TableCell className="text-center">

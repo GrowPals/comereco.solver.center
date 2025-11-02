@@ -46,19 +46,36 @@ const ProfilePage = () => {
     if (!user?.id) return;
     setLoading(true);
     try {
+      // CORREGIDO: Según documentación técnica oficial, el campo es created_by (no requester_id)
+      // Consulta separada para evitar embeds ambiguos según mejores prácticas
       const { data: requisitions, error: reqsError } = await supabase
         .from('requisitions')
-        .select('id, internal_folio, created_at, business_status, total_amount, created_by, approved_by, requester:profiles!created_by(full_name)')
+        .select('id, internal_folio, created_at, business_status, total_amount, created_by, approved_by, company_id')
         .or(`created_by.eq.${user.id},approved_by.eq.${user.id}`)
         .order('created_at', { ascending: false });
 
       if (reqsError) throw reqsError;
 
-      const createdCount = requisitions.filter(r => r.created_by === user.id).length;
-      const approvedCount = requisitions.filter(r => r.approved_by === user.id).length;
+      // Enriquecer con datos del creador si es necesario
+      const enrichedRequisitions = await Promise.all(
+        (requisitions || []).map(async (req) => {
+          if (req.created_by) {
+            const { data: creatorData } = await supabase
+              .from('profiles')
+              .select('full_name')
+              .eq('id', req.created_by)
+              .single();
+            return { ...req, creator: creatorData };
+          }
+          return req;
+        })
+      );
+
+      const createdCount = enrichedRequisitions.filter(r => r.created_by === user.id).length;
+      const approvedCount = enrichedRequisitions.filter(r => r.approved_by === user.id).length;
       
       setStats({ created: createdCount, approved: approvedCount });
-      setRecentRequisitions(requisitions.filter(r => r.created_by === user.id).slice(0, 3));
+      setRecentRequisitions(enrichedRequisitions.filter(r => r.created_by === user.id).slice(0, 3));
 
     } catch (error) {
       logger.error('Failed to load profile data:', error);

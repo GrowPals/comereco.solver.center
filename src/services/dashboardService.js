@@ -25,10 +25,18 @@ export const getDashboardStats = async () => {
  * Obtiene las requisiciones más recientes para el usuario actual.
  * @returns {Promise<Array>} Lista de requisiciones recientes.
  */
+/**
+ * CORREGIDO: Filtra por created_by del usuario actual según documentación técnica
+ * Campo correcto: created_by (no requester_id)
+ */
 export const getRecentRequisitions = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
+
     const { data, error } = await supabase
         .from('requisitions')
-        .select('id, internal_folio, created_at, total_amount, business_status, project:project_id(name)')
+        .select('id, internal_folio, created_at, total_amount, business_status, project_id')
+        .eq('created_by', user.id)
         .order('created_at', { ascending: false })
         .limit(5);
 
@@ -36,7 +44,24 @@ export const getRecentRequisitions = async () => {
         logger.error('Error fetching recent requisitions:', error);
         throw new Error('No se pudieron cargar las requisiciones recientes.');
     }
-    return data;
+
+    // Enriquecer con datos de proyecto si es necesario
+    if (data && data.length > 0) {
+        const projectIds = [...new Set(data.map(r => r.project_id).filter(Boolean))];
+        if (projectIds.length > 0) {
+            const { data: projects } = await supabase
+                .from('projects')
+                .select('id, name')
+                .in('id', projectIds);
+
+            const projectsMap = new Map((projects || []).map(p => [p.id, p]));
+            data.forEach(req => {
+                req.project = req.project_id ? projectsMap.get(req.project_id) : null;
+            });
+        }
+    }
+
+    return data || [];
 };
 
 /**

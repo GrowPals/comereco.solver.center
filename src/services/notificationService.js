@@ -3,18 +3,29 @@ import { supabase } from '@/lib/customSupabaseClient';
 import logger from '@/utils/logger';
 
 /**
+ * CORREGIDO: Valida sesión y usa RLS correctamente
  * Obtiene todas las notificaciones para el usuario autenticado.
+ * RLS filtra automáticamente por user_id, pero el filtro explícito no es incorrecto.
  * @returns {Promise<Array>} Una lista de notificaciones.
  */
 export const getNotifications = async () => {
   try {
+    // Validar sesión antes de hacer queries
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !session) {
+      throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+    }
+
+    // RLS filtra automáticamente por user_id según REFERENCIA_TECNICA_BD_SUPABASE.md
+    // El filtro explícito es redundante pero añade claridad
     const { data, error } = await supabase
       .from('notifications')
-      .select('*')
+      .select('id, type, title, message, link, is_read, created_at')
+      .eq('user_id', session.user.id)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return data;
+    return data || [];
   } catch (error) {
     logger.error('Error fetching notifications:', error);
     throw new Error('No se pudieron cargar las notificaciones.');

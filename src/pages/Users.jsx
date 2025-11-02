@@ -41,11 +41,11 @@ import { useToast } from '@/components/ui/useToast';
 import PageLoader from '@/components/PageLoader';
 
 
+// Mapeo de roles según app_role_v2 enum (admin | supervisor | user)
 const roleMapping = {
     user: { label: 'Usuario', icon: <UserIcon className="w-4 h-4 mr-2" /> },
     supervisor: { label: 'Supervisor', icon: <Briefcase className="w-4 h-4 mr-2" /> },
     admin: { label: 'Admin', icon: <Shield className="w-4 h-4 mr-2" /> },
-    super_admin: { label: 'Super Admin', icon: <Shield className="w-4 h-4 mr-2 text-yellow-300" /> },
 };
 
 const UserForm = ({ user, onSave, onCancel, isLoading }) => {
@@ -79,7 +79,7 @@ const UserForm = ({ user, onSave, onCancel, isLoading }) => {
                         <SelectValue placeholder="Selecciona un rol" />
                     </SelectTrigger>
                     <SelectContent>
-                        {Object.entries(roleMapping).filter(([key]) => key !== 'super_admin').map(([key, { label }]) => (
+                        {Object.entries(roleMapping).map(([key, { label }]) => (
                             <SelectItem key={key} value={key}>{label}</SelectItem>
                         ))}
                     </SelectContent>

@@ -11,29 +11,45 @@ export const SupabaseAuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // FIX: Esta función ahora se llamará para enriquecer el usuario de auth
+  // FIX: Consulta separada para evitar embed ambiguo company:companies(*) que causa errores 500
+  // Según REFERENCIA_TECNICA_BD_SUPABASE.md, debemos evitar embeds ambiguos y usar consultas separadas
   const fetchUserProfile = useCallback(async (authUser) => {
     if (!authUser) {
       setUser(null);
       return null;
     }
     try {
-      const { data: profile, error } = await supabase
+      // Primero obtener el perfil
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select(`*, company:companies(*)`)
+        .select('id, company_id, full_name, avatar_url, role_v2, updated_at')
         .eq('id', authUser.id)
         .single();
 
-      if (error) {
-        logger.error('Error fetching user profile:', error);
+      if (profileError) {
+        logger.error('Error fetching user profile:', profileError);
         await supabase.auth.signOut();
         setUser(null);
         return null;
-      } else {
-        const userWithCompany = { ...authUser, ...profile };
-        setUser(userWithCompany);
-        return userWithCompany;
       }
+
+      // Luego obtener la empresa por separado para evitar el embed ambiguo
+      let company = null;
+      if (profile.company_id) {
+        const { data: companyData, error: companyError } = await supabase
+          .from('companies')
+          .select('id, name, bind_location_id, bind_price_list_id')
+          .eq('id', profile.company_id)
+          .single();
+        
+        if (!companyError && companyData) {
+          company = companyData;
+        }
+      }
+
+      const userWithCompany = { ...authUser, ...profile, company };
+      setUser(userWithCompany);
+      return userWithCompany;
     } catch (e) {
       logger.error('Unexpected error fetching profile:', e);
       setUser(null);

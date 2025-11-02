@@ -2,11 +2,22 @@
 import { supabase } from '@/lib/customSupabaseClient';
 import logger from '@/utils/logger';
 
+/**
+ * CORREGIDO: Asegura que la sesión esté activa antes de hacer queries
+ * RLS filtra automáticamente por company_id según REFERENCIA_TECNICA_BD_SUPABASE.md
+ */
 export const fetchProducts = async ({ pageParam = 0, searchTerm = '', category = '', availability = '' }) => {
+    // Validar sesión antes de hacer queries
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !session) {
+        throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+    }
+
     const ITEMS_PER_PAGE = 12;
     const from = pageParam * ITEMS_PER_PAGE;
     const to = from + ITEMS_PER_PAGE - 1;
 
+    // RLS filtra automáticamente por company_id del usuario autenticado
     let query = supabase
         .from('products')
         .select('*', { count: 'exact' })
@@ -56,7 +67,21 @@ export const fetchProductById = async (productId) => {
 };
 
 export const fetchProductCategories = async () => {
-    const { data, error } = await supabase.rpc('get_unique_product_categories');
+    // Obtener el company_id del usuario actual
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
+    
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('company_id')
+        .eq('id', user.id)
+        .single();
+    
+    if (!profile?.company_id) return [];
+
+    const { data, error } = await supabase.rpc('get_unique_product_categories', {
+        p_company_id: profile.company_id
+    });
     if (error) {
         logger.error("Error fetching categories:", error);
         return [];
@@ -64,9 +89,21 @@ export const fetchProductCategories = async () => {
     return data.map(c => c.category);
 };
 
-// Admin Functions
+/**
+ * CORREGIDO: Valida sesión antes de hacer queries
+ * RLS filtra automáticamente por company_id
+ */
 export const getAdminProducts = async () => {
-    const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !session) {
+        throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+    }
+
+    const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('created_at', { ascending: false });
+        
     if (error) {
         logger.error('Error fetching admin products:', error);
         throw new Error('No se pudieron cargar los productos.');
@@ -74,14 +111,35 @@ export const getAdminProducts = async () => {
     return data;
 };
 
+/**
+ * CORREGIDO: Valida sesión y maneja errores correctamente
+ */
 export const createProduct = async (productData) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    const { data: profile } = await supabase.from('profiles').select('company_id').eq('id', user.id).single();
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+        throw new Error("Usuario no autenticado.");
+    }
+
+    const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('company_id')
+        .eq('id', user.id)
+        .single();
+    
+    if (profileError || !profile) {
+        logger.error('Error fetching user profile:', profileError);
+        throw new Error("No se pudo obtener el perfil del usuario.");
+    }
     
     // Bind ID no se maneja en el MVP, se puede poner un placeholder
     const bind_id = productData.sku + '-bind-placeholder';
 
-    const { data, error } = await supabase.from('products').insert([{ ...productData, company_id: profile.company_id, bind_id }]).select().single();
+    const { data, error } = await supabase
+        .from('products')
+        .insert([{ ...productData, company_id: profile.company_id, bind_id }])
+        .select()
+        .single();
+        
     if (error) {
         logger.error('Error creating product:', error);
         throw new Error(error.message);

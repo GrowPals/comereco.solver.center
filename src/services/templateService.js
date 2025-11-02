@@ -3,33 +3,55 @@ import { supabase } from '@/lib/customSupabaseClient';
 import logger from '@/utils/logger';
 
 /**
+ * CORREGIDO: Valida sesión antes de hacer queries
  * Obtiene todas las plantillas del usuario actual.
+ * RLS filtra automáticamente según REFERENCIA_TECNICA_BD_SUPABASE.md
  * @returns {Promise<Array>} Lista de plantillas.
  */
 export const getTemplates = async () => {
+    // Validar sesión antes de hacer queries
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !session) {
+        throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+    }
+
+    // RLS filtra automáticamente por user_id y company_id
     const { data, error } = await supabase
         .from('requisition_templates')
-        .select('*')
+        .select('id, name, description, items, is_favorite, usage_count, last_used_at, project_id, company_id, created_at, updated_at')
+        .eq('user_id', session.user.id)
         .order('created_at', { ascending: false });
 
     if (error) {
         logger.error('Error fetching templates:', error);
         throw new Error('No se pudieron cargar las plantillas.');
     }
-    return data;
+    return data || [];
 };
 
 /**
+ * CORREGIDO: Valida sesión y maneja errores correctamente
  * Crea una nueva plantilla de requisición.
  * @param {object} templateData - { name, description, items, project_id (opcional) }
  * @returns {Promise<object>} La plantilla creada.
  */
 export const createTemplate = async (templateData) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Usuario no autenticado.');
+    // Validar sesión antes de hacer queries
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+        throw new Error('Usuario no autenticado.');
+    }
     
-    const { data: profile } = await supabase.from('profiles').select('company_id').eq('id', user.id).single();
-    if (!profile) throw new Error('Perfil de usuario no encontrado.');
+    const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('company_id')
+        .eq('id', user.id)
+        .single();
+        
+    if (profileError || !profile) {
+        logger.error('Error fetching user profile:', profileError);
+        throw new Error('Perfil de usuario no encontrado.');
+    }
 
     const { data, error } = await supabase
         .from('requisition_templates')

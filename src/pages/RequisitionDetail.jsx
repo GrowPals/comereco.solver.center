@@ -81,13 +81,15 @@ const RequisitionDetail = () => {
         reject({ requisitionId, reason: rejectionReason });
     };
 
+    // CORREGIDO: Según documentación técnica oficial, el campo es created_by
     const isOwner = user && requisition && user.id === requisition.created_by;
     const actionLoading = isSubmitting || isApproving || isRejecting;
 
     if (isLoading) return <PageLoader />;
     if (!requisition) return <div className="p-8 text-center">Requisición no encontrada.</div>;
 
-    const { internal_folio, created_at, business_status, requester, items, total_amount, comments } = requisition;
+    // CORREGIDO: Usar creator en lugar de requester según documentación
+    const { internal_folio, created_at, business_status, creator, items, total_amount, comments } = requisition;
 
     const statusConfig = {
         draft: { text: 'Borrador', color: 'bg-gray-500' },
@@ -110,7 +112,7 @@ const RequisitionDetail = () => {
                         <div>
                             <h1 className="text-2xl font-bold tracking-tight">Requisición {internal_folio}</h1>
                             <p className="text-sm text-muted-foreground">
-                                Creada por {requester?.full_name || 'Desconocido'} el {format(new Date(created_at), 'dd MMM, yyyy', { locale: es })}
+                                Creada por {creator?.full_name || 'Desconocido'} el {format(new Date(created_at), 'dd MMM, yyyy', { locale: es })}
                             </p>
                         </div>
                     </div>

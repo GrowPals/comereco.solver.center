@@ -1,24 +1,28 @@
 
 import React from 'react';
 
+/**
+ * Roles válidos según REFERENCIA_TECNICA_BD_SUPABASE.md
+ * Usar role_v2, NO role (LEGACY)
+ */
 export const ROLES = {
-  ADMIN: 'admin_corp',
+  ADMIN: 'admin',
   SUPERVISOR: 'supervisor',
-  USER: 'employee',
-  SUPER_ADMIN: 'super_admin'
+  USER: 'user'
 };
 
 /**
  * Checks if a user has at least one of the specified roles.
+ * FIX: Usa role_v2 en lugar de role (LEGACY) según REFERENCIA_TECNICA_BD_SUPABASE.md
  * @param {object} user - The user object from useSupabaseAuth.
  * @param {Array<string>} requiredRoles - Array of roles to check against.
  * @returns {boolean} - True if the user has one of the required roles.
  */
 export const userHasRole = (user, requiredRoles) => {
-  if (!user || !user.role || !Array.isArray(requiredRoles)) {
+  if (!user || !user.role_v2 || !Array.isArray(requiredRoles)) {
     return false;
   }
-  return requiredRoles.includes(user.role);
+  return requiredRoles.includes(user.role_v2);
 };
 
 /**
