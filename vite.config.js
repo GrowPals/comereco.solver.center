@@ -253,13 +253,40 @@ export default defineConfig({
 		},
 	},
 	build: {
+		target: 'esnext',
+		minify: 'esbuild',
+		cssMinify: true,
+		sourcemap: false,
 		rollupOptions: {
 			external: [
 				'@babel/parser',
 				'@babel/traverse',
 				'@babel/generator',
 				'@babel/types'
-			]
-		}
+			],
+			output: {
+				manualChunks: {
+					// Vendor chunks
+					'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+					'ui-vendor': [
+						'@radix-ui/react-accordion',
+						'@radix-ui/react-alert-dialog',
+						'@radix-ui/react-dialog',
+						'@radix-ui/react-dropdown-menu',
+						'@radix-ui/react-select',
+						'@radix-ui/react-tabs',
+						'@radix-ui/react-toast'
+					],
+					'chart-vendor': ['chart.js', 'react-chartjs-2'],
+					'form-vendor': ['react-hook-form', 'react-day-picker'],
+					'animation-vendor': ['framer-motion'],
+					'supabase-vendor': ['@supabase/supabase-js'],
+					'query-vendor': ['@tanstack/react-query'],
+					'utils-vendor': ['date-fns', 'clsx', 'tailwind-merge', 'class-variance-authority']
+				},
+				chunkSizeWarningLimit: 1000
+			}
+		},
+		chunkSizeWarningLimit: 1000
 	}
 });

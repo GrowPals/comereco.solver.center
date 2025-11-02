@@ -3,14 +3,13 @@
   "type": "module",
   "version": "0.0.0",
   "private": true,
-  "description": "Final attempt to clear cache by renaming files.",
+  "description": "Sistema web interno para la gestión de requisiciones de compra del Grupo Solven",
   "scripts": {
     "dev": "vite --host :: --port 3000",
     "build": "vite build",
     "preview": "vite preview --host :: --port 3000"
   },
   "dependencies": {
-    "@faker-js/faker": "^8.4.1",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-alert-dialog": "^1.1.4",
     "@radix-ui/react-avatar": "^1.0.4",
@@ -48,6 +47,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@types/node": "^20.8.3",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
