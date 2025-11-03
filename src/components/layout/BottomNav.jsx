@@ -7,14 +7,13 @@ import { useCart } from '@/hooks/useCart';
 
 const BottomNav = memo(({ onMenuClick }) => {
     const location = useLocation();
-    const { totalItems } = useCart();
+    const { totalItems, toggleCart } = useCart();
 
     // BottomNav simplificado - SOLO acciones principales y frecuentes
     // Igual para todos los roles (siguiendo patrón de apps populares)
     const navItems = useMemo(() => [
         { path: '/dashboard', icon: Home, label: 'Inicio' },
         { path: '/catalog', icon: ShoppingCart, label: 'Catálogo' },
-        { path: '/catalog', icon: Plus, label: 'Nueva', isAction: true, showBadge: true }, // Acción principal
         { path: '/requisitions', icon: List, label: 'Mis Reqs' },
     ], []);
 
@@ -34,37 +33,45 @@ const BottomNav = memo(({ onMenuClick }) => {
                             className="inline-flex flex-col items-center justify-center group transition-all duration-200"
                         >
                             <div className={`relative flex items-center justify-center min-w-[44px] min-h-[44px] rounded-2xl transition-all duration-200 ${
-                                item.isAction
-                                    ? 'bg-gradient-primary shadow-lg hover:shadow-xl scale-110'
-                                    : isItemActive
-                                        ? 'bg-primary-50'
-                                        : 'hover:bg-slate-50'
+                                isItemActive
+                                    ? 'bg-primary-50'
+                                    : 'hover:bg-slate-50'
                             }`}>
                                 <ItemIcon className={`transition-colors duration-200 ${
-                                    item.isAction
-                                        ? 'w-6 h-6 text-white'
-                                        : isItemActive
-                                            ? 'w-6 h-6 text-primary-600'
-                                            : 'w-6 h-6 text-slate-500 group-hover:text-slate-900'
+                                    isItemActive
+                                        ? 'w-6 h-6 text-primary-600'
+                                        : 'w-6 h-6 text-slate-500 group-hover:text-slate-900'
                                 }`} />
-                                {item.showBadge && totalItems > 0 && (
-                                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white animate-pulse">
-                                        {totalItems > 9 ? '9+' : totalItems}
-                                    </span>
-                                )}
                             </div>
                             <span className={`text-[10px] font-semibold mt-1 transition-colors duration-200 ${
-                                item.isAction
+                                isItemActive
                                     ? 'text-primary-600'
-                                    : isItemActive
-                                        ? 'text-primary-600'
-                                        : 'text-slate-500 group-hover:text-slate-900'
+                                    : 'text-slate-500 group-hover:text-slate-900'
                             }`}>
                                 {item.label}
                             </span>
                         </NavLink>
                     );
                 })}
+
+                {/* Botón de Carrito - Abre el carrito lateral */}
+                <button
+                    onClick={toggleCart}
+                    className="inline-flex flex-col items-center justify-center group transition-all duration-200"
+                    aria-label="Abrir carrito"
+                >
+                    <div className="relative flex items-center justify-center min-w-[44px] min-h-[44px] rounded-2xl transition-all duration-200 bg-gradient-primary shadow-lg hover:shadow-xl scale-110">
+                        <Plus className="w-6 h-6 text-white transition-colors duration-200" />
+                        {totalItems > 0 && (
+                            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white animate-pulse">
+                                {totalItems > 9 ? '9+' : totalItems}
+                            </span>
+                        )}
+                    </div>
+                    <span className="text-[10px] font-semibold mt-1 text-primary-600 transition-colors duration-200">
+                        Carrito
+                    </span>
+                </button>
 
                 {/* Botón de Menú - Abre el Sidebar */}
                 <button
