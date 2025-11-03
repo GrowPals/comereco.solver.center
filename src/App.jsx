@@ -114,19 +114,27 @@ const AppLayout = () => {
   const contentMargin = isSidebarOpen ? 'lg:ml-64' : 'lg:ml-20';
 
   return (
-    <div className="flex h-screen bg-white text-gray-900">
+    <div className="flex h-screen w-full bg-white text-gray-900">
       <SkipLinks />
       {showNav && (
         <>
+          {/* Overlay - Solo en mobile cuando sidebar está abierto */}
+          {isMobileNavOpen && (
+            <div
+              onClick={() => setMobileNavOpen(false)}
+              className="fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity duration-300"
+              aria-hidden="true"
+            />
+          )}
+          {/* Sidebar - Desktop a la izquierda, Mobile drawer desde la derecha */}
           <Sidebar isSidebarOpen={isSidebarOpen} isMobileNavOpen={isMobileNavOpen} setMobileNavOpen={setMobileNavOpen} />
-          {isMobileNavOpen && <div onClick={() => setMobileNavOpen(false)} className="fixed inset-0 bg-black/40 z-40 lg:hidden" />}
         </>
       )}
-      
-      <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${contentMargin}`}>
+
+      <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out w-full ${contentMargin}`}>
         {showNav && <Header setSidebarOpen={handleToggleSidebar} />}
-        
-        <main className="flex-1 overflow-y-auto pb-28 lg:pb-0" id="main-content" role="main">
+
+        <main className="flex-1 overflow-y-auto pb-28 lg:pb-0 w-full" id="main-content" role="main">
             <ErrorBoundary level="page">
               <Suspense fallback={<div className="h-full"><PageLoader /></div>}>
                 <Routes location={location}>
@@ -179,7 +187,7 @@ const AppLayout = () => {
         {showNav && (
             <>
                 <div className="lg:hidden">
-                    <BottomNav />
+                    <BottomNav onMenuClick={() => setMobileNavOpen(true)} />
                 </div>
                 <Cart />
             </>

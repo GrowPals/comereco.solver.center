@@ -10,37 +10,48 @@ import { Input } from '@/components/ui/input';
 import { useToastNotification } from '@/components/ui/toast-notification';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/lib/customSupabaseClient';
+import { updateUserProfile } from '@/services/userService';
 import logger from '@/utils/logger';
 import RequisitionCard from '@/components/RequisitionCard';
 
-const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name }) => (
+const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name, editable = false, placeholder }) => (
   <div className="flex items-center gap-4 py-4">
     <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm">
       <Icon className="h-5 w-5 text-blue-600" aria-hidden="true" />
     </div>
     <div className="flex-1">
       <p className="text-sm text-slate-600 font-medium mb-1">{label}</p>
-      {isEditing && name === 'full_name' ? (
-        <Input name={name} value={value} onChange={onChange} className="mt-1 h-9 rounded-xl" />
+      {isEditing && editable ? (
+        <Input
+          name={name}
+          value={value || ''}
+          onChange={onChange}
+          placeholder={placeholder}
+          className="mt-1 h-9 rounded-xl"
+        />
       ) : (
-        <p className="font-bold text-slate-900">{value}</p>
+        <p className="font-bold text-slate-900">{value || placeholder || 'No especificado'}</p>
       )}
     </div>
   </div>
 );
 
 const ProfilePage = () => {
-  const { user, loading: authLoading, updateUser } = useSupabaseAuth();
+  const { user, loading: authLoading } = useSupabaseAuth();
   const toast = useToastNotification();
   const [isEditing, setIsEditing] = useState(false);
-  const [profileData, setProfileData] = useState({ full_name: '' });
+  const [profileData, setProfileData] = useState({ full_name: '', phone: '' });
   const [stats, setStats] = useState({ created: 0, approved: 0 });
   const [recentRequisitions, setRecentRequisitions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (user) {
-      setProfileData({ full_name: user.full_name || '' });
+      setProfileData({
+        full_name: user.full_name || '',
+        phone: user.phone || ''
+      });
     }
   }, [user]);
 
@@ -97,12 +108,33 @@ const ProfilePage = () => {
   };
 
   const handleSave = async () => {
+    if (!user?.id) return;
+
+    setIsSaving(true);
     try {
-      await updateUser({ full_name: profileData.full_name });
-      toast.success('Éxito', 'Tu perfil ha sido actualizado.');
+      // Preparar datos para actualización
+      const updateData = {
+        full_name: profileData.full_name.trim()
+      };
+
+      // Solo incluir phone si hay un valor
+      if (profileData.phone && profileData.phone.trim()) {
+        updateData.phone = profileData.phone.trim();
+      }
+
+      // Llamar al servicio con el ID del usuario
+      await updateUserProfile(user.id, updateData);
+
+      toast.success('Éxito', 'Tu perfil ha sido actualizado correctamente.');
       setIsEditing(false);
+
+      // Recargar datos del perfil para reflejar cambios
+      await loadProfileData();
     } catch (error) {
-      toast.error('Error', 'No se pudo actualizar tu perfil.');
+      logger.error('Error updating profile:', error);
+      toast.error('Error', error.message || 'No se pudo actualizar tu perfil.');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -141,18 +173,61 @@ const ProfilePage = () => {
               </div>
               {isEditing ? (
                 <div className="flex gap-2">
-                  <Button size="icon" variant="outline" onClick={() => setIsEditing(false)} className="rounded-xl h-11 w-11 shadow-sm hover:shadow-md"><X className="h-5 w-5" /></Button>
-                  <Button size="icon" onClick={handleSave} className="rounded-xl h-11 w-11 shadow-lg hover:shadow-xl"><Save className="h-5 w-5" /></Button>
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    onClick={() => setIsEditing(false)}
+                    disabled={isSaving}
+                    className="rounded-xl h-11 w-11 shadow-sm hover:shadow-md"
+                  >
+                    <X className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className="rounded-xl h-11 w-11 shadow-lg hover:shadow-xl"
+                  >
+                    <Save className={`h-5 w-5 ${isSaving ? 'animate-pulse' : ''}`} />
+                  </Button>
                 </div>
               ) : (
                 <Button size="icon" variant="outline" onClick={() => setIsEditing(true)} className="rounded-xl h-11 w-11 shadow-sm hover:shadow-md"><Edit className="h-5 w-5" /></Button>
               )}
             </div>
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <ProfileInfoRow icon={User} label="Nombre Completo" value={profileData.full_name} isEditing={isEditing} onChange={handleInputChange} name="full_name" />
-              <ProfileInfoRow icon={Mail} label="Email" value={email} />
-              <ProfileInfoRow icon={Shield} label="Rol" value={role_v2 || 'N/A'} />
-              <ProfileInfoRow icon={Phone} label="Teléfono" value="No disponible" />
+              <ProfileInfoRow
+                icon={User}
+                label="Nombre Completo"
+                value={profileData.full_name}
+                isEditing={isEditing}
+                onChange={handleInputChange}
+                name="full_name"
+                editable={true}
+                placeholder="Tu nombre completo"
+              />
+              <ProfileInfoRow
+                icon={Mail}
+                label="Email"
+                value={email}
+                editable={false}
+              />
+              <ProfileInfoRow
+                icon={Shield}
+                label="Rol"
+                value={role_v2 === 'admin' ? 'Administrador' : role_v2 === 'supervisor' ? 'Supervisor' : 'Usuario'}
+                editable={false}
+              />
+              <ProfileInfoRow
+                icon={Phone}
+                label="Teléfono"
+                value={profileData.phone}
+                isEditing={isEditing}
+                onChange={handleInputChange}
+                name="phone"
+                editable={true}
+                placeholder="+52 123 456 7890"
+              />
             </div>
           </CardContent>
         </Card>

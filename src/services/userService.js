@@ -27,7 +27,7 @@ export const fetchUsersInCompany = async () => {
   // RLS filtra automáticamente por company_id, pero el filtro explícito añade claridad
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, company_id, full_name, avatar_url, role_v2, updated_at')
+    .select('id, company_id, full_name, avatar_url, role_v2, phone, updated_at')
     .eq('company_id', companyId);
 
   if (error) {
@@ -146,14 +146,34 @@ export const updateUserProfile = async (userId, updateData) => {
     }
   }
 
-  // Campos permitidos según REFERENCIA_TECNICA_BD_SUPABASE.md
-  const allowedFields = ['full_name', 'avatar_url', 'role_v2'];
+  // Validar formato de teléfono si se está actualizando
+  if (updateData.phone !== undefined && updateData.phone !== null) {
+    const trimmedPhone = updateData.phone.trim();
+    // Permitir cadena vacía para eliminar el teléfono
+    if (trimmedPhone && trimmedPhone.length > 0) {
+      // Validar que contenga solo números, espacios, guiones, paréntesis y el símbolo +
+      const phoneRegex = /^[+\d\s\-()]+$/;
+      if (!phoneRegex.test(trimmedPhone)) {
+        throw new Error("El formato del teléfono no es válido. Use solo números, espacios, guiones, paréntesis o +");
+      }
+      if (trimmedPhone.length < 7 || trimmedPhone.length > 20) {
+        throw new Error("El teléfono debe tener entre 7 y 20 caracteres.");
+      }
+    }
+  }
+
+  // Campos permitidos según REFERENCIA_TECNICA_BD_SUPABASE.md + phone
+  const allowedFields = ['full_name', 'avatar_url', 'role_v2', 'phone'];
   const filteredUpdate = Object.keys(updateData)
     .filter(key => allowedFields.includes(key))
     .reduce((obj, key) => {
       // Limpiar y normalizar datos
       if (key === 'full_name' && updateData[key]) {
         obj[key] = updateData[key].trim();
+      } else if (key === 'phone' && updateData[key] !== undefined) {
+        // Permitir null o cadena vacía para eliminar el teléfono
+        const trimmedPhone = updateData[key] ? updateData[key].trim() : '';
+        obj[key] = trimmedPhone || null;
       } else {
         obj[key] = updateData[key];
       }
@@ -168,7 +188,7 @@ export const updateUserProfile = async (userId, updateData) => {
     .from('profiles')
     .update(filteredUpdate)
     .eq('id', userId)
-    .select('id, company_id, full_name, avatar_url, role_v2, updated_at')
+    .select('id, company_id, full_name, avatar_url, role_v2, phone, updated_at')
     .single();
   
   if (error) {

@@ -29,7 +29,7 @@ export const SupabaseAuthProvider = ({ children }) => {
       // Primero obtener el perfil
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('id, company_id, full_name, avatar_url, role_v2, updated_at')
+        .select('id, company_id, full_name, avatar_url, role_v2, phone, updated_at')
         .eq('id', authUser.id)
         .single();
 

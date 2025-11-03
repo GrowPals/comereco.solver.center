@@ -1,114 +1,201 @@
 
 import React, { useMemo, useCallback, memo } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, List, FolderKanban, Users, ShoppingBag, BarChart, CheckSquare, Settings, LogOut, Star, LayoutTemplate } from 'lucide-react';
+import { Home, List, FolderKanban, Users, ShoppingBag, BarChart, CheckSquare, Settings, LogOut, Star, LayoutTemplate, HelpCircle, Bell, ChevronRight } from 'lucide-react';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
-import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/components/ui/useToast';
 
-const NavItem = memo(({ to, icon: Icon, children, isSidebarOpen }) => {
+const MenuItem = memo(({ to, icon: Icon, children, onClick, badge }) => {
     const location = useLocation();
     const isActive = location.pathname === to || (to !== '/dashboard' && location.pathname.startsWith(to));
 
     return (
-        <NavLink to={to}>
-            {({ isPending }) => (
-                <div
-                    className={`flex items-center p-3 my-1 rounded-xl transition-all duration-200 relative group focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-2 ${
-                        isActive
-                            ? 'bg-gradient-primary text-white shadow-sm'
-                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                    }`}
-                    role="listitem"
-                >
-                    <Icon className={`h-5 w-5 transition-transform duration-200 ${isActive ? 'text-white' : 'text-slate-500 group-hover:text-blue-600 group-hover:scale-110'}`} aria-hidden="true" />
-                    <span className={`ml-4 font-semibold text-sm ${isSidebarOpen ? 'block' : 'hidden'}`}>
-                        {children}
-                    </span>
-                    {isPending && <span className="ml-2" aria-label="Cargando">...</span>}
+        <NavLink to={to} onClick={onClick}>
+            <div
+                className={`flex items-center justify-between p-3.5 rounded-xl transition-all duration-200 group ${
+                    isActive
+                        ? 'bg-primary-50 text-primary-700'
+                        : 'text-slate-700 hover:bg-slate-50 active:bg-slate-100'
+                }`}
+            >
+                <div className="flex items-center gap-3 flex-1">
+                    <div className={`flex items-center justify-center w-10 h-10 rounded-lg transition-colors ${
+                        isActive ? 'bg-primary-100' : 'bg-slate-100 group-hover:bg-slate-200'
+                    }`}>
+                        <Icon className={`h-5 w-5 ${isActive ? 'text-primary-600' : 'text-slate-600'}`} />
+                    </div>
+                    <span className="font-medium text-[15px]">{children}</span>
                 </div>
-            )}
+                {badge && (
+                    <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-red-500 text-white text-xs font-bold">
+                        {badge}
+                    </span>
+                )}
+                <ChevronRight className={`h-4 w-4 transition-transform ${isActive ? 'text-primary-600' : 'text-slate-400'}`} />
+            </div>
         </NavLink>
     );
 });
 
-NavItem.displayName = 'NavItem';
+MenuItem.displayName = 'MenuItem';
 
 const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
     const { user, signOut } = useSupabaseAuth();
     const { toast } = useToast();
     const { isAdmin, isSupervisor } = useUserPermissions();
-    
+
     const handleLogout = useCallback(async () => {
         await signOut();
         toast({ title: 'Has cerrado sesión', variant: 'success' });
     }, [signOut, toast]);
 
-    const navItems = useMemo(() => {
-        let items = [
-            { to: '/dashboard', icon: Home, text: 'Dashboard' },
-            { to: '/catalog', icon: ShoppingBag, text: 'Catálogo' },
-            { to: '/requisitions', icon: List, text: 'Requisiciones' },
-        ];
+    const handleNavClick = useCallback(() => {
+        // Cerrar sidebar en mobile al hacer clic en un enlace
+        setMobileNavOpen(false);
+    }, [setMobileNavOpen]);
 
-        if (isAdmin) {
-            items.push(
-                { to: '/users', icon: Users, text: 'Usuarios' },
-                { to: '/projects', icon: FolderKanban, text: 'Proyectos' },
-                { to: '/products/manage', icon: ShoppingBag, text: 'Productos' },
-                { to: '/reports', icon: BarChart, text: 'Reportes' }
-            );
-        } else if (isSupervisor) {
-            items.push(
-                { to: '/approvals', icon: CheckSquare, text: 'Aprobaciones' },
-                { to: '/projects', icon: FolderKanban, text: 'Proyectos' }
-            );
-        } else { // User role
-            items.push(
-                { to: '/templates', icon: LayoutTemplate, text: 'Plantillas' },
-                { to: '/favorites', icon: Star, text: 'Favoritos' }
-            );
+    const userName = useMemo(() => user?.full_name || 'Usuario', [user?.full_name]);
+    const userEmail = useMemo(() => user?.email || '', [user?.email]);
+    const userInitials = useMemo(() => {
+        return userName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    }, [userName]);
+
+    // Menú secundario - Opciones específicas por rol
+    const menuSections = useMemo(() => {
+        const sections = [];
+
+        // Sección de Administración (solo para Admin y Supervisor)
+        if (isAdmin || isSupervisor) {
+            const adminItems = [];
+
+            if (isAdmin) {
+                adminItems.push(
+                    { to: '/users', icon: Users, text: 'Gestión de Usuarios' },
+                    { to: '/products/manage', icon: ShoppingBag, text: 'Gestión de Productos' },
+                    { to: '/reports', icon: BarChart, text: 'Reportes y Analíticas' },
+                );
+            }
+
+            if (isSupervisor || isAdmin) {
+                adminItems.push(
+                    { to: '/approvals', icon: CheckSquare, text: 'Aprobaciones', badge: null },
+                    { to: '/projects', icon: FolderKanban, text: 'Proyectos' },
+                );
+            }
+
+            if (adminItems.length > 0) {
+                sections.push({
+                    title: 'Administración',
+                    items: adminItems
+                });
+            }
         }
 
-        return items;
+        // Sección de Mis Herramientas (para usuarios normales)
+        if (!isAdmin && !isSupervisor) {
+            sections.push({
+                title: 'Mis Herramientas',
+                items: [
+                    { to: '/templates', icon: LayoutTemplate, text: 'Plantillas' },
+                    { to: '/favorites', icon: Star, text: 'Favoritos' },
+                ]
+            });
+        }
+
+        return sections;
     }, [isAdmin, isSupervisor]);
 
     return (
         <aside
-            className={`fixed lg:relative top-0 left-0 h-full bg-white border-r border-slate-200 z-50 flex flex-col transition-all duration-200 shadow-lg lg:shadow-none ${isSidebarOpen ? 'w-64' : 'w-20'} ${isMobileNavOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
+            className={`fixed top-0 right-0 h-full bg-white z-50 flex flex-col transition-all duration-300 ease-out ${
+                isMobileNavOpen ? 'translate-x-0 w-[320px] shadow-2xl' : 'translate-x-full w-[320px]'
+            } lg:relative lg:translate-x-0 lg:border-r lg:border-slate-200 lg:shadow-none ${
+                isSidebarOpen ? 'lg:w-64' : 'lg:w-20'
+            }`}
             role="complementary"
-            aria-label="Navegación principal"
+            aria-label="Menú secundario"
             id="navigation"
         >
-            <div className={`flex items-center ${isSidebarOpen ? 'justify-start px-6' : 'justify-center'} h-20 border-b border-slate-200`}>
-                <div className={`flex items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 shadow-sm ${isSidebarOpen ? 'h-12 w-12' : 'h-12 w-12'}`}>
-                    <img
-                        src="https://i.ibb.co/XZW8Nh3v/solver-logo-1.png"
-                        alt="ComerECO Logo"
-                        className={`object-contain ${isSidebarOpen ? 'h-7 w-7' : 'h-7 w-7'}`}
-                    />
-                </div>
-                {isSidebarOpen && (
-                    <span className="ml-3 text-xl font-bold text-slate-900 tracking-tight">
-                        Comer<span className="bg-gradient-primary bg-clip-text text-transparent">ECO</span>
-                    </span>
-                )}
+            {/* Header del Sidebar - Perfil del Usuario */}
+            <div className="p-6 border-b border-slate-200">
+                <NavLink to="/profile" onClick={handleNavClick}>
+                    <div className="flex items-center gap-4 hover:bg-slate-50 -m-2 p-2 rounded-xl transition-colors">
+                        <Avatar className="h-16 w-16 ring-2 ring-primary-100">
+                            <AvatarImage alt={`Avatar de ${userName}`} src={user?.avatar_url} />
+                            <AvatarFallback className="bg-gradient-primary text-white font-bold text-lg">
+                                {userInitials}
+                            </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                            <p className="font-bold text-slate-900 text-base truncate">{userName}</p>
+                            <p className="text-sm text-slate-500 truncate">{userEmail}</p>
+                            <span className="inline-block mt-1 text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">
+                                {isAdmin ? 'Administrador' : isSupervisor ? 'Supervisor' : 'Usuario'}
+                            </span>
+                        </div>
+                        <ChevronRight className="h-5 w-5 text-slate-400 flex-shrink-0" />
+                    </div>
+                </NavLink>
             </div>
 
-            <nav className="flex-1 px-4 py-6 overflow-y-auto" role="navigation" aria-label="Menú principal">
-                {navItems.map(item => <NavItem key={item.to} to={item.to} icon={item.icon} isSidebarOpen={isSidebarOpen}>{item.text}</NavItem>)}
+            {/* Contenido del menú */}
+            <nav className="flex-1 px-4 py-6 overflow-y-auto" role="navigation" aria-label="Menú secundario">
+                {/* Secciones específicas del rol */}
+                {menuSections.map((section, idx) => (
+                    <div key={idx} className="mb-6">
+                        <h3 className="px-3 mb-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            {section.title}
+                        </h3>
+                        <div className="space-y-1">
+                            {section.items.map((item) => (
+                                <MenuItem
+                                    key={item.to}
+                                    to={item.to}
+                                    icon={item.icon}
+                                    onClick={handleNavClick}
+                                    badge={item.badge}
+                                >
+                                    {item.text}
+                                </MenuItem>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+
+                {/* Sección de Configuración y Ayuda */}
+                <div className="mb-6">
+                    <h3 className="px-3 mb-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                        General
+                    </h3>
+                    <div className="space-y-1">
+                        <MenuItem to="/notifications" icon={Bell} onClick={handleNavClick}>
+                            Notificaciones
+                        </MenuItem>
+                        <MenuItem to="/settings" icon={Settings} onClick={handleNavClick}>
+                            Configuración
+                        </MenuItem>
+                        <MenuItem to="/help" icon={HelpCircle} onClick={handleNavClick}>
+                            Ayuda y Soporte
+                        </MenuItem>
+                    </div>
+                </div>
             </nav>
 
-            <div className="px-4 py-4 border-t border-gray-200">
-                <NavItem to="/settings" icon={Settings} isSidebarOpen={isSidebarOpen}>Configuración</NavItem>
+            {/* Footer - Cerrar Sesión */}
+            <div className="p-4 border-t border-slate-200">
                 <button
                     onClick={handleLogout}
-                    className="w-full flex items-center p-3 my-1 rounded-lg cursor-pointer text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors duration-150 group focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                    className="w-full flex items-center justify-between p-3.5 rounded-xl text-red-600 hover:bg-red-50 active:bg-red-100 transition-colors duration-150 group"
                     aria-label="Cerrar sesión"
                 >
-                    <LogOut className="h-5 w-5 text-gray-500 group-hover:text-red-600" aria-hidden="true" />
-                    <span className={`ml-4 font-medium text-sm ${isSidebarOpen ? 'block' : 'hidden'}`}>Cerrar Sesión</span>
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-red-50 group-hover:bg-red-100">
+                            <LogOut className="h-5 w-5 text-red-600" />
+                        </div>
+                        <span className="font-medium text-[15px]">Cerrar Sesión</span>
+                    </div>
                 </button>
             </div>
         </aside>

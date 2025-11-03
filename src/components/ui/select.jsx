@@ -14,14 +14,18 @@ const SelectTrigger = React.forwardRef(({ className, children, ...props }, ref) 
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      'flex h-12 w-full items-center justify-between rounded-xl border border-input bg-card px-4 py-3 text-base text-slate-900 ring-offset-background placeholder:text-muted-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+      'flex h-12 w-full items-center justify-between rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 ring-offset-background placeholder:text-slate-500 transition-all',
+      'hover:border-primary-400 hover:bg-slate-50',
+      'focus:outline-none focus:ring-2 focus:ring-primary-200 focus:ring-offset-2 focus:border-primary-500 focus:bg-white',
+      'data-[state=open]:border-primary-500 data-[state=open]:ring-2 data-[state=open]:ring-primary-200 data-[state=open]:bg-white',
+      'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-slate-100',
       className
     )}
     {...props}
   >
-    <span className="truncate flex-1 text-left">{children}</span>
+    <span className="truncate flex-1 text-left font-medium">{children}</span>
     <SelectPrimitive.Icon asChild>
-      <ChevronDown className="h-4 w-4 opacity-50 flex-shrink-0 ml-2" />
+      <ChevronDown className="h-5 w-5 text-slate-500 flex-shrink-0 ml-2 transition-transform data-[state=open]:rotate-180" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ));
@@ -83,14 +87,17 @@ const SelectItem = React.forwardRef(({ className, children, ...props }, ref) => 
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex w-full cursor-default select-none items-center rounded-lg py-2 pl-8 pr-2 text-sm text-slate-900 outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      'relative flex w-full cursor-default select-none items-center rounded-lg py-2.5 pl-8 pr-2 text-sm text-slate-900 outline-none transition-colors',
+      'focus:bg-primary-50 focus:text-primary-900 hover:bg-primary-50 hover:text-primary-900',
+      'data-[state=checked]:bg-primary-100 data-[state=checked]:text-primary-900 data-[state=checked]:font-semibold',
+      'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className
     )}
     {...props}
   >
     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center flex-shrink-0">
       <SelectPrimitive.ItemIndicator>
-        <Check className="h-4 w-4" />
+        <Check className="h-4 w-4 text-primary-600 stroke-[2.5]" />
       </SelectPrimitive.ItemIndicator>
     </span>
 

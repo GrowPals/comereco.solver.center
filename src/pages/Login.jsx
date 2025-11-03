@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { useForm } from 'react-hook-form';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, AlertTriangle } from 'lucide-react';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
@@ -16,12 +16,13 @@ import { Button } from '@/components/ui/button';
 import logger from '@/utils/logger';
 
 const LoginPage = () => {
-    const { register, handleSubmit, formState: { errors }, getValues, setValue } = useForm({
+    const { register, handleSubmit, formState: { errors }, getValues, setValue, watch } = useForm({
         defaultValues: {
             email: localStorage.getItem('rememberMeEmail') || '',
             remember: !!localStorage.getItem('rememberMeEmail')
         }
     });
+    const rememberValue = watch('remember');
     const { signIn, session } = useSupabaseAuth();
     const navigate = useNavigate();
     const location = useLocation();
@@ -149,9 +150,10 @@ const LoginPage = () => {
                         className="text-center mb-10"
                     >
                         <img
-                            src="https://i.ibb.co/XZW8Nh3v/solver-logo-1.png"
+                            src="https://i.ibb.co/2YYFKR0j/isotipo-comereco.png"
                             alt="ComerECO Logo"
-                            className="w-24 h-24 object-contain mx-auto drop-shadow-xl"
+                            className="w-20 h-20 object-contain mx-auto drop-shadow-xl"
+                            loading="eager"
                         />
                     </motion.div>
 
@@ -236,14 +238,17 @@ const LoginPage = () => {
                                 <div className="flex items-center gap-2">
                                     <Checkbox
                                         id="remember"
-                                        checked={getValues('remember')}
-                                        onCheckedChange={handleRememberChange}
+                                        checked={rememberValue}
+                                        onCheckedChange={(checked) => {
+                                            setValue('remember', checked);
+                                            handleRememberChange(checked);
+                                        }}
                                         disabled={isLoading}
                                         className="rounded-md"
                                     />
                                     <Label
                                         htmlFor="remember"
-                                        className="font-medium text-slate-600 cursor-pointer text-sm hover:text-slate-900 transition-colors"
+                                        className="font-medium text-slate-600 cursor-pointer text-sm hover:text-slate-900 transition-colors select-none"
                                     >
                                         Recordarme
                                     </Label>
