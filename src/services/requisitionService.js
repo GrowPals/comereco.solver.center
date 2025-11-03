@@ -202,6 +202,14 @@ export const fetchRequisitionDetails = async (id) => {
 
 
 /**
+ * Alias legacy para compatibilidad (DEPRECATED - usar createRequisitionFromCart)
+ * @deprecated Usar createRequisitionFromCart en su lugar
+ */
+export const createRequisition = async (payload) => {
+    return createRequisitionFromCart(payload);
+};
+
+/**
  * Llama al RPC para crear una requisición completa desde el carrito.
  * @param {object} requisitionData - { projectId, comments, items }
  * @returns {Promise<object>} La nueva requisición creada.

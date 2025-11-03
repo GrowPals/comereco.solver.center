@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
-import { useCart } from '@/hooks/useCart';
+import { useCart } from '@/context/CartContext';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 
 const RequisitionContext = createContext();

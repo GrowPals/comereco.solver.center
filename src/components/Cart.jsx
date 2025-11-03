@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo, memo, useCallback } from 'react';
-import { useCart } from '@/hooks/useCart';
+import { useCart } from '@/context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { X, ShoppingCart, Trash2, Plus, Minus, BookmarkPlus, ArrowRight, Package, Loader2 } from 'lucide-react';

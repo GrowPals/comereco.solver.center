@@ -72,7 +72,7 @@ const CatalogPage = () => {
       <div className="min-h-screen bg-white">
         <div className="max-w-7xl mx-auto">
           {/* Header Simplificado - Sticky */}
-          <div className="sticky top-0 z-20 bg-white border-b border-slate-200 shadow-sm">
+          <div className="sticky top-16 z-20 bg-white border-b border-slate-200 shadow-sm">
             <div className="p-3 md:p-6 space-y-3 md:space-y-4">
               {/* Título - Solo visible en desktop */}
               <div className="hidden md:block">

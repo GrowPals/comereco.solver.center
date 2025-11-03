@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useCart } from '@/hooks/useCart';
+import { useCart } from '@/context/CartContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Edit } from 'lucide-react';

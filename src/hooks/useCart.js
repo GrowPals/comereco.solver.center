@@ -171,13 +171,13 @@ export const useCart = () => {
     };
 
     const addToCartMutation = useMutation({
-        mutationFn: (product) => {
+        mutationFn: ({ product, quantity = 1 }) => {
             if (!user?.id) {
                 throw new Error('Usuario no autenticado');
             }
             const existingItem = items.find(item => item.id === product.id);
-            const quantity = (existingItem?.quantity || 0) + 1;
-            return upsertCartItemAPI({ userId: user.id, productId: product.id, quantity });
+            const newQuantity = (existingItem?.quantity || 0) + quantity;
+            return upsertCartItemAPI({ userId: user.id, productId: product.id, quantity: newQuantity });
         },
         ...mutationOptions,
         onSuccess: () => {
@@ -196,6 +196,9 @@ export const useCart = () => {
             return upsertCartItemAPI({ userId: user.id, productId, quantity });
         },
         ...mutationOptions,
+        onSuccess: () => {
+            toast({ title: 'Cantidad actualizada', variant: 'info' });
+        }
     });
 
     const removeFromCartMutation = useMutation({
@@ -216,8 +219,7 @@ export const useCart = () => {
         ...mutationOptions,
         onSuccess: () => {
             toast({ title: 'Carrito vaciado' });
-            // Invalidar todas las queries de cart para asegurar sincronización
-            queryClient.invalidateQueries({ queryKey: ['cart'] });
+            queryClient.invalidateQueries({ queryKey: ['cart', user?.id] });
         }
     });
 
@@ -231,7 +233,7 @@ export const useCart = () => {
         return item?.quantity || 0;
     }, [items]);
 
-    const addToCartHandler = (product) => addToCartMutation.mutate(product);
+    const addToCartHandler = (product, quantity = 1) => addToCartMutation.mutate({ product, quantity });
     const updateQuantityHandler = (productId, quantity) => updateQuantityMutation.mutate({ productId, quantity });
     const removeFromCartHandler = (productId) => removeFromCartMutation.mutate(productId);
     const clearCartHandler = () => clearCartMutation.mutate();

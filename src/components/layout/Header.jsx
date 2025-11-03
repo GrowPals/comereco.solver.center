@@ -26,7 +26,7 @@ const Header = memo(({ setSidebarOpen }) => {
     }, [userName]);
 
     return (
-        <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-4 border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-sm px-4 md:px-8" role="banner">
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-sm px-4 md:px-8" role="banner">
             {/* Mobile Logo - Sin botón hamburger */}
             <div className="flex items-center lg:hidden">
                 <Link to="/dashboard" className="flex items-center gap-2" aria-label="ComerECO - Ir al inicio">

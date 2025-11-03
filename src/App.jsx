@@ -17,6 +17,7 @@ import SkipLinks from '@/components/SkipLinks';
 import AppProviders from '@/context/AppProviders';
 import { ToastProvider } from '@/components/ui/toast-notification';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { cn } from '@/lib/utils';
 
 // Lazy loading de las páginas
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
@@ -37,6 +38,7 @@ const ManageProductsPage = lazy(() => import('@/pages/admin/ManageProducts'));
 const ReportsPage = lazy(() => import('@/pages/admin/Reports'));
 const FavoritesPage = lazy(() => import('@/pages/Favorites'));
 const ResetPasswordPage = lazy(() => import('@/pages/ResetPassword'));
+const HelpPage = lazy(() => import('@/pages/Help'));
 const NotFoundPage = lazy(() => import('@/pages/NotFound'));
 
 
@@ -120,30 +122,19 @@ const AppLayout = () => {
   const pathsWithoutNav = ['/checkout', '/reset-password'];
   const showNav = !pathsWithoutNav.some(path => location.pathname.startsWith(path));
 
-  const contentMargin = isSidebarOpen ? 'lg:ml-64' : 'lg:ml-20';
-
   return (
-    <div className="flex h-screen w-full bg-white text-gray-900">
+    <div className="min-h-screen bg-slate-50">
       <SkipLinks />
-      {showNav && (
-        <>
-          {/* Overlay - Solo en mobile cuando sidebar está abierto */}
-          {isMobileNavOpen && (
-            <div
-              onClick={() => setMobileNavOpen(false)}
-              className="fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity duration-300"
-              aria-hidden="true"
-            />
-          )}
-          {/* Sidebar - Desktop a la izquierda, Mobile drawer desde la derecha */}
-          <Sidebar isSidebarOpen={isSidebarOpen} isMobileNavOpen={isMobileNavOpen} setMobileNavOpen={setMobileNavOpen} />
-        </>
-      )}
-
-      <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out w-full ${contentMargin}`}>
+      
+      {showNav && <Sidebar isSidebarOpen={isSidebarOpen} isMobileNavOpen={isMobileNavOpen} setMobileNavOpen={setMobileNavOpen} />}
+      
+      <div className={cn(
+        "relative min-h-screen transition-all duration-300 ease-in-out",
+        isSidebarOpen ? 'lg:pl-64' : 'lg:pl-20'
+      )}>
         {showNav && <Header setSidebarOpen={handleToggleSidebar} />}
-
-        <main className="flex-1 overflow-y-auto pb-28 lg:pb-0 w-full" id="main-content" role="main">
+        
+        <main className="w-full" id="main-content" role="main">
             <ErrorBoundary level="page">
               <Suspense fallback={<div className="h-full"><PageLoader /></div>}>
                 <Routes location={location}>
@@ -189,6 +180,7 @@ const AppLayout = () => {
                         <Route path="/checkout" element={<CheckoutPage />} />
                         <Route path="/templates" element={<TemplatesPage />} />
                         <Route path="/favorites" element={<FavoritesPage />} />
+                        <Route path="/help" element={<HelpPage />} />
                         <Route path="/reset-password" element={<ResetPasswordPage />} />
 
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />
@@ -197,16 +189,16 @@ const AppLayout = () => {
               </Suspense>
             </ErrorBoundary>
         </main>
-
-        {showNav && (
-            <>
-                <div className="lg:hidden">
-                    <BottomNav onMenuClick={() => setMobileNavOpen(true)} />
-                </div>
-                <Cart />
-            </>
-        )}
       </div>
+
+      {showNav && (
+        <>
+          <div className="lg:hidden">
+            <BottomNav onMenuClick={() => setMobileNavOpen(true)} />
+          </div>
+          <Cart />
+        </>
+      )}
     </div>
   );
 };

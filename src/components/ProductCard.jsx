@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import { Heart, Plus, Check, Loader2, ShoppingCart } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useCart } from '@/hooks/useCart';
+import { useCart } from '@/context/CartContext';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useToastNotification } from '@/components/ui/toast-notification';
 import OptimizedImage from '@/components/OptimizedImage';
@@ -39,17 +39,10 @@ const ProductCard = memo(({ product }) => {
     toggleFavorite(product.id, product.name || product.nombre);
   }, [toggleFavorite, product.id, product.name]);
 
-  const handleCardClick = useCallback(() => {
-    // Navegación a detalles del producto (a implementar)
-    // navigate(`/products/${product.id}`);
-  }, []);
-
-  const handleKeyDown = useCallback((e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handleCardClick();
-    }
-  }, [handleCardClick]);
+  // Navegación a detalles de producto - Disponible en versión futura
+  // const handleCardClick = useCallback(() => {
+  //   navigate(`/products/${product.id}`);
+  // }, [navigate, product.id]);
 
   const productName = product.name || product.nombre || 'Producto sin nombre';
   const productPrice = (product.price || product.precio || 0).toFixed(2);
@@ -57,12 +50,9 @@ const ProductCard = memo(({ product }) => {
 
   return (
     <article
-      className="group relative bg-white rounded-xl md:rounded-2xl overflow-hidden border border-slate-200 hover:border-blue-200 hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col"
+      className="group relative bg-white rounded-xl md:rounded-2xl overflow-hidden border border-slate-200 hover:border-blue-200 hover:shadow-lg transition-all duration-300 h-full flex flex-col"
       role="article"
       aria-label={`Producto ${productName}, precio ${productPrice} pesos, categoría ${productCategory}`}
-      tabIndex={0}
-      onKeyDown={handleKeyDown}
-      onClick={handleCardClick}
     >
       {/* Imagen del producto */}
       <div className="relative aspect-square bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden">

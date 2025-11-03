@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCart } from '@/hooks/useCart';
+import { useCart } from '@/context/CartContext';
 import { ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 

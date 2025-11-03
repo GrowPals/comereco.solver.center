@@ -1,5 +1,6 @@
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
+import { useQuery } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,17 +8,24 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
 import { Button } from "@/components/ui/button"
-import { Calendar as CalendarIcon } from 'lucide-react';
+import { Calendar as CalendarIcon, Loader2 } from 'lucide-react';
 import { format } from "date-fns"
 import { es } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
-import { todosLosProyectos } from '@/data/mockdata';
+import { getMyProjects } from '@/services/projectService';
 
 const categories = ['Tecnología', 'Oficina', 'Mobiliario', 'Seguridad', 'Limpieza', 'Marketing', 'Operaciones'];
 
 const GeneralDataStep = () => {
     const { register, formState: { errors }, watch, setValue, control } = useFormContext();
     const requiredDate = watch('requiredDate');
+
+    // Fetch projects from API instead of mockdata
+    const { data: projects = [], isLoading: isLoadingProjects } = useQuery({
+        queryKey: ['myProjects'],
+        queryFn: getMyProjects,
+        staleTime: 60000, // 1 minuto
+    });
 
     return (
         <div className="space-y-6">
@@ -100,10 +108,17 @@ const GeneralDataStep = () => {
                     <select
                         id="costCenter"
                         {...register('costCenter')}
-                        className="flex h-12 w-full items-center justify-between rounded-md border border-input bg-card px-3 py-2 text-base ring-offset-background"
+                        className="flex h-12 w-full items-center justify-between rounded-md border border-input bg-card px-3 py-2 text-base ring-offset-background disabled:cursor-not-allowed disabled:opacity-50"
+                        disabled={isLoadingProjects}
                     >
-                        <option value="">Selecciona un proyecto...</option>
-                        {todosLosProyectos.map(proj => <option key={proj.id} value={proj.id}>{proj.nombre} - {proj.centro_costos}</option>)}
+                        <option value="">
+                            {isLoadingProjects ? 'Cargando proyectos...' : 'Selecciona un proyecto...'}
+                        </option>
+                        {projects.map(proj => (
+                            <option key={proj.id} value={proj.id}>
+                                {proj.name}
+                            </option>
+                        ))}
                     </select>
                 </div>
             </div>

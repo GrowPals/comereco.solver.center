@@ -2,7 +2,7 @@
 import React, { useMemo, memo } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Home, ShoppingCart, List, Menu } from 'lucide-react';
-import { useCart } from '@/hooks/useCart';
+import { useCart } from '@/context/CartContext';
 
 const BottomNav = memo(({ onMenuClick }) => {
     const location = useLocation();

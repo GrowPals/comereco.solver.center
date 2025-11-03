@@ -66,8 +66,8 @@
     --text-tertiary: var(--neutral-500);
 
     /* ============ GRADIENTS ============ */
-    --gradient-primary: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
-    --gradient-primary-intense: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+    --gradient-primary: linear-gradient(135deg, #1D4ED8 0%, #1E3A8A 100%);
+    --gradient-primary-intense: linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%);
     --gradient-accent: linear-gradient(135deg, #00C05D 0%, #00A651 100%);
     --gradient-accent-intense: linear-gradient(135deg, #00C05D 0%, #008C45 100%);
     --gradient-dark: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);

@@ -1,23 +1,25 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { useCart } from '@/hooks/useCart';
+import { useCart } from '@/context/CartContext';
+import { useQuery } from '@tanstack/react-query';
 import { Plus, Minus, Trash2, ShoppingCart, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import EmptyState from '@/components/EmptyState';
-import { todosLosProductos } from '@/data/mockdata';
+import { getProducts } from '@/services/productService';
 import { motion, AnimatePresence } from 'framer-motion';
+import PageLoader from '@/components/PageLoader';
 
 const ProductCard = ({ product, onAdd }) => (
   <Card className="overflow-hidden">
     <CardContent className="p-4 flex flex-col h-full">
       <img
         className="w-full h-32 object-cover rounded-md mb-4"
-        alt={product.nombre}
-        src="https://images.unsplash.com/photo-1648476029943-301781dd76d4"
+        alt={product.name || 'Producto'}
+        src={product.image_url || "https://images.unsplash.com/photo-1648476029943-301781dd76d4"}
       />
       <div className="flex-grow">
-        <p className="font-semibold text-sm">{product.nombre}</p>
+        <p className="font-semibold text-sm">{product.name}</p>
         <p className="text-xs text-neutral-70">{product.sku}</p>
         <p className="text-xs text-neutral-70">Stock: {product.stock}</p>
       </div>
@@ -26,9 +28,9 @@ const ProductCard = ({ product, onAdd }) => (
           {new Intl.NumberFormat('es-MX', {
             style: 'currency',
             currency: 'MXN',
-          }).format(product.precio)}
+          }).format(product.price)}
         </p>
-        <Button size="sm" variant="secondary" onClick={() => onAdd(product)}>
+        <Button size="sm" variant="secondary" onClick={() => onAdd(product)} disabled={product.stock <= 0}>
           <Plus className="h-4 w-4 mr-1" /> Agregar
         </Button>
       </div>
@@ -112,16 +114,18 @@ const ItemsStep = () => {
     return () => clearTimeout(timeout);
   }, [searchInput]);
 
+  // Fetch products from API instead of mockdata
+  const { data: productsData, isLoading: isLoadingProducts } = useQuery({
+    queryKey: ['products-search', { searchTerm, page: 1, pageSize: 12 }],
+    queryFn: () => getProducts({ searchTerm, page: 1, pageSize: 12 }),
+    staleTime: 60000, // 1 minuto
+  });
+
   const filteredProducts = useMemo(() => {
-    if (!searchTerm) return todosLosProductos.slice(0, 6); // Show some initial products
-    return todosLosProductos
-      .filter(
-        (p) =>
-          p.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          p.sku.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-      .slice(0, 12);
-  }, [searchTerm]);
+    const products = productsData?.data || [];
+    if (!searchTerm) return products.slice(0, 6); // Show 6 initial products
+    return products.slice(0, 12); // Show up to 12 when searching
+  }, [productsData, searchTerm]);
 
   const enrichedItems = useMemo(
     () =>
@@ -135,6 +139,15 @@ const ItemsStep = () => {
 
   const totalItems = enrichedItems.length;
 
+  // Loading state for products
+  if (isLoadingProducts && filteredProducts.length === 0) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <PageLoader message="Cargando productos..." />
+      </div>
+    );
+  }
+
   return (
     <div className="grid lg:grid-cols-2 gap-8">
       {/* Left side: Catalog Search */}
@@ -146,11 +159,25 @@ const ItemsStep = () => {
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
         />
-        <div className="grid sm:grid-cols-2 gap-4">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} onAdd={addToCart} />
-          ))}
-        </div>
+        {isLoadingProducts ? (
+          <div className="py-8 text-center text-sm text-muted-foreground">
+            Cargando productos...
+          </div>
+        ) : filteredProducts.length === 0 ? (
+          <Card className="p-8">
+            <EmptyState
+              icon={<Search className="h-12 w-12 text-neutral-300" />}
+              title="No se encontraron productos"
+              description="Intenta buscar con otros términos"
+            />
+          </Card>
+        ) : (
+          <div className="grid sm:grid-cols-2 gap-4">
+            {filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} onAdd={addToCart} />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Right side: Shopping Cart */}
