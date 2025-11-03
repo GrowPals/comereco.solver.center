@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import NotificationCenter from '@/components/layout/NotificationCenter';
+import { CartIcon } from '@/components/CartIcon';
 
 const Header = memo(({ setSidebarOpen }) => {
     const { user, signOut } = useSupabaseAuth();
@@ -53,6 +54,9 @@ const Header = memo(({ setSidebarOpen }) => {
 
             {/* Right side actions */}
             <div className="flex items-center gap-2">
+                {/* Carrito - visible en mobile y desktop */}
+                <CartIcon />
+
                 {/* Notificaciones - visible en mobile y desktop */}
                 <NotificationCenter />
 

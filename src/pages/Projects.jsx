@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { PlusCircle, MoreHorizontal, Edit, Trash2, Users, FolderKanban, UserPlus } from 'lucide-react';
+import { PlusCircle, MoreHorizontal, Edit, Trash2, Users, FolderKanban, UserPlus, CheckCircle2, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/useToast';
 import {
@@ -31,6 +31,7 @@ import {
   getProjectMembers,
   addProjectMember,
   removeProjectMember,
+  updateProjectMemberApproval,
 } from '@/services/projectService';
 import { fetchUsersInCompany } from '@/services/userService';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
@@ -159,12 +160,25 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
         onError: (error) => toast({ variant: 'destructive', title: 'Error', description: error.message }),
     });
 
+    const toggleApprovalMutation = useMutation({
+        mutationFn: ({ projectId, userId, requiresApproval }) =>
+            updateProjectMemberApproval(projectId, userId, requiresApproval),
+        onSuccess: () => {
+            queryClient.invalidateQueries(['projectMembers', project.id]);
+            toast({ title: 'Configuración actualizada' });
+        },
+        onError: (error) => toast({ variant: 'destructive', title: 'Error', description: error.message }),
+    });
+
     const availableUsers = companyUsers?.filter(u => !members?.some(m => m.user_id === u.id)) || [];
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-lg">
-                <DialogHeader><DialogTitle>Gestionar Miembros de "{project?.name}"</DialogTitle></DialogHeader>
+            <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                    <DialogTitle>Gestionar Miembros de "{project?.name}"</DialogTitle>
+                    <DialogDescription>Agrega usuarios y configura si requieren aprobación para enviar requisiciones.</DialogDescription>
+                </DialogHeader>
                 <div className="py-4 space-y-4">
                     <div className="flex gap-2">
                         <Select value={selectedUser} onValueChange={setSelectedUser}>
@@ -175,13 +189,50 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
                         </Select>
                         <Button onClick={() => addMemberMutation.mutate({ projectId: project.id, userId: selectedUser })} disabled={!selectedUser || addMemberMutation.isPending}><UserPlus className="h-4 w-4"/></Button>
                     </div>
-                    <div className="max-h-64 overflow-y-auto space-y-2 pr-2">
-                        {isLoadingMembers ? <p>Cargando miembros...</p> : members?.map(member => (
-                            <div key={member.user_id} className="flex items-center justify-between bg-muted p-2 rounded-md">
-                                <p>{member.user.full_name}</p>
-                                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeMemberMutation.mutate({ projectId: project.id, userId: member.user_id })}><Trash2 className="h-4 w-4 text-destructive"/></Button>
-                            </div>
-                        ))}
+                    <div className="max-h-96 overflow-y-auto space-y-2 pr-2">
+                        {isLoadingMembers ? (
+                            <p className="text-center text-muted-foreground py-4">Cargando miembros...</p>
+                        ) : members && members.length > 0 ? (
+                            members.map(member => (
+                                <div key={member.user_id} className="flex items-center justify-between bg-muted p-3 rounded-lg hover:bg-muted/80 transition-colors">
+                                    <div className="flex-1">
+                                        <p className="font-medium">{member.user.full_name}</p>
+                                        <p className="text-sm text-muted-foreground">
+                                            {member.requires_approval ? 'Requiere aprobación' : 'Aprobación automática'}
+                                        </p>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Button
+                                            variant={member.requires_approval ? "outline" : "default"}
+                                            size="sm"
+                                            className="h-8"
+                                            onClick={() => toggleApprovalMutation.mutate({
+                                                projectId: project.id,
+                                                userId: member.user_id,
+                                                requiresApproval: !member.requires_approval
+                                            })}
+                                            disabled={toggleApprovalMutation.isPending}
+                                        >
+                                            {member.requires_approval ? (
+                                                <><XCircle className="h-3.5 w-3.5 mr-1" /> Requiere aprobación</>
+                                            ) : (
+                                                <><CheckCircle2 className="h-3.5 w-3.5 mr-1" /> Auto-aprobado</>
+                                            )}
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-8 w-8"
+                                            onClick={() => removeMemberMutation.mutate({ projectId: project.id, userId: member.user_id })}
+                                        >
+                                            <Trash2 className="h-4 w-4 text-destructive"/>
+                                        </Button>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-center text-muted-foreground py-8">No hay miembros en este proyecto</p>
+                        )}
                     </div>
                 </div>
                 <DialogFooter><Button onClick={onClose}>Cerrar</Button></DialogFooter>

@@ -245,7 +245,7 @@ export const getProjectMembers = async (projectId) => {
 
     const { data: memberships, error: membersError } = await supabase
         .from('project_members')
-        .select('user_id, role_in_project, added_at')
+        .select('user_id, role_in_project, added_at, requires_approval')
         .eq('project_id', projectId);
     
     if (membersError) {
@@ -283,8 +283,9 @@ export const getProjectMembers = async (projectId) => {
  * @param {string} projectId - ID del proyecto.
  * @param {string} userId - ID del usuario a agregar.
  * @param {string} roleInProject - Rol en el proyecto (default: 'member').
+ * @param {boolean} requiresApproval - Si el usuario requiere aprobación para enviar requisiciones (default: true).
  */
-export const addProjectMember = async (projectId, userId, roleInProject = 'member') => {
+export const addProjectMember = async (projectId, userId, roleInProject = 'member', requiresApproval = true) => {
     // Validar sesión antes de hacer queries (usando cache)
     const { session, error: sessionError } = await getCachedSession();
     if (sessionError || !session) {
@@ -293,7 +294,12 @@ export const addProjectMember = async (projectId, userId, roleInProject = 'membe
 
     const { error } = await supabase
         .from('project_members')
-        .insert({ project_id: projectId, user_id: userId, role_in_project: roleInProject });
+        .insert({
+            project_id: projectId,
+            user_id: userId,
+            role_in_project: roleInProject,
+            requires_approval: requiresApproval
+        });
     if (error) {
         logger.error('Error adding project member:', error);
         throw new Error(formatErrorMessage(error));
@@ -342,9 +348,39 @@ export const updateProjectMemberRole = async (projectId, userId, roleInProject) 
         .from('project_members')
         .update({ role_in_project: roleInProject })
         .match({ project_id: projectId, user_id: userId });
-    
+
     if (error) {
         logger.error('Error updating project member role:', error);
+        throw new Error(formatErrorMessage(error));
+    }
+};
+
+/**
+ * NUEVO: Actualiza si un miembro requiere aprobación para enviar requisiciones.
+ * RLS verifica permisos según rol (admin y supervisor del proyecto pueden actualizar).
+ * @param {string} projectId - ID del proyecto.
+ * @param {string} userId - ID del usuario a actualizar.
+ * @param {boolean} requiresApproval - Si el usuario requiere aprobación.
+ */
+export const updateProjectMemberApproval = async (projectId, userId, requiresApproval) => {
+    // Validar sesión antes de hacer queries (usando cache)
+    const { session, error: sessionError } = await getCachedSession();
+    if (sessionError || !session) {
+        throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+    }
+
+    // Validar que requiresApproval sea booleano
+    if (typeof requiresApproval !== 'boolean') {
+        throw new Error("El parámetro requiresApproval debe ser un booleano.");
+    }
+
+    const { error } = await supabase
+        .from('project_members')
+        .update({ requires_approval: requiresApproval })
+        .match({ project_id: projectId, user_id: userId });
+
+    if (error) {
+        logger.error('Error updating project member approval:', error);
         throw new Error(formatErrorMessage(error));
     }
 };
