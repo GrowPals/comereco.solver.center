@@ -62,9 +62,28 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
         return userName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
     }, [userName]);
 
-    // Menú secundario - Opciones específicas por rol
+    // Menú - Navegación completa
     const menuSections = useMemo(() => {
         const sections = [];
+
+        // Sección de Navegación Principal (para todos los usuarios)
+        sections.push({
+            title: 'Principal',
+            items: [
+                { to: '/dashboard', icon: Home, text: 'Dashboard' },
+                { to: '/catalog', icon: ShoppingBag, text: 'Catálogo' },
+                { to: '/requisitions', icon: List, text: 'Requisiciones' },
+            ]
+        });
+
+        // Sección de Mis Herramientas (para todos los usuarios)
+        sections.push({
+            title: 'Mis Herramientas',
+            items: [
+                { to: '/templates', icon: LayoutTemplate, text: 'Plantillas' },
+                { to: '/favorites', icon: Star, text: 'Favoritos' },
+            ]
+        });
 
         // Sección de Administración (solo para Admin y Supervisor)
         if (isAdmin || isSupervisor) {
@@ -93,17 +112,6 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
             }
         }
 
-        // Sección de Mis Herramientas (para usuarios normales)
-        if (!isAdmin && !isSupervisor) {
-            sections.push({
-                title: 'Mis Herramientas',
-                items: [
-                    { to: '/templates', icon: LayoutTemplate, text: 'Plantillas' },
-                    { to: '/favorites', icon: Star, text: 'Favoritos' },
-                ]
-            });
-        }
-
         return sections;
     }, [isAdmin, isSupervisor]);
 
@@ -111,11 +119,11 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
         <aside
             className={`fixed top-0 right-0 h-full bg-white z-50 flex flex-col transition-all duration-300 ease-out ${
                 isMobileNavOpen ? 'translate-x-0 w-[320px] shadow-2xl' : 'translate-x-full w-[320px]'
-            } lg:relative lg:translate-x-0 lg:border-r lg:border-slate-200 lg:shadow-none ${
-                isSidebarOpen ? 'lg:w-64' : 'lg:w-20'
+            } lg:fixed lg:left-0 lg:translate-x-0 lg:border-r lg:border-slate-200 lg:shadow-sm ${
+                isSidebarOpen ? 'lg:w-64' : 'lg:w-64'
             }`}
             role="complementary"
-            aria-label="Menú secundario"
+            aria-label="Menú de navegación"
             id="navigation"
         >
             {/* Header del Sidebar - Perfil del Usuario */}
