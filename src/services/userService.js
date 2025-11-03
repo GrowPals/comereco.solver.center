@@ -185,3 +185,60 @@ export const updateUserProfile = async (userId, updateData) => {
   
   return data;
 };
+
+/**
+ * Desactiva o activa un usuario mediante Edge Function
+ * @param {string} userId - El ID del usuario a modificar
+ * @param {boolean} isActive - Estado de activación (true = activo, false = desactivado)
+ * @returns {Promise<Object>} El resultado de la operación
+ */
+export const toggleUserStatus = async (userId, isActive) => {
+  // Validar datos de entrada
+  if (!userId) {
+    throw new Error("El ID del usuario es requerido.");
+  }
+  if (typeof isActive !== 'boolean') {
+    throw new Error("El estado de activación debe ser un booleano.");
+  }
+
+  // Validar sesión
+  const { session, error: sessionError } = await getCachedSession();
+  if (sessionError || !session) {
+    throw new Error("Usuario no autenticado.");
+  }
+
+  try {
+    // Llamar a la Edge Function
+    const { data, error } = await supabase.functions.invoke('toggle-user-status', {
+      body: {
+        userId,
+        isActive,
+      },
+    });
+
+    if (error) {
+      logger.error('Error toggling user status via Edge Function:', error);
+      throw new Error(error.message || 'Error al cambiar el estado del usuario');
+    }
+
+    if (data?.error) {
+      logger.error('Edge Function returned error:', data.error);
+      throw new Error(data.error);
+    }
+
+    logger.info('User status toggled successfully:', data);
+    return data;
+  } catch (error) {
+    logger.error('Exception toggling user status:', error);
+
+    // Manejar errores específicos
+    if (error.message?.includes('desactivarte a ti mismo')) {
+      throw new Error("No puedes desactivarte a ti mismo.");
+    }
+    if (error.message?.includes('permisos')) {
+      throw new Error("No tienes permisos para cambiar el estado de usuarios.");
+    }
+
+    throw new Error(error.message || formatErrorMessage(error));
+  }
+};

@@ -37,7 +37,7 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { fetchUsersInCompany, inviteUser, updateUserProfile } from '@/services/userService';
+import { fetchUsersInCompany, inviteUser, updateUserProfile, toggleUserStatus } from '@/services/userService';
 import { useToast } from '@/components/ui/useToast';
 import PageLoader from '@/components/PageLoader';
 
@@ -162,6 +162,18 @@ const Users = () => {
         }
     });
 
+    const toggleStatusMutation = useMutation({
+        mutationFn: ({ userId, isActive }) => toggleUserStatus(userId, isActive),
+        ...mutationOptions,
+        onSuccess: (data, ...args) => {
+            toast({
+                title: 'Éxito',
+                description: data.message || 'Estado del usuario actualizado correctamente.'
+            });
+            mutationOptions.onSuccess(data, ...args);
+        }
+    });
+
     const handleOpenForm = (user = null) => {
         setEditingUser(user);
         setIsFormOpen(true);
@@ -175,21 +187,20 @@ const Users = () => {
         }
     };
 
-    const handleDisableUser = (user) => {
-        // NOTA: Esta funcionalidad requiere configuración adicional en Supabase
-        // Se necesita agregar un campo `is_active` o `disabled` en la tabla profiles
-        // y crear una Edge Function para desactivar usuarios en auth
-        toast({
-            variant: 'destructive',
-            title: 'Funcionalidad en desarrollo',
-            description: 'La desactivación de usuarios requiere configuración adicional en Supabase. Contacta al administrador del sistema.',
-        });
+    const handleToggleUserStatus = (user) => {
+        // El usuario está activo por defecto, si is_active no está definido
+        const currentStatus = user.is_active !== false;
+        const action = currentStatus ? 'desactivar' : 'activar';
+        const actionCap = currentStatus ? 'Desactivar' : 'Activar';
 
-        // TODO: Implementar cuando se agregue el campo is_active en profiles
-        // const confirmDisable = window.confirm(`¿Estás seguro de desactivar a ${user.full_name || user.email}?`);
-        // if (confirmDisable) {
-        //     updateMutation.mutate({ id: user.id, is_active: false });
-        // }
+        const confirmMessage = `¿Estás seguro de ${action} a ${user.full_name || user.email}?`;
+
+        if (window.confirm(confirmMessage)) {
+            toggleStatusMutation.mutate({
+                userId: user.id,
+                isActive: !currentStatus
+            });
+        }
     };
 
     if (isLoading) return <div className="p-8"><PageLoader /></div>;
@@ -249,8 +260,15 @@ const Users = () => {
                                                     {user.full_name?.charAt(0) || 'U'}
                                                 </AvatarFallback>
                                             </Avatar>
-                                            <div>
-                                                <p className="font-bold text-slate-900">{user.full_name}</p>
+                                            <div className="flex-1">
+                                                <div className="flex items-center gap-2">
+                                                    <p className="font-bold text-slate-900">{user.full_name}</p>
+                                                    {user.is_active === false && (
+                                                        <Badge variant="destructive" className="text-xs">
+                                                            Inactivo
+                                                        </Badge>
+                                                    )}
+                                                </div>
                                                 <p className="text-sm text-slate-600">{user.email}</p>
                                             </div>
                                         </div>
@@ -286,10 +304,10 @@ const Users = () => {
                                                     Editar
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem
-                                                    className="text-red-600"
-                                                    onClick={() => handleDisableUser(user)}
+                                                    className={user.is_active !== false ? "text-red-600" : "text-green-600"}
+                                                    onClick={() => handleToggleUserStatus(user)}
                                                 >
-                                                    Desactivar
+                                                    {user.is_active !== false ? 'Desactivar' : 'Activar'}
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>

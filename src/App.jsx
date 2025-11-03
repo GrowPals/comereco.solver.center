@@ -35,6 +35,7 @@ const ProjectsPage = lazy(() => import('@/pages/Projects'));
 const ManageProductsPage = lazy(() => import('@/pages/admin/ManageProducts'));
 const ReportsPage = lazy(() => import('@/pages/admin/Reports'));
 const FavoritesPage = lazy(() => import('@/pages/Favorites'));
+const ResetPasswordPage = lazy(() => import('@/pages/ResetPassword'));
 
 
 // Componente para rutas privadas
@@ -107,7 +108,7 @@ const AppLayout = () => {
     }
   };
 
-  const pathsWithoutNav = ['/checkout'];
+  const pathsWithoutNav = ['/checkout', '/reset-password'];
   const showNav = !pathsWithoutNav.some(path => location.pathname.startsWith(path));
 
   const contentMargin = isSidebarOpen ? 'lg:ml-64' : 'lg:ml-20';
@@ -166,7 +167,8 @@ const AppLayout = () => {
                         <Route path="/checkout" element={<CheckoutPage />} />
                         <Route path="/templates" element={<TemplatesPage />} />
                         <Route path="/favorites" element={<FavoritesPage />} />
-                        
+                        <Route path="/reset-password" element={<ResetPasswordPage />} />
+
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />
                         <Route path="*" element={<Navigate to="/dashboard" replace />} />
                     </Routes>
