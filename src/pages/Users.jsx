@@ -174,7 +174,24 @@ const Users = () => {
             inviteMutation.mutate(userData);
         }
     };
-    
+
+    const handleDisableUser = (user) => {
+        // NOTA: Esta funcionalidad requiere configuración adicional en Supabase
+        // Se necesita agregar un campo `is_active` o `disabled` en la tabla profiles
+        // y crear una Edge Function para desactivar usuarios en auth
+        toast({
+            variant: 'destructive',
+            title: 'Funcionalidad en desarrollo',
+            description: 'La desactivación de usuarios requiere configuración adicional en Supabase. Contacta al administrador del sistema.',
+        });
+
+        // TODO: Implementar cuando se agregue el campo is_active en profiles
+        // const confirmDisable = window.confirm(`¿Estás seguro de desactivar a ${user.full_name || user.email}?`);
+        // if (confirmDisable) {
+        //     updateMutation.mutate({ id: user.id, is_active: false });
+        // }
+    };
+
     if (isLoading) return <div className="p-8"><PageLoader /></div>;
     if (isError) return <div className="p-8 text-destructive">Error al cargar usuarios.</div>;
 
@@ -268,7 +285,10 @@ const Users = () => {
                                                 <DropdownMenuItem onClick={() => handleOpenForm(user)}>
                                                     Editar
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem className="text-red-600">
+                                                <DropdownMenuItem
+                                                    className="text-red-600"
+                                                    onClick={() => handleDisableUser(user)}
+                                                >
                                                     Desactivar
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>

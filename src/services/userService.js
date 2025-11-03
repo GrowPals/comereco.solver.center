@@ -38,8 +38,9 @@ export const fetchUsersInCompany = async () => {
 };
 
 /**
- * CORREGIDO: Valida sesión y maneja errores correctamente
- * Invita a un nuevo usuario a la compañía.
+ * CORREGIDO: Usa Edge Function para invitar usuarios de forma segura
+ * Invita a un nuevo usuario a la compañía mediante una Edge Function.
+ * La Edge Function maneja la invitación con permisos de service_role.
  * @param {string} email - El email del usuario a invitar.
  * @param {string} role - El rol a asignar al nuevo usuario (usará role_v2). Valores: 'admin' | 'supervisor' | 'user'
  * @returns {Promise<Object>} El resultado de la invitación.
@@ -56,43 +57,52 @@ export const inviteUser = async (email, role) => {
         throw new Error("El rol es requerido.");
     }
 
-    // Optimizado: Usar helpers cacheados
-    const { session, error: sessionError } = await getCachedSession();
-    if (sessionError || !session) {
-        throw new Error("Usuario no autenticado.");
-    }
-
-    const { companyId, error: companyError } = await getCachedCompanyId();
-    if (companyError || !companyId) {
-        throw new Error('No se pudo obtener la información de la compañía.');
-    }
-
     // Validar que el rol sea válido según REFERENCIA_TECNICA_BD_SUPABASE.md
     const validRoles = ['admin', 'supervisor', 'user'];
     if (!validRoles.includes(role)) {
         throw new Error(`Rol inválido. Debe ser uno de: ${validRoles.join(', ')}`);
     }
 
-    // FIX: La llamada correcta es a `supabase.auth.admin.inviteUserByEmail`
-    // FIX: Los metadatos deben estar dentro de `user_metadata`
-    const { data, error } = await supabase.auth.admin.inviteUserByEmail(email.trim().toLowerCase(), {
-        data: {
-            // Esto se usará en el trigger handle_new_user para crear el perfil
-            role_v2: role, 
-            company_id: companyId,
-        },
-    });
+    // Optimizado: Usar helpers cacheados para validar sesión
+    const { session, error: sessionError } = await getCachedSession();
+    if (sessionError || !session) {
+        throw new Error("Usuario no autenticado.");
+    }
 
-    if (error) {
-        logger.error('Error inviting user:', error);
+    try {
+        // Llamar a la Edge Function con el token del usuario
+        const { data, error } = await supabase.functions.invoke('invite-user', {
+            body: {
+                email: email.trim().toLowerCase(),
+                role: role,
+            },
+        });
+
+        if (error) {
+            logger.error('Error inviting user via Edge Function:', error);
+            throw new Error(error.message || 'Error al invitar usuario');
+        }
+
+        if (data?.error) {
+            logger.error('Edge Function returned error:', data.error);
+            throw new Error(data.error);
+        }
+
+        logger.info('User invited successfully:', data);
+        return data;
+    } catch (error) {
+        logger.error('Exception inviting user:', error);
+
         // Manejar errores específicos
         if (error.message?.includes('already registered') || error.message?.includes('already exists')) {
             throw new Error("Este email ya está registrado en el sistema.");
         }
-        throw new Error(formatErrorMessage(error));
-    }
+        if (error.message?.includes('permisos')) {
+            throw new Error("No tienes permisos para invitar usuarios.");
+        }
 
-    return data;
+        throw new Error(error.message || formatErrorMessage(error));
+    }
 };
 
 

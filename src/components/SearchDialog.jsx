@@ -25,7 +25,7 @@ const SearchDialog = memo(({ open, onOpenChange }) => {
   );
 
   useEffect(() => {
-    if (!debouncedQuery.trim() || !user?.company_id) {
+    if (!debouncedQuery.trim()) {
       setResults({ productos: [], requisiciones: [], usuarios: [] });
       setIsLoading(false);
       return;
@@ -34,7 +34,8 @@ const SearchDialog = memo(({ open, onOpenChange }) => {
     const search = async () => {
       setIsLoading(true);
       try {
-        const searchResults = await performGlobalSearch(debouncedQuery, user.company_id);
+        // CORREGIDO: performGlobalSearch ahora obtiene company_id de la sesión internamente
+        const searchResults = await performGlobalSearch(debouncedQuery);
         setResults(searchResults);
       } catch (error) {
         logger.error('Error en búsqueda:', error);
@@ -45,7 +46,7 @@ const SearchDialog = memo(({ open, onOpenChange }) => {
     };
 
     search();
-  }, [debouncedQuery, user?.company_id]);
+  }, [debouncedQuery]);
 
   const handleSelect = (path) => {
     onOpenChange(false);

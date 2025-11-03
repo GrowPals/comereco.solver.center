@@ -5,11 +5,14 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, AlertTriangle } from 'lucide-react';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
+import { supabase } from '@/lib/customSupabaseClient';
 import { RippleButton } from '@/components/ui/ripple-button';
 import { FloatingInput } from '@/components/ui/floating-input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { useToastNotification } from '@/components/ui/toast-notification';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import logger from '@/utils/logger';
 
 const LoginPage = () => {
@@ -29,6 +32,9 @@ const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [authError, setAuthError] = useState('');
     const [isShaking, setIsShaking] = useState(false);
+    const [showResetDialog, setShowResetDialog] = useState(false);
+    const [resetEmail, setResetEmail] = useState('');
+    const [isResetting, setIsResetting] = useState(false);
 
     useEffect(() => {
       if (session) {
@@ -74,6 +80,53 @@ const LoginPage = () => {
             localStorage.setItem('rememberMeEmail', email);
         } else {
             localStorage.removeItem('rememberMeEmail');
+        }
+    };
+
+    const handleForgotPassword = () => {
+        const currentEmail = getValues('email');
+        setResetEmail(currentEmail || '');
+        setShowResetDialog(true);
+    };
+
+    const handleResetPassword = async (e) => {
+        e.preventDefault();
+
+        if (!resetEmail || !resetEmail.trim()) {
+            toast.error('Email requerido', 'Por favor ingresa tu email');
+            return;
+        }
+
+        if (!resetEmail.match(/^\S+@\S+$/i)) {
+            toast.error('Email inválido', 'Por favor ingresa un email válido');
+            return;
+        }
+
+        setIsResetting(true);
+
+        try {
+            const { error } = await supabase.auth.resetPasswordForEmail(resetEmail.trim().toLowerCase(), {
+                redirectTo: `${window.location.origin}/reset-password`,
+            });
+
+            if (error) {
+                throw error;
+            }
+
+            toast.success(
+                'Email enviado',
+                'Revisa tu bandeja de entrada para restablecer tu contraseña'
+            );
+            setShowResetDialog(false);
+            setResetEmail('');
+        } catch (error) {
+            logger.error('Error sending reset email:', error);
+            toast.error(
+                'Error al enviar email',
+                error.message || 'No se pudo enviar el email de recuperación'
+            );
+        } finally {
+            setIsResetting(false);
         }
     };
 
@@ -195,13 +248,13 @@ const LoginPage = () => {
                                         Recordarme
                                     </Label>
                                 </div>
-                                <Link
-                                    to="#"
-                                    onClick={() => toast.info("Función no implementada", "La recuperación de contraseña estará disponible pronto.")}
+                                <button
+                                    type="button"
+                                    onClick={handleForgotPassword}
                                     className="text-sm text-blue-600 hover:text-blue-700 hover:underline transition-all duration-200 font-semibold"
                                 >
                                     ¿Olvidaste tu contraseña?
-                                </Link>
+                                </button>
                             </div>
 
                             {/* Submit Button */}
@@ -226,6 +279,53 @@ const LoginPage = () => {
                         Sistema de Requisiciones · <span className="text-blue-600">ComerECO</span>
                     </motion.p>
                 </div>
+
+                {/* Reset Password Dialog */}
+                <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+                    <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                            <DialogTitle>Recuperar contraseña</DialogTitle>
+                            <DialogDescription>
+                                Ingresa tu email y te enviaremos un enlace para restablecer tu contraseña
+                            </DialogDescription>
+                        </DialogHeader>
+                        <form onSubmit={handleResetPassword} className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="reset-email">Email</Label>
+                                <div className="relative">
+                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                                    <input
+                                        id="reset-email"
+                                        type="email"
+                                        value={resetEmail}
+                                        onChange={(e) => setResetEmail(e.target.value)}
+                                        placeholder="tu@email.com"
+                                        className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        disabled={isResetting}
+                                        autoFocus
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex gap-3 justify-end">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => setShowResetDialog(false)}
+                                    disabled={isResetting}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    disabled={isResetting}
+                                    className="min-w-[120px]"
+                                >
+                                    {isResetting ? 'Enviando...' : 'Enviar email'}
+                                </Button>
+                            </div>
+                        </form>
+                    </DialogContent>
+                </Dialog>
             </div>
         </>
     );

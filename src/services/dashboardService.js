@@ -11,6 +11,26 @@ import { formatErrorMessage } from '@/utils/errorHandler';
  */
 export const getDashboardStats = async () => {
     try {
+        // CRÍTICO: Validar sesión antes de llamar al RPC
+        const { session, error: sessionError } = await getCachedSession();
+        if (sessionError || !session) {
+            logger.error('Dashboard stats failed: No valid session');
+            // Devolver estadísticas vacías si no hay sesión válida
+            return {
+                draft_count: 0,
+                submitted_count: 0,
+                approved_count: 0,
+                approved_total: 0,
+                active_requisitions_count: 0,
+                total_users_count: 0,
+                total_projects_count: 0,
+                total_requisitions: 0,
+                pending_requisitions: 0,
+                approved_requisitions: 0,
+                total_amount: 0,
+            };
+        }
+
         // La función RPC 'get_dashboard_stats' se encargará de determinar el rol
         // y devolver las estadísticas adecuadas para el usuario que realiza la llamada.
         const { data, error } = await supabase.rpc('get_dashboard_stats');
@@ -32,7 +52,7 @@ export const getDashboardStats = async () => {
                 total_amount: 0,
             };
         }
-        
+
         // El RPC devuelve un array con un solo objeto
         // Validar que data existe y tiene elementos
         if (!data || !Array.isArray(data) || data.length === 0) {
@@ -51,7 +71,7 @@ export const getDashboardStats = async () => {
                 total_amount: 0,
             };
         }
-        
+
         return data[0] || {};
     } catch (err) {
         logger.error('Exception in getDashboardStats:', err);
