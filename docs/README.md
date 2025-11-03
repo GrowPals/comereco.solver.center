@@ -1,83 +1,269 @@
 # 📚 Documentación ComerECO
 
-Documentación completa del sistema ComerECO - Sistema de Requisiciones del Grupo Solven. Esta guía está organizada según el estado real del contenido para evitar confusiones entre lo implementado y lo que aún es un plan.
+Documentación completa del sistema ComerECO - Sistema de Requisiciones del Grupo Solven.
+
+**Última actualización:** 2 de noviembre de 2025
 
 ---
 
-## 📖 Índice rápido por estado
+## 🚀 Start Here
 
-### ✅ Implementado (Base funcional)
+¿Primera vez en el proyecto? Empieza aquí:
 
-- **[Guía de Despliegue](guides/GUIA_DESPLIEGUE.md)** – Cómo levantar el proyecto local y en Vercel.
-- **[Variables de Entorno](guides/INSTRUCCIONES_VARIABLES_ENTORNO.md)** – Configuración de `.env`.
-- **[Pruebas Locales](guides/GUIA_PRUEBAS_LOCALES.md)** – Flujo recomendado de QA manual.
-- **[Arquitectura de Roles y Permisos](ARQUITECTURA_ROLES_PERMISOS.md)** – Descripción del RBAC actual.
-- **[Documentación Técnica BD Supabase](guides/DOCUMENTACION_TECNICA_BD_SUPABASE.md)** – Esquema vigente en Supabase.
-- **[Referencia Técnica BD](guides/REFERENCIA_TECNICA_BD_SUPABASE.md)** – Relaciones, claves foráneas y RLS activos.
-- **[Implementación Backend](guides/IMPLEMENTACION_BACKEND_SUPABASE.md)** – Cómo interactúa hoy el frontend con Supabase.
-- **[Mejores Prácticas Supabase](guides/GUIA_BEST_PRACTICES_SUPABASE.md)** – Reglas vigentes para sesiones, RLS y consultas.
-- **[Estado General de la BD](ESTADO_BASE_DATOS.md)** – Problemas vigentes y salud actual.
-- **[Fix RLS Recursivo](INSTRUCCIONES_FIX_RLS_RECURSION.md)** – Script y pasos para resolver el bug de políticas.
-- **[RESUMEN_AUDITORIA_ACTUALIZADO.md](../RESUMEN_AUDITORIA_ACTUALIZADO.md)** – Fotografía actual (nov-2025) con hallazgos críticos.
-
-### 🔄 En planeación / pendientes
-
-> Estos documentos describen la arquitectura objetivo (Bind ERP + n8n). No hay migraciones ni código que materialicen todavía esas piezas.
-
-- **[Arquitectura Completa](ARQUITECTURA_COMPLETA.md)** – Diseño de la solución final (marcado como blueprint).
-- **[Checklist Producción y Automatización](CHECKLIST_PRODUCCION_AUTOMATIZACION.md)** – Lista de tareas pendientes para llegar a producción.
-- **[Guía de Implementación Bind](../GUIA_IMPLEMENTACION_BIND_PASO_A_PASO.md)** – Plan de trabajo paso a paso (todos los checkboxes comienzan vacíos).
-- **[docs/api/](api/)** – Scripts SQL disponibles; faltan migraciones clave (`get_dashboard_stats`, `bind_mappings`, `bind_sync_logs`, triggers PGMQ, etc.).
-
-### 🛠️ Soporte y operación
-
-- **[Deployment Checklist](guides/DEPLOYMENT_CHECKLIST.md)**
-- **[Configuración Vercel](guides/GUIA_CONFIGURACION_VERCEL.md)**
-- **[Configuración de Dominios](guides/GUIA_CONFIGURACION_DOMINIOS.md)**
-- **[Troubleshooting Login](guides/PASOS_PARA_ARREGLAR_LOGIN.md)**
-
-### 🗄️ Archivo histórico y planeación
-
-- **[Development](development/)** – Planes de sprints y bitácoras.
-- **[Archive](archive/)** – Registros anteriores (mantener como referencia, no representan el estado actual).
+1. 📖 **[README Principal](../README.md)** - Visión general del proyecto
+2. ⚙️ **[Guía de Despliegue](guides/GUIA_DESPLIEGUE.md)** - Cómo levantar el proyecto
+3. 🔑 **[Variables de Entorno](guides/INSTRUCCIONES_VARIABLES_ENTORNO.md)** - Configuración `.env`
+4. 🏗️ **[Arquitectura de Roles](ARQUITECTURA_ROLES_PERMISOS.md)** - Sistema de permisos
 
 ---
 
-## 🎯 Estructura del Proyecto
+## 📁 Estructura de Documentación
 
 ```
-COMERECO WEBAPP/
-├── src/                    # Código fuente de la aplicación
-│   ├── components/         # Componentes React reutilizables
-│   ├── lib/                # Utilidades y configuraciones
-│   ├── pages/              # Páginas de la aplicación
-│   └── services/           # Servicios y API clients
-├── docs/                   # Documentación completa
-│   ├── guides/             # Guías técnicas y de referencia
-│   ├── development/        # Documentación de desarrollo
-│   ├── archive/            # Documentación histórica
-│   └── api/                # Scripts SQL y migraciones
-├── public/                 # Archivos estáticos
-└── README.md               # Documentación principal del proyecto
+docs/
+├── README.md                                   # Este archivo
+│
+├── 📋 Documentos Principales
+│   ├── ARQUITECTURA_COMPLETA.md               # Arquitectura objetivo (blueprint)
+│   ├── ARQUITECTURA_ROLES_PERMISOS.md         # Sistema RBAC vigente
+│   ├── CHECKLIST_PRODUCCION_AUTOMATIZACION.md # Tareas para producción
+│   ├── ESTADO_BASE_DATOS.md                   # Estado actual de la BD
+│   └── INSTRUCCIONES_FIX_RLS_RECURSION.md     # Fix bug RLS recursivo
+│
+├── 📖 guides/                                  # Guías técnicas
+│   ├── IMPLEMENTACION_BACKEND_SUPABASE.md     # Backend con Supabase
+│   ├── REFERENCIA_BD_SUPABASE.md              # ⭐ Esquema completo de BD
+│   ├── GUIA_BEST_PRACTICES_SUPABASE.md        # Mejores prácticas
+│   ├── GUIA_DESPLIEGUE.md                     # Despliegue local/producción
+│   ├── DEPLOYMENT_CHECKLIST.md                # Checklist deployment
+│   ├── GUIA_CONFIGURACION_VERCEL.md           # Configuración Vercel
+│   ├── GUIA_CONFIGURACION_DOMINIOS.md         # Configuración dominios
+│   ├── GUIA_PRUEBAS_LOCALES.md                # Testing manual
+│   ├── PASOS_PARA_ARREGLAR_LOGIN.md           # Troubleshooting login
+│   ├── INSTRUCCIONES_VARIABLES_ENTORNO.md     # Variables de entorno
+│   └── INDICE_SERVICIOS_WEBAPP.md             # Índice de servicios
+│
+├── 💻 development/                             # Desarrollo
+│   ├── 10_PROMPTS_AGENTES_SUPABASE.md         # Prompts para IA
+│   ├── PLAN_INTEGRACION_SUPABASE_100.md       # Plan de integración
+│   ├── ANALISIS_CORE_EVOLUTIVO.md             # Análisis evolutivo
+│   ├── PLAN_EJECUCION_CORE_EVOLUTIVO.md       # Plan de ejecución
+│   ├── PROMPT_SIMPLE_AGENTES.md               # Prompts simples
+│   └── PROMPT_SIMPLE_COPIAR_PEGAR.md          # Prompts copy-paste
+│
+├── 🔧 troubleshooting/                         # Solución de problemas
+│   ├── FIX_REACT_USESTATE_ERROR.md            # Fix error useState
+│   ├── FIX_REACT_CREATECONTEXT_ERROR.md       # Fix error createContext
+│   └── FIX_DEPRECATION_WARNINGS.md            # Fix warnings deprecados
+│
+├── 🗄️ api/                                     # Scripts SQL
+│   ├── CREATE_TEST_USER.sql                   # Crear usuario de prueba
+│   ├── FIX_DATABASE_STRUCTURE.sql             # Fix estructura BD
+│   ├── FIX_RLS_RECURSION.sql                  # Fix bug RLS
+│   ├── MIGRACION_ADAPTACION_N8N.sql           # Migración para n8n
+│   └── MIGRACION_FIX_SECURITY_ISSUES.sql      # Fix seguridad
+│
+└── 📦 archive/                                 # Documentación histórica
+    ├── README.md                              # Índice del archivo
+    ├── iterations/                            # Bitácoras de desarrollo
+    ├── optimizations/                         # Optimizaciones por iteración
+    └── audits/                                # Auditorías históricas
 ```
 
 ---
 
-## 🔍 Búsqueda rápida
+## 📖 Documentación por Categoría
 
-- **Configurar proyecto:** [Variables de Entorno](guides/INSTRUCCIONES_VARIABLES_ENTORNO.md) → [Guía de Despliegue](guides/GUIA_DESPLIEGUE.md)
-- **Entender roles:** [Arquitectura de Roles y Permisos](ARQUITECTURA_ROLES_PERMISOS.md)
-- **Consultar tablas:** [Documentación Técnica BD](guides/DOCUMENTACION_TECNICA_BD_SUPABASE.md)
-- **Despliegue / Soporte:** [Deployment Checklist](guides/DEPLOYMENT_CHECKLIST.md) → [Troubleshooting Login](guides/PASOS_PARA_ARREGLAR_LOGIN.md)
+### 🏗️ Arquitectura y Diseño
+
+| Documento | Descripción | Estado |
+|-----------|-------------|--------|
+| [ARQUITECTURA_COMPLETA.md](ARQUITECTURA_COMPLETA.md) | Arquitectura objetivo del sistema | 🔵 Blueprint |
+| [ARQUITECTURA_ROLES_PERMISOS.md](ARQUITECTURA_ROLES_PERMISOS.md) | Sistema RBAC y permisos | ✅ Vigente |
+| [REFERENCIA_BD_SUPABASE.md](guides/REFERENCIA_BD_SUPABASE.md) | Esquema completo de base de datos | ✅ Vigente |
+| [ESTADO_BASE_DATOS.md](ESTADO_BASE_DATOS.md) | Estado actual de la BD | ✅ Vigente |
+
+### 🚀 Deployment y Configuración
+
+| Documento | Descripción | Estado |
+|-----------|-------------|--------|
+| [GUIA_DESPLIEGUE.md](guides/GUIA_DESPLIEGUE.md) | Despliegue local y producción | ✅ Vigente |
+| [DEPLOYMENT_CHECKLIST.md](guides/DEPLOYMENT_CHECKLIST.md) | Checklist de deployment | ✅ Vigente |
+| [GUIA_CONFIGURACION_VERCEL.md](guides/GUIA_CONFIGURACION_VERCEL.md) | Configuración Vercel | ✅ Vigente |
+| [GUIA_CONFIGURACION_DOMINIOS.md](guides/GUIA_CONFIGURACION_DOMINIOS.md) | Configuración de dominios | ✅ Vigente |
+| [INSTRUCCIONES_VARIABLES_ENTORNO.md](guides/INSTRUCCIONES_VARIABLES_ENTORNO.md) | Variables de entorno | ✅ Vigente |
+
+### 💾 Base de Datos y Backend
+
+| Documento | Descripción | Estado |
+|-----------|-------------|--------|
+| [IMPLEMENTACION_BACKEND_SUPABASE.md](guides/IMPLEMENTACION_BACKEND_SUPABASE.md) | Implementación backend | ✅ Vigente |
+| [REFERENCIA_BD_SUPABASE.md](guides/REFERENCIA_BD_SUPABASE.md) | ⭐ Referencia completa de BD | ✅ Vigente |
+| [GUIA_BEST_PRACTICES_SUPABASE.md](guides/GUIA_BEST_PRACTICES_SUPABASE.md) | Mejores prácticas | ✅ Vigente |
+| [INSTRUCCIONES_FIX_RLS_RECURSION.md](INSTRUCCIONES_FIX_RLS_RECURSION.md) | Fix bug RLS recursivo | ✅ Vigente |
+| [api/](api/) | Scripts SQL y migraciones | ✅ Vigente |
+
+### 🔌 Integraciones
+
+| Documento | Descripción | Estado |
+|-----------|-------------|--------|
+| [../GUIA_IMPLEMENTACION_BIND_PASO_A_PASO.md](../GUIA_IMPLEMENTACION_BIND_PASO_A_PASO.md) | Guía de integración Bind ERP | 🔵 Blueprint |
+| [../integrations/n8n/](../integrations/n8n/) | Documentación n8n | 🔵 Blueprint |
+| [CHECKLIST_PRODUCCION_AUTOMATIZACION.md](CHECKLIST_PRODUCCION_AUTOMATIZACION.md) | Checklist de automatización | 🔵 Blueprint |
+
+### 🧪 Testing y QA
+
+| Documento | Descripción | Estado |
+|-----------|-------------|--------|
+| [GUIA_PRUEBAS_LOCALES.md](guides/GUIA_PRUEBAS_LOCALES.md) | Guía de testing local | ✅ Vigente |
+
+### 🔧 Troubleshooting
+
+| Documento | Descripción | Estado |
+|-----------|-------------|--------|
+| [PASOS_PARA_ARREGLAR_LOGIN.md](guides/PASOS_PARA_ARREGLAR_LOGIN.md) | Solucionar problemas login | ✅ Vigente |
+| [troubleshooting/FIX_REACT_USESTATE_ERROR.md](troubleshooting/FIX_REACT_USESTATE_ERROR.md) | Fix error useState | ✅ Vigente |
+| [troubleshooting/FIX_REACT_CREATECONTEXT_ERROR.md](troubleshooting/FIX_REACT_CREATECONTEXT_ERROR.md) | Fix error createContext | ✅ Vigente |
+| [troubleshooting/FIX_DEPRECATION_WARNINGS.md](troubleshooting/FIX_DEPRECATION_WARNINGS.md) | Fix warnings deprecados | ✅ Vigente |
+
+### 💻 Desarrollo
+
+| Documento | Descripción | Estado |
+|-----------|-------------|--------|
+| [development/](development/) | Planes y prompts de desarrollo | ✅ Vigente |
+| [INDICE_SERVICIOS_WEBAPP.md](guides/INDICE_SERVICIOS_WEBAPP.md) | Índice de servicios | ✅ Vigente |
 
 ---
 
-## 🆕 Actualizaciones destacadas
+## 🔍 Búsqueda Rápida
 
-- **Noviembre 2025:** `RESUMEN_AUDITORIA_ACTUALIZADO.md` reemplaza reportes anteriores que hablaban de automatización completa. Se documenta que Bind ERP y `get_dashboard_stats` siguen pendientes.
-- **Guías de integración Bind:** permanecen como blueprint. Cada documento ahora especifica que requiere migraciones futuras.
+### ¿Necesitas...?
+
+**Configurar el proyecto por primera vez:**
+1. [Variables de Entorno](guides/INSTRUCCIONES_VARIABLES_ENTORNO.md)
+2. [Guía de Despliegue](guides/GUIA_DESPLIEGUE.md)
+3. [Guía de Pruebas Locales](guides/GUIA_PRUEBAS_LOCALES.md)
+
+**Entender la arquitectura:**
+1. [Arquitectura de Roles y Permisos](ARQUITECTURA_ROLES_PERMISOS.md)
+2. [Referencia BD Supabase](guides/REFERENCIA_BD_SUPABASE.md)
+3. [Arquitectura Completa](ARQUITECTURA_COMPLETA.md) (objetivo)
+
+**Solucionar un problema:**
+1. [Troubleshooting Login](guides/PASOS_PARA_ARREGLAR_LOGIN.md)
+2. [Carpeta troubleshooting/](troubleshooting/)
+3. [Fix RLS Recursivo](INSTRUCCIONES_FIX_RLS_RECURSION.md)
+
+**Desplegar a producción:**
+1. [Deployment Checklist](guides/DEPLOYMENT_CHECKLIST.md)
+2. [Guía de Despliegue](guides/GUIA_DESPLIEGUE.md)
+3. [Configuración Vercel](guides/GUIA_CONFIGURACION_VERCEL.md)
+
+**Integrar con Bind ERP:**
+1. [Guía Implementación Bind](../GUIA_IMPLEMENTACION_BIND_PASO_A_PASO.md)
+2. [Documentación n8n](../integrations/n8n/)
+3. [Auditoría actual](../AUDITORIA_VISION_REALIDAD_PLAN_2025.md)
 
 ---
 
-**Última curación del índice:** 2025-11-02  
-**Contacto:** equipo ComerECO
+## 📊 Estado del Proyecto
+
+### ✅ Implementado y Funcional
+
+- ✅ Sistema de autenticación con Supabase Auth
+- ✅ Sistema RBAC (admin, supervisor, user)
+- ✅ Gestión de requisiciones
+- ✅ Workflow de aprobaciones
+- ✅ Dashboard básico
+- ✅ Multi-empresa (multi-tenant)
+- ✅ RLS (Row Level Security) configurado
+
+### 🔵 En Planeación (Blueprint)
+
+- 🔵 Integración con Bind ERP
+- 🔵 Automatización con n8n
+- 🔵 Dashboard de estadísticas avanzado
+- 🔵 Notificaciones en tiempo real
+- 🔵 Sincronización automática de productos
+
+**Consulta:** [AUDITORIA_VISION_REALIDAD_PLAN_2025.md](../AUDITORIA_VISION_REALIDAD_PLAN_2025.md) para el estado detallado.
+
+---
+
+## 🎓 Leyenda
+
+| Ícono | Significado |
+|-------|-------------|
+| ✅ | Documentación vigente y código implementado |
+| 🔵 | Blueprint / En planeación (no implementado aún) |
+| ⭐ | Documento clave - Lectura esencial |
+| 📦 | Documentación histórica (referencia) |
+
+---
+
+## 🗂️ Documentación Relacionada
+
+### Raíz del Proyecto
+- [README Principal](../README.md) - Documentación principal
+- [Auditoría Nov 2025](../AUDITORIA_VISION_REALIDAD_PLAN_2025.md) - Estado actual del proyecto
+- [Guía Bind ERP](../GUIA_IMPLEMENTACION_BIND_PASO_A_PASO.md) - Plan de integración
+
+### Integraciones
+- [n8n Workflows](../integrations/n8n/) - Documentación de n8n y Bind ERP
+
+### Archivo Histórico
+- [archive/README.md](archive/README.md) - Índice de documentación histórica
+
+---
+
+## 📝 Contribuir a la Documentación
+
+### Al crear nueva documentación:
+
+1. **Ubicación correcta:**
+   - Guías técnicas → `guides/`
+   - Desarrollo/Prompts → `development/`
+   - Solución de problemas → `troubleshooting/`
+   - Scripts SQL → `api/`
+
+2. **Formato:**
+   - Usar Markdown (.md)
+   - Incluir fecha de última actualización
+   - Marcar estado (✅ Vigente / 🔵 Blueprint)
+
+3. **Actualizar índices:**
+   - Agregar referencia en este README
+   - Actualizar links relevantes
+
+### Al deprecar documentación:
+
+1. Mover a `archive/` con subcarpeta apropiada
+2. Actualizar referencias en README
+3. Documentar razón en commit
+
+---
+
+## 🔄 Últimas Actualizaciones
+
+### Noviembre 2025 - Limpieza y Reorganización
+
+- ✅ **Eliminados** 18 archivos duplicados/obsoletos
+- ✅ **Combinados** documentos redundantes de BD
+- ✅ **Reorganizada** carpeta `archive/` con subcarpetas lógicas
+- ✅ **Creada** carpeta `troubleshooting/` para fixes
+- ✅ **Actualizado** índice maestro con nueva estructura
+
+**Reducción:** 37% menos archivos, 0% duplicación
+
+### Estructura Anterior vs Nueva
+
+**Antes:** 88 archivos .md, 42 en archive sin organizar
+**Ahora:** ~55 archivos .md organizados en carpetas lógicas
+
+Ver detalles: [archive/audits/](archive/audits/)
+
+---
+
+**Última curación:** 2 de noviembre de 2025
+**Mantenido por:** Equipo ComerECO
+**Próxima revisión:** Diciembre 2025
