@@ -15,9 +15,9 @@ const SelectTrigger = React.forwardRef(({ className, children, ...props }, ref) 
     ref={ref}
     className={cn(
       'flex h-12 w-full items-center justify-between rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 ring-offset-background placeholder:text-slate-500 transition-all',
-      'hover:border-primary-400 hover:bg-slate-50',
-      'focus:outline-none focus:ring-2 focus:ring-primary-200 focus:ring-offset-2 focus:border-primary-500 focus:bg-white',
-      'data-[state=open]:border-primary-500 data-[state=open]:ring-2 data-[state=open]:ring-primary-200 data-[state=open]:bg-white',
+      'hover:border-slate-400 hover:bg-slate-50',
+      'focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-2 focus:border-slate-400 focus:bg-white',
+      'data-[state=open]:border-slate-400 data-[state=open]:ring-2 data-[state=open]:ring-slate-200 data-[state=open]:bg-white',
       'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-slate-100',
       className
     )}
@@ -88,9 +88,9 @@ const SelectItem = React.forwardRef(({ className, children, ...props }, ref) => 
     ref={ref}
     className={cn(
       'relative flex w-full cursor-pointer select-none items-center rounded-lg py-2.5 pl-8 pr-2 text-sm text-slate-700 outline-none transition-colors',
-      'hover:bg-blue-50 hover:text-blue-900',
-      'focus:bg-blue-50 focus:text-blue-900',
-      'data-[state=checked]:bg-blue-100 data-[state=checked]:text-blue-900 data-[state=checked]:font-semibold',
+      'hover:bg-slate-100 hover:text-slate-900',
+      'focus:bg-slate-100 focus:text-slate-900',
+      'data-[state=checked]:bg-slate-200 data-[state=checked]:text-slate-900 data-[state=checked]:font-semibold',
       'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className
     )}
@@ -98,7 +98,7 @@ const SelectItem = React.forwardRef(({ className, children, ...props }, ref) => 
   >
     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center flex-shrink-0">
       <SelectPrimitive.ItemIndicator>
-        <Check className="h-4 w-4 text-blue-600 stroke-[2.5]" />
+        <Check className="h-4 w-4 text-slate-600 stroke-[2.5]" />
       </SelectPrimitive.ItemIndicator>
     </span>
 

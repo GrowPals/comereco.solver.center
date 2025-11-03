@@ -21,7 +21,7 @@ const Input = React.forwardRef(({ className, type, icon, error, success, ...prop
         type={type}
         className={cn(
           "flex h-12 w-full rounded-lg border-2 border-neutral-200 bg-white px-4 py-3 text-base text-slate-900 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-400 transition-all duration-200",
-          "focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-200/30 focus-visible:shadow-glow-primary",
+          "focus-visible:outline-none focus-visible:border-slate-400 focus-visible:ring-4 focus-visible:ring-slate-200/50",
           "hover:border-neutral-300",
           "disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-neutral-50",
           icon ? "pl-12" : "px-4",
@@ -37,7 +37,7 @@ const Input = React.forwardRef(({ className, type, icon, error, success, ...prop
 
       {/* Bottom border animation */}
       <div className={cn(
-        "absolute bottom-0 left-0 h-0.5 bg-gradient-primary transition-all duration-300",
+        "absolute bottom-0 left-0 h-0.5 bg-slate-400 transition-all duration-300",
         isFocused ? "w-full" : "w-0"
       )} />
 

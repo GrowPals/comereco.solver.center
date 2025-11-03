@@ -210,9 +210,9 @@ const Approvals = () => {
                                                     handleOpenRejectionModal(req.id);
                                                 }}
                                                 disabled={mutation.isPending}
-                                                variant="outline"
-                                                size="lg"
-                                                className="border-2 border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400 hover:text-red-700 shadow-sm hover:shadow-md"
+                                                variant="destructive"
+                                                size="icon"
+                                                className="shadow-sm hover:shadow-md"
                                             >
                                                 <X className="h-5 w-5" />
                                             </Button>

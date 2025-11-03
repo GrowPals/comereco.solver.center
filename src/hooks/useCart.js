@@ -231,6 +231,11 @@ export const useCart = () => {
         return item?.quantity || 0;
     }, [items]);
 
+    const addToCartHandler = (product) => addToCartMutation.mutate(product);
+    const updateQuantityHandler = (productId, quantity) => updateQuantityMutation.mutate({ productId, quantity });
+    const removeFromCartHandler = (productId) => removeFromCartMutation.mutate(productId);
+    const clearCartHandler = () => clearCartMutation.mutate();
+
     return {
         items,
         isLoading,
@@ -238,10 +243,10 @@ export const useCart = () => {
         isCartOpen,
         setIsCartOpen,
         toggleCart: () => setIsCartOpen(prev => !prev),
-        addToCart: addToCartMutation.mutate,
-        removeFromCart: removeFromCartMutation.mutate,
-        updateQuantity: updateQuantityMutation.mutate,
-        clearCart: clearCartMutation.mutate,
+        addToCart: addToCartHandler,
+        removeFromCart: removeFromCartHandler,
+        updateQuantity: updateQuantityHandler,
+        clearCart: clearCartHandler,
         getItemQuantity,
         totalItems,
         subtotal,
