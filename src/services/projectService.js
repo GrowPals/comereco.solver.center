@@ -384,3 +384,112 @@ export const updateProjectMemberApproval = async (projectId, userId, requiresApp
         throw new Error(formatErrorMessage(error));
     }
 };
+
+/**
+ * Obtiene el detalle completo de un proyecto incluyendo miembros y requisiciones
+ * @param {string} projectId - El ID del proyecto
+ * @returns {Promise<Object>} El proyecto con sus relaciones
+ */
+export const getProjectDetails = async (projectId) => {
+  if (!projectId) {
+    throw new Error("El ID del proyecto es requerido.");
+  }
+
+  // Validar sesión
+  const { session, error: sessionError } = await getCachedSession();
+  if (sessionError || !session) {
+    throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+  }
+
+  // Obtener proyecto
+  const { data: project, error: projectError } = await supabase
+    .from('projects')
+    .select('id, company_id, name, description, status, supervisor_id, created_by, created_at, updated_at, active')
+    .eq('id', projectId)
+    .single();
+
+  if (projectError) {
+    logger.error('Error fetching project:', projectError);
+    throw new Error(formatErrorMessage(projectError));
+  }
+
+  if (!project) {
+    throw new Error("Proyecto no encontrado.");
+  }
+
+  // Obtener supervisor
+  let supervisor = null;
+  if (project.supervisor_id) {
+    const { data: supervisorData } = await supabase
+      .from('profiles')
+      .select('id, full_name, email, avatar_url')
+      .eq('id', project.supervisor_id)
+      .single();
+    supervisor = supervisorData;
+  }
+
+  // Obtener miembros del proyecto
+  const { data: memberships, error: membersError } = await supabase
+    .from('project_members')
+    .select('id, user_id, role_in_project, requires_approval, added_at')
+    .eq('project_id', projectId);
+
+  if (membersError) {
+    logger.error('Error fetching project members:', membersError);
+  }
+
+  // Obtener detalles de los miembros
+  let members = [];
+  if (memberships && memberships.length > 0) {
+    const memberIds = memberships.map(m => m.user_id);
+    const { data: memberProfiles } = await supabase
+      .from('profiles')
+      .select('id, full_name, email, avatar_url, role_v2')
+      .in('id', memberIds);
+
+    if (memberProfiles) {
+      const profilesMap = new Map(memberProfiles.map(p => [p.id, p]));
+      members = memberships.map(m => ({
+        ...m,
+        profile: profilesMap.get(m.user_id) || null
+      }));
+    }
+  }
+
+  // Obtener requisiciones del proyecto
+  const { data: requisitions, error: requisitionsError } = await supabase
+    .from('requisitions')
+    .select('id, internal_folio, created_at, business_status, total_amount, created_by')
+    .eq('project_id', projectId)
+    .order('created_at', { ascending: false })
+    .limit(50);
+
+  if (requisitionsError) {
+    logger.error('Error fetching project requisitions:', requisitionsError);
+  }
+
+  // Obtener creadores de requisiciones
+  let requisitionsWithCreators = [];
+  if (requisitions && requisitions.length > 0) {
+    const creatorIds = [...new Set(requisitions.map(r => r.created_by).filter(Boolean))];
+    const { data: creators } = await supabase
+      .from('profiles')
+      .select('id, full_name')
+      .in('id', creatorIds);
+
+    if (creators) {
+      const creatorsMap = new Map(creators.map(c => [c.id, c]));
+      requisitionsWithCreators = requisitions.map(r => ({
+        ...r,
+        creator: creatorsMap.get(r.created_by) || null
+      }));
+    }
+  }
+
+  return {
+    ...project,
+    supervisor,
+    members,
+    requisitions: requisitionsWithCreators
+  };
+};

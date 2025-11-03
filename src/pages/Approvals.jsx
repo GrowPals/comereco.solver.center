@@ -190,27 +190,32 @@ const Approvals = () => {
 
                                         {/* Action Buttons */}
                                         <div className="flex gap-3">
-                                            <button
+                                            <Button
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     handleApprove(req.id);
                                                 }}
                                                 disabled={mutation.isPending}
-                                                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-accent text-white rounded-xl font-semibold shadow-accent hover:shadow-glow-accent hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                variant="success"
+                                                size="lg"
+                                                className="flex-1 shadow-lg hover:shadow-xl"
+                                                isLoading={mutation.isPending}
                                             >
                                                 <Check className="h-5 w-5" />
                                                 <span>Aprobar</span>
-                                            </button>
-                                            <button
+                                            </Button>
+                                            <Button
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     handleOpenRejectionModal(req.id);
                                                 }}
                                                 disabled={mutation.isPending}
-                                                className="flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-red-200 text-red-600 rounded-xl font-semibold hover:bg-red-50 hover:border-red-300 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                variant="outline"
+                                                size="lg"
+                                                className="border-2 border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400 hover:text-red-700 shadow-sm hover:shadow-md"
                                             >
                                                 <X className="h-5 w-5" />
-                                            </button>
+                                            </Button>
                                         </div>
                                     </div>
                                 </div>

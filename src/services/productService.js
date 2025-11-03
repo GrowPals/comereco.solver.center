@@ -32,7 +32,7 @@ export const fetchProducts = async ({ pageParam = 0, searchTerm = '', category =
         if (searchTerm) {
             query = query.or(`name.ilike.%${searchTerm}%,sku.ilike.%${searchTerm}%`);
         }
-        if (category) {
+        if (category && category.trim() !== '') {
             query = query.eq('category', category);
         }
         if (availability === 'in_stock') {
@@ -121,7 +121,7 @@ export const getAdminProducts = async () => {
     const { data, error } = await supabase
         .from('products')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('name', { ascending: true });
         
     if (error) {
         logger.error('Error fetching admin products:', error);
@@ -247,6 +247,31 @@ export const updateProduct = async (productData) => {
     }
     
     return data;
+};
+
+export const deleteProduct = async (productId) => {
+    if (!productId) {
+        throw new Error("El ID del producto es requerido.");
+    }
+    
+    // Validar sesión antes de hacer queries (usando cache)
+    const { session, error: sessionError } = await getCachedSession();
+    if (sessionError || !session) {
+        throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+    }
+    
+    const { error } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', productId);
+        
+    if (error) {
+        logger.error('Error deleting product:', error);
+        if (error.code === '23503') { // Foreign key violation
+            throw new Error("No se puede eliminar el producto porque está siendo usado en requisiciones existentes.");
+        }
+        throw new Error(formatErrorMessage(error));
+    }
 };
 
 // Aliases para compatibilidad con hooks

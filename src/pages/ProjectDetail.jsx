@@ -1,0 +1,311 @@
+import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
+import { useQuery } from '@tanstack/react-query';
+import { ArrowLeft, Users, FileText, TrendingUp, Calendar, Shield, CheckCircle2, XCircle, Clock, Package } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from '@/components/ui/useToast';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { getProjectDetails } from '@/services/projectService';
+import { useUserPermissions } from '@/hooks/useUserPermissions';
+import PageLoader from '@/components/PageLoader';
+import EmptyState from '@/components/EmptyState';
+
+const ProjectDetail = () => {
+  const { id: projectId } = useParams();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const { canManageProjects } = useUserPermissions();
+
+  const { data: project, isLoading, isError } = useQuery({
+    queryKey: ['projectDetails', projectId],
+    queryFn: () => getProjectDetails(projectId),
+    enabled: !!projectId
+  });
+
+  const handleNavigateBack = () => {
+    navigate('/projects');
+  };
+
+  const handleNavigateToRequisition = (requisitionId) => {
+    navigate(`/requisitions/${requisitionId}`);
+  };
+
+  if (isLoading) return <PageLoader />;
+
+  if (isError || !project) {
+    return (
+      <div className="p-8 text-center">
+        <div className="max-w-md mx-auto">
+          <h2 className="text-2xl font-bold mb-2">Proyecto no encontrado</h2>
+          <p className="text-muted-foreground mb-4">El proyecto que buscas no existe o no tienes permisos para verlo.</p>
+          <Button onClick={handleNavigateBack}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Volver a Proyectos
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const statusConfig = {
+    draft: { text: 'Borrador', variant: 'muted', accent: 'bg-slate-400' },
+    active: { text: 'Activo', variant: 'success', accent: 'bg-green-500' },
+    on_hold: { text: 'En Pausa', variant: 'warning', accent: 'bg-amber-500' },
+    completed: { text: 'Completado', variant: 'info', accent: 'bg-blue-500' },
+    cancelled: { text: 'Cancelado', variant: 'danger', accent: 'bg-red-500' },
+  };
+
+  const requisitionStatusConfig = {
+    draft: { text: 'Borrador', variant: 'muted' },
+    submitted: { text: 'Enviada', variant: 'warning' },
+    approved: { text: 'Aprobada', variant: 'success' },
+    rejected: { text: 'Rechazada', variant: 'danger' },
+    ordered: { text: 'Ordenada', variant: 'info' },
+    cancelled: { text: 'Cancelada', variant: 'muted' },
+  };
+
+  const currentStatus = statusConfig[project.status] || statusConfig.active;
+
+  // Calcular estadísticas
+  const totalRequisitions = project.requisitions?.length || 0;
+  const approvedRequisitions = project.requisitions?.filter(r => r.business_status === 'approved').length || 0;
+  const pendingRequisitions = project.requisitions?.filter(r => r.business_status === 'submitted').length || 0;
+  const totalAmount = project.requisitions?.reduce((sum, r) => sum + (Number(r.total_amount) || 0), 0) || 0;
+
+  return (
+    <>
+      <Helmet>
+        <title>{project.name} - ComerECO</title>
+      </Helmet>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto space-y-8">
+          {/* Header */}
+          <header className="relative bg-white rounded-2xl border-2 border-slate-200 p-6 sm:p-8 shadow-lg overflow-hidden">
+            <div className={`absolute top-0 left-0 right-0 h-1.5 ${currentStatus.accent}`} />
+            
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+              <div className="flex items-start gap-4 w-full sm:w-auto">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handleNavigateBack}
+                  aria-label="Volver"
+                  className="rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </Button>
+                <div className="flex-1">
+                  <h1 className="text-4xl font-bold tracking-tight text-slate-900 mb-2">
+                    {project.name}
+                  </h1>
+                  {project.description && (
+                    <p className="text-base text-slate-600 mb-2">{project.description}</p>
+                  )}
+                  <div className="flex flex-wrap items-center gap-4 mt-4">
+                    <Badge variant={project.active ? 'success' : 'muted'} className="shadow-sm">
+                      {project.active ? 'Activo' : 'Archivado'}
+                    </Badge>
+                    <Badge variant={currentStatus.variant} className="shadow-sm">
+                      {currentStatus.text}
+                    </Badge>
+                    {project.supervisor && (
+                      <div className="flex items-center gap-2 text-sm text-slate-600">
+                        <Shield className="h-4 w-4" />
+                        <span className="font-semibold">Supervisor:</span>
+                        <span>{project.supervisor.full_name}</span>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-2 text-sm text-slate-600">
+                      <Calendar className="h-4 w-4" />
+                      <span>Creado: {format(new Date(project.created_at), 'dd MMM, yyyy', { locale: es })}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </header>
+
+          {/* Statistics Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card className="shadow-md border-2">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-slate-600 mb-1">Total Requisiciones</p>
+                    <p className="text-3xl font-bold text-slate-900">{totalRequisitions}</p>
+                  </div>
+                  <FileText className="h-8 w-8 text-blue-600" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="shadow-md border-2">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-slate-600 mb-1">Aprobadas</p>
+                    <p className="text-3xl font-bold text-green-600">{approvedRequisitions}</p>
+                  </div>
+                  <CheckCircle2 className="h-8 w-8 text-green-600" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="shadow-md border-2">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-slate-600 mb-1">Pendientes</p>
+                    <p className="text-3xl font-bold text-amber-600">{pendingRequisitions}</p>
+                  </div>
+                  <Clock className="h-8 w-8 text-amber-600" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="shadow-md border-2">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-slate-600 mb-1">Total Invertido</p>
+                    <p className="text-3xl font-bold text-slate-900">${totalAmount.toFixed(2)}</p>
+                  </div>
+                  <TrendingUp className="h-8 w-8 text-blue-600" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Members Card */}
+            <Card className="shadow-md border-2">
+              <CardHeader className="pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm">
+                    <Users className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <CardTitle className="text-2xl font-bold text-slate-900">Miembros del Proyecto</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {project.members && project.members.length > 0 ? (
+                  <div className="space-y-3">
+                    {project.members.map((member) => (
+                      <div
+                        key={member.id}
+                        className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border-2 border-slate-200 hover:border-blue-300 transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage src={member.profile?.avatar_url} />
+                            <AvatarFallback>
+                              {member.profile?.full_name?.charAt(0)?.toUpperCase() || 'U'}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-semibold text-slate-900">
+                              {member.profile?.full_name || 'Usuario Desconocido'}
+                            </p>
+                            <p className="text-sm text-slate-600">{member.profile?.email}</p>
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-1">
+                          <Badge variant="outline" className="text-xs">
+                            {member.role_in_project || 'Miembro'}
+                          </Badge>
+                          {member.requires_approval && (
+                            <Badge variant="warning" className="text-xs">
+                              Requiere Aprobación
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <EmptyState
+                    icon={Users}
+                    title="No hay miembros"
+                    description="Este proyecto aún no tiene miembros asignados."
+                  />
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Requisitions Card */}
+            <Card className="shadow-md border-2">
+              <CardHeader className="pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm">
+                    <FileText className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <CardTitle className="text-2xl font-bold text-slate-900">Requisiciones Recientes</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {project.requisitions && project.requisitions.length > 0 ? (
+                  <div className="space-y-3">
+                    {project.requisitions.slice(0, 10).map((requisition) => {
+                      const status = requisitionStatusConfig[requisition.business_status] || requisitionStatusConfig.draft;
+                      return (
+                        <div
+                          key={requisition.id}
+                          onClick={() => handleNavigateToRequisition(requisition.id)}
+                          className="group cursor-pointer p-4 bg-slate-50 rounded-xl border-2 border-slate-200 hover:border-blue-300 hover:shadow-md transition-all duration-200"
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <Package className="h-4 w-4 text-slate-600" />
+                              <span className="font-mono font-semibold text-slate-900">
+                                #{requisition.internal_folio}
+                              </span>
+                            </div>
+                            <Badge variant={status.variant} className="text-xs">
+                              {status.text}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-slate-600">
+                              {requisition.creator?.full_name || 'Desconocido'}
+                            </span>
+                            <span className="font-semibold text-slate-900">
+                              ${(Number(requisition.total_amount) || 0).toFixed(2)}
+                            </span>
+                          </div>
+                          <p className="text-xs text-slate-500 mt-1">
+                            {format(new Date(requisition.created_at), 'dd MMM, yyyy HH:mm', { locale: es })}
+                          </p>
+                        </div>
+                      );
+                    })}
+                    {project.requisitions.length > 10 && (
+                      <Button
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => navigate('/requisitions', { state: { projectId: project.id } })}
+                      >
+                        Ver todas las requisiciones ({project.requisitions.length})
+                      </Button>
+                    )}
+                  </div>
+                ) : (
+                  <EmptyState
+                    icon={FileText}
+                    title="No hay requisiciones"
+                    description="Este proyecto aún no tiene requisiciones."
+                  />
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default ProjectDetail;
+

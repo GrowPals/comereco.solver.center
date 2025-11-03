@@ -9,6 +9,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import NotificationCenter from '@/components/layout/NotificationCenter';
 import { CartIcon } from '@/components/CartIcon';
+import GlobalSearch from '@/components/layout/GlobalSearch';
 
 const Header = memo(({ setSidebarOpen }) => {
     const { user, signOut } = useSupabaseAuth();
@@ -43,13 +44,8 @@ const Header = memo(({ setSidebarOpen }) => {
             </div>
 
             {/* Search bar (Desktop) */}
-            <div className="hidden lg:block relative flex-1 max-w-md">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" aria-hidden="true" />
-                <Input
-                    placeholder="Buscar requisiciones, productos..."
-                    className="pl-12 bg-slate-50 border-slate-200 focus-visible:bg-white rounded-xl h-11"
-                    aria-label="Buscar en la aplicación"
-                />
+            <div className="hidden lg:block flex-1 max-w-md">
+                <GlobalSearch />
             </div>
 
             {/* Right side actions */}

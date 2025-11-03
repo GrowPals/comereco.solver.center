@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { ShoppingCart, CreditCard, MessageSquare, AlertTriangle, Save } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
@@ -153,22 +153,26 @@ const CheckoutPage = () => {
                             </div>
                             <div className="bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-md space-y-4">
                                 <div>
-                                    <Label htmlFor="projectId" className={errors.projectId ? 'text-destructive' : ''}>Proyecto</Label>
-                                    <Select name="projectId" control={control} onValueChange={(value) => {
-                                        const { onChange } = register('projectId', { required: 'Debes seleccionar un proyecto' });
-                                        onChange({ target: { value } });
-                                    }}>
-                                        <SelectTrigger id="projectId" className={errors.projectId ? 'border-destructive' : ''}>
-                                            <SelectValue placeholder="Selecciona un proyecto" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {projects?.length > 0 ? (
-                                                projects.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)
-                                            ) : (
-                                                <div className="p-4 text-sm text-center text-muted-foreground">No perteneces a ningún proyecto.</div>
-                                            )}
-                                        </SelectContent>
-                                    </Select>
+                                    <Label htmlFor="projectId" className={errors.projectId ? 'text-destructive' : ''}>Proyecto *</Label>
+                                    <Controller
+                                        name="projectId"
+                                        control={control}
+                                        rules={{ required: 'Debes seleccionar un proyecto' }}
+                                        render={({ field }) => (
+                                            <Select onValueChange={field.onChange} value={field.value}>
+                                                <SelectTrigger id="projectId" className={errors.projectId ? 'border-destructive' : ''}>
+                                                    <SelectValue placeholder="Selecciona un proyecto" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {projects?.length > 0 ? (
+                                                        projects.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)
+                                                    ) : (
+                                                        <div className="p-4 text-sm text-center text-muted-foreground">No perteneces a ningún proyecto.</div>
+                                                    )}
+                                                </SelectContent>
+                                            </Select>
+                                        )}
+                                    />
                                     {errors.projectId && <p className="mt-1 text-sm text-destructive flex items-center gap-1"><AlertTriangle size={14} />{errors.projectId.message}</p>}
                                 </div>
                                 <div>

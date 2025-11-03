@@ -1,10 +1,13 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAdminProducts, createProduct, updateProduct } from '@/services/productService';
+import { getAdminProducts, createProduct, updateProduct, deleteProduct } from '@/services/productService';
+import { useProductCategories } from '@/hooks/useProducts';
+import { uploadProductImage, deleteProductImage } from '@/services/imageService';
 import { useForm } from 'react-hook-form';
-import { PlusCircle, MoreHorizontal, Edit, ToggleLeft, ToggleRight, ShoppingBag } from 'lucide-react';
+import { PlusCircle, MoreHorizontal, Edit, ToggleLeft, ToggleRight, ShoppingBag, Trash2, Upload, X, Image as ImageIcon } from 'lucide-react';
+import OptimizedImage from '@/components/OptimizedImage';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/useToast';
 import PageLoader from '@/components/PageLoader';
@@ -17,31 +20,103 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import FormStatusFeedback from '@/components/ui/form-status-feedback';
 
 const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
+    const { toast } = useToast();
+    const { data: categories = [] } = useProductCategories();
+    const fileInputRef = useRef(null);
     const [formStatus, setFormStatus] = useState({ status: 'idle', message: '' });
+    const [imagePreview, setImagePreview] = useState(product?.image_url || '');
+    const [imageFile, setImageFile] = useState(null);
+    const [uploadingImage, setUploadingImage] = useState(false);
+    const [oldImageUrl, setOldImageUrl] = useState(null);
+    
     const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } = useForm({ 
         mode: 'onBlur',
-        defaultValues: product || { name: '', sku: '', price: 0, stock: 0, is_active: true } 
+        defaultValues: product || { name: '', sku: '', price: 0, stock: 0, category: '', is_active: true } 
     });
     const isActive = watch('is_active');
+    const selectedCategory = watch('category');
 
     useEffect(() => {
         if(product) {
             Object.keys(product).forEach(key => setValue(key, product[key]));
+            setImagePreview(product.image_url || '');
+            setOldImageUrl(product.image_url || null);
+        } else {
+            setImagePreview('');
+            setOldImageUrl(null);
+            setImageFile(null);
         }
         setFormStatus({ status: 'idle', message: '' });
-    }, [product, setValue]);
+    }, [product, setValue, isOpen]);
+
+    const handleImageChange = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Validar tipo
+        if (!file.type.startsWith('image/')) {
+            toast({ variant: 'destructive', title: 'Error', description: 'Por favor selecciona un archivo de imagen válido.' });
+            return;
+        }
+
+        // Validar tamaño (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            toast({ variant: 'destructive', title: 'Error', description: 'El archivo es demasiado grande. El tamaño máximo es 5MB.' });
+            return;
+        }
+
+        setImageFile(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setImagePreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const handleRemoveImage = () => {
+        setImageFile(null);
+        setImagePreview('');
+        setOldImageUrl(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
 
     const onSubmit = async (data) => {
         setFormStatus({ status: 'loading', message: product ? 'Guardando cambios...' : 'Creando producto...' });
         try {
-            await onSave(data);
+            let imageUrl = oldImageUrl || data.image_url || '';
+
+            // Subir nueva imagen si hay una seleccionada
+            if (imageFile) {
+                setUploadingImage(true);
+                try {
+                    imageUrl = await uploadProductImage(imageFile, product?.id);
+                    // Eliminar imagen anterior si existe y es diferente
+                    if (oldImageUrl && oldImageUrl !== imageUrl) {
+                        await deleteProductImage(oldImageUrl);
+                    }
+                } catch (imageError) {
+                    setFormStatus({ status: 'error', message: imageError.message || 'Error al subir la imagen' });
+                    setUploadingImage(false);
+                    return;
+                }
+                setUploadingImage(false);
+            }
+
+            // Crear o actualizar producto con la URL de la imagen
+            await onSave({ ...data, image_url: imageUrl });
             setFormStatus({ status: 'success', message: product ? 'Producto actualizado exitosamente' : 'Producto creado exitosamente' });
             setTimeout(() => {
                 onClose();
                 setFormStatus({ status: 'idle', message: '' });
+                setImagePreview('');
+                setImageFile(null);
+                setOldImageUrl(null);
             }, 1500);
         } catch (error) {
             setFormStatus({ status: 'error', message: error.message || 'Error al guardar el producto' });
@@ -110,10 +185,71 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
                         </div>
                         <div>
                             <Label htmlFor="category">Categoría</Label>
-                            <Input id="category" {...register('category')} />
+                            <Select value={selectedCategory || ''} onValueChange={(value) => setValue('category', value)}>
+                                <SelectTrigger className={errors.category && 'border-error focus-visible:ring-error'}>
+                                    <SelectValue placeholder="Seleccionar categoría" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="">Sin categoría</SelectItem>
+                                    {categories.map((cat) => (
+                                        <SelectItem key={cat} value={cat}>
+                                            {cat}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            {errors.category && <p className="text-destructive text-sm mt-1">{errors.category.message}</p>}
                         </div>
                     </div>
-                     <div>
+                    <div>
+                        <Label htmlFor="image">Imagen del Producto</Label>
+                        <div className="mt-2 space-y-3">
+                            {imagePreview && (
+                                <div className="relative inline-block">
+                                    <img 
+                                        src={imagePreview} 
+                                        alt="Preview" 
+                                        className="h-32 w-32 object-contain rounded-lg border-2 border-slate-200 bg-slate-50 p-2"
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="destructive"
+                                        size="icon"
+                                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
+                                        onClick={handleRemoveImage}
+                                    >
+                                        <X className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                            )}
+                            {!imagePreview && (
+                                <div className="flex items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 rounded-lg bg-slate-50">
+                                    <ImageIcon className="h-8 w-8 text-slate-400" />
+                                </div>
+                            )}
+                            <div className="flex gap-2">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => fileInputRef.current?.click()}
+                                    disabled={uploadingImage}
+                                    className="flex items-center gap-2"
+                                >
+                                    <Upload className="h-4 w-4" />
+                                    {imagePreview ? 'Cambiar Imagen' : 'Subir Imagen'}
+                                </Button>
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                    className="hidden"
+                                />
+                            </div>
+                            <p className="text-xs text-slate-500">Formatos permitidos: JPEG, PNG, WebP, GIF. Tamaño máximo: 5MB</p>
+                        </div>
+                    </div>
+                    <div>
                         <Label htmlFor="description">Descripción</Label>
                         <Textarea id="description" {...register('description')} />
                     </div>
@@ -122,9 +258,9 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
                         <Label htmlFor="is_active">{isActive ? 'Activo' : 'Inactivo'}</Label>
                     </div>
                     <DialogFooter>
-                        <Button variant="outline" type="button" onClick={onClose} disabled={isSubmitting}>Cancelar</Button>
-                        <Button type="submit" isLoading={isSubmitting} isSuccess={formStatus.status === 'success'}>
-                            {product ? 'Actualizar' : 'Crear'}
+                        <Button variant="outline" type="button" onClick={onClose} disabled={isSubmitting || uploadingImage}>Cancelar</Button>
+                        <Button type="submit" isLoading={isSubmitting || uploadingImage} isSuccess={formStatus.status === 'success'}>
+                            {uploadingImage ? 'Subiendo imagen...' : product ? 'Actualizar' : 'Crear'}
                         </Button>
                     </DialogFooter>
                 </form>
@@ -163,6 +299,14 @@ const ManageProductsPage = () => {
             mutationOptions.onSuccess(); 
         } 
     });
+    const deleteMutation = useMutation({ 
+        mutationFn: deleteProduct, 
+        ...mutationOptions, 
+        onSuccess: () => { 
+            toast({ title: 'Producto eliminado', description: 'El producto se ha eliminado exitosamente' }); 
+            mutationOptions.onSuccess(); 
+        } 
+    });
 
     const handleSave = async (data) => {
         if (data.id) {
@@ -174,6 +318,13 @@ const ManageProductsPage = () => {
     
     const handleToggleActive = (product) => {
         updateMutation.mutate({ ...product, is_active: !product.is_active });
+    };
+    
+    const handleDelete = async (product) => {
+        if (!confirm(`¿Estás seguro de que deseas eliminar el producto "${product.name}"? Esta acción no se puede deshacer.`)) {
+            return;
+        }
+        deleteMutation.mutate(product.id);
     };
 
     if (isLoading) return <PageLoader />;
@@ -211,8 +362,10 @@ const ManageProductsPage = () => {
                             <Table>
                             <TableHeader>
                                 <TableRow>
+                                    <TableHead className="w-16">Imagen</TableHead>
                                     <TableHead>SKU</TableHead>
                                     <TableHead>Nombre</TableHead>
+                                    <TableHead>Categoría</TableHead>
                                     <TableHead>Precio</TableHead>
                                     <TableHead>Stock</TableHead>
                                     <TableHead>Estado</TableHead>
@@ -222,8 +375,31 @@ const ManageProductsPage = () => {
                                 <TableBody>
                                     {products.map(p => (
                                         <TableRow key={p.id} className="hover:bg-slate-50 transition-colors">
+                                            <TableCell>
+                                                <div className="w-12 h-12 rounded-lg bg-slate-100 overflow-hidden flex items-center justify-center">
+                                                    {p.image_url ? (
+                                                        <OptimizedImage
+                                                            src={p.image_url}
+                                                            alt={p.name}
+                                                            fallback="/placeholder.png"
+                                                            className="w-full h-full object-contain p-1"
+                                                        />
+                                                    ) : (
+                                                        <ImageIcon className="h-6 w-6 text-slate-400" />
+                                                    )}
+                                                </div>
+                                            </TableCell>
                                             <TableCell className="font-mono font-semibold text-slate-900">{p.sku}</TableCell>
                                             <TableCell className="font-semibold text-slate-900">{p.name}</TableCell>
+                                            <TableCell>
+                                                {p.category ? (
+                                                    <Badge variant="outline" className="text-xs">
+                                                        {p.category}
+                                                    </Badge>
+                                                ) : (
+                                                    <span className="text-xs text-slate-400">Sin categoría</span>
+                                                )}
+                                            </TableCell>
                                             <TableCell className="font-bold text-slate-900">${p.price.toFixed(2)}</TableCell>
                                             <TableCell className="font-medium text-slate-700">{p.stock}</TableCell>
                                             <TableCell>
@@ -245,6 +421,9 @@ const ManageProductsPage = () => {
                                                         <DropdownMenuItem onClick={() => handleToggleActive(p)}>
                                                             {p.is_active ? <ToggleLeft className="mr-2 h-4 w-4" /> : <ToggleRight className="mr-2 h-4 w-4" />}
                                                             {p.is_active ? 'Desactivar' : 'Activar'}
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => handleDelete(p)} className="text-destructive focus:text-destructive">
+                                                            <Trash2 className="mr-2 h-4 w-4" /> Eliminar
                                                         </DropdownMenuItem>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>

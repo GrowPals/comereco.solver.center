@@ -32,10 +32,12 @@ const NotificationsPage = lazy(() => import('@/pages/Notifications'));
 const CheckoutPage = lazy(() => import('@/pages/Checkout'));
 const TemplatesPage = lazy(() => import('@/pages/Templates'));
 const ProjectsPage = lazy(() => import('@/pages/Projects'));
+const ProjectDetail = lazy(() => import('@/pages/ProjectDetail'));
 const ManageProductsPage = lazy(() => import('@/pages/admin/ManageProducts'));
 const ReportsPage = lazy(() => import('@/pages/admin/Reports'));
 const FavoritesPage = lazy(() => import('@/pages/Favorites'));
 const ResetPasswordPage = lazy(() => import('@/pages/ResetPassword'));
+const NotFoundPage = lazy(() => import('@/pages/NotFound'));
 
 
 // Componente para rutas privadas
@@ -158,6 +160,11 @@ const AppLayout = () => {
                             <ProjectsPage />
                           </PrivateRoute>
                         } />
+                        <Route path="/projects/:id" element={
+                          <PrivateRoute>
+                            <ProjectDetail />
+                          </PrivateRoute>
+                        } />
                          <Route path="/products/manage" element={
                           <PrivateRoute permissionCheck={(p) => p.isAdmin}>
                             <ManageProductsPage />
@@ -178,7 +185,7 @@ const AppLayout = () => {
                         <Route path="/reset-password" element={<ResetPasswordPage />} />
 
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                        <Route path="*" element={<NotFoundPage />} />
                     </Routes>
               </Suspense>
             </ErrorBoundary>

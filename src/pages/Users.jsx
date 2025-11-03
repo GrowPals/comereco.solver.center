@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-import { Plus, MoreHorizontal, User as UserIcon, Shield, Briefcase } from 'lucide-react';
+import { Plus, MoreHorizontal, User as UserIcon, Shield, Briefcase, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -37,7 +37,7 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { fetchUsersInCompany, inviteUser, updateUserProfile, toggleUserStatus } from '@/services/userService';
+import { fetchUsersInCompany, inviteUser, updateUserProfile, toggleUserStatus, deleteUser } from '@/services/userService';
 import { useToast } from '@/components/ui/useToast';
 import PageLoader from '@/components/PageLoader';
 
@@ -174,6 +174,18 @@ const Users = () => {
         }
     });
 
+    const deleteMutation = useMutation({
+        mutationFn: (userId) => deleteUser(userId),
+        ...mutationOptions,
+        onSuccess: () => {
+            toast({
+                title: 'Éxito',
+                description: 'Usuario eliminado correctamente.'
+            });
+            mutationOptions.onSuccess();
+        }
+    });
+
     const handleOpenForm = (user = null) => {
         setEditingUser(user);
         setIsFormOpen(true);
@@ -200,6 +212,13 @@ const Users = () => {
                 userId: user.id,
                 isActive: !currentStatus
             });
+        }
+    };
+
+    const handleDeleteUser = (user) => {
+        const confirmMessage = `¿Estás seguro de eliminar a ${user.full_name || user.email}? Esta acción no se puede deshacer.`;
+        if (window.confirm(confirmMessage)) {
+            deleteMutation.mutate(user.id);
         }
     };
 
@@ -245,6 +264,7 @@ const Users = () => {
                             <TableRow>
                                 <TableHead>Usuario</TableHead>
                                 <TableHead>Rol</TableHead>
+                                <TableHead>Estado</TableHead>
                                 <TableHead>Última Actualización</TableHead>
                                 <TableHead><span className="sr-only">Acciones</span></TableHead>
                             </TableRow>
@@ -281,6 +301,11 @@ const Users = () => {
                                             {roleMapping[user.role_v2]?.label || user.role_v2}
                                         </Badge>
                                     </TableCell>
+                                    <TableCell>
+                                        <Badge variant={user.is_active !== false ? 'success' : 'muted'} className="shadow-sm">
+                                            {user.is_active !== false ? 'Activo' : 'Inactivo'}
+                                        </Badge>
+                                    </TableCell>
                                     <TableCell className="font-medium text-slate-700">
                                         {new Date(user.updated_at).toLocaleDateString('es-MX', {
                                             year: 'numeric',
@@ -308,6 +333,12 @@ const Users = () => {
                                                     onClick={() => handleToggleUserStatus(user)}
                                                 >
                                                     {user.is_active !== false ? 'Desactivar' : 'Activar'}
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem
+                                                    className="text-destructive focus:text-destructive"
+                                                    onClick={() => handleDeleteUser(user)}
+                                                >
+                                                    <Trash2 className="mr-2 h-4 w-4" /> Eliminar
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>

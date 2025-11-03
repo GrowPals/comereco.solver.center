@@ -259,6 +259,47 @@ export const toggleUserStatus = async (userId, isActive) => {
       throw new Error("No tienes permisos para cambiar el estado de usuarios.");
     }
 
-    throw new Error(error.message || formatErrorMessage(error));
-  }
+/**
+ * NUEVO: Elimina un usuario de la compañía (desactiva pero no elimina de auth)
+ * IMPORTANTE: Esta función solo desactiva el usuario, no lo elimina de auth.users
+ * para mantener integridad referencial en requisiciones y otros datos históricos.
+ * @param {string} userId - El ID del usuario a eliminar.
+ * @returns {Promise<Object>} El resultado de la operación.
+ */
+export const deleteUser = async (userId) => {
+    // Validar datos de entrada
+    if (!userId) {
+        throw new Error("El ID del usuario es requerido.");
+    }
+
+    // Validar sesión
+    const { session, error: sessionError } = await getCachedSession();
+    if (sessionError || !session) {
+        throw new Error("Usuario no autenticado.");
+    }
+
+    // Validar que el usuario no se está eliminando a sí mismo
+    if (session.user.id === userId) {
+        throw new Error("No puedes eliminar tu propia cuenta.");
+    }
+
+    // En lugar de eliminar, desactivamos el usuario y limpiamos datos sensibles
+    // Esto mantiene la integridad referencial en requisiciones y otros datos históricos
+    const { error } = await supabase
+        .from('profiles')
+        .update({ 
+            is_active: false,
+            full_name: 'Usuario Eliminado',
+            phone: null,
+            avatar_url: null
+        })
+        .eq('id', userId);
+
+    if (error) {
+        logger.error('Error deleting user:', error);
+        throw new Error(formatErrorMessage(error));
+    }
+
+    logger.info('User deleted successfully (deactivated):', userId);
+    return { message: 'Usuario eliminado correctamente' };
 };

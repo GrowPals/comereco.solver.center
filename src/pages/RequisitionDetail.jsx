@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { ArrowLeft, Check, X, Send, FileText, MessageSquare } from 'lucide-react';
+import { ArrowLeft, Check, X, Send, FileText, MessageSquare, FolderOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -126,7 +126,7 @@ const RequisitionDetail = () => {
     }
 
     // CORREGIDO: Usar creator en lugar de requester según documentación
-    const { internal_folio, created_at, business_status, creator, items, total_amount, comments } = requisition;
+    const { internal_folio, created_at, business_status, creator, items, total_amount, comments, project, project_id } = requisition;
 
     const statusConfig = {
         draft: { text: 'Borrador', variant: 'muted', accent: 'bg-slate-400' },
@@ -138,6 +138,12 @@ const RequisitionDetail = () => {
     };
 
     const currentStatus = statusConfig[business_status] || { text: business_status, variant: 'muted', accent: 'bg-slate-400' };
+
+    const handleNavigateToProject = useCallback(() => {
+        if (project_id) {
+            navigate(`/projects/${project_id}`);
+        }
+    }, [navigate, project_id]);
 
     return (
         <>
@@ -167,6 +173,20 @@ const RequisitionDetail = () => {
                                     <p className="text-base text-slate-600 flex items-center gap-2">
                                         Creada por <span className="font-semibold text-slate-900">{creator?.full_name || 'Desconocido'}</span> el {formattedDate}
                                     </p>
+                                    {project && (
+                                        <div className="flex items-center gap-2 mt-2">
+                                            <FolderOpen className="h-4 w-4 text-slate-500" />
+                                            <span className="text-sm text-slate-600">Proyecto:</span>
+                                            <Button
+                                                variant="link"
+                                                size="sm"
+                                                onClick={handleNavigateToProject}
+                                                className="h-auto p-0 text-blue-600 hover:text-blue-700 font-semibold"
+                                            >
+                                                {project.name}
+                                            </Button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <Badge variant={currentStatus.variant} className="text-sm px-4 py-2 shadow-sm">

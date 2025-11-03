@@ -135,6 +135,10 @@ const RequisitionCard = memo(({ requisition }) => {
               <Button
                 variant="ghost"
                 size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCardClick();
+                }}
                 className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-xl group-hover:translate-x-1 transition-transform duration-200"
                 aria-label={`Ver detalles de requisición ${requisition.internal_folio}`}
               >

@@ -2,7 +2,8 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { PlusCircle, MoreHorizontal, Edit, Trash2, Users, FolderKanban, UserPlus, CheckCircle2, XCircle } from 'lucide-react';
+import { PlusCircle, MoreHorizontal, Edit, Trash2, Users, FolderKanban, UserPlus, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/useToast';
 import {
@@ -38,7 +39,7 @@ import { useUserPermissions } from '@/hooks/useUserPermissions';
 import PageLoader from '@/components/PageLoader';
 import EmptyState from '@/components/EmptyState';
 
-const ProjectCard = ({ project, onEdit, onDelete, onManageMembers }) => {
+const ProjectCard = ({ project, onEdit, onDelete, onManageMembers, onView }) => {
   const { canManageProjects } = useUserPermissions();
   return (
     <div className="group relative bg-white border-2 border-slate-200 rounded-2xl p-6 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
@@ -77,13 +78,23 @@ const ProjectCard = ({ project, onEdit, onDelete, onManageMembers }) => {
         <p className="text-base text-slate-600 line-clamp-2 min-h-[3rem] leading-relaxed">{project.description}</p>
       </div>
 
-      <div className="mt-6 pt-4 border-t border-slate-200 flex justify-between items-center">
+      <div className="mt-6 pt-4 border-t border-slate-200 flex flex-col gap-3">
+        <div className="flex justify-between items-center">
         <Badge variant={project.active ? 'success' : 'muted'} className="shadow-sm">
           {project.active ? 'Activo' : 'Archivado'}
         </Badge>
         <div className="text-sm text-slate-600">
           <span className="font-medium text-slate-900">{project.supervisor?.full_name || 'Sin asignar'}</span>
         </div>
+        </div>
+        <Button
+          variant="outline"
+          className="w-full group-hover:border-blue-300 group-hover:text-blue-600 transition-colors"
+          onClick={() => onView(project)}
+        >
+          Ver Detalles
+          <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
       </div>
     </div>
   );
@@ -187,7 +198,15 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
                                 {availableUsers.map(u => <SelectItem key={u.id} value={u.id}>{u.full_name}</SelectItem>)}
                             </SelectContent>
                         </Select>
-                        <Button onClick={() => addMemberMutation.mutate({ projectId: project.id, userId: selectedUser })} disabled={!selectedUser || addMemberMutation.isPending}><UserPlus className="h-4 w-4"/></Button>
+                        <Button 
+                            onClick={() => addMemberMutation.mutate({ projectId: project.id, userId: selectedUser })} 
+                            disabled={!selectedUser || addMemberMutation.isPending}
+                            isLoading={addMemberMutation.isPending}
+                            className="shadow-md hover:shadow-lg"
+                            title={!selectedUser ? 'Selecciona un usuario para agregar' : 'Agregar miembro'}
+                        >
+                            <UserPlus className="h-4 w-4"/>
+                        </Button>
                     </div>
                     <div className="max-h-96 overflow-y-auto space-y-2 pr-2">
                         {isLoadingMembers ? (
@@ -242,6 +261,7 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
 };
 
 const ProjectsPage = () => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { canManageProjects } = useUserPermissions();
@@ -310,7 +330,14 @@ const ProjectsPage = () => {
           {projects && projects.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects.map((project) => (
-              <ProjectCard key={project.id} project={project} onEdit={(p) => setFormModal({ isOpen: true, project: p })} onDelete={(p) => setDeleteModal({ isOpen: true, project: p })} onManageMembers={(p) => setMembersModal({ isOpen: true, project: p })} />
+              <ProjectCard
+                key={project.id}
+                project={project}
+                onEdit={(p) => setFormModal({ isOpen: true, project: p })}
+                onDelete={(p) => setDeleteModal({ isOpen: true, project: p })}
+                onManageMembers={(p) => setMembersModal({ isOpen: true, project: p })}
+                onView={(p) => navigate(`/projects/${p.id}`)}
+              />
             ))}
             </div>
           ) : (
