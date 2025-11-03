@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import { useQueryClient } from '@tanstack/react-query';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
-import { fetchProducts } from '@/services/productService';
+import { getProducts } from '@/services/productService';
 import { fetchRequisitions } from '@/services/requisitionService';
 import { useSessionExpirationHandler } from '@/hooks/useSessionExpirationHandler';
 
@@ -86,8 +86,15 @@ const AppLayout = () => {
     // Prefetch requisiciones si está en dashboard
     if (location.pathname === '/dashboard') {
       queryClient.prefetchQuery({
-        queryKey: ['requisitions', 1, 10, 'created_at', false],
-        queryFn: () => fetchRequisitions(1, 10, 'created_at', false),
+        queryKey: ['requisitions', { page: 1, pageSize: 10 }],
+        queryFn: async () => {
+          const result = await fetchRequisitions(1, 10, 'created_at', false);
+          return {
+            data: result?.data ?? [],
+            total: result?.total ?? 0,
+            count: result?.total ?? 0,
+          };
+        },
         staleTime: 60000, // 1 minuto
       });
     }
@@ -96,7 +103,7 @@ const AppLayout = () => {
     if (location.pathname === '/dashboard' || location.pathname === '/catalog') {
       queryClient.prefetchQuery({
         queryKey: ['products', { page: 1, pageSize: 12, searchTerm: '', category: '' }],
-        queryFn: () => fetchProducts({ pageParam: 0, searchTerm: '', category: '' }),
+        queryFn: () => getProducts({ page: 1, pageSize: 12, searchTerm: '', category: '' }),
         staleTime: 60000, // 1 minuto
       });
     }

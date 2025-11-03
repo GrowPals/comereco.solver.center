@@ -20,8 +20,8 @@ const RequisitionsPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [page, setPage] = useState(1);
-  const [selectedProject, setSelectedProject] = useState(location.state?.projectId || '');
-  const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedProject, setSelectedProject] = useState(location.state?.projectId || 'all');
+  const [selectedStatus, setSelectedStatus] = useState('all');
   const pageSize = 10;
 
   const { data: projects } = useQuery({ queryKey: ['myProjects'], queryFn: getMyProjects });
@@ -31,21 +31,21 @@ const RequisitionsPage = () => {
   const filteredRequisitions = useMemo(() => {
     let filtered = data?.data ?? [];
     
-    if (selectedProject) {
+    if (selectedProject && selectedProject !== 'all') {
       filtered = filtered.filter(req => req.project_id === selectedProject);
     }
     
-    if (selectedStatus) {
+    if (selectedStatus && selectedStatus !== 'all') {
       filtered = filtered.filter(req => req.business_status === selectedStatus);
     }
     
     return filtered;
   }, [data?.data, selectedProject, selectedStatus]);
 
-  const hasFilters = selectedProject || selectedStatus;
+  const hasFilters = (selectedProject && selectedProject !== 'all') || (selectedStatus && selectedStatus !== 'all');
   const clearFilters = () => {
-    setSelectedProject('');
-    setSelectedStatus('');
+    setSelectedProject('all');
+    setSelectedStatus('all');
     setPage(1);
   };
 
@@ -106,7 +106,7 @@ const RequisitionsPage = () => {
                 <SelectValue placeholder="Todos los proyectos" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos los proyectos</SelectItem>
+                <SelectItem value="all">Todos los proyectos</SelectItem>
                 {projects?.map((project) => (
                   <SelectItem key={project.id} value={project.id}>
                     {project.name}
@@ -119,7 +119,7 @@ const RequisitionsPage = () => {
                 <SelectValue placeholder="Todos los estados" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos los estados</SelectItem>
+                <SelectItem value="all">Todos los estados</SelectItem>
                 <SelectItem value="draft">Borrador</SelectItem>
                 <SelectItem value="submitted">Enviada</SelectItem>
                 <SelectItem value="approved">Aprobada</SelectItem>

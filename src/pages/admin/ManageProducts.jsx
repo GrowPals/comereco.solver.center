@@ -185,12 +185,12 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
                         </div>
                         <div>
                             <Label htmlFor="category">Categoría</Label>
-                            <Select value={selectedCategory || ''} onValueChange={(value) => setValue('category', value)}>
+                            <Select value={selectedCategory || 'none'} onValueChange={(value) => setValue('category', value === 'none' ? '' : value)}>
                                 <SelectTrigger className={errors.category && 'border-error focus-visible:ring-error'}>
                                     <SelectValue placeholder="Seleccionar categoría" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="">Sin categoría</SelectItem>
+                                    <SelectItem value="none">Sin categoría</SelectItem>
                                     {categories.map((cat) => (
                                         <SelectItem key={cat} value={cat}>
                                             {cat}
