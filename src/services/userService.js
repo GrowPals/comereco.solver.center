@@ -259,6 +259,10 @@ export const toggleUserStatus = async (userId, isActive) => {
       throw new Error("No tienes permisos para cambiar el estado de usuarios.");
     }
 
+    throw new Error(error.message || formatErrorMessage(error));
+  }
+};
+
 /**
  * NUEVO: Elimina un usuario de la compañía (desactiva pero no elimina de auth)
  * IMPORTANTE: Esta función solo desactiva el usuario, no lo elimina de auth.users
