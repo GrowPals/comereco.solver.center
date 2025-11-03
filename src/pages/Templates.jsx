@@ -35,6 +35,7 @@ import EmptyState from '@/components/EmptyState';
 import { useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
+import TemplateItemsEditor from '@/components/TemplateItemsEditor';
 
 const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
     return (
@@ -75,27 +76,75 @@ const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
 const TemplateFormModal = ({ template, isOpen, onClose, onSave }) => {
   const [name, setName] = useState(template?.name || '');
   const [description, setDescription] = useState(template?.description || '');
+  const [items, setItems] = useState(template?.items || []);
 
   const handleSubmit = () => {
-    onSave({ id: template?.id, name, description, items: template?.items || [] });
+    if (!name.trim()) {
+      return; // El botón ya está deshabilitado, pero por si acaso
+    }
+    onSave({ id: template?.id, name, description, items });
   };
-  
-  // No se permite editar los items aquí para mantener la simplicidad. Se edita creando una nueva.
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">{template ? 'Editar Plantilla' : 'Crear Nueva Plantilla'}</DialogTitle>
-          {!template && <DialogDescription className="text-base">Crea una plantilla desde cero. Añade productos desde la página de la plantilla.</DialogDescription>}
+          <DialogTitle className="text-2xl font-bold">
+            {template ? 'Editar Plantilla' : 'Crear Nueva Plantilla'}
+          </DialogTitle>
+          <DialogDescription className="text-base">
+            {template
+              ? 'Actualiza la información y productos de tu plantilla.'
+              : 'Crea una plantilla con los productos que uses frecuentemente.'}
+          </DialogDescription>
         </DialogHeader>
-        <div className="space-y-4 py-4">
-          <div><Label htmlFor="name">Nombre de la Plantilla</Label><Input id="name" value={name} onChange={(e) => setName(e.target.value)} className="rounded-xl" /></div>
-          <div><Label htmlFor="description">Descripción</Label><Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} className="rounded-xl" /></div>
+
+        <div className="space-y-6 py-4">
+          {/* Información básica */}
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="name">Nombre de la Plantilla *</Label>
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Ej: Suministros de oficina mensuales"
+                className="rounded-xl"
+              />
+            </div>
+            <div>
+              <Label htmlFor="description">Descripción (Opcional)</Label>
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Describe para qué sirve esta plantilla..."
+                className="rounded-xl"
+                rows={3}
+              />
+            </div>
+          </div>
+
+          {/* Editor de items */}
+          <div className="border-t pt-6">
+            <TemplateItemsEditor
+              items={items}
+              onChange={setItems}
+            />
+          </div>
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose} className="rounded-xl">Cancelar</Button>
-          <Button onClick={handleSubmit} className="rounded-xl shadow-lg hover:shadow-xl">Guardar</Button>
+
+        <DialogFooter className="gap-2">
+          <Button variant="outline" onClick={onClose} className="rounded-xl">
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            disabled={!name.trim()}
+            className="rounded-xl shadow-lg hover:shadow-xl"
+          >
+            {template ? 'Actualizar Plantilla' : 'Crear Plantilla'}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -136,8 +185,15 @@ const TemplatesPage = () => {
   });
 
   const handleSave = (templateData) => {
-    if (templateData.id) updateMutation.mutate(templateData);
-    else createMutation.mutate({ ...templateData, items: templateData.items || [] });
+    if (!templateData.name || !templateData.name.trim()) {
+      toast({ variant: 'destructive', title: 'Error', description: 'El nombre de la plantilla es requerido.' });
+      return;
+    }
+    if (templateData.id) {
+      updateMutation.mutate(templateData);
+    } else {
+      createMutation.mutate({ ...templateData, items: templateData.items || [] });
+    }
   };
   
   if (isLoading) return <PageLoader message="Cargando plantillas..." />;
@@ -160,9 +216,23 @@ const TemplatesPage = () => {
                 <p className="text-base sm:text-lg text-slate-600">Reutiliza tus pedidos frecuentes con un solo clic.</p>
               </div>
             </div>
-            <Button onClick={() => navigate('/catalog')} size="lg" className="shadow-lg hover:shadow-xl whitespace-nowrap">
-              <FilePlus className="mr-2 h-5 w-5" /> Crear desde Carrito
-            </Button>
+            <div className="flex gap-3">
+              <Button
+                onClick={() => setFormModal({ isOpen: true, template: null })}
+                size="lg"
+                variant="outline"
+                className="shadow-md hover:shadow-lg whitespace-nowrap"
+              >
+                <PlusCircle className="mr-2 h-5 w-5" /> Nueva Plantilla
+              </Button>
+              <Button
+                onClick={() => navigate('/catalog')}
+                size="lg"
+                className="shadow-lg hover:shadow-xl whitespace-nowrap"
+              >
+                <FilePlus className="mr-2 h-5 w-5" /> Desde Carrito
+              </Button>
+            </div>
           </header>
 
           {templates && templates.length > 0 ? (
