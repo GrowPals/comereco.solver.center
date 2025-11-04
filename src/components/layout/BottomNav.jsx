@@ -19,8 +19,8 @@ const BottomNav = memo(({ onMenuClick }) => {
     const isActive = (path) => location.pathname === path || (path !== '/dashboard' && location.pathname.startsWith(path));
 
     return (
-        <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50 lg:hidden shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]" role="navigation" aria-label="Navegación móvil principal">
-            <div className="grid h-20 grid-cols-5 max-w-full mx-auto px-2 safe-area-inset-bottom">
+        <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 bg-white/95 backdrop-blur-sm shadow-[0_-8px_24px_rgba(15,23,42,0.08)] lg:hidden" role="navigation" aria-label="Navegación móvil principal">
+            <div className="mx-auto grid h-[72px] grid-cols-5 max-w-full px-2 pb-[env(safe-area-inset-bottom)]">
                 {/* Navegación izquierda */}
                 {navItemsLeft.map((item) => {
                     const ItemIcon = item.icon;

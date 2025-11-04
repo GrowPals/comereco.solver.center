@@ -156,7 +156,8 @@ const AppLayout = () => {
       )}
 
       <div className={cn(
-        "relative min-h-screen transition-all duration-300 ease-in-out lg:pl-[18rem]"
+        'relative min-h-screen transition-all duration-300 ease-in-out',
+        isSidebarOpen ? 'lg:pl-[18rem]' : 'lg:pl-[5rem]'
       )}>
         {showNav && <Header setSidebarOpen={handleToggleSidebar} />}
 
@@ -165,7 +166,7 @@ const AppLayout = () => {
           id="main-content"
           role="main"
         >
-          <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:max-w-full lg:px-8">
+          <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
             <ErrorBoundary level="page">
               <Suspense fallback={<div className="h-full"><PageLoader /></div>}>
                 <Routes location={location}>

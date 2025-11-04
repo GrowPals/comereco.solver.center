@@ -276,8 +276,84 @@ const Users = () => {
                         </Button>
                     </header>
 
+                    {/* Users mobile list */}
+                    <div className="space-y-4 md:hidden">
+                        {users?.map((user) => (
+                            <div key={user.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                                <div className="flex items-start gap-3">
+                                    <Avatar className="h-11 w-11 border border-slate-200">
+                                        <AvatarImage src={user.avatar_url} />
+                                        <AvatarFallback className="text-white font-semibold">
+                                            {user.full_name?.charAt(0) || 'U'}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-start justify-between gap-2">
+                                            <div>
+                                                <p className="font-semibold text-slate-900 line-clamp-1">{user.full_name}</p>
+                                                <p className="text-sm text-slate-500 line-clamp-1">{user.email}</p>
+                                            </div>
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-9 w-9 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-100"
+                                                        aria-label={`Acciones para ${user.full_name || user.email}`}
+                                                    >
+                                                        <MoreHorizontal className="h-4 w-4" />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end" className="rounded-xl">
+                                                    <DropdownMenuItem onClick={() => handleOpenForm(user)}>
+                                                        Editar usuario
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem
+                                                        className={user.is_active !== false ? 'text-red-600' : 'text-green-600'}
+                                                        onClick={() => handleToggleUserStatus(user)}
+                                                    >
+                                                        {user.is_active !== false ? 'Desactivar' : 'Activar'}
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem
+                                                        className="text-destructive focus:text-destructive"
+                                                        onClick={() => handleDeleteUser(user)}
+                                                    >
+                                                        <Trash2 className="mr-2 h-4 w-4" /> Eliminar
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </div>
+                                        {user.is_active === false && (
+                                            <Badge variant="destructive" className="mt-1 text-xs">
+                                                Inactivo
+                                            </Badge>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-slate-600">
+                                    <Badge variant="outline" className="font-semibold">
+                                        {roleMapping[user.role_v2]?.icon && (
+                                            React.createElement(roleMapping[user.role_v2].icon, { className: 'mr-1 h-4 w-4' })
+                                        )}
+                                        {roleMapping[user.role_v2]?.label || user.role_v2}
+                                    </Badge>
+                                    <Badge variant={user.is_active !== false ? 'success' : 'muted'}>
+                                        {user.is_active !== false ? 'Activo' : 'Inactivo'}
+                                    </Badge>
+                                    <span className="ml-auto text-xs text-slate-500">
+                                        {new Date(user.updated_at).toLocaleDateString('es-MX', {
+                                            year: 'numeric',
+                                            month: 'short',
+                                            day: 'numeric'
+                                        })}
+                                    </span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
                     {/* Users Table */}
-                    <div className="bg-white border-2 border-slate-200 rounded-2xl shadow-lg overflow-hidden">
+                    <div className="hidden overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-lg md:block">
                         <Table>
                         <TableHeader>
                             <TableRow>
