@@ -36,6 +36,7 @@ import {
 } from '@/services/projectService';
 import { fetchUsersInCompany } from '@/services/userService';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import PageLoader from '@/components/PageLoader';
 import EmptyState from '@/components/EmptyState';
 
@@ -102,21 +103,32 @@ const ProjectCard = ({ project, onEdit, onDelete, onManageMembers, onView }) => 
 
 const EMPTY_SUPERVISOR_VALUE = 'none';
 
-const ProjectFormModal = ({ project, isOpen, onClose, onSave, supervisors }) => {
+const ProjectFormModal = ({ project, isOpen, onClose, onSave, supervisors, isAdmin, currentUserId }) => {
   const [name, setName] = useState(project?.name || '');
   const [description, setDescription] = useState(project?.description || '');
-  const [supervisorId, setSupervisorId] = useState(project?.supervisor_id ? String(project.supervisor_id) : EMPTY_SUPERVISOR_VALUE);
+  const initialSupervisor = project?.supervisor_id
+    ? String(project.supervisor_id)
+    : (isAdmin ? EMPTY_SUPERVISOR_VALUE : (currentUserId ? String(currentUserId) : EMPTY_SUPERVISOR_VALUE));
+  const [supervisorId, setSupervisorId] = useState(initialSupervisor);
   const [active, setActive] = useState(project?.active ?? true);
 
   useEffect(() => {
     setName(project?.name || '');
     setDescription(project?.description || '');
-    setSupervisorId(project?.supervisor_id ? String(project.supervisor_id) : EMPTY_SUPERVISOR_VALUE);
+    if (project?.supervisor_id) {
+      setSupervisorId(String(project.supervisor_id));
+    } else if (isAdmin) {
+      setSupervisorId(EMPTY_SUPERVISOR_VALUE);
+    } else if (currentUserId) {
+      setSupervisorId(String(currentUserId));
+    }
     setActive(project?.active ?? true);
-  }, [project, isOpen]);
+  }, [project, isOpen, isAdmin, currentUserId]);
 
   const handleSubmit = () => {
-    const normalizedSupervisorId = supervisorId === EMPTY_SUPERVISOR_VALUE ? null : Number(supervisorId);
+    const normalizedSupervisorId = isAdmin
+      ? (supervisorId === EMPTY_SUPERVISOR_VALUE ? null : supervisorId)
+      : (currentUserId || null);
     onSave({
       id: project?.id,
       name,
@@ -144,22 +156,29 @@ const ProjectFormModal = ({ project, isOpen, onClose, onSave, supervisors }) => 
               <Label htmlFor="description">Descripción</Label>
               <Input id="description" value={description} onChange={(e) => setDescription(e.target.value)} className="rounded-xl" />
             </div>
-            <div>
-              <Label htmlFor="supervisor">Supervisor</Label>
-              <Select value={supervisorId} onValueChange={setSupervisorId}>
-                <SelectTrigger className="rounded-xl">
-                  <SelectValue placeholder="Seleccionar supervisor..." />
-                </SelectTrigger>
-                <SelectContent className="rounded-xl">
-                  <SelectItem value={EMPTY_SUPERVISOR_VALUE}>Sin supervisor</SelectItem>
-                  {supervisors?.filter(Boolean)?.map((s) => (
-                    <SelectItem key={s.id} value={String(s.id)}>
-                      {s.full_name || 'Sin nombre'} ({s.role_v2 === 'admin' ? 'Admin' : 'Supervisor'})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {isAdmin ? (
+              <div>
+                <Label htmlFor="supervisor">Supervisor</Label>
+                <Select value={supervisorId} onValueChange={setSupervisorId}>
+                  <SelectTrigger className="rounded-xl">
+                    <SelectValue placeholder="Seleccionar supervisor..." />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl">
+                    <SelectItem value={EMPTY_SUPERVISOR_VALUE}>Sin supervisor</SelectItem>
+                    {supervisors?.filter(Boolean)?.map((s) => (
+                      <SelectItem key={s.id} value={String(s.id)}>
+                        {s.full_name || 'Sin nombre'} ({s.role_v2 === 'admin' ? 'Admin' : 'Supervisor'})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            ) : (
+              <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                <Label className="text-sm font-medium text-slate-700">Supervisor asignado</Label>
+                <p className="text-sm text-slate-600">Serás asignado automáticamente como supervisor de este proyecto.</p>
+              </div>
+            )}
             <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
               <input
                 type="checkbox"
@@ -262,7 +281,7 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
                                 </SelectContent>
                             </Select>
                             <Button 
-                                onClick={() => selectedUser !== MANAGE_MEMBERS_PLACEHOLDER && addMemberMutation.mutate({ projectId: project.id, userId: Number(selectedUser) })} 
+                                onClick={() => selectedUser !== MANAGE_MEMBERS_PLACEHOLDER && addMemberMutation.mutate({ projectId: project.id, userId: selectedUser })} 
                                 disabled={selectedUser === MANAGE_MEMBERS_PLACEHOLDER || addMemberMutation.isPending}
                                 isLoading={addMemberMutation.isPending}
                                 className="rounded-xl shadow-button hover:shadow-button-hover"
@@ -330,7 +349,9 @@ const ProjectsPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const { canManageProjects } = useUserPermissions();
+  const { canManageProjects, isAdmin } = useUserPermissions();
+  const { user } = useSupabaseAuth();
+  const currentUserId = user?.id || null;
   
   const [formModal, setFormModal] = useState({ isOpen: false, project: null });
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, project: null });
@@ -422,7 +443,17 @@ const ProjectsPage = () => {
         </div>
       </div>
 
-      {formModal.isOpen && <ProjectFormModal isOpen={formModal.isOpen} onClose={() => setFormModal({ isOpen: false, project: null })} project={formModal.project} onSave={handleSave} supervisors={supervisors} />}
+      {formModal.isOpen && (
+        <ProjectFormModal
+          isOpen={formModal.isOpen}
+          onClose={() => setFormModal({ isOpen: false, project: null })}
+          project={formModal.project}
+          onSave={handleSave}
+          supervisors={supervisors}
+          isAdmin={isAdmin}
+          currentUserId={currentUserId}
+        />
+      )}
       {membersModal.isOpen && <ManageMembersModal isOpen={membersModal.isOpen} onClose={() => setMembersModal({ isOpen: false, project: null })} project={membersModal.project} />}
 
       <Dialog open={deleteModal.isOpen} onOpenChange={() => setDeleteModal({ isOpen: false, project: null })}>

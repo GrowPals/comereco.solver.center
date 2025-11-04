@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { Plus, MoreHorizontal, User as UserIcon, Shield, Briefcase, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -41,6 +41,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { fetchUsersInCompany, inviteUser, updateUserProfile, toggleUserStatus, deleteUser } from '@/services/userService';
 import { useToast } from '@/components/ui/useToast';
 import PageLoader from '@/components/PageLoader';
+import { Switch } from '@/components/ui/switch';
 
 
 // Mapeo de roles según app_role_v2 enum (admin | supervisor | user)
@@ -51,19 +52,27 @@ const roleMapping = {
 };
 
 const UserForm = ({ user, onSave, onCancel, isLoading }) => {
-    const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm({
+    const { register, handleSubmit, watch, setValue, control, formState: { errors } } = useForm({
         mode: 'onBlur',
         defaultValues: {
             email: user?.email || '',
             role: user?.role_v2 || 'user',
-            full_name: user?.full_name || ''
+            full_name: user?.full_name || '',
+            can_submit_without_approval: user?.can_submit_without_approval ?? false,
         }
     });
 
     const role = watch('role');
+    const canBypass = watch('can_submit_without_approval');
 
     const onSubmit = (data) => {
-        onSave({ id: user?.id, email: data.email, role: data.role, full_name: data.full_name });
+        onSave({
+            id: user?.id,
+            email: data.email,
+            role: data.role,
+            full_name: data.full_name,
+            can_submit_without_approval: data.can_submit_without_approval,
+        });
     };
 
     return (
@@ -114,6 +123,26 @@ const UserForm = ({ user, onSave, onCancel, isLoading }) => {
                     </SelectContent>
                 </Select>
             </div>
+            {user && (
+              <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                <div className="pr-4">
+                  <Label className="text-sm font-medium text-slate-700">Envío directo de requisiciones</Label>
+                  <p className="text-xs text-slate-500">Permite que este usuario envíe requisiciones sin aprobación previa del supervisor.</p>
+                </div>
+                <Controller
+                  name="can_submit_without_approval"
+                  control={control}
+                  render={({ field }) => (
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={(checked) => field.onChange(checked)}
+                      disabled={isLoading}
+                      aria-label="Permitir envío sin aprobación"
+                    />
+                  )}
+                />
+              </div>
+            )}
             <div className="flex justify-end space-x-2 pt-4">
                 <Button type="button" variant="ghost" onClick={onCancel}>Cancelar</Button>
                 <Button type="submit" isLoading={isLoading}>{user ? 'Guardar Cambios' : 'Invitar Usuario'}</Button>
@@ -157,7 +186,12 @@ const Users = () => {
     });
 
     const updateMutation = useMutation({
-        mutationFn: ({ id, role, full_name }) => updateUserProfile(id, { role_v2: role, full_name }),
+        mutationFn: ({ id, role, full_name, can_submit_without_approval }) =>
+            updateUserProfile(id, {
+              role_v2: role,
+              full_name,
+              can_submit_without_approval,
+            }),
          ...mutationOptions,
         onSuccess: (...args) => {
             toast({ title: 'Éxito', description: 'Usuario actualizado correctamente.' });
@@ -195,10 +229,11 @@ const Users = () => {
     };
 
     const handleSaveUser = (userData) => {
-        if (userData.id) { // Es una actualización
-            updateMutation.mutate(userData);
-        } else { // Es una invitación
-            inviteMutation.mutate(userData);
+        const { id, email, role, full_name, can_submit_without_approval } = userData;
+        if (id) {
+            updateMutation.mutate({ id, role, full_name, can_submit_without_approval });
+        } else {
+            inviteMutation.mutate({ email, role });
         }
     };
 

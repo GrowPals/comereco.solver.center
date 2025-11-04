@@ -100,8 +100,8 @@ export const createProject = async (projectData) => {
   }
 
   const access = await getUserAccessContext();
-  if (!access.isAdmin) {
-    throw new Error('Solo los administradores pueden crear proyectos.');
+  if (!access.isAdmin && !access.isSupervisor) {
+    throw new Error('No tienes permisos para crear proyectos.');
   }
 
   const { session, error: sessionError } = await getCachedSession();
@@ -123,6 +123,21 @@ export const createProject = async (projectData) => {
     company_id: companyId,
     created_by: session.user.id
   };
+
+  if (!access.isAdmin) {
+    if (!access.userId) {
+      throw new Error('No se pudo determinar el supervisor actual.');
+    }
+    cleanedData.supervisor_id = String(access.userId);
+  } else if (projectData.supervisor_id) {
+    cleanedData.supervisor_id = String(projectData.supervisor_id);
+  } else {
+    cleanedData.supervisor_id = null;
+  }
+
+  if (cleanedData.active === undefined) {
+    cleanedData.active = true;
+  }
   
   const { data, error } = await supabase
     .from('projects')
@@ -189,6 +204,9 @@ export const updateProject = async (projectData) => {
   if (cleanedData.name) cleanedData.name = cleanedData.name.trim();
   if (cleanedData.description !== undefined) {
     cleanedData.description = cleanedData.description?.trim() || '';
+  }
+  if (cleanedData.supervisor_id !== undefined) {
+    cleanedData.supervisor_id = cleanedData.supervisor_id ? String(cleanedData.supervisor_id) : null;
   }
   
   const { data, error } = await supabase

@@ -34,7 +34,7 @@ export const useUserPermissions = () => {
     // FIX: Eliminado isSuperAdmin ya que 'super_admin' no existe en role_v2
     // Si necesitas funcionalidad de super admin, debe manejarse vía políticas RLS o campo adicional
     const canManageUsers = isAdmin;
-    const canManageProjects = isAdmin;
+    const canManageProjects = isAdmin || isSupervisor;
     const canApproveRequisitions = isAdmin || isSupervisor;
     // Todos los usuarios autenticados pueden crear requisiciones
     const canCreateRequisitions = !!user;
