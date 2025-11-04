@@ -55,7 +55,7 @@ const FavoritesPage = () => {
     if (isLoading) {
         return (
             <>
-                <Helmet><title>Mis Favoritos - ComerECO</title></Helmet>
+                <Helmet><title>{`Mis Favoritos - ComerECO`}</title></Helmet>
                 <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8">
                     <div className="max-w-7xl mx-auto space-y-8">
                         {/* Header Skeleton */}
@@ -92,7 +92,7 @@ const FavoritesPage = () => {
     if (isError) {
         return (
             <>
-                <Helmet><title>Mis Favoritos - ComerECO</title></Helmet>
+                <Helmet><title>{`Mis Favoritos - ComerECO`}</title></Helmet>
                 <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-2xl shadow-lg p-12 max-w-md border-2 border-red-100">
                         <EmptyState
@@ -138,7 +138,7 @@ const FavoritesPage = () => {
     // Estado con productos favoritos
     return (
         <>
-            <Helmet><title>Mis Favoritos ({favoriteCount}) - ComerECO</title></Helmet>
+            <Helmet><title>{`Mis Favoritos (${favoriteCount}) - ComerECO`}</title></Helmet>
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8">
                 <div className="max-w-7xl mx-auto space-y-8">
                     {/* Header */}

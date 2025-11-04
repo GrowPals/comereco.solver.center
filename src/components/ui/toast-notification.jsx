@@ -31,7 +31,7 @@ const Toast = ({ id, title, message, variant = 'info', onClose }) => {
   return (
     <div
       className={cn(
-        'flex items-start gap-3 w-full max-w-md p-4 bg-white rounded-xl border border-neutral-200 shadow-2xl backdrop-blur-sm transition-all duration-200',
+        'flex items-start gap-3 w-full max-w-md sm:max-w-sm p-4 bg-white rounded-xl border border-neutral-200 shadow-2xl backdrop-blur-sm transition-all duration-200',
         isExiting ? 'opacity-0 translate-x-full scale-95' : 'opacity-100 translate-x-0 scale-100'
       )}
     >
@@ -91,7 +91,7 @@ export const ToastProvider = ({ children }) => {
   return (
     <ToastContext.Provider value={toast}>
       {children}
-      <div className="fixed top-4 right-4 z-[100] flex flex-col gap-3 pointer-events-none">
+      <div className="fixed top-4 left-4 right-4 sm:left-auto z-[100] flex flex-col gap-3 pointer-events-none items-center sm:items-end">
         {toasts.map(toast => (
           <div key={toast.id} className="pointer-events-auto">
             <Toast {...toast} onClose={removeToast} />

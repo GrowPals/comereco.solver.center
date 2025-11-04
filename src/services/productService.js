@@ -8,7 +8,7 @@ import logger from '@/utils/logger';
  * CORREGIDO: Asegura que la sesión esté activa antes de hacer queries
  * RLS filtra automáticamente por company_id según REFERENCIA_TECNICA_BD_SUPABASE.md
  */
-export const fetchProducts = async ({ pageParam = 0, searchTerm = '', category = '', availability = '' }) => {
+export const fetchProducts = async ({ pageParam = 0, searchTerm = '', category = '', availability = '', pageSize = 12 }) => {
     try {
         // Validar sesión antes de hacer queries (usando cache)
         const { session, error: sessionError } = await getCachedSession();
@@ -17,7 +17,7 @@ export const fetchProducts = async ({ pageParam = 0, searchTerm = '', category =
             return { products: [], totalCount: 0 };
         }
 
-        const ITEMS_PER_PAGE = 12;
+        const ITEMS_PER_PAGE = Math.max(12, Number.isFinite(pageSize) && pageSize > 0 ? Math.floor(pageSize) : 12);
         const from = pageParam * ITEMS_PER_PAGE;
         const to = from + ITEMS_PER_PAGE - 1;
 
@@ -51,6 +51,7 @@ export const fetchProducts = async ({ pageParam = 0, searchTerm = '', category =
             products: data || [],
             nextPage: (to + 1) < (count || 0) ? pageParam + 1 : undefined,
             totalCount: count || 0,
+            pageSize: ITEMS_PER_PAGE,
         };
     } catch (err) {
         logger.error('Exception in fetchProducts:', err);
@@ -278,7 +279,7 @@ export const deleteProduct = async (productId) => {
 export const getProducts = async (filters = {}) => {
     const { searchTerm = '', category = '', page = 1, pageSize = 12 } = filters;
     const pageParam = page - 1;
-    const result = await fetchProducts({ pageParam, searchTerm, category });
+    const result = await fetchProducts({ pageParam, searchTerm, category, pageSize });
     return {
         data: result.products || [],
         count: result.totalCount || 0,

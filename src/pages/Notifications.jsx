@@ -154,7 +154,7 @@ const NotificationsPage = () => {
                                 {unreadCount > 0 && <p className="text-base sm:text-lg text-slate-600">{unreadCount} notificaciones no leídas</p>}
                             </div>
                         </div>
-                        <Button onClick={() => confirmAction('markAllRead', allNotifications.filter(n => !n.is_read).map(n => n.id))} disabled={unreadCount === 0} size="lg" className="shadow-lg hover:shadow-xl whitespace-nowrap">
+                        <Button onClick={() => confirmAction('markAllRead', allNotifications.filter(n => !n.is_read).map(n => n.id))} disabled={unreadCount === 0} size="lg" className="shadow-button hover:shadow-button-hover whitespace-nowrap">
                             <CheckCheck className="mr-2 h-5 w-5" /> Marcar todo como leído
                         </Button>
                     </header>
@@ -237,7 +237,7 @@ const NotificationsPage = () => {
             </div>
             
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <DialogContent className="sm:max-w-md">
+                <DialogContent className="sm:max-w-md border border-slate-200 bg-white shadow-2xl">
                     <DialogHeader>
                         <DialogTitle className="text-2xl font-bold">Confirmar Acción</DialogTitle>
                     </DialogHeader>
@@ -247,7 +247,7 @@ const NotificationsPage = () => {
                     </DialogDescription>
                     <DialogFooter className="gap-2">
                         <Button variant="ghost" onClick={() => setDialogOpen(false)} className="rounded-xl">Cancelar</Button>
-                        <Button onClick={dialogAction?.perform} variant={dialogAction?.type === 'delete' ? 'destructive' : 'default'} className="rounded-xl shadow-lg hover:shadow-xl">
+                        <Button onClick={dialogAction?.perform} variant={dialogAction?.type === 'delete' ? 'destructive' : 'default'} className="rounded-xl shadow-button hover:shadow-button-hover">
                             Confirmar
                         </Button>
                     </DialogFooter>

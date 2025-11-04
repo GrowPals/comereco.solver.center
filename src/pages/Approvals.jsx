@@ -198,7 +198,7 @@ const Approvals = () => {
                                                 disabled={mutation.isPending}
                                                 variant="success"
                                                 size="lg"
-                                                className="flex-1 shadow-lg hover:shadow-xl"
+                                                className="flex-1 rounded-xl shadow-button hover:shadow-button-hover"
                                                 isLoading={mutation.isPending}
                                             >
                                                 <Check className="h-5 w-5" />
@@ -212,7 +212,7 @@ const Approvals = () => {
                                                 disabled={mutation.isPending}
                                                 variant="destructive"
                                                 size="icon"
-                                                className="shadow-sm hover:shadow-md"
+                                                className="rounded-xl shadow-xs hover:shadow-sm"
                                             >
                                                 <X className="h-5 w-5" />
                                             </Button>

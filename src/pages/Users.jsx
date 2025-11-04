@@ -37,6 +37,7 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { fetchUsersInCompany, inviteUser, updateUserProfile, toggleUserStatus, deleteUser } from '@/services/userService';
 import { useToast } from '@/components/ui/useToast';
 import PageLoader from '@/components/PageLoader';
@@ -125,6 +126,8 @@ const UserForm = ({ user, onSave, onCancel, isLoading }) => {
 const Users = () => {
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingUser, setEditingUser] = useState(null);
+    const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [userToDelete, setUserToDelete] = useState(null);
     const { toast } = useToast();
     const queryClient = useQueryClient();
 
@@ -216,9 +219,15 @@ const Users = () => {
     };
 
     const handleDeleteUser = (user) => {
-        const confirmMessage = `¿Estás seguro de eliminar a ${user.full_name || user.email}? Esta acción no se puede deshacer.`;
-        if (window.confirm(confirmMessage)) {
-            deleteMutation.mutate(user.id);
+        setUserToDelete(user);
+        setDeleteDialogOpen(true);
+    };
+
+    const confirmDelete = () => {
+        if (userToDelete) {
+            deleteMutation.mutate(userToDelete.id);
+            setDeleteDialogOpen(false);
+            setUserToDelete(null);
         }
     };
 
@@ -230,6 +239,16 @@ const Users = () => {
             <Helmet>
                 <title>Gestión de Usuarios - ComerECO</title>
             </Helmet>
+            <ConfirmDialog
+                open={isDeleteDialogOpen}
+                onOpenChange={setDeleteDialogOpen}
+                title="¿Eliminar usuario?"
+                description={`¿Estás seguro de eliminar a ${userToDelete?.full_name || userToDelete?.email}? Esta acción no se puede deshacer y el usuario perderá acceso al sistema.`}
+                confirmText="Eliminar usuario"
+                cancelText="Cancelar"
+                variant="destructive"
+                onConfirm={confirmDelete}
+            />
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8">
                 <div className="max-w-7xl mx-auto space-y-8">
                     {/* Header */}
@@ -250,7 +269,7 @@ const Users = () => {
                         <Button
                             size="lg"
                             onClick={() => handleOpenForm()}
-                            className="shadow-lg hover:shadow-xl whitespace-nowrap"
+                            className="shadow-button hover:shadow-button-hover whitespace-nowrap"
                         >
                             <Plus className="mr-2 h-5 w-5" />
                             Invitar Usuario
@@ -352,7 +371,7 @@ const Users = () => {
             </div>
 
             <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-                <DialogContent className="sm:max-w-lg">
+                <DialogContent className="sm:max-w-lg border border-slate-200 bg-white shadow-2xl">
                     <DialogHeader>
                         <DialogTitle className="text-2xl font-bold">
                             {editingUser ? 'Editar Usuario' : 'Invitar Nuevo Usuario'}

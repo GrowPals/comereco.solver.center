@@ -84,7 +84,7 @@ const RequisitionsPage = () => {
                   <RefreshCw className={`h-5 w-5 ${isFetching ? 'animate-spin text-blue-500' : 'text-slate-600'}`} />
                 </Button>
                 <Button
-                  onClick={() => navigate('/catalog')}
+                  onClick={() => navigate('/requisitions/new')}
                   size="lg"
                   className="shadow-lg"
                 >
@@ -193,17 +193,17 @@ const RequisitionsPage = () => {
                 <EmptyState
                   icon={FileText}
                   title={hasFilters ? "No se encontraron requisiciones" : "No tienes requisiciones"}
-                  description={hasFilters 
+                  description={hasFilters
                     ? "Intenta ajustar los filtros para ver más resultados."
-                    : "Tus requisiciones aparecerán aquí una vez que las crees desde el catálogo."
+                    : "Tus requisiciones aparecerán aquí una vez que las crees. Haz clic en el botón para comenzar."
                   }
                   action={hasFilters ? {
                     label: 'Limpiar filtros',
                     onClick: clearFilters,
                     icon: X
                   } : {
-                    label: 'Ir al Catálogo',
-                    onClick: () => navigate('/catalog'),
+                    label: 'Nueva Requisición',
+                    onClick: () => navigate('/requisitions/new'),
                     icon: Plus
                   }}
                 />

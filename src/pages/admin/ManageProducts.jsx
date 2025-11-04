@@ -125,14 +125,15 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-2xl">
-                <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold">
-                        {product ? 'Editar Producto' : 'Crear Producto'}
-                    </DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 py-4">
-                    <FormStatusFeedback status={formStatus.status} message={formStatus.message} />
+            <DialogContent className="sm:max-w-2xl overflow-hidden border border-slate-200 bg-white shadow-2xl p-0">
+                <form onSubmit={handleSubmit(onSubmit)} className="flex max-h-[90vh] flex-col">
+                    <DialogHeader className="px-6 pt-6">
+                        <DialogTitle className="text-2xl font-bold">
+                            {product ? 'Editar Producto' : 'Crear Producto'}
+                        </DialogTitle>
+                    </DialogHeader>
+                    <div className="flex-1 space-y-5 overflow-y-auto px-6 py-4">
+                        <FormStatusFeedback status={formStatus.status} message={formStatus.message} />
                     <div>
                         <Label htmlFor="name">Nombre</Label>
                         <Input 
@@ -257,11 +258,14 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
                         <Switch id="is_active" checked={isActive} onCheckedChange={(checked) => setValue('is_active', checked)} />
                         <Label htmlFor="is_active">{isActive ? 'Activo' : 'Inactivo'}</Label>
                     </div>
-                    <DialogFooter>
-                        <Button variant="outline" type="button" onClick={onClose} disabled={isSubmitting || uploadingImage}>Cancelar</Button>
-                        <Button type="submit" isLoading={isSubmitting || uploadingImage} isSuccess={formStatus.status === 'success'}>
-                            {uploadingImage ? 'Subiendo imagen...' : product ? 'Actualizar' : 'Crear'}
-                        </Button>
+                    </div>
+                    <DialogFooter className="sticky bottom-0 flex flex-col gap-2 border-t border-slate-200 bg-white/95 px-6 py-4 backdrop-blur">
+                        <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
+                            <Button variant="outline" type="button" onClick={onClose} disabled={isSubmitting || uploadingImage} className="rounded-xl">Cancelar</Button>
+                            <Button type="submit" isLoading={isSubmitting || uploadingImage} isSuccess={formStatus.status === 'success'} className="rounded-xl shadow-button hover:shadow-button-hover">
+                                {uploadingImage ? 'Subiendo imagen...' : product ? 'Actualizar' : 'Crear'}
+                            </Button>
+                        </div>
                     </DialogFooter>
                 </form>
             </DialogContent>
@@ -350,7 +354,7 @@ const ManageProductsPage = () => {
                         <Button
                             size="lg"
                             onClick={() => setFormModal({ isOpen: true, product: null })}
-                            className="shadow-lg hover:shadow-xl whitespace-nowrap"
+                            className="shadow-button hover:shadow-button-hover whitespace-nowrap"
                         >
                             <PlusCircle className="mr-2 h-5 w-5" />
                             Crear Producto
@@ -381,7 +385,7 @@ const ManageProductsPage = () => {
                                                         <OptimizedImage
                                                             src={p.image_url}
                                                             alt={p.name}
-                                                            fallback="/placeholder.png"
+                                                            fallback="/placeholder.svg"
                                                             className="w-full h-full object-contain p-1"
                                                         />
                                                     ) : (

@@ -4,30 +4,36 @@
 import React, { useState, useCallback, memo } from 'react';
 import { cn } from '@/lib/utils';
 
-const OptimizedImage = memo(({ 
-  src, 
-  alt = '', 
-  className = '', 
-  fallback = '/placeholder.png',
+const OptimizedImage = memo(({
+  src,
+  alt = '',
+  className = '',
+  fallback = '/placeholder.svg',
   loading = 'lazy',
-  ...props 
+  ...props
 }) => {
   const [imageSrc, setImageSrc] = useState(src || fallback);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [fallbackAttempted, setFallbackAttempted] = useState(false);
 
   const handleError = useCallback(() => {
-    if (imageSrc !== fallback) {
+    // Si aún no hemos intentado el fallback, usarlo
+    if (!fallbackAttempted && imageSrc !== fallback) {
       setImageSrc(fallback);
       setHasError(true);
+      setFallbackAttempted(true);
     }
     setIsLoading(false);
-  }, [imageSrc, fallback]);
+  }, [imageSrc, fallback, fallbackAttempted]);
 
   const handleLoad = useCallback(() => {
     setIsLoading(false);
-    setHasError(false);
-  }, []);
+    // Solo limpiar el error si no estamos mostrando el fallback
+    if (!fallbackAttempted) {
+      setHasError(false);
+    }
+  }, [fallbackAttempted]);
 
   return (
     <div className={cn('relative', className)}>

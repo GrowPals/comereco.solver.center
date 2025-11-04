@@ -108,7 +108,7 @@ const SearchDialog = memo(({ open, onOpenChange }) => {
                         <OptimizedImage 
                           src={item.image_url} 
                           alt={`Imagen de ${item.name}`}
-                          fallback="/placeholder.png"
+                          fallback="/placeholder.svg"
                           loading="lazy"
                           className="w-10 h-10 rounded-lg object-cover bg-muted"
                         />

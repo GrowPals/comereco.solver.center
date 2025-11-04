@@ -11,7 +11,7 @@ import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { supabase } from '@/lib/customSupabaseClient';
 import { cn } from '@/lib/utils';
 import logger from '@/utils/logger';
-import { getNotifications, markNotificationsAsRead } from '@/services/notificationService';
+import { getNotifications, markNotificationsAsRead, getUnreadCount } from '@/services/notificationService';
 
 const notificationIcons = {
     success: { color: 'bg-gradient-to-br from-green-100 to-green-50 text-green-600 shadow-sm', icon: CheckCheck },
@@ -62,48 +62,58 @@ const NotificationItem = ({ notification, onRead }) => {
     );
 };
 
-const NotificationCenter = () => {
+const NotificationCenter = ({ variant = 'popover' }) => {
     const { user } = useSupabaseAuth();
     const navigate = useNavigate();
-    
+
     const [notifications, setNotifications] = useState([]);
+    const [unreadCount, setUnreadCount] = useState(0);
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
         if (!user?.id) return;
-        
+
         const isValidUUID = (str) => {
             if (!str) return false;
             const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
             return uuidRegex.test(str);
         };
-    
+
         if (!isValidUUID(user.id)) {
             logger.error('Invalid user ID format for notifications');
             return;
         }
-    
-        // Usar el servicio centralizado que valida sesión y filtra por user_id
-        getNotifications()
-            .then(notifications => {
+
+        // Cargar notificaciones y contador en paralelo
+        Promise.all([
+            getNotifications(),
+            getUnreadCount()
+        ])
+            .then(([allNotifications, count]) => {
                 // Limitar a 20 notificaciones más recientes para el popover
-                setNotifications(notifications.slice(0, 20));
+                setNotifications(allNotifications.slice(0, 20));
+                // Usar el contador real de todas las no leídas
+                setUnreadCount(count);
             })
             .catch(error => {
                 logger.error('Error loading notifications:', error);
             });
-    
+
         // Suscripción real-time: solo escucha notificaciones del usuario autenticado
         const channel = supabase
             .channel(`notifications-user-${user.id}`)
-            .on('postgres_changes', { 
-                event: 'INSERT', 
-                schema: 'public', 
+            .on('postgres_changes', {
+                event: 'INSERT',
+                schema: 'public',
                 table: 'notifications',
                 filter: `user_id=eq.${user.id}` // Filtro explícito por user_id
             }, (payload) => {
                 logger.info('New notification received:', payload.new);
                 setNotifications(prev => [payload.new, ...prev.slice(0, 19)]);
+                // Actualizar contador si la nueva notificación no está leída
+                if (!payload.new.is_read) {
+                    setUnreadCount(prev => prev + 1);
+                }
             })
             .on('postgres_changes', {
                 event: 'UPDATE',
@@ -112,9 +122,16 @@ const NotificationCenter = () => {
                 filter: `user_id=eq.${user.id}` // Filtro explícito por user_id
             }, (payload) => {
                 logger.info('Notification updated:', payload.new);
-                setNotifications(prev => 
+                const oldNotification = notifications.find(n => n.id === payload.new.id);
+                setNotifications(prev =>
                     prev.map(n => n.id === payload.new.id ? payload.new : n)
                 );
+                // Actualizar contador si cambió el estado de lectura
+                if (oldNotification && !oldNotification.is_read && payload.new.is_read) {
+                    setUnreadCount(prev => Math.max(0, prev - 1));
+                } else if (oldNotification && oldNotification.is_read && !payload.new.is_read) {
+                    setUnreadCount(prev => prev + 1);
+                }
             })
             .subscribe((status, err) => {
                 if (status === 'SUBSCRIBED') {
@@ -123,15 +140,13 @@ const NotificationCenter = () => {
                     logger.error('Error subscribing to notifications channel', err);
                 }
             });
-    
+
         return () => {
             if (channel) {
                 supabase.removeChannel(channel).catch(err => logger.error('Failed to remove notifications channel', err));
             }
         };
     }, [user]);
-    
-    const unreadCount = useMemo(() => notifications.filter(n => !n.is_read).length, [notifications]);
 
     const handleMarkAsRead = async (id) => {
         const notification = notifications.find(n => n.id === id);
@@ -139,12 +154,33 @@ const NotificationCenter = () => {
             try {
                 await markNotificationsAsRead([id]);
                 setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
+                // Decrementar el contador
+                setUnreadCount(prev => Math.max(0, prev - 1));
             } catch (error) {
                 logger.error('Error marking notification as read:', error);
             }
         }
         setOpen(false);
     };
+
+    if (variant === 'icon') {
+        return (
+            <Button
+                variant="ghost"
+                size="icon"
+                className="relative h-11 w-11 rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
+                aria-label={`Ver notificaciones${unreadCount > 0 ? `, ${unreadCount} sin leer` : ''}`}
+                onClick={() => navigate('/notifications')}
+            >
+                <Bell className="h-5 w-5" />
+                {unreadCount > 0 && (
+                    <div className="absolute -top-1 -right-1 flex min-h-[18px] min-w-[18px] items-center justify-center rounded-full bg-gradient-error px-1 text-[10px] font-bold text-white shadow-md">
+                        {unreadCount > 99 ? '99+' : unreadCount}
+                    </div>
+                )}
+            </Button>
+        );
+    }
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -153,7 +189,7 @@ const NotificationCenter = () => {
                     <Bell className="h-5 w-5" />
                     {unreadCount > 0 && (
                         <div className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-gradient-error text-white text-[10px] font-bold flex items-center justify-center shadow-md animate-pulse">
-                            {unreadCount > 9 ? '9+' : unreadCount}
+                            {unreadCount > 99 ? '99+' : unreadCount}
                         </div>
                     )}
                 </Button>

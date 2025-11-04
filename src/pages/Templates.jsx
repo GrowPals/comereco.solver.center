@@ -87,65 +87,69 @@ const TemplateFormModal = ({ template, isOpen, onClose, onSave }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">
-            {template ? 'Editar Plantilla' : 'Crear Nueva Plantilla'}
-          </DialogTitle>
-          <DialogDescription className="text-base">
-            {template
-              ? 'Actualiza la información y productos de tu plantilla.'
-              : 'Crea una plantilla con los productos que uses frecuentemente.'}
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-hidden border border-slate-200 bg-white shadow-2xl p-0">
+        <div className="flex max-h-[90vh] flex-col">
+          <DialogHeader className="px-6 pt-6">
+            <DialogTitle className="text-2xl font-bold">
+              {template ? 'Editar Plantilla' : 'Crear Nueva Plantilla'}
+            </DialogTitle>
+            <DialogDescription className="text-base">
+              {template
+                ? 'Actualiza la información y productos de tu plantilla.'
+                : 'Crea una plantilla con los productos que uses frecuentemente.'}
+            </DialogDescription>
+          </DialogHeader>
 
-        <div className="space-y-6 py-4">
-          {/* Información básica */}
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="name">Nombre de la Plantilla *</Label>
-              <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Ej: Suministros de oficina mensuales"
-                className="rounded-xl"
-              />
+          <div className="flex-1 overflow-y-auto px-6 py-4">
+            {/* Información básica */}
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="name">Nombre de la Plantilla *</Label>
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Ej: Suministros de oficina mensuales"
+                  className="rounded-xl"
+                />
+              </div>
+              <div>
+                <Label htmlFor="description">Descripción (Opcional)</Label>
+                <Textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Describe para qué sirve esta plantilla..."
+                  className="rounded-xl"
+                  rows={3}
+                />
+              </div>
             </div>
-            <div>
-              <Label htmlFor="description">Descripción (Opcional)</Label>
-              <Textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Describe para qué sirve esta plantilla..."
-                className="rounded-xl"
-                rows={3}
+
+            {/* Editor de items */}
+            <div className="mt-6 border-t pt-6">
+              <TemplateItemsEditor
+                items={items}
+                onChange={setItems}
               />
             </div>
           </div>
 
-          {/* Editor de items */}
-          <div className="border-t pt-6">
-            <TemplateItemsEditor
-              items={items}
-              onChange={setItems}
-            />
-          </div>
+          <DialogFooter className="sticky bottom-0 flex flex-col gap-2 border-t border-slate-200 bg-white/95 px-6 py-4 backdrop-blur">
+            <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
+              <Button variant="outline" onClick={onClose} className="rounded-xl">
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleSubmit}
+                disabled={!name.trim()}
+                className="rounded-xl shadow-button hover:shadow-button-hover"
+              >
+                {template ? 'Actualizar Plantilla' : 'Crear Plantilla'}
+              </Button>
+            </div>
+          </DialogFooter>
         </div>
-
-        <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={onClose} className="rounded-xl">
-            Cancelar
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={!name.trim()}
-            className="rounded-xl shadow-lg hover:shadow-xl"
-          >
-            {template ? 'Actualizar Plantilla' : 'Crear Plantilla'}
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
@@ -221,14 +225,14 @@ const TemplatesPage = () => {
                 onClick={() => setFormModal({ isOpen: true, template: null })}
                 size="lg"
                 variant="outline"
-                className="shadow-md hover:shadow-lg whitespace-nowrap"
+                className="shadow-button hover:shadow-button-hover whitespace-nowrap"
               >
                 <PlusCircle className="mr-2 h-5 w-5" /> Nueva Plantilla
               </Button>
               <Button
                 onClick={() => navigate('/catalog')}
                 size="lg"
-                className="shadow-lg hover:shadow-xl whitespace-nowrap"
+                className="shadow-button hover:shadow-button-hover whitespace-nowrap"
               >
                 <FilePlus className="mr-2 h-5 w-5" /> Desde Carrito
               </Button>
@@ -247,7 +251,7 @@ const TemplatesPage = () => {
                 icon={Bot}
                 title="Aún no tienes plantillas"
                 description="Crea tu primera plantilla guardando un carrito de compras para agilizar tus pedidos futuros."
-                actionButton={<Button onClick={() => navigate('/catalog')} size="lg" className="shadow-lg hover:shadow-xl">Ir al Catálogo</Button>}
+                actionButton={<Button onClick={() => navigate('/catalog')} size="lg" className="shadow-button hover:shadow-button-hover">Ir al Catálogo</Button>}
               />
             </div>
           )}
@@ -257,7 +261,7 @@ const TemplatesPage = () => {
       {formModal.isOpen && <TemplateFormModal isOpen={formModal.isOpen} onClose={() => setFormModal({ isOpen: false, template: null })} template={formModal.template} onSave={handleSave} />}
       
       <Dialog open={deleteModal.isOpen} onOpenChange={() => setDeleteModal({ isOpen: false, template: null })}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md border border-slate-200 bg-white shadow-2xl">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold">¿Eliminar plantilla "{deleteModal.template?.name}"?</DialogTitle>
             <DialogDescription className="text-base">Esta acción no se puede deshacer.</DialogDescription>

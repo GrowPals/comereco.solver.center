@@ -106,6 +106,12 @@ export const fetchRequisitions = async (page = 1, pageSize = 10, sortBy = 'creat
  * @returns {Promise<object>} Detalle de la requisición.
  */
 export const fetchRequisitionDetails = async (id) => {
+    // Validar que el ID sea un UUID válido
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!id || !uuidRegex.test(id)) {
+        throw new Error('ID de requisición inválido. Por favor, accede a la requisición desde la lista de requisiciones.');
+    }
+
     // FIX: Evitar embeds ambiguos - consultas separadas según REFERENCIA_TECNICA_BD_SUPABASE.md
     // Primero obtener la requisición base
     // Optimizado: Seleccionar solo campos necesarios para evitar datos innecesarios

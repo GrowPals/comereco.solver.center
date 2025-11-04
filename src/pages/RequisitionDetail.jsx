@@ -126,7 +126,7 @@ const RequisitionDetail = () => {
     }
 
     // CORREGIDO: Usar creator en lugar de requester según documentación
-    const { internal_folio, created_at, business_status, creator, items, total_amount, comments, project, project_id } = requisition;
+    const { internal_folio, created_at, business_status, created_by, creator, items, total_amount, comments, project, project_id } = requisition;
 
     const statusConfig = {
         draft: { text: 'Borrador', variant: 'muted', accent: 'bg-slate-400' },

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PlusCircle, MoreHorizontal, Edit, Trash2, Users, FolderKanban, UserPlus, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
@@ -100,46 +100,90 @@ const ProjectCard = ({ project, onEdit, onDelete, onManageMembers, onView }) => 
   );
 };
 
+const EMPTY_SUPERVISOR_VALUE = 'none';
+
 const ProjectFormModal = ({ project, isOpen, onClose, onSave, supervisors }) => {
   const [name, setName] = useState(project?.name || '');
   const [description, setDescription] = useState(project?.description || '');
-  const [supervisorId, setSupervisorId] = useState(project?.supervisor_id || '');
+  const [supervisorId, setSupervisorId] = useState(project?.supervisor_id ? String(project.supervisor_id) : EMPTY_SUPERVISOR_VALUE);
   const [active, setActive] = useState(project?.active ?? true);
 
+  useEffect(() => {
+    setName(project?.name || '');
+    setDescription(project?.description || '');
+    setSupervisorId(project?.supervisor_id ? String(project.supervisor_id) : EMPTY_SUPERVISOR_VALUE);
+    setActive(project?.active ?? true);
+  }, [project, isOpen]);
+
   const handleSubmit = () => {
-    onSave({ id: project?.id, name, description, supervisor_id: supervisorId, active });
+    const normalizedSupervisorId = supervisorId === EMPTY_SUPERVISOR_VALUE ? null : Number(supervisorId);
+    onSave({
+      id: project?.id,
+      name,
+      description,
+      supervisor_id: normalizedSupervisorId,
+      active
+    });
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">
-            {project ? 'Editar Proyecto' : 'Crear Nuevo Proyecto'}
-          </DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4 py-4">
-          <div><Label htmlFor="name">Nombre del Proyecto</Label><Input id="name" value={name} onChange={(e) => setName(e.target.value)} /></div>
-          <div><Label htmlFor="description">Descripción</Label><Input id="description" value={description} onChange={(e) => setDescription(e.target.value)} /></div>
-          <div>
-            <Label htmlFor="supervisor">Supervisor</Label>
-            <Select value={supervisorId} onValueChange={setSupervisorId}>
-              <SelectTrigger><SelectValue placeholder="Seleccionar supervisor..." /></SelectTrigger>
-              <SelectContent>
-                {supervisors?.map(s => <SelectItem key={s.id} value={s.id}>{s.full_name}</SelectItem>)}
-              </SelectContent>
-            </Select>
+      <DialogContent className="sm:max-w-lg overflow-hidden border border-slate-200 bg-white shadow-2xl p-0">
+        <div className="flex max-h-[85vh] flex-col">
+          <DialogHeader className="px-6 pt-6">
+            <DialogTitle className="text-2xl font-bold">
+              {project ? 'Editar Proyecto' : 'Crear Nuevo Proyecto'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+            <div>
+              <Label htmlFor="name">Nombre del Proyecto</Label>
+              <Input id="name" value={name} onChange={(e) => setName(e.target.value)} className="rounded-xl" />
+            </div>
+            <div>
+              <Label htmlFor="description">Descripción</Label>
+              <Input id="description" value={description} onChange={(e) => setDescription(e.target.value)} className="rounded-xl" />
+            </div>
+            <div>
+              <Label htmlFor="supervisor">Supervisor</Label>
+              <Select value={supervisorId} onValueChange={setSupervisorId}>
+                <SelectTrigger className="rounded-xl">
+                  <SelectValue placeholder="Seleccionar supervisor..." />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl">
+                  <SelectItem value={EMPTY_SUPERVISOR_VALUE}>Sin supervisor</SelectItem>
+                  {supervisors?.filter(Boolean)?.map((s) => (
+                    <SelectItem key={s.id} value={String(s.id)}>
+                      {s.full_name || 'Sin nombre'} ({s.role_v2 === 'admin' ? 'Admin' : 'Supervisor'})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+              <input
+                type="checkbox"
+                id="active"
+                checked={active}
+                onChange={(e) => setActive(e.target.checked)}
+                className="h-4 w-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+              />
+              <Label htmlFor="active" className="text-sm font-medium text-slate-700">Activo</Label>
+            </div>
           </div>
-          <div className="flex items-center space-x-2"><input type="checkbox" id="active" checked={active} onChange={(e) => setActive(e.target.checked)} /><Label htmlFor="active">Activo</Label></div>
+          <DialogFooter className="sticky bottom-0 flex flex-col gap-2 border-t border-slate-200 bg-white/95 px-6 py-4 backdrop-blur">
+            <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
+              <Button variant="outline" onClick={onClose} className="rounded-xl">Cancelar</Button>
+              <Button onClick={handleSubmit} className="rounded-xl shadow-button hover:shadow-button-hover">Guardar</Button>
+            </div>
+          </DialogFooter>
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Cancelar</Button>
-          <Button onClick={handleSubmit}>Guardar</Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 };
+
+const MANAGE_MEMBERS_PLACEHOLDER = 'none';
 
 const ManageMembersModal = ({ project, isOpen, onClose }) => {
     const queryClient = useQueryClient();
@@ -150,14 +194,20 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
         enabled: !!project,
     });
     const { data: companyUsers } = useQuery({ queryKey: ['companyUsers'], queryFn: fetchUsersInCompany });
-    const [selectedUser, setSelectedUser] = useState('');
+    const [selectedUser, setSelectedUser] = useState(MANAGE_MEMBERS_PLACEHOLDER);
+
+    useEffect(() => {
+        if (!isOpen) {
+            setSelectedUser(MANAGE_MEMBERS_PLACEHOLDER);
+        }
+    }, [isOpen, project?.id]);
 
     const addMemberMutation = useMutation({
         mutationFn: ({ projectId, userId }) => addProjectMember(projectId, userId),
         onSuccess: () => {
             queryClient.invalidateQueries(['projectMembers', project.id]);
             toast({ title: 'Miembro agregado' });
-            setSelectedUser('');
+            setSelectedUser(MANAGE_MEMBERS_PLACEHOLDER);
         },
         onError: (error) => toast({ variant: 'destructive', title: 'Error', description: error.message }),
     });
@@ -181,80 +231,96 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
         onError: (error) => toast({ variant: 'destructive', title: 'Error', description: error.message }),
     });
 
-    const availableUsers = companyUsers?.filter(u => !members?.some(m => m.user_id === u.id)) || [];
+    const availableUsers = (companyUsers || [])
+        .filter((u) => u && u.id && !members?.some(m => m.user_id === u.id));
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-2xl">
-                <DialogHeader>
-                    <DialogTitle>Gestionar Miembros de "{project?.name}"</DialogTitle>
-                    <DialogDescription>Agrega usuarios y configura si requieren aprobación para enviar requisiciones.</DialogDescription>
-                </DialogHeader>
-                <div className="py-4 space-y-4">
-                    <div className="flex gap-2">
-                        <Select value={selectedUser} onValueChange={setSelectedUser}>
-                            <SelectTrigger><SelectValue placeholder="Agregar miembro..." /></SelectTrigger>
-                            <SelectContent>
-                                {availableUsers.map(u => <SelectItem key={u.id} value={u.id}>{u.full_name}</SelectItem>)}
-                            </SelectContent>
-                        </Select>
-                        <Button 
-                            onClick={() => addMemberMutation.mutate({ projectId: project.id, userId: selectedUser })} 
-                            disabled={!selectedUser || addMemberMutation.isPending}
-                            isLoading={addMemberMutation.isPending}
-                            className="shadow-md hover:shadow-lg"
-                            title={!selectedUser ? 'Selecciona un usuario para agregar' : 'Agregar miembro'}
-                        >
-                            <UserPlus className="h-4 w-4"/>
-                        </Button>
-                    </div>
-                    <div className="max-h-96 overflow-y-auto space-y-2 pr-2">
-                        {isLoadingMembers ? (
-                            <p className="text-center text-muted-foreground py-4">Cargando miembros...</p>
-                        ) : members && members.length > 0 ? (
-                            members.map(member => (
-                                <div key={member.user_id} className="flex items-center justify-between bg-muted p-3 rounded-lg hover:bg-muted/80 transition-colors">
-                                    <div className="flex-1">
-                                        <p className="font-medium">{member.user.full_name}</p>
-                                        <p className="text-sm text-muted-foreground">
-                                            {member.requires_approval ? 'Requiere aprobación' : 'Aprobación automática'}
-                                        </p>
+            <DialogContent className="max-w-2xl overflow-hidden border border-slate-200 bg-white shadow-2xl p-0">
+                <div className="flex max-h-[85vh] flex-col">
+                    <DialogHeader className="px-6 pt-6">
+                        <DialogTitle>Gestionar Miembros de "{project?.name}"</DialogTitle>
+                        <DialogDescription>Agrega usuarios y configura si requieren aprobación para enviar requisiciones.</DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 px-6 py-4">
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                            <Select value={selectedUser} onValueChange={setSelectedUser}>
+                                <SelectTrigger className="rounded-xl">
+                                    <SelectValue placeholder="Agregar miembro..." />
+                                </SelectTrigger>
+                                <SelectContent className="rounded-xl">
+                                    <SelectItem value={MANAGE_MEMBERS_PLACEHOLDER} disabled>
+                                        Seleccionar miembro…
+                                    </SelectItem>
+                                    {availableUsers.length === 0 ? (
+                                        <div className="px-3 py-2 text-sm text-slate-500">Sin usuarios disponibles</div>
+                                    ) : (
+                                        availableUsers.map(u => (
+                                            <SelectItem key={u.id} value={String(u.id)}>{u.full_name || u.email}</SelectItem>
+                                        ))
+                                    )}
+                                </SelectContent>
+                            </Select>
+                            <Button 
+                                onClick={() => selectedUser !== MANAGE_MEMBERS_PLACEHOLDER && addMemberMutation.mutate({ projectId: project.id, userId: Number(selectedUser) })} 
+                                disabled={selectedUser === MANAGE_MEMBERS_PLACEHOLDER || addMemberMutation.isPending}
+                                isLoading={addMemberMutation.isPending}
+                                className="rounded-xl shadow-button hover:shadow-button-hover"
+                                title={selectedUser === MANAGE_MEMBERS_PLACEHOLDER ? 'Selecciona un usuario para agregar' : 'Agregar miembro'}
+                            >
+                                <UserPlus className="h-4 w-4"/>
+                            </Button>
+                        </div>
+                        <div className="max-h-96 space-y-2 overflow-y-auto pr-2">
+                            {isLoadingMembers ? (
+                                <p className="py-4 text-center text-slate-500">Cargando miembros...</p>
+                            ) : members && members.length > 0 ? (
+                                members.map(member => (
+                                    <div key={member.user_id} className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 p-3">
+                                        <div className="flex-1">
+                                            <p className="font-medium text-slate-900">{member.user.full_name}</p>
+                                            <p className="text-sm text-slate-500">
+                                                {member.requires_approval ? 'Requiere aprobación' : 'Aprobación automática'}
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <Button
+                                                variant={member.requires_approval ? "outline" : "default"}
+                                                size="sm"
+                                                className="rounded-xl"
+                                                onClick={() => toggleApprovalMutation.mutate({
+                                                    projectId: project.id,
+                                                    userId: member.user_id,
+                                                    requiresApproval: !member.requires_approval
+                                                })}
+                                                disabled={toggleApprovalMutation.isPending}
+                                            >
+                                                {member.requires_approval ? (
+                                                    <><XCircle className="mr-1 h-4 w-4" /> Requiere aprobación</>
+                                                ) : (
+                                                    <><CheckCircle2 className="mr-1 h-4 w-4" /> Auto-aprobado</>
+                                                )}
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-9 w-9 rounded-xl text-destructive hover:bg-destructive/10"
+                                                onClick={() => removeMemberMutation.mutate({ projectId: project.id, userId: member.user_id })}
+                                            >
+                                                <Trash2 className="h-4 w-4"/>
+                                            </Button>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <Button
-                                            variant={member.requires_approval ? "outline" : "default"}
-                                            size="sm"
-                                            className="h-8"
-                                            onClick={() => toggleApprovalMutation.mutate({
-                                                projectId: project.id,
-                                                userId: member.user_id,
-                                                requiresApproval: !member.requires_approval
-                                            })}
-                                            disabled={toggleApprovalMutation.isPending}
-                                        >
-                                            {member.requires_approval ? (
-                                                <><XCircle className="h-3.5 w-3.5 mr-1" /> Requiere aprobación</>
-                                            ) : (
-                                                <><CheckCircle2 className="h-3.5 w-3.5 mr-1" /> Auto-aprobado</>
-                                            )}
-                                        </Button>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-8 w-8"
-                                            onClick={() => removeMemberMutation.mutate({ projectId: project.id, userId: member.user_id })}
-                                        >
-                                            <Trash2 className="h-4 w-4 text-destructive"/>
-                                        </Button>
-                                    </div>
-                                </div>
-                            ))
-                        ) : (
-                            <p className="text-center text-muted-foreground py-8">No hay miembros en este proyecto</p>
-                        )}
+                                ))
+                            ) : (
+                                <p className="py-8 text-center text-slate-500">No hay miembros en este proyecto</p>
+                            )}
+                        </div>
                     </div>
+                    <DialogFooter className="sticky bottom-0 border-t border-slate-200 bg-white/95 px-6 py-4 backdrop-blur">
+                        <Button onClick={onClose} className="rounded-xl">Cerrar</Button>
+                    </DialogFooter>
                 </div>
-                <DialogFooter><Button onClick={onClose}>Cerrar</Button></DialogFooter>
             </DialogContent>
         </Dialog>
     );

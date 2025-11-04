@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo, memo, useCallback } from 'react';
+import React, { useState, useMemo, memo, useCallback, useEffect } from 'react';
 import { useCart } from '@/context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { createTemplate } from '@/services/templateService';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import OptimizedImage from '@/components/OptimizedImage';
@@ -50,7 +51,7 @@ const CartItem = memo(({ item }) => {
         <OptimizedImage
           src={item.image_url}
           alt={`Imagen de ${item.name || 'producto'}`}
-          fallback="/placeholder.png"
+          fallback="/placeholder.svg"
           loading="lazy"
           className="w-full h-full object-contain p-2"
         />
@@ -66,7 +67,7 @@ const CartItem = memo(({ item }) => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             variant="outline"
             size="icon"
@@ -77,7 +78,7 @@ const CartItem = memo(({ item }) => {
           >
             <Minus size={16} aria-hidden="true" />
           </Button>
-          <span className="w-12 text-center font-semibold text-sm text-foreground" aria-label={`Cantidad: ${itemQuantity}`}>
+          <span className="min-w-[3rem] text-center font-semibold text-sm text-foreground" aria-label={`Cantidad: ${itemQuantity}`}>
             {itemQuantity}
           </span>
           <Button
@@ -91,7 +92,7 @@ const CartItem = memo(({ item }) => {
         </div>
       </div>
 
-      <div className="text-right flex flex-col items-end gap-2 flex-shrink-0">
+      <div className="text-right flex flex-col items-end gap-2 flex-shrink-0 min-w-[90px]">
         <p className="font-bold text-sm text-foreground">
           ${subtotal.toFixed(2)}
         </p>
@@ -99,7 +100,7 @@ const CartItem = memo(({ item }) => {
           variant="ghost"
           size="icon"
           onClick={handleRemove}
-          className="w-10 h-10 rounded-full hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-destructive focus:ring-offset-2"
+          className="w-10 h-10 rounded-full bg-destructive/10 text-destructive hover:bg-destructive hover:text-white transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-destructive focus:ring-offset-2"
           aria-label={`Eliminar ${item.name || 'producto'} del carrito`}
         >
           <Trash2 size={18} aria-hidden="true" />
@@ -169,52 +170,64 @@ const SaveTemplateModal = ({ isOpen, onOpenChange, cartItems }) => {
     }
   };
 
+  useEffect(() => {
+    if (!isOpen) {
+      setName('');
+      setDescription('');
+      setIsSaving(false);
+    }
+  }, [isOpen]);
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="rounded-2xl">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl">
-            <BookmarkPlus className="w-5 h-5 text-primary" />
-            Guardar como Plantilla
-          </DialogTitle>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
-            <Label htmlFor="template-name" className="text-sm font-semibold">
-              Nombre de la Plantilla
-            </Label>
-            <Input
-              id="template-name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Ej: Pedido semanal de oficina"
-              className="rounded-xl"
-            />
+      <DialogContent className="sm:max-w-md overflow-hidden border border-slate-200 bg-white shadow-2xl p-0">
+        <div className="flex flex-col">
+          <DialogHeader className="px-6 pt-6">
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <BookmarkPlus className="h-5 w-5 text-primary" />
+              Guardar como Plantilla
+            </DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 px-6 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="template-name" className="text-sm font-semibold">
+                Nombre de la Plantilla
+              </Label>
+              <Input
+                id="template-name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Ej: Pedido semanal de oficina"
+                className="rounded-xl"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="template-description" className="text-sm font-semibold">
+                Descripción (opcional)
+              </Label>
+              <Textarea
+                id="template-description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Una breve descripción de esta plantilla."
+                className="rounded-xl"
+              />
+            </div>
           </div>
-          <div className="grid gap-2">
-            <Label htmlFor="template-description" className="text-sm font-semibold">
-              Descripción (opcional)
-            </Label>
-            <Textarea
-              id="template-description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Una breve descripción de esta plantilla."
-              className="rounded-xl"
-            />
-          </div>
+          <DialogFooter className="sticky bottom-0 flex flex-col gap-2 border-t border-slate-200 bg-white/95 px-6 py-4 backdrop-blur">
+            <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
+              <DialogClose asChild>
+                <Button type="button" variant="outline" className="rounded-xl" disabled={isSaving}>
+                  Cancelar
+                </Button>
+              </DialogClose>
+              <Button type="button" onClick={handleSave} className="rounded-xl shadow-button hover:shadow-button-hover" disabled={isSaving}>
+                {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isSaving ? 'Guardando...' : 'Guardar'}
+              </Button>
+            </div>
+          </DialogFooter>
         </div>
-        <DialogFooter className="gap-2">
-          <DialogClose asChild>
-            <Button type="button" variant="outline" className="rounded-xl" disabled={isSaving}>
-              Cancelar
-            </Button>
-          </DialogClose>
-          <Button type="button" onClick={handleSave} className="rounded-xl" disabled={isSaving}>
-            {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isSaving ? 'Guardando...' : 'Guardar'}
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
@@ -225,9 +238,20 @@ const Cart = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isTemplateModalOpen, setTemplateModalOpen] = useState(false);
+  const [isClearCartDialogOpen, setClearCartDialogOpen] = useState(false);
 
   const handleClearCart = () => {
+    setClearCartDialogOpen(true);
+  };
+
+  const confirmClearCart = () => {
     clearCart();
+    setClearCartDialogOpen(false);
+    toast({
+      title: "Carrito vaciado",
+      description: "Se han eliminado todos los productos del carrito.",
+      variant: "default"
+    });
   };
 
   const handleCheckout = () => {
@@ -251,6 +275,16 @@ const Cart = () => {
   return (
     <>
       <SaveTemplateModal isOpen={isTemplateModalOpen} onOpenChange={setTemplateModalOpen} cartItems={items} />
+      <ConfirmDialog
+        open={isClearCartDialogOpen}
+        onOpenChange={setClearCartDialogOpen}
+        title="¿Vaciar el carrito?"
+        description="Esta acción eliminará todos los productos de tu carrito. No podrás deshacer esta acción."
+        confirmText="Vaciar carrito"
+        cancelText="Cancelar"
+        variant="destructive"
+        onConfirm={confirmClearCart}
+      />
       {isCartOpen && (
         <>
           <div
@@ -262,7 +296,7 @@ const Cart = () => {
             aria-modal="true"
             aria-labelledby="cart-title"
           >
-            <header className="flex items-center justify-between px-5 py-4 border-b">
+            <header className="flex items-center justify-between px-5 py-4 border-b flex-shrink-0">
               <div className="flex items-center gap-3">
                 <ShoppingCart className="w-6 h-6 text-primary" aria-hidden="true" />
                 <h2 id="cart-title" className="text-xl font-bold text-foreground">Tu Carrito</h2>
@@ -272,10 +306,10 @@ const Cart = () => {
                   </Badge>
                 )}
               </div>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={toggleCart} 
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleCart}
                 className="rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                 aria-label="Cerrar carrito"
               >
@@ -283,8 +317,8 @@ const Cart = () => {
               </Button>
             </header>
 
-            <div className="flex-1 relative">
-              <ScrollArea className="absolute inset-0">
+            <div className="flex-1 overflow-hidden">
+              <ScrollArea className="h-full">
                 <div className="px-5" role="list" aria-label="Productos en el carrito">
                   {items.length > 0 ? (
                     items.map((item, index) => (
@@ -314,7 +348,7 @@ const Cart = () => {
             </div>
 
             {items.length > 0 && (
-              <footer className="px-5 py-6 border-t bg-background space-y-4">
+              <footer className="px-5 py-6 border-t bg-background space-y-4 flex-shrink-0">
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between text-foreground">
                     <span>Subtotal</span>

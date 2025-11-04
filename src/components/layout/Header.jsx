@@ -1,19 +1,27 @@
 
-import React, { useMemo, useCallback, memo } from 'react';
+import React, { useMemo, useCallback, memo, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, ChevronDown, LogOut, Search, User } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { ChevronDown, LogOut, Search, User } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import NotificationCenter from '@/components/layout/NotificationCenter';
 import { CartIcon } from '@/components/CartIcon';
 import GlobalSearch from '@/components/layout/GlobalSearch';
+import { cn } from '@/lib/utils';
 
-const Header = memo(({ setSidebarOpen }) => {
+const MOBILE_BREAKPOINT = 1024;
+
+const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
     const { user, signOut } = useSupabaseAuth();
     const navigate = useNavigate();
+
+    const [isDesktop, setIsDesktop] = useState(() => {
+        if (typeof window === 'undefined') return true;
+        return window.innerWidth >= MOBILE_BREAKPOINT;
+    });
+    const [showMobileBar, setShowMobileBar] = useState(true);
+    const lastScrollY = useRef(0);
 
     const handleLogout = useCallback(async () => {
         await signOut();
@@ -25,71 +33,143 @@ const Header = memo(({ setSidebarOpen }) => {
         return userName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
     }, [userName]);
 
+    useEffect(() => {
+        if (typeof window === 'undefined') return undefined;
+
+        const handleResize = () => {
+            const nextIsDesktop = window.innerWidth >= MOBILE_BREAKPOINT;
+            setIsDesktop(nextIsDesktop);
+            if (nextIsDesktop) {
+                setShowMobileBar(true);
+            }
+        };
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    useEffect(() => {
+        if (typeof window === 'undefined' || isDesktop) {
+            return undefined;
+        }
+
+        const handleScroll = () => {
+            const current = window.scrollY;
+
+            if (current < 24) {
+                setShowMobileBar(true);
+                lastScrollY.current = current;
+                return;
+            }
+
+            if (current > lastScrollY.current + 12) {
+                setShowMobileBar(false);
+            } else if (current < lastScrollY.current - 12) {
+                setShowMobileBar(true);
+            }
+
+            lastScrollY.current = current;
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [isDesktop]);
+
     return (
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-sm px-4 md:px-8" role="banner">
-            {/* Mobile Logo - Sin botón hamburger */}
-            <div className="flex items-center lg:hidden">
-                <Link to="/dashboard" className="flex items-center gap-2" aria-label="ComerECO - Ir al inicio">
-                    <img
-                        src="https://i.ibb.co/2YYFKR0j/isotipo-comereco.png"
-                        alt="ComerECO"
-                        className="w-8 h-8 object-contain"
-                        loading="eager"
-                    />
-                    <span className="text-lg font-bold tracking-tight">
-                        <span className="text-slate-900">Comer</span>
-                        <span className="bg-gradient-primary bg-clip-text text-transparent">ECO</span>
-                    </span>
-                </Link>
-            </div>
+        <header
+            className={cn(
+                'sticky top-0 z-50 w-full transition-transform duration-300 ease-out',
+                isDesktop
+                    ? 'flex h-16 items-center justify-between gap-4 border-b border-slate-200 bg-white/95 px-4 shadow-sm backdrop-blur-md md:px-8'
+                    : 'border-b border-transparent bg-white/95 px-4 pb-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] backdrop-blur-md'
+            )}
+            role="banner"
+            style={!isDesktop ? { transform: showMobileBar ? 'translateY(0)' : 'translateY(-110%)' } : undefined}
+        >
+            {isDesktop ? (
+                <>
+                    <div className="flex items-center lg:hidden">
+                        <Link to="/dashboard" className="flex items-center gap-2" aria-label="ComerECO - Ir al inicio">
+                            <img
+                                src="https://i.ibb.co/2YYFKR0j/isotipo-comereco.png"
+                                alt="ComerECO"
+                                className="h-8 w-8 object-contain"
+                                loading="eager"
+                            />
+                            <span className="text-lg font-bold tracking-tight">
+                                <span className="text-slate-900">Comer</span>
+                                <span className="bg-gradient-primary bg-clip-text text-transparent">ECO</span>
+                            </span>
+                        </Link>
+                    </div>
 
-            {/* Search bar (Desktop) */}
-            <div className="hidden lg:block flex-1 max-w-md">
-                <GlobalSearch />
-            </div>
+                    <div className="hidden lg:block">
+                        <Link to="/dashboard" className="flex items-center gap-2" aria-label="ComerECO - Ir al inicio">
+                            <img
+                                src="https://i.ibb.co/2YYFKR0j/isotipo-comereco.png"
+                                alt="ComerECO"
+                                className="h-9 w-9 object-contain"
+                                loading="eager"
+                            />
+                            <span className="text-xl font-bold tracking-tight">
+                                <span className="text-slate-900">Comer</span>
+                                <span className="bg-gradient-primary bg-clip-text text-transparent">ECO</span>
+                            </span>
+                        </Link>
+                    </div>
 
-            {/* Right side actions */}
-            <div className="flex items-center gap-2">
-                {/* Carrito - visible en mobile y desktop */}
-                <CartIcon />
+                    <div className="hidden lg:block flex-1 max-w-xl">
+                        <GlobalSearch />
+                    </div>
 
-                {/* Notificaciones - visible en mobile y desktop */}
-                <NotificationCenter />
-
-                {/* Menú de usuario - solo desktop */}
-                <div className="hidden lg:flex items-center">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <button className="flex items-center gap-3 cursor-pointer rounded-xl px-3 py-2 hover:bg-slate-100 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-                                aria-label={`Menú de usuario: ${userName}`}
-                                aria-haspopup="true"
-                            >
-                                <Avatar className="h-9 w-9 ring-2 ring-blue-100">
-                                    <AvatarImage alt={`Avatar de ${userName}`} src={user?.avatar_url} />
-                                    <AvatarFallback className="bg-gradient-primary text-white font-semibold text-sm">{userInitials}</AvatarFallback>
-                                </Avatar>
-                                <span className="font-semibold text-sm text-slate-900">{userName}</span>
-                                <ChevronDown className="h-4 w-4 text-slate-500" aria-hidden="true" />
-                            </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-56" align="end" role="menu">
-                            <DropdownMenuItem asChild role="menuitem">
-                                <Link to="/profile"><User className="mr-2 h-4 w-4" aria-hidden="true" /> Mi Perfil</Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                                onClick={handleLogout}
-                                className="text-error focus:text-error focus:bg-error-light"
-                                role="menuitem"
-                                aria-label="Cerrar sesión"
-                            >
-                                <LogOut className="mr-2 h-4 w-4" aria-hidden="true" />
-                                <span>Cerrar Sesión</span>
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <div className="flex flex-1 items-center justify-end gap-2">
+                        <CartIcon />
+                        <NotificationCenter />
+                        <div className="hidden lg:flex items-center">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <button
+                                        className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                        aria-label={`Menú de usuario: ${userName}`}
+                                        aria-haspopup="true"
+                                    >
+                                        <Avatar className="h-9 w-9 ring-2 ring-blue-100">
+                                            <AvatarImage alt={`Avatar de ${userName}`} src={user?.avatar_url} />
+                                            <AvatarFallback className="bg-gradient-primary text-sm font-semibold text-white">{userInitials}</AvatarFallback>
+                                        </Avatar>
+                                        <span className="text-sm font-semibold text-slate-900">{userName}</span>
+                                        <ChevronDown className="h-4 w-4 text-slate-500" aria-hidden="true" />
+                                    </button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-56" align="end" role="menu">
+                                    <DropdownMenuItem asChild role="menuitem">
+                                        <Link to="/profile"><User className="mr-2 h-4 w-4" aria-hidden="true" /> Mi Perfil</Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem
+                                        onClick={handleLogout}
+                                        className="text-error focus:bg-error-light focus:text-error"
+                                        role="menuitem"
+                                        aria-label="Cerrar sesión"
+                                    >
+                                        <LogOut className="mr-2 h-4 w-4" aria-hidden="true" />
+                                        <span>Cerrar Sesión</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    </div>
+                </>
+            ) : (
+                <div className="flex items-center gap-3">
+                    <div className="flex-1">
+                        <GlobalSearch variant="mobile" />
+                    </div>
+                    <NotificationCenter variant="icon" />
+                    <CartIcon variant="compact" />
                 </div>
-            </div>
+            )}
         </header>
     );
 });

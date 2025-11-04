@@ -123,15 +123,42 @@ export const getTopProducts = async (limit = 10) => {
 
     const requisitionIds = requisitions.map(r => r.id);
 
-    // Obtener los items de esas requisiciones con información del producto
+    // Obtener los items de esas requisiciones (sin join para evitar PGRST201)
     const { data: items, error: itemsError } = await supabase
         .from('requisition_items')
-        .select('product_id, quantity, products(name)')
+        .select('product_id, quantity')
         .in('requisition_id', requisitionIds);
 
     if (itemsError) {
         logger.error('Error fetching requisition items:', itemsError);
-        throw new Error(formatErrorMessage(itemsError));
+        // Devolver array vacío en lugar de lanzar error
+        return [];
+    }
+
+    if (!items || items.length === 0) {
+        return [];
+    }
+
+    // Obtener IDs únicos de productos
+    const uniqueProductIds = [...new Set(items.map(item => item.product_id))];
+
+    // Obtener nombres de productos en consulta separada para evitar error de permisos
+    let productNames = {};
+    try {
+        const { data: products, error: productsError } = await supabase
+            .from('products')
+            .select('id, name')
+            .in('id', uniqueProductIds);
+
+        if (productsError) {
+            logger.error('Error fetching product names:', productsError);
+        } else if (products) {
+            products.forEach(p => {
+                productNames[p.id] = p.name;
+            });
+        }
+    } catch (err) {
+        logger.error('Exception fetching product names:', err);
     }
 
     // Agrupar por producto y sumar cantidades
@@ -139,7 +166,7 @@ export const getTopProducts = async (limit = 10) => {
 
     items.forEach(item => {
         const productId = item.product_id;
-        const productName = item.products?.name || 'Producto desconocido';
+        const productName = productNames[productId] || `Producto ${productId.slice(0, 8)}`;
         const quantity = Number(item.quantity) || 0;
 
         if (!productMap[productId]) {
@@ -216,14 +243,42 @@ export const getRequisitionsByUser = async () => {
     const { companyId } = await getCachedCompanyId();
     if (!companyId) throw new Error('Empresa no encontrada');
 
+    // Obtener requisiciones sin join para evitar PGRST201
     const { data: requisitions, error } = await supabase
         .from('requisitions')
-        .select('created_by, profiles(full_name)')
+        .select('created_by')
         .eq('company_id', companyId);
 
     if (error) {
         logger.error('Error fetching requisitions by user:', error);
-        throw new Error(formatErrorMessage(error));
+        // Devolver array vacío en lugar de lanzar error
+        return [];
+    }
+
+    if (!requisitions || requisitions.length === 0) {
+        return [];
+    }
+
+    // Obtener IDs únicos de usuarios
+    const uniqueUserIds = [...new Set(requisitions.map(req => req.created_by))];
+
+    // Obtener nombres de usuarios en consulta separada para evitar error de permisos
+    let userNames = {};
+    try {
+        const { data: profiles, error: profilesError } = await supabase
+            .from('profiles')
+            .select('id, full_name')
+            .in('id', uniqueUserIds);
+
+        if (profilesError) {
+            logger.error('Error fetching profile names:', profilesError);
+        } else if (profiles) {
+            profiles.forEach(p => {
+                userNames[p.id] = p.full_name;
+            });
+        }
+    } catch (err) {
+        logger.error('Exception fetching profile names:', err);
     }
 
     // Agrupar por usuario
@@ -231,7 +286,7 @@ export const getRequisitionsByUser = async () => {
 
     requisitions.forEach(req => {
         const userId = req.created_by;
-        const userName = req.profiles?.full_name || 'Usuario desconocido';
+        const userName = userNames[userId] || `Usuario ${userId.slice(0, 8)}`;
 
         if (!userMap[userId]) {
             userMap[userId] = {

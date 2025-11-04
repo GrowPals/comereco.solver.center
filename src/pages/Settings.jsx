@@ -68,7 +68,7 @@ const SettingsPage = () => {
         <>
             <Helmet><title>Configuración - ComerECO</title></Helmet>
             <div className="flex flex-col lg:flex-row min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
-                    <aside className="w-full lg:w-72 bg-white lg:border-r-2 border-b-2 lg:border-b-0 border-slate-200 lg:shadow-lg">
+                    <aside className="w-full lg:w-80 bg-white lg:border-r-2 border-b-2 lg:border-b-0 border-slate-200 lg:shadow-lg">
                     <div className="p-6 hidden lg:block border-b-2 border-slate-200">
                         <div className="flex items-center gap-3">
                             <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm">
@@ -114,7 +114,7 @@ const SettingsPage = () => {
                         ))}
                     </nav>
                     </aside>
-                    <main className="flex-1 p-4 sm:p-6 lg:p-8">
+                    <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
                         {renderContent()}
                     </main>
                 </div>

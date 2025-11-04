@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback, memo } from 'react';
-import { Heart, Plus, Check, Loader2, ShoppingCart } from 'lucide-react';
+import { Heart, Plus, Loader2, Minus, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
 import { useFavorites } from '@/hooks/useFavorites';
@@ -8,132 +8,182 @@ import { useToastNotification } from '@/components/ui/toast-notification';
 import OptimizedImage from '@/components/OptimizedImage';
 
 const ProductCard = memo(({ product }) => {
-  const { addToCart, getItemQuantity } = useCart();
+  const { addToCart, getItemQuantity, updateQuantity, removeFromCart } = useCart();
   const { favorites, toggleFavorite } = useFavorites();
   const toast = useToastNotification();
 
   const [isAdding, setIsAdding] = useState(false);
-  const [isAdded, setIsAdded] = useState(false);
+  const [currentQuantity, setCurrentQuantity] = useState(0);
 
   const isFavorite = Array.isArray(favorites) && favorites.includes(product.id);
 
   useEffect(() => {
     const quantity = getItemQuantity(product.id);
-    setIsAdded(quantity > 0);
+    setCurrentQuantity(quantity);
   }, [getItemQuantity, product.id]);
 
-  const handleAddToCart = useCallback((e) => {
-    e.stopPropagation();
-    if (isAdded) return;
-    setIsAdding(true);
-    setTimeout(() => {
-      addToCart(product);
-      setIsAdding(false);
-      setIsAdded(true);
-      toast.success('¡Producto añadido!', `${product.name || product.nombre} se agregó al carrito`);
-    }, 300);
-  }, [isAdded, addToCart, product, toast]);
+  const handleAddToCart = useCallback(
+    (event) => {
+      event.stopPropagation();
+      if (currentQuantity > 0) return;
+      setIsAdding(true);
+      setTimeout(() => {
+        addToCart(product);
+        setIsAdding(false);
+        toast.success('¡Producto añadido!', `${product.name || product.nombre} se agregó al carrito.`);
+      }, 260);
+    },
+    [currentQuantity, addToCart, product, toast]
+  );
 
-  const handleToggleFavorite = useCallback((e) => {
-    e.stopPropagation();
-    toggleFavorite(product.id, product.name || product.nombre);
-  }, [toggleFavorite, product.id, product.name]);
+  const handleIncrease = useCallback(
+    (event) => {
+      event.stopPropagation();
+      updateQuantity(product.id, currentQuantity + 1);
+    },
+    [updateQuantity, product.id, currentQuantity]
+  );
 
-  // Navegación a detalles de producto - Disponible en versión futura
-  // const handleCardClick = useCallback(() => {
-  //   navigate(`/products/${product.id}`);
-  // }, [navigate, product.id]);
+  const handleDecrease = useCallback(
+    (event) => {
+      event.stopPropagation();
+      if (currentQuantity <= 1) {
+        removeFromCart(product.id);
+      } else {
+        updateQuantity(product.id, currentQuantity - 1);
+      }
+    },
+    [updateQuantity, removeFromCart, product.id, currentQuantity]
+  );
+
+  const handleToggleFavorite = useCallback(
+    (event) => {
+      event.stopPropagation();
+      toggleFavorite(product.id, product.name || product.nombre);
+    },
+    [toggleFavorite, product.id, product.name]
+  );
 
   const productName = product.name || product.nombre || 'Producto sin nombre';
-  const productPrice = (product.price || product.precio || 0).toFixed(2);
+  const productPrice = Number(product.price || product.precio || 0).toFixed(2);
   const productCategory = product.category || product.categoria || 'Sin categoría';
+  const productAvailability = product.availability || product.disponibilidad;
+  const stock = Number.isFinite(product.stock) ? product.stock : product.existencias;
+  const isInStock = stock === undefined ? true : stock > 0;
 
   return (
     <article
-      className="group relative bg-white rounded-xl md:rounded-2xl overflow-hidden border border-slate-200 hover:border-blue-200 hover:shadow-lg transition-all duration-300 h-full flex flex-col"
+      className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus-within:-translate-y-1 focus-within:shadow-xl"
       role="article"
-      aria-label={`Producto ${productName}, precio ${productPrice} pesos, categoría ${productCategory}`}
+      aria-label={`Producto ${productName}, precio ${productPrice} pesos`}
     >
-      {/* Imagen del producto */}
-      <div className="relative aspect-square bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden">
+      <div className="relative overflow-hidden">
         <OptimizedImage
           src={product.image_url || product.image}
           alt={`Imagen de ${productName}`}
-          fallback="/placeholder.png"
+          fallback="/placeholder.svg"
           loading="lazy"
-          className="w-full h-full object-contain p-2 md:p-4 group-hover:scale-105 transition-transform duration-300"
+          className="aspect-[4/5] w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
 
-        {/* Botón de favorito - Esquina superior derecha */}
+        <div className="absolute left-4 top-4 flex flex-wrap items-center gap-2">
+          <span className="rounded-full bg-white/95 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-700 shadow-sm backdrop-blur">
+            {productCategory}
+          </span>
+          {productAvailability && (
+            <span className="rounded-full bg-emerald-500/90 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white shadow-sm">
+              {productAvailability}
+            </span>
+          )}
+        </div>
+
         <button
           onClick={handleToggleFavorite}
-          className="absolute top-2 right-2 z-10 w-8 h-8 md:w-9 md:h-9 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:shadow-lg hover:bg-white flex items-center justify-center transition-all duration-200 active:scale-90"
+          className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/95 text-slate-500 shadow-lg transition-all duration-200 hover:text-red-500"
           aria-label={isFavorite ? `Quitar ${productName} de favoritos` : `Añadir ${productName} a favoritos`}
           aria-pressed={isFavorite}
         >
           <Heart
             className={cn(
-              'w-4 h-4 md:w-4.5 md:h-4.5 transition-all duration-200',
-              isFavorite ? 'fill-red-500 text-red-500 scale-110' : 'text-slate-400 hover:text-red-500'
+              'h-5 w-5 transition-all duration-200',
+              isFavorite ? 'scale-110 fill-red-500 text-red-500' : 'group-hover:scale-105'
             )}
             aria-hidden="true"
           />
         </button>
-
-        {/* Badge de categoría - Solo en desktop */}
-        <div className="hidden md:block absolute bottom-2 left-2 px-2 py-1 rounded-md bg-white/90 backdrop-blur-sm shadow-sm">
-          <p className="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">
-            {productCategory}
-          </p>
-        </div>
       </div>
 
-      {/* Info del producto */}
-      <div className="p-2 md:p-4 space-y-2 md:space-y-3 flex-1 flex flex-col">
-        {/* Categoría - Solo mobile */}
-        <div className="md:hidden">
-          <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wide">
-            {productCategory}
-          </p>
+      <div className="flex flex-1 flex-col gap-4 p-4">
+        <div className="space-y-2">
+          <h3 className="line-clamp-2 text-base font-semibold leading-snug text-slate-900 sm:text-lg">
+            {productName}
+          </h3>
+          <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide">
+            <span className={cn('rounded-full px-2.5 py-1', isInStock ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500')}>
+              {isInStock ? 'Disponible' : 'Sin stock'}
+            </span>
+            {Number.isFinite(stock) && (
+              <span className="text-slate-500">{stock} pzas</span>
+            )}
+          </div>
         </div>
 
-        {/* Nombre del producto */}
-        <h3 className="font-semibold md:font-bold text-slate-900 text-xs md:text-sm line-clamp-2 leading-snug min-h-[2rem] md:min-h-[2.5rem]">
-          {productName}
-        </h3>
-
-        {/* Precio y botón de agregar */}
-        <div className="flex items-end justify-between gap-2 mt-auto pt-2 border-t border-slate-100">
-          <div className="flex flex-col">
-            <span className="text-xs text-slate-500 font-medium mb-0.5 hidden md:block">Precio</span>
-            <span className="text-lg md:text-xl font-bold text-slate-900 tracking-tight">
-              ${productPrice}
-            </span>
+        <div className="mt-auto flex flex-col gap-4">
+          <div className="flex items-end justify-between gap-4">
+            <div className="space-y-1">
+              <span className="text-xs font-medium uppercase tracking-wide text-slate-500">Precio</span>
+              <p className="text-2xl font-bold tracking-tight text-slate-900">
+                ${productPrice}
+              </p>
+            </div>
+            {product.unit && (
+              <span className="text-xs font-semibold text-slate-500">{product.unit}</span>
+            )}
           </div>
 
-          {/* Botón agregar al carrito */}
-          <button
-            onClick={handleAddToCart}
-            disabled={isAdding || isAdded}
-            className={cn(
-              'flex items-center justify-center rounded-lg md:rounded-xl transition-all duration-200 active:scale-95 shadow-md',
-              'w-8 h-8 md:w-10 md:h-10',
-              isAdded
-                ? 'bg-gradient-accent hover:shadow-lg text-white'
-                : 'bg-gradient-primary hover:shadow-lg text-white',
-              (isAdding || isAdded) && 'cursor-default'
-            )}
-            aria-label={isAdded ? `${productName} ya está en el carrito` : `Añadir ${productName} al carrito`}
-            aria-disabled={isAdding || isAdded}
-          >
-            {isAdding ? (
-              <Loader2 className="w-4 h-4 md:w-5 md:h-5 animate-spin" aria-hidden="true" />
-            ) : isAdded ? (
-              <Check className="w-4 h-4 md:w-5 md:h-5" aria-hidden="true" />
-            ) : (
-              <Plus className="w-4 h-4 md:w-5 md:h-5" aria-hidden="true" />
-            )}
-          </button>
+          {currentQuantity === 0 ? (
+            <button
+              onClick={handleAddToCart}
+              disabled={isAdding || !isInStock}
+              className={cn(
+                'flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-500 py-3 text-base font-semibold text-white transition-all duration-200 active:scale-[0.98]',
+                isInStock ? 'hover:bg-emerald-600' : 'cursor-not-allowed bg-slate-200 text-slate-500'
+              )}
+              aria-disabled={isAdding || !isInStock}
+            >
+              {isAdding ? (
+                <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
+              ) : (
+                <>
+                  <Plus className="h-5 w-5" aria-hidden="true" />
+                  Agregar
+                </>
+              )}
+            </button>
+          ) : (
+            <div className="flex w-full items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-2">
+              <button
+                onClick={handleDecrease}
+                className="flex h-10 w-10 items-center justify-center rounded-xl border border-transparent bg-white text-slate-600 transition-all duration-200 hover:border-red-200 hover:bg-red-50 hover:text-red-600 active:scale-95"
+                aria-label={currentQuantity === 1 ? `Quitar ${productName} del carrito` : `Disminuir cantidad de ${productName}`}
+              >
+                {currentQuantity === 1 ? <Trash2 className="h-4 w-4" aria-hidden="true" /> : <Minus className="h-4 w-4" aria-hidden="true" />}
+              </button>
+              <span
+                className="min-w-[3.5rem] rounded-xl bg-white px-3 py-2 text-center text-base font-bold text-slate-900"
+                aria-label={`Cantidad seleccionada: ${currentQuantity}`}
+              >
+                {currentQuantity}
+              </span>
+              <button
+                onClick={handleIncrease}
+                className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500 text-white transition-all duration-200 hover:bg-emerald-600 hover:shadow-md active:scale-95"
+                aria-label={`Aumentar cantidad de ${productName}`}
+              >
+                <Plus className="h-4 w-4" aria-hidden="true" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </article>

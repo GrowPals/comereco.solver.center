@@ -9,48 +9,24 @@ import React from 'react';
 
 const ProductCardSkeleton = () => {
   return (
-    <div className="bg-white rounded-2xl overflow-hidden border border-gray-200 h-full flex flex-col animate-pulse">
-      {/* Layout Mobile: Horizontal */}
-      <div className="md:hidden flex flex-row gap-3 p-3">
-        {/* Imagen skeleton - 16:9 */}
-        <div className="relative w-32 h-20 bg-gray-200 rounded-lg flex-shrink-0">
-          <div className="absolute top-1 left-1 w-12 h-4 bg-gray-300 rounded" />
-        </div>
-
-        {/* Info skeleton - Mobile */}
-        <div className="flex-1 flex flex-col justify-between">
-          <div className="space-y-1.5">
-            <div className="h-3 bg-gray-200 rounded w-full" />
-            <div className="h-3 bg-gray-200 rounded w-2/3" />
-            <div className="h-4 bg-gray-200 rounded w-1/3 mt-2" />
-          </div>
-          <div className="flex items-center gap-2 mt-2">
-            <div className="w-8 h-8 bg-gray-200 rounded-lg" />
-            <div className="flex-1 h-8 bg-gray-200 rounded-lg" />
-          </div>
-        </div>
+    <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm animate-pulse">
+      <div className="relative w-full bg-slate-100 aspect-[4/5]">
+        <div className="absolute left-4 top-4 h-6 w-20 rounded-full bg-slate-200" />
+        <div className="absolute right-4 top-4 h-9 w-9 rounded-full bg-slate-200" />
       </div>
-
-      {/* Layout Desktop: Vertical */}
-      <div className="hidden md:flex md:flex-col h-full">
-        {/* Imagen skeleton */}
-        <div className="relative aspect-square bg-gray-200">
-          <div className="absolute top-3 right-3 w-9 h-9 rounded-full bg-gray-300" />
-          <div className="absolute bottom-3 left-3 w-20 h-6 bg-gray-300 rounded-lg" />
+      <div className="flex flex-1 flex-col gap-4 p-4">
+        <div className="space-y-2">
+          <div className="h-4 w-full rounded bg-slate-200" />
+          <div className="h-4 w-3/4 rounded bg-slate-200" />
         </div>
-
-        {/* Info skeleton */}
-        <div className="p-5 space-y-3 flex-1 flex flex-col">
+        <div className="mt-auto flex items-end justify-between gap-4">
           <div className="space-y-2">
-            <div className="h-4 bg-gray-200 rounded w-3/4" />
-            <div className="h-4 bg-gray-200 rounded w-1/2" />
+            <div className="h-3 w-16 rounded bg-slate-200" />
+            <div className="h-6 w-24 rounded bg-slate-200" />
           </div>
-          <div className="flex items-center justify-between pt-3 mt-auto border-t border-gray-100">
-            <div className="space-y-1">
-              <div className="h-3 bg-gray-200 rounded w-12" />
-              <div className="h-6 bg-gray-200 rounded w-20" />
-            </div>
-            <div className="w-12 h-12 bg-gray-200 rounded-xl" />
+          <div className="flex items-center gap-2">
+            <div className="h-10 w-10 rounded-full bg-slate-200" />
+            <div className="h-10 w-20 rounded-full bg-slate-200" />
           </div>
         </div>
       </div>
@@ -65,7 +41,7 @@ export default ProductCardSkeleton;
  */
 export const ProductCardSkeletonList = ({ count = 12 }) => {
   return (
-    <div className="grid gap-3 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 sm:gap-5 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
       {Array.from({ length: count }).map((_, index) => (
         <ProductCardSkeleton key={index} />
       ))}

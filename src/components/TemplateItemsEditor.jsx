@@ -1,7 +1,7 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Plus, Trash2, Package, Search, Loader2 } from 'lucide-react';
+import { Plus, Trash2, Package, Search, Loader2, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -119,6 +119,19 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
     onChange(updated);
   };
 
+  const handleStepQuantity = useCallback((productId, delta) => {
+    setLocalItems(prevItems => {
+      const updated = prevItems.map(item => {
+        if (item.product_id !== productId) return item;
+        const nextQuantity = Math.max(1, item.quantity + delta);
+        return { ...item, quantity: nextQuantity };
+      });
+
+      onChange(updated);
+      return updated;
+    });
+  }, [onChange]);
+
   const handleRemoveItem = (productId) => {
     const updated = localItems.filter(item => item.product_id !== productId);
     setLocalItems(updated);
@@ -165,56 +178,85 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
             return (
               <div
                 key={item.product_id}
-                className="flex items-center gap-3 p-3 bg-white rounded-xl border-2 border-slate-200 hover:border-blue-200 transition-colors"
+                className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:border-blue-200 hover:shadow-md"
               >
-                {/* Imagen */}
-                <img
-                  src={product.image_url || '/placeholder.png'}
-                  alt={product.name}
-                  className="w-12 h-12 rounded-lg object-cover border border-slate-200"
-                />
+                <div className="flex flex-col gap-4 md:grid md:grid-cols-[auto,minmax(0,1fr),auto,auto,auto] md:items-center md:gap-6">
+                  {/* Imagen */}
+                  <div className="flex items-center justify-center">
+                    <img
+                      src={product.image_url || '/placeholder.svg'}
+                      alt={product.name}
+                      className="h-16 w-16 rounded-xl border border-slate-200 object-cover shadow-xs"
+                    />
+                  </div>
 
-                {/* Info */}
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-slate-900 truncate">{product.name}</p>
-                  <p className="text-sm text-slate-600">
-                    SKU: {product.sku} • ${product.price?.toFixed(2) || '0.00'}
-                  </p>
+                  {/* Info */}
+                  <div className="min-w-0">
+                    <p className="truncate font-semibold text-slate-900">{product.name}</p>
+                    <p className="text-sm text-slate-600">
+                      SKU: {product.sku} • ${product.price?.toFixed(2) || '0.00'}
+                    </p>
+                  </div>
+
+                  {/* Cantidad */}
+                  <div className="flex items-center justify-start gap-2">
+                    <div className="flex items-center gap-1 rounded-xl border border-slate-200 bg-slate-50 px-1 py-1">
+                      <button
+                        type="button"
+                        onClick={() => handleStepQuantity(item.product_id, -1)}
+                        disabled={readOnly || item.quantity <= 1}
+                        className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-slate-600 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+                        aria-label={`Disminuir cantidad de ${product.name}`}
+                      >
+                        <Minus className="h-4 w-4" />
+                      </button>
+                      <Input
+                        type="number"
+                        min="1"
+                        value={item.quantity}
+                        onChange={(e) => handleUpdateQuantity(item.product_id, e.target.value)}
+                        disabled={readOnly}
+                        className="h-9 w-16 border-0 bg-transparent text-center text-base font-semibold focus-visible:ring-0"
+                        aria-label={`Cantidad actual de ${product.name}`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleStepQuantity(item.product_id, 1)}
+                        disabled={readOnly}
+                        className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-slate-600 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+                        aria-label={`Incrementar cantidad de ${product.name}`}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <span className="text-sm text-slate-600">
+                      {product.unit || 'pza'}
+                    </span>
+                  </div>
+
+                  {/* Subtotal */}
+                  <div className="text-left md:text-right">
+                    <p className="text-sm text-slate-500">Subtotal</p>
+                    <p className="font-bold text-slate-900">
+                      ${((product.price || 0) * item.quantity).toFixed(2)}
+                    </p>
+                  </div>
+
+                  {/* Eliminar */}
+                  {!readOnly && (
+                    <div className="flex justify-end">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleRemoveItem(item.product_id)}
+                        className="h-9 w-9 rounded-xl text-red-600 hover:bg-red-50 hover:text-red-700"
+                        aria-label={`Eliminar ${product.name} de la plantilla`}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
                 </div>
-
-                {/* Cantidad */}
-                <div className="flex items-center gap-2">
-                  <Input
-                    type="number"
-                    min="1"
-                    value={item.quantity}
-                    onChange={(e) => handleUpdateQuantity(item.product_id, e.target.value)}
-                    disabled={readOnly}
-                    className="w-20 text-center"
-                  />
-                  <span className="text-sm text-slate-600 whitespace-nowrap">
-                    {product.unit || 'pza'}
-                  </span>
-                </div>
-
-                {/* Subtotal */}
-                <div className="text-right">
-                  <p className="font-bold text-slate-900">
-                    ${((product.price || 0) * item.quantity).toFixed(2)}
-                  </p>
-                </div>
-
-                {/* Eliminar */}
-                {!readOnly && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleRemoveItem(item.product_id)}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                )}
               </div>
             );
           })
@@ -223,17 +265,18 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
 
       {/* Modal para agregar producto */}
       <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-        <DialogContent className="sm:max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold">Agregar Producto a la Plantilla</DialogTitle>
-          </DialogHeader>
+        <DialogContent className="sm:max-w-2xl overflow-hidden border border-slate-200 bg-white shadow-2xl p-0">
+          <div className="flex max-h-[80vh] flex-col">
+            <DialogHeader className="px-6 pt-6">
+              <DialogTitle className="text-2xl font-bold">Agregar Producto a la Plantilla</DialogTitle>
+            </DialogHeader>
 
-          <div className="space-y-4 py-4">
-            {/* Buscador */}
-            <div>
-              <Label htmlFor="search">Buscar Producto</Label>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <div className="space-y-4 px-6 py-4 overflow-y-auto">
+              {/* Buscador */}
+              <div>
+                <Label htmlFor="search">Buscar Producto</Label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <Input
                   id="search"
                   value={searchQuery}
@@ -266,9 +309,9 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
                         <SelectItem key={product.id} value={product.id}>
                           <div className="flex items-center gap-3 py-1">
                             <img
-                              src={product.image_url || '/placeholder.png'}
+                              src={product.image_url || '/placeholder.svg'}
                               alt={product.name}
-                              className="w-8 h-8 rounded object-cover"
+                              className="h-8 w-8 rounded-lg border border-slate-200 object-cover"
                             />
                             <div className="flex-1">
                               <p className="font-medium">{product.name}</p>
@@ -299,17 +342,17 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
 
             {/* Preview del producto seleccionado */}
             {selectedProductId && (
-              <div className="bg-blue-50 rounded-xl p-4 border-2 border-blue-200">
-                <p className="text-sm font-semibold text-blue-900 mb-2">Vista Previa:</p>
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <p className="mb-2 text-sm font-semibold text-slate-700">Vista previa</p>
                 {(() => {
                   const product = products.find(p => p.id === selectedProductId);
                   if (!product) return null;
                   return (
                     <div className="flex items-center gap-3">
                       <img
-                        src={product.image_url || '/placeholder.png'}
+                        src={product.image_url || '/placeholder.svg'}
                         alt={product.name}
-                        className="w-16 h-16 rounded-lg object-cover border-2 border-white shadow"
+                        className="h-16 w-16 rounded-xl border border-slate-200 object-cover shadow-sm"
                       />
                       <div className="flex-1">
                         <p className="font-bold text-slate-900">{product.name}</p>
@@ -318,8 +361,8 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm text-slate-600">Subtotal:</p>
-                        <p className="text-xl font-bold text-blue-600">
+                        <p className="text-sm text-slate-500">Subtotal</p>
+                        <p className="text-xl font-bold text-slate-900">
                           ${((product.price || 0) * parseInt(quantity || 1)).toFixed(2)}
                         </p>
                       </div>
@@ -328,27 +371,31 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
                 })()}
               </div>
             )}
-          </div>
+            </div>
 
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setIsAddModalOpen(false);
-                setSelectedProductId('');
-                setQuantity(1);
-                setSearchQuery('');
-              }}
-            >
-              Cancelar
-            </Button>
-            <Button
-              onClick={handleAddItem}
-              disabled={!selectedProductId || quantity <= 0}
-            >
-              Agregar
-            </Button>
-          </DialogFooter>
+            <DialogFooter className="sticky bottom-0 flex flex-col gap-2 border-t border-slate-200 bg-white/95 px-6 py-4 backdrop-blur">
+              <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setIsAddModalOpen(false);
+                    setSelectedProductId('');
+                    setQuantity(1);
+                    setSearchQuery('');
+                  }}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={handleAddItem}
+                  disabled={!selectedProductId || quantity <= 0}
+                  className="rounded-xl shadow-button hover:shadow-button-hover"
+                >
+                  Agregar
+                </Button>
+              </div>
+            </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

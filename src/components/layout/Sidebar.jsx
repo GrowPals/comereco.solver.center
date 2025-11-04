@@ -58,8 +58,15 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
 
     const userName = useMemo(() => user?.full_name || 'Usuario', [user?.full_name]);
     const userEmail = useMemo(() => user?.email || '', [user?.email]);
+    const primaryName = useMemo(() => userName.split(' ').filter(Boolean)[0] || userName, [userName]);
     const userInitials = useMemo(() => {
-        return userName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        return userName
+            .split(' ')
+            .filter(Boolean)
+            .map(n => n[0])
+            .join('')
+            .substring(0, 2)
+            .toUpperCase();
     }, [userName]);
 
     // Menú - Navegación completa
@@ -117,11 +124,9 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
 
     return (
         <aside
-            className={`fixed top-0 right-0 h-full bg-white z-50 flex flex-col transition-all duration-300 ease-out ${
-                isMobileNavOpen ? 'translate-x-0 w-[320px] shadow-2xl' : 'translate-x-full w-[320px]'
-            } lg:fixed lg:left-0 lg:translate-x-0 lg:border-r lg:border-slate-200 lg:shadow-sm ${
-                isSidebarOpen ? 'lg:w-64' : 'lg:w-64'
-            }`}
+            className={`fixed top-0 right-0 z-50 flex h-full flex-col bg-white transition-all duration-300 ease-out ${
+                isMobileNavOpen ? 'translate-x-0 w-[340px] shadow-2xl' : 'translate-x-full w-[340px]'
+            } lg:fixed lg:left-0 lg:w-72 lg:translate-x-0 lg:border-r lg:border-slate-200 lg:shadow-md`}
             role="complementary"
             aria-label="Menú de navegación"
             id="navigation"
@@ -132,12 +137,12 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
                     <div className="flex items-center gap-4 hover:bg-slate-50 -m-2 p-2 rounded-xl transition-colors">
                         <Avatar className="h-16 w-16 ring-2 ring-primary-100">
                             <AvatarImage alt={`Avatar de ${userName}`} src={user?.avatar_url} />
-                            <AvatarFallback className="bg-gradient-primary text-white font-bold text-lg">
+                            <AvatarFallback className="bg-slate-900 text-white font-bold text-lg">
                                 {userInitials}
                             </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                            <p className="font-bold text-slate-900 text-base truncate">{userName}</p>
+                            <p className="font-bold text-slate-900 text-base">{primaryName}</p>
                             <p className="text-sm text-slate-500 truncate">{userEmail}</p>
                             <span className="inline-block mt-1 text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">
                                 {isAdmin ? 'Administrador' : isSupervisor ? 'Supervisor' : 'Usuario'}

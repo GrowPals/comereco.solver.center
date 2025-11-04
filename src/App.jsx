@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 // Lazy loading de las páginas
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
 const RequisitionsPage = lazy(() => import('@/pages/Requisitions'));
+const NewRequisitionPage = lazy(() => import('@/pages/NewRequisition'));
 const RequisitionDetail = lazy(() => import('@/pages/RequisitionDetail'));
 const LoginPage = lazy(() => import('@/pages/Login'));
 const ProfilePage = lazy(() => import('@/pages/Profile'));
@@ -140,6 +141,7 @@ const AppLayout = () => {
                 <Routes location={location}>
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/requisitions" element={<RequisitionsPage />} />
+                        <Route path="/requisitions/new" element={<NewRequisitionPage />} />
                         <Route path="/requisitions/:id" element={<RequisitionDetail />} />
                         <Route path="/profile" element={<ProfilePage />} />
                         

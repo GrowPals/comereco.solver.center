@@ -5,8 +5,9 @@ import { Search, X, FileText, Package, User, Loader2 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { performGlobalSearch } from '@/services/searchService';
 import { useDebounce } from '@/hooks/useDebounce';
+import { cn } from '@/lib/utils';
 
-const GlobalSearch = () => {
+const GlobalSearch = ({ variant = 'desktop' }) => {
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState({ productos: [], requisiciones: [], usuarios: [] });
@@ -15,6 +16,7 @@ const GlobalSearch = () => {
   const inputRef = useRef(null);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
+  const isMobileVariant = variant === 'mobile';
 
   useEffect(() => {
     if (debouncedSearchTerm.length >= 2) {
@@ -50,8 +52,11 @@ const GlobalSearch = () => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 pointer-events-none" />
+        <div className={cn('relative flex-1', !isMobileVariant && 'max-w-md')}>
+          <Search className={cn(
+            'pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400',
+            isMobileVariant && 'text-slate-500'
+          )} />
           <input
             ref={inputRef}
             type="text"
@@ -59,7 +64,12 @@ const GlobalSearch = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onFocus={() => setOpen(true)}
-            className="w-full pl-12 pr-4 h-11 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
+            className={cn(
+              'w-full border focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all',
+              isMobileVariant
+                ? 'h-12 rounded-2xl border-slate-200 bg-slate-100 pl-12 pr-4 text-base font-medium text-slate-900 focus:bg-white shadow-sm'
+                : 'h-11 rounded-xl border-slate-200 bg-slate-50 pl-12 pr-4'
+            )}
             aria-label="Buscar en la aplicación"
           />
           {searchTerm && (
@@ -69,7 +79,10 @@ const GlobalSearch = () => {
                 setSearchTerm('');
                 inputRef.current?.focus();
               }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              className={cn(
+                'absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-slate-600',
+                isMobileVariant && 'text-slate-500 hover:text-slate-700'
+              )}
               aria-label="Limpiar búsqueda"
             >
               <X className="h-4 w-4" />
@@ -77,7 +90,13 @@ const GlobalSearch = () => {
           )}
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-[400px] p-0 max-h-[500px] overflow-hidden" align="start">
+      <PopoverContent
+        className={cn(
+          'max-h-[500px] overflow-hidden p-0',
+          isMobileVariant ? 'w-[min(420px,calc(100vw-2rem))]' : 'w-[400px]'
+        )}
+        align={isMobileVariant ? 'center' : 'start'}
+      >
         <div className="p-4 border-b border-slate-200">
           <div className="flex items-center gap-2">
             <Search className="h-4 w-4 text-slate-500" />
@@ -168,4 +187,3 @@ const GlobalSearch = () => {
 };
 
 export default GlobalSearch;
-

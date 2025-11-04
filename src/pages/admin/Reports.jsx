@@ -12,7 +12,9 @@ import {
     Clock,
     Package,
     Loader2,
-    AlertCircle
+    AlertCircle,
+    Download,
+    FileSpreadsheet
 } from 'lucide-react';
 import {
     getGeneralStats,
@@ -24,6 +26,8 @@ import {
 import PageLoader from '@/components/PageLoader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/useToast';
 
 // Componente de tarjeta de estadística
 const StatCard = ({ icon: Icon, title, value, subtitle, color = 'blue', trend }) => {
@@ -55,6 +59,10 @@ const StatCard = ({ icon: Icon, title, value, subtitle, color = 'blue', trend })
 };
 
 // Componente de gráfico de barras simple (sin dependencias externas)
+const APPROVED_GRADIENT = 'linear-gradient(90deg, #4f8b72 0%, #2f6650 100%)';
+const PENDING_GRADIENT = 'linear-gradient(90deg, #f1b567 0%, #d58a2a 100%)';
+const BAR_GRADIENT = 'linear-gradient(90deg, #6c7bd0 0%, #3f4f99 100%)';
+
 const SimpleBarChart = ({ data, title, subtitle, dataKey, nameKey }) => {
     if (!data || data.length === 0) {
         return (
@@ -79,21 +87,21 @@ const SimpleBarChart = ({ data, title, subtitle, dataKey, nameKey }) => {
                 {subtitle && <p className="text-sm text-slate-600 mt-1">{subtitle}</p>}
             </CardHeader>
             <CardContent>
-                <div className="space-y-4">
+                <div className="space-y-5">
                     {data.map((item, index) => {
                         const value = item[dataKey] || 0;
                         const percentage = maxValue > 0 ? (value / maxValue) * 100 : 0;
 
                         return (
-                            <div key={index} className="space-y-2">
-                                <div className="flex items-center justify-between text-sm">
-                                    <span className="font-medium text-slate-700">{item[nameKey]}</span>
-                                    <span className="font-bold text-slate-900">{value}</span>
+                            <div key={index} className="space-y-3">
+                                <div className="flex items-baseline justify-between text-sm">
+                                    <span className="font-medium text-slate-700 leading-tight">{item[nameKey]}</span>
+                                    <span className="font-semibold text-slate-900">{value}</span>
                                 </div>
-                                <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+                                <div className="w-full h-3.5 rounded-full bg-slate-100/80">
                                     <div
-                                        className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-500"
-                                        style={{ width: `${percentage}%` }}
+                                        className="h-full rounded-full transition-all duration-500"
+                                        style={{ width: `${percentage}%`, background: BAR_GRADIENT }}
                                     />
                                 </div>
                             </div>
@@ -135,53 +143,55 @@ const MonthlyTrendChart = ({ data }) => {
             </CardHeader>
             <CardContent>
                 <div className="space-y-6">
-                    <div className="flex gap-4 justify-end">
+                    <div className="flex justify-end gap-4">
                         <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-full bg-green-500" />
+                            <div className="h-3 w-3 rounded-full" style={{ background: APPROVED_GRADIENT }} />
                             <span className="text-xs font-medium text-slate-600">Aprobadas</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-full bg-amber-500" />
+                            <div className="h-3 w-3 rounded-full" style={{ background: PENDING_GRADIENT }} />
                             <span className="text-xs font-medium text-slate-600">Pendientes</span>
                         </div>
                     </div>
 
                     <div className="space-y-5">
                         {data.map((item, index) => {
-                            const approvedPercentage = maxValue > 0 ? ((item.aprobadas || 0) / maxValue) * 100 : 0;
-                            const pendingPercentage = maxValue > 0 ? ((item.pendientes || 0) / maxValue) * 100 : 0;
+                            const approvedValue = item.aprobadas || 0;
+                            const pendingValue = item.pendientes || 0;
+                            const approvedPercentage = maxValue > 0 ? (approvedValue / maxValue) * 100 : 0;
+                            const pendingPercentage = maxValue > 0 ? (pendingValue / maxValue) * 100 : 0;
 
                             return (
                                 <div key={index} className="space-y-2">
                                     <div className="flex items-center justify-between text-sm">
                                         <span className="font-bold text-slate-900 w-16">{item.mes}</span>
                                         <div className="flex gap-4 text-xs">
-                                            <span className="text-green-700 font-semibold">
-                                                ${item.aprobadas.toLocaleString('es-MX')}
+                                            <span className="text-slate-700 font-semibold">
+                                                ${approvedValue.toLocaleString('es-MX')}
                                             </span>
-                                            <span className="text-amber-700 font-semibold">
-                                                ${item.pendientes.toLocaleString('es-MX')}
+                                            <span className="text-slate-600 font-semibold">
+                                                ${pendingValue.toLocaleString('es-MX')}
                                             </span>
                                         </div>
                                     </div>
-                                    <div className="flex gap-1 h-8">
+                                    <div className="flex h-8 gap-1">
                                         <div
-                                            className="bg-gradient-to-r from-green-400 to-green-500 rounded-lg transition-all duration-500 flex items-center justify-center"
-                                            style={{ width: `${approvedPercentage}%` }}
+                                            className="flex items-center justify-center rounded-lg px-2 text-xs font-semibold text-white transition-all duration-500"
+                                            style={{ width: `${approvedPercentage}%`, background: APPROVED_GRADIENT }}
                                         >
                                             {approvedPercentage > 15 && (
-                                                <span className="text-xs font-bold text-white">
-                                                    ${item.aprobadas.toLocaleString('es-MX')}
+                                                <span>
+                                                    ${approvedValue.toLocaleString('es-MX')}
                                                 </span>
                                             )}
                                         </div>
                                         <div
-                                            className="bg-gradient-to-r from-amber-400 to-amber-500 rounded-lg transition-all duration-500 flex items-center justify-center"
-                                            style={{ width: `${pendingPercentage}%` }}
+                                            className="flex items-center justify-center rounded-lg px-2 text-xs font-semibold text-white transition-all duration-500"
+                                            style={{ width: `${pendingPercentage}%`, background: PENDING_GRADIENT }}
                                         >
                                             {pendingPercentage > 15 && (
-                                                <span className="text-xs font-bold text-white">
-                                                    ${item.pendientes.toLocaleString('es-MX')}
+                                                <span>
+                                                    ${pendingValue.toLocaleString('es-MX')}
                                                 </span>
                                             )}
                                         </div>
@@ -260,6 +270,8 @@ const SimplePieChart = ({ data }) => {
 };
 
 const ReportsPage = () => {
+    const { toast } = useToast();
+
     // Queries para obtener datos
     const { data: generalStats, isLoading: loadingStats } = useQuery({
         queryKey: ['generalStats'],
@@ -297,6 +309,82 @@ const ReportsPage = () => {
         return <PageLoader message="Cargando reportes y analíticas..." />;
     }
 
+    // Función para exportar a CSV/Excel
+    const exportToExcel = () => {
+        try {
+            // Preparar datos para CSV
+            const csvData = [];
+
+            // Encabezados generales
+            csvData.push(['REPORTE DE ANALÍTICAS - COMERCO']);
+            csvData.push(['Fecha de generación:', new Date().toLocaleDateString('es-ES')]);
+            csvData.push([]);
+
+            // Estadísticas generales
+            csvData.push(['ESTADÍSTICAS GENERALES']);
+            csvData.push(['Total Requisiciones', generalStats?.totalRequisitions || 0]);
+            csvData.push(['Monto Total Aprobado', generalStats?.totalApproved || 0]);
+            csvData.push(['Pendientes de Aprobación', generalStats?.pendingApprovals || 0]);
+            csvData.push(['Usuarios Activos', generalStats?.activeUsers || 0]);
+            csvData.push([]);
+
+            // Requisiciones por mes
+            csvData.push(['REQUISICIONES POR MES']);
+            csvData.push(['Mes', 'Aprobadas', 'Pendientes']);
+            monthlyData?.forEach(item => {
+                csvData.push([item.mes, item.aprobadas, item.pendientes]);
+            });
+            csvData.push([]);
+
+            // Productos más solicitados
+            csvData.push(['PRODUCTOS MÁS SOLICITADOS']);
+            csvData.push(['Producto', 'Cantidad']);
+            topProducts?.forEach(item => {
+                csvData.push([item.producto, item.cantidad]);
+            });
+            csvData.push([]);
+
+            // Top usuarios
+            csvData.push(['REQUISICIONES POR USUARIO']);
+            csvData.push(['Usuario', 'Total Requisiciones']);
+            topUsers?.forEach(item => {
+                csvData.push([item.nombre, item.total]);
+            });
+
+            // Convertir a CSV
+            const csvContent = csvData.map(row => row.join(',')).join('\n');
+
+            // Crear blob y descargar
+            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `reporte_comerco_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+
+            toast({
+                title: 'Exportación exitosa',
+                description: 'El reporte se ha descargado como archivo CSV.',
+                variant: 'success'
+            });
+        } catch (error) {
+            console.error('Error exportando a Excel:', error);
+            toast({
+                title: 'Error al exportar',
+                description: 'No se pudo generar el archivo de exportación.',
+                variant: 'destructive'
+            });
+        }
+    };
+
+    // Función para exportar a PDF
+    const exportToPDF = () => {
+        toast({
+            title: 'Función en desarrollo',
+            description: 'La exportación a PDF estará disponible próximamente. Use la exportación a Excel por ahora.',
+            variant: 'info'
+        });
+    };
+
     return (
         <>
             <Helmet><title>Reportes y Analíticas - ComerECO</title></Helmet>
@@ -316,6 +404,23 @@ const ReportsPage = () => {
                                     Visualiza el desempeño y tendencias de tu organización
                                 </p>
                             </div>
+                        </div>
+                        <div className="flex gap-2">
+                            <Button
+                                onClick={exportToExcel}
+                                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-md"
+                            >
+                                <FileSpreadsheet className="h-4 w-4 mr-2" />
+                                Exportar Excel
+                            </Button>
+                            <Button
+                                onClick={exportToPDF}
+                                variant="outline"
+                                className="border-2 hover:bg-slate-50"
+                            >
+                                <Download className="h-4 w-4 mr-2" />
+                                Exportar PDF
+                            </Button>
                         </div>
                     </header>
 

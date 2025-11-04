@@ -1,21 +1,19 @@
 
 import React, { useMemo, memo } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import { Home, ShoppingCart, List, Menu } from 'lucide-react';
-import { useCart } from '@/context/CartContext';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Home, ClipboardList, Menu, Layers, Plus } from 'lucide-react';
 
 const BottomNav = memo(({ onMenuClick }) => {
     const location = useLocation();
-    const { totalItems, toggleCart } = useCart();
+    const navigate = useNavigate();
 
-    // BottomNav simplificado - SOLO acciones principales y frecuentes
-    const navItems = useMemo(() => [
+    const navItemsLeft = useMemo(() => [
         { path: '/dashboard', icon: Home, label: 'Inicio' },
-        { path: '/catalog', icon: ShoppingCart, label: 'Catálogo' },
+        { path: '/templates', icon: Layers, label: 'Plantillas' },
     ], []);
 
     const navItemsRight = useMemo(() => [
-        { path: '/requisitions', icon: List, label: 'Mis Reqs' },
+        { path: '/requisitions', icon: ClipboardList, label: 'Pedidos' },
     ], []);
 
     const isActive = (path) => location.pathname === path || (path !== '/dashboard' && location.pathname.startsWith(path));
@@ -24,7 +22,7 @@ const BottomNav = memo(({ onMenuClick }) => {
         <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50 lg:hidden shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]" role="navigation" aria-label="Navegación móvil principal">
             <div className="grid h-20 grid-cols-5 max-w-full mx-auto px-2 safe-area-inset-bottom">
                 {/* Navegación izquierda */}
-                {navItems.map((item) => {
+                {navItemsLeft.map((item) => {
                     const ItemIcon = item.icon;
                     const isItemActive = isActive(item.path);
 
@@ -58,22 +56,17 @@ const BottomNav = memo(({ onMenuClick }) => {
                     );
                 })}
 
-                {/* Botón de Carrito - CENTRO - Destacado */}
+                {/* Botón de acción rápida - Catálogo */}
                 <button
-                    onClick={toggleCart}
+                    onClick={() => navigate('/catalog')}
                     className="inline-flex flex-col items-center justify-center group transition-all duration-200"
-                    aria-label={`Abrir carrito de compras${totalItems > 0 ? ` (${totalItems} productos)` : ''}`}
+                    aria-label="Ir al catálogo de productos"
                 >
-                    <div className="relative flex items-center justify-center w-14 h-14 rounded-2xl transition-all duration-300 bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 -mt-2">
-                        <ShoppingCart className="w-6 h-6 text-white transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />
-                        {totalItems > 0 && (
-                            <span className="absolute -top-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-[11px] font-bold text-white ring-2 ring-white shadow-md animate-pulse" aria-label={`${totalItems} productos en el carrito`}>
-                                {totalItems > 9 ? '9+' : totalItems}
-                            </span>
-                        )}
+                    <div className="relative -mt-2 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 shadow-xl transition-all duration-300 hover:shadow-2xl group-active:scale-95">
+                        <Plus className="h-7 w-7 text-white transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />
                     </div>
-                    <span className="text-[10px] font-bold mt-1 text-blue-600 transition-colors duration-200">
-                        Carrito
+                    <span className="mt-1 text-[10px] font-bold text-blue-600 transition-colors duration-200">
+                        Agregar
                     </span>
                 </button>
 
