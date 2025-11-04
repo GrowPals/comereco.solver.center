@@ -52,7 +52,7 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <div className={cn('relative flex-1', !isMobileVariant && 'max-w-md')}>
+        <div className="relative flex-1">
           <Search className={cn(
             'pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400',
             isMobileVariant && 'text-slate-500'
@@ -60,7 +60,7 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
           <input
             ref={inputRef}
             type="text"
-            placeholder="Buscar requisiciones, productos..."
+            placeholder={isMobileVariant ? 'Buscar' : 'Buscar requisiciones, productos...'}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onFocus={() => setOpen(true)}

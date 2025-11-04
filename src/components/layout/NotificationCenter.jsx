@@ -168,13 +168,13 @@ const NotificationCenter = ({ variant = 'popover' }) => {
             <Button
                 variant="ghost"
                 size="icon"
-                className="relative h-11 w-11 rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
+                className="relative h-11 w-11 overflow-visible rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
                 aria-label={`Ver notificaciones${unreadCount > 0 ? `, ${unreadCount} sin leer` : ''}`}
                 onClick={() => navigate('/notifications')}
             >
                 <Bell className="h-5 w-5" />
                 {unreadCount > 0 && (
-                    <div className="absolute -top-1 -right-1 flex min-h-[18px] min-w-[18px] items-center justify-center rounded-full bg-gradient-error px-1 text-[10px] font-bold text-white shadow-md">
+                    <div className="absolute -top-1.5 -right-1.5 z-20 flex h-5 min-w-[1.75rem] items-center justify-center rounded-full bg-gradient-error px-1.5 text-[10px] font-bold text-white leading-[20px] shadow-md">
                         {unreadCount > 99 ? '99+' : unreadCount}
                     </div>
                 )}
@@ -185,10 +185,10 @@ const NotificationCenter = ({ variant = 'popover' }) => {
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon" className="relative rounded-full hover:bg-primary-50 transition-colors" aria-label={`Ver notificaciones, ${unreadCount} no leídas`}>
+                <Button variant="ghost" size="icon" className="relative overflow-visible rounded-full hover:bg-primary-50 transition-colors" aria-label={`Ver notificaciones, ${unreadCount} no leídas`}>
                     <Bell className="h-5 w-5" />
                     {unreadCount > 0 && (
-                        <div className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-gradient-error text-white text-[10px] font-bold flex items-center justify-center shadow-md animate-pulse">
+                        <div className="absolute -top-1.5 -right-1.5 z-20 flex h-5 min-w-[1.75rem] items-center justify-center rounded-full bg-gradient-error px-1.5 text-[10px] font-bold text-white leading-[20px] shadow-md animate-pulse">
                             {unreadCount > 99 ? '99+' : unreadCount}
                         </div>
                     )}

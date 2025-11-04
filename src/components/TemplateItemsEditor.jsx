@@ -180,32 +180,32 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
                 key={item.product_id}
                 className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:border-blue-200 hover:shadow-md"
               >
-                <div className="flex flex-col gap-4 md:grid md:grid-cols-[auto,minmax(0,1fr),auto,auto,auto] md:items-center md:gap-6">
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-[auto,minmax(0,1fr),auto,auto,auto] lg:items-center lg:gap-6">
                   {/* Imagen */}
-                  <div className="flex items-center justify-center">
+                  <div className="flex items-center justify-center lg:justify-start">
                     <img
                       src={product.image_url || '/placeholder.svg'}
                       alt={product.name}
-                      className="h-16 w-16 rounded-xl border border-slate-200 object-cover shadow-xs"
+                      className="h-20 w-20 rounded-xl border border-slate-200 object-cover shadow-xs sm:h-16 sm:w-16"
                     />
                   </div>
 
                   {/* Info */}
-                  <div className="min-w-0">
-                    <p className="truncate font-semibold text-slate-900">{product.name}</p>
+                  <div className="min-w-0 space-y-1">
+                    <p className="text-base font-semibold leading-snug text-slate-900 line-clamp-2">{product.name}</p>
                     <p className="text-sm text-slate-600">
                       SKU: {product.sku} • ${product.price?.toFixed(2) || '0.00'}
                     </p>
                   </div>
 
                   {/* Cantidad */}
-                  <div className="flex items-center justify-start gap-2">
-                    <div className="flex items-center gap-1 rounded-xl border border-slate-200 bg-slate-50 px-1 py-1">
+                  <div className="flex flex-col gap-3 lg:col-auto lg:flex-row lg:items-center lg:gap-4">
+                    <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-2 py-1.5">
                       <button
                         type="button"
                         onClick={() => handleStepQuantity(item.product_id, -1)}
                         disabled={readOnly || item.quantity <= 1}
-                        className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-slate-600 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-slate-600 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
                         aria-label={`Disminuir cantidad de ${product.name}`}
                       >
                         <Minus className="h-4 w-4" />
@@ -216,40 +216,40 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
                         value={item.quantity}
                         onChange={(e) => handleUpdateQuantity(item.product_id, e.target.value)}
                         disabled={readOnly}
-                        className="h-9 w-16 border-0 bg-transparent text-center text-base font-semibold focus-visible:ring-0"
+                        className="h-11 w-16 border-0 bg-transparent text-center text-lg font-semibold focus-visible:ring-0"
                         aria-label={`Cantidad actual de ${product.name}`}
                       />
                       <button
                         type="button"
                         onClick={() => handleStepQuantity(item.product_id, 1)}
                         disabled={readOnly}
-                        className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-slate-600 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-slate-600 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
                         aria-label={`Incrementar cantidad de ${product.name}`}
                       >
                         <Plus className="h-4 w-4" />
                       </button>
                     </div>
-                    <span className="text-sm text-slate-600">
+                    <span className="text-sm font-medium text-slate-500">
                       {product.unit || 'pza'}
                     </span>
                   </div>
 
                   {/* Subtotal */}
-                  <div className="text-left md:text-right">
+                  <div className="flex flex-col gap-1 text-left lg:text-right">
                     <p className="text-sm text-slate-500">Subtotal</p>
-                    <p className="font-bold text-slate-900">
+                    <p className="text-lg font-bold text-slate-900">
                       ${((product.price || 0) * item.quantity).toFixed(2)}
                     </p>
                   </div>
 
                   {/* Eliminar */}
                   {!readOnly && (
-                    <div className="flex justify-end">
+                    <div className="flex items-start justify-end lg:justify-center">
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => handleRemoveItem(item.product_id)}
-                        className="h-9 w-9 rounded-xl text-red-600 hover:bg-red-50 hover:text-red-700"
+                        className="h-10 w-10 rounded-xl text-red-600 hover:bg-red-50 hover:text-red-700"
                         aria-label={`Eliminar ${product.name} de la plantilla`}
                       >
                         <Trash2 className="h-4 w-4" />

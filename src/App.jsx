@@ -120,22 +120,52 @@ const AppLayout = () => {
     }
   };
 
+  useEffect(() => {
+    const shouldLockScroll = isMobileNavOpen && typeof window !== 'undefined' && window.innerWidth < 1024;
+    if (shouldLockScroll) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileNavOpen]);
+
   const pathsWithoutNav = ['/checkout', '/reset-password'];
   const showNav = !pathsWithoutNav.some(path => location.pathname.startsWith(path));
 
   return (
     <div className="min-h-screen bg-slate-50">
       <SkipLinks />
-      
-      {showNav && <Sidebar isSidebarOpen={isSidebarOpen} isMobileNavOpen={isMobileNavOpen} setMobileNavOpen={setMobileNavOpen} />}
-      
+
+      {showNav && (
+        <>
+          <Sidebar isSidebarOpen={isSidebarOpen} isMobileNavOpen={isMobileNavOpen} setMobileNavOpen={setMobileNavOpen} />
+          <button
+            type="button"
+            aria-label="Cerrar menú de navegación"
+            onClick={() => setMobileNavOpen(false)}
+            className={cn(
+              'fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm transition-opacity lg:hidden',
+              isMobileNavOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
+            )}
+          />
+        </>
+      )}
+
       <div className={cn(
-        "relative min-h-screen transition-all duration-300 ease-in-out",
-        isSidebarOpen ? 'lg:pl-64' : 'lg:pl-20'
+        "relative min-h-screen transition-all duration-300 ease-in-out lg:pl-[18rem]"
       )}>
         {showNav && <Header setSidebarOpen={handleToggleSidebar} />}
-        
-        <main className="w-full" id="main-content" role="main">
+
+        <main
+          className="relative w-full flex-1 bg-slate-50 pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-[calc(4.75rem+env(safe-area-inset-top))] transition-all duration-300 lg:pb-10 lg:pt-10"
+          id="main-content"
+          role="main"
+        >
+          <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:max-w-full lg:px-8">
             <ErrorBoundary level="page">
               <Suspense fallback={<div className="h-full"><PageLoader /></div>}>
                 <Routes location={location}>
@@ -190,6 +220,7 @@ const AppLayout = () => {
                     </Routes>
               </Suspense>
             </ErrorBoundary>
+          </div>
         </main>
       </div>
 

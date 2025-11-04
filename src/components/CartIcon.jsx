@@ -14,7 +14,7 @@ export function CartIcon({ variant = 'default' }) {
       variant="ghost"
       size="icon"
       className={cn(
-        'relative rounded-full transition-colors',
+        'relative overflow-visible rounded-full transition-colors',
         isCompact && 'h-11 w-11 border border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50'
       )}
       aria-label={totalItems > 0 ? `Abrir carrito, ${totalItems} productos` : 'Abrir carrito'}
@@ -23,8 +23,8 @@ export function CartIcon({ variant = 'default' }) {
       {totalItems > 0 && (
         <span
           className={cn(
-            'absolute -top-1 -right-1 flex min-h-[18px] min-w-[18px] items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground shadow-md',
-            totalItems > 99 && 'px-1.5'
+            'absolute -top-1.5 -right-1.5 z-20 flex h-5 min-w-[1.75rem] items-center justify-center rounded-full bg-destructive px-1.5 text-[10px] font-bold text-destructive-foreground leading-[20px] shadow-md',
+            totalItems > 99 && 'px-2'
           )}
         >
           {totalItems > 99 ? '99+' : totalItems}

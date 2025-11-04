@@ -165,7 +165,7 @@ const ProfilePage = () => {
             <div className="flex flex-col sm:flex-row items-start sm:items-end -mt-16 gap-6">
               <Avatar className="h-32 w-32 border-4 border-white shadow-lg">
                 <AvatarImage src={user.avatar_url} alt={full_name} />
-                <AvatarFallback className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700 text-4xl font-bold">{fallback}</AvatarFallback>
+                <AvatarFallback className="text-4xl font-bold text-white">{fallback}</AvatarFallback>
               </Avatar>
               <div className="flex-1 pb-2">
                 <h2 className="text-2xl sm:text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">{profileData.full_name}</h2>

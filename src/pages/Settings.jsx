@@ -22,18 +22,19 @@ const TABS = [
 ];
 
 const SettingsCard = ({ title, description, children, onSave, isSaving }) => (
-    <Card className="border-2 border-slate-200 shadow-lg rounded-2xl">
-        <CardHeader className="pb-6">
+    <Card className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg">
+        <CardHeader className="space-y-3 pb-4">
             <CardTitle className="text-2xl font-bold text-slate-900">{title}</CardTitle>
-            {description && <CardDescription className="text-base text-slate-600 mt-2">{description}</CardDescription>}
+            {description && <CardDescription className="text-base text-slate-600">{description}</CardDescription>}
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-6 pb-24 pt-0">
             {children}
         </CardContent>
         {onSave && (
-            <div className="p-6 pt-0">
-                <Button onClick={onSave} disabled={isSaving} className="rounded-xl shadow-lg hover:shadow-xl" size="lg">
-                    {isSaving ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : null} Guardar Cambios
+            <div className="sticky bottom-0 left-0 right-0 z-10 mt-auto border-t border-slate-200 bg-white/95 px-6 py-4 backdrop-blur">
+                <Button onClick={onSave} disabled={isSaving} className="w-full rounded-xl shadow-lg hover:shadow-xl" size="lg">
+                    {isSaving ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : null}
+                    Guardar Cambios
                 </Button>
             </div>
         )}
@@ -67,9 +68,10 @@ const SettingsPage = () => {
     return (
         <>
             <Helmet><title>Configuración - ComerECO</title></Helmet>
-            <div className="flex flex-col lg:flex-row min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
-                    <aside className="w-full lg:w-80 bg-white lg:border-r-2 border-b-2 lg:border-b-0 border-slate-200 lg:shadow-lg">
-                    <div className="p-6 hidden lg:block border-b-2 border-slate-200">
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
+                <div className="mx-auto flex w-full max-w-7xl flex-col-reverse gap-6 px-4 pb-16 pt-8 lg:grid lg:grid-cols-[22rem,minmax(0,1fr)] lg:items-start lg:gap-10 lg:px-8">
+                    <aside className="order-2 w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg lg:order-1 lg:sticky lg:top-24 lg:h-fit">
+                    <div className="hidden border-b border-slate-200 p-6 lg:block">
                         <div className="flex items-center gap-3">
                             <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm">
                                 <Settings className="h-6 w-6 text-blue-600" aria-hidden="true" />
@@ -114,10 +116,11 @@ const SettingsPage = () => {
                         ))}
                     </nav>
                     </aside>
-                    <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+                    <main className="order-1 w-full max-w-3xl space-y-6 lg:order-2">
                         {renderContent()}
                     </main>
                 </div>
+            </div>
         </>
     );
 };

@@ -295,7 +295,7 @@ const Users = () => {
                                         <div className="flex items-center space-x-3">
                                             <Avatar className="h-11 w-11 border-2 border-slate-200">
                                                 <AvatarImage src={user.avatar_url} />
-                                                <AvatarFallback className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700 font-bold">
+                                                <AvatarFallback className="text-white font-semibold">
                                                     {user.full_name?.charAt(0) || 'U'}
                                                 </AvatarFallback>
                                             </Avatar>

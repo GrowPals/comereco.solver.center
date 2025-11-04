@@ -1,11 +1,12 @@
 
 import React, { useMemo, useCallback, memo } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, List, FolderKanban, Users, ShoppingBag, BarChart, CheckSquare, Settings, LogOut, Star, LayoutTemplate, HelpCircle, Bell, ChevronRight } from 'lucide-react';
+import { Home, List, FolderKanban, Users, ShoppingBag, BarChart, CheckSquare, Settings, LogOut, Star, LayoutTemplate, HelpCircle, Bell, ChevronRight, X } from 'lucide-react';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/components/ui/useToast';
+import { cn } from '@/lib/utils';
 
 const MenuItem = memo(({ to, icon: Icon, children, onClick, badge }) => {
     const location = useLocation();
@@ -124,20 +125,34 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
 
     return (
         <aside
-            className={`fixed top-0 right-0 z-50 flex h-full flex-col bg-white transition-all duration-300 ease-out ${
-                isMobileNavOpen ? 'translate-x-0 w-[340px] shadow-2xl' : 'translate-x-full w-[340px]'
-            } lg:fixed lg:left-0 lg:w-72 lg:translate-x-0 lg:border-r lg:border-slate-200 lg:shadow-md`}
+            className={cn(
+                'fixed inset-y-0 left-0 z-50 flex h-full flex-col bg-white transition-transform duration-300 ease-out lg:border-r lg:border-slate-200 lg:shadow-md',
+                isMobileNavOpen ? 'translate-x-0 shadow-[0_20px_60px_rgba(15,23,42,0.25)]' : '-translate-x-full shadow-none',
+                isSidebarOpen ? 'lg:w-72' : 'lg:w-20',
+                'w-full max-w-sm lg:translate-x-0'
+            )}
             role="complementary"
             aria-label="Menú de navegación"
             id="navigation"
         >
+            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4 lg:hidden">
+                <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Menú principal</p>
+                <button
+                    type="button"
+                    onClick={() => setMobileNavOpen(false)}
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-600 shadow-sm"
+                    aria-label="Cerrar menú"
+                >
+                    <X className="h-4 w-4" />
+                </button>
+            </div>
             {/* Header del Sidebar - Perfil del Usuario */}
             <div className="p-6 border-b border-slate-200">
                 <NavLink to="/profile" onClick={handleNavClick}>
                     <div className="flex items-center gap-4 hover:bg-slate-50 -m-2 p-2 rounded-xl transition-colors">
                         <Avatar className="h-16 w-16 ring-2 ring-primary-100">
                             <AvatarImage alt={`Avatar de ${userName}`} src={user?.avatar_url} />
-                            <AvatarFallback className="bg-slate-900 text-white font-bold text-lg">
+                            <AvatarFallback className="text-lg font-bold text-white">
                                 {userInitials}
                             </AvatarFallback>
                         </Avatar>
@@ -154,7 +169,7 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
             </div>
 
             {/* Contenido del menú */}
-            <nav className="flex-1 px-4 py-6 overflow-y-auto" role="navigation" aria-label="Menú secundario">
+            <nav className="flex-1 overflow-y-auto px-4 py-6" role="navigation" aria-label="Menú secundario">
                 {/* Secciones específicas del rol */}
                 {menuSections.map((section, idx) => (
                     <div key={idx} className="mb-6">
