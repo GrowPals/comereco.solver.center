@@ -31,6 +31,47 @@ const mapToObject = (map) => {
   return obj;
 };
 
+export const getRequiresApprovalFromContext = (accessContext, projectId, userId) => {
+  if (!accessContext || !projectId || !userId) {
+    return null;
+  }
+
+  const approvals = accessContext.approvalsByProject;
+  if (!approvals) {
+    return null;
+  }
+
+  const resolveFromMap = (map) => {
+    if (!map || !map.has(projectId)) {
+      return null;
+    }
+    const value = map.get(projectId);
+    if (value instanceof Map) {
+      return value.has(userId) ? value.get(userId) : null;
+    }
+    return typeof value === 'boolean' ? value : null;
+  };
+
+  if (approvals instanceof Map) {
+    return resolveFromMap(approvals);
+  }
+
+  const projectApprovals = approvals[projectId];
+  if (!projectApprovals) {
+    return null;
+  }
+
+  if (projectApprovals instanceof Map) {
+    return projectApprovals.has(userId) ? projectApprovals.get(userId) : null;
+  }
+
+  if (Object.prototype.hasOwnProperty.call(projectApprovals, userId)) {
+    return projectApprovals[userId];
+  }
+
+  return null;
+};
+
 export const getUserAccessContext = async ({ forceRefresh = false } = {}) => {
   const now = Date.now();
 
