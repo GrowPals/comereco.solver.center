@@ -158,11 +158,34 @@ export const updateUserProfile = async (userId, updateData) => {
     throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
   }
 
+  const access = await getUserAccessContext();
+  const isSelf = session.user.id === userId;
+  const manageableIds = access.manageableUserIds || [];
+
   // Validar que role_v2 sea válido si se está actualizando
   if (updateData.role_v2) {
     const validRoles = ['admin', 'supervisor', 'user'];
     if (!validRoles.includes(updateData.role_v2)) {
       throw new Error(`Rol inválido. Debe ser uno de: ${validRoles.join(', ')}`);
+    }
+    if (!access.isAdmin) {
+      throw new Error('Solo los administradores pueden cambiar el rol.');
+    }
+  }
+
+  if (!access.isAdmin) {
+    if (access.isSupervisor) {
+      if (!manageableIds.includes(userId) && !isSelf) {
+        throw new Error('No tienes permisos para actualizar este usuario.');
+      }
+    } else if (!isSelf) {
+      throw new Error('No tienes permisos para actualizar este usuario.');
+    }
+  }
+
+  if (updateData.can_submit_without_approval !== undefined && !access.isAdmin) {
+    if (!access.isSupervisor || (!manageableIds.includes(userId) && !isSelf)) {
+      throw new Error('No tienes permisos para modificar este permiso.');
     }
   }
 
@@ -193,7 +216,7 @@ export const updateUserProfile = async (userId, updateData) => {
   }
 
   // Campos permitidos según REFERENCIA_TECNICA_BD_SUPABASE.md + phone
-  const allowedFields = ['full_name', 'avatar_url', 'role_v2', 'phone'];
+  const allowedFields = ['full_name', 'avatar_url', 'role_v2', 'phone', 'can_submit_without_approval'];
   const filteredUpdate = Object.keys(updateData)
     .filter(key => allowedFields.includes(key))
     .reduce((obj, key) => {
@@ -204,6 +227,8 @@ export const updateUserProfile = async (userId, updateData) => {
         // Permitir null o cadena vacía para eliminar el teléfono
         const trimmedPhone = updateData[key] ? updateData[key].trim() : '';
         obj[key] = trimmedPhone || null;
+      } else if (key === 'can_submit_without_approval') {
+        obj[key] = !!updateData[key];
       } else {
         obj[key] = updateData[key];
       }
@@ -218,7 +243,7 @@ export const updateUserProfile = async (userId, updateData) => {
     .from('profiles')
     .update(filteredUpdate)
     .eq('id', userId)
-    .select('id, company_id, full_name, avatar_url, role_v2, phone, updated_at')
+    .select('id, company_id, full_name, avatar_url, role_v2, phone, updated_at, can_submit_without_approval')
     .single();
   
   if (error) {
