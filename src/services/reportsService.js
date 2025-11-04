@@ -1,10 +1,48 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
-import { getCachedSession, getCachedCompanyId } from '@/lib/supabaseHelpers';
+import { getUserAccessContext } from '@/lib/accessControl';
 import { formatErrorMessage } from '@/utils/errorHandler';
 import logger from '@/utils/logger';
 import { startOfMonth, endOfMonth, subMonths, format } from 'date-fns';
 import { es } from 'date-fns/locale';
+
+const STATUS_TEMPLATE = [
+    { key: 'draft', label: 'Borradores', color: '#64748b' },
+    { key: 'submitted', label: 'Pendientes', color: '#f59e0b' },
+    { key: 'approved', label: 'Aprobadas', color: '#10b981' },
+    { key: 'rejected', label: 'Rechazadas', color: '#ef4444' },
+];
+
+const mapStatusCounts = (counts) =>
+    STATUS_TEMPLATE.map(({ key, label, color }) => ({
+        name: label,
+        value: counts[key] || 0,
+        color,
+    }));
+
+const buildEmptyStatus = () => mapStatusCounts({});
+
+const applyRequisitionAccessFilter = (builder, access, { requireProjects = true } = {}) => {
+    let query = builder.eq('company_id', access.companyId);
+
+    if (access.isAdmin) {
+        return { query, empty: false };
+    }
+
+    if (access.isSupervisor) {
+        const projectIds = access.accessibleProjectIds || [];
+        if (requireProjects && projectIds.length === 0) {
+            return { query, empty: true };
+        }
+        if (projectIds.length > 0) {
+            query = query.in('project_id', projectIds);
+        }
+        return { query, empty: false };
+    }
+
+    query = query.eq('created_by', access.userId);
+    return { query, empty: false };
+};
 
 /**
  * Servicio para obtener datos de reportes y analytics
@@ -12,16 +50,18 @@ import { es } from 'date-fns/locale';
 
 // Obtener estadísticas de requisiciones por estado
 export const getRequisitionsByStatus = async () => {
-    const { session } = await getCachedSession();
-    if (!session) throw new Error('No autenticado');
+    const access = await getUserAccessContext();
 
-    const { companyId } = await getCachedCompanyId();
-    if (!companyId) throw new Error('Empresa no encontrada');
+    const { query, empty } = applyRequisitionAccessFilter(
+        supabase.from('requisitions').select('business_status, project_id, created_by, company_id'),
+        access
+    );
 
-    const { data, error } = await supabase
-        .from('requisitions')
-        .select('business_status')
-        .eq('company_id', companyId);
+    if (empty) {
+        return buildEmptyStatus();
+    }
+
+    const { data, error } = await query;
 
     if (error) {
         logger.error('Error fetching requisitions by status:', error);
@@ -43,21 +83,12 @@ export const getRequisitionsByStatus = async () => {
         }
     });
 
-    return [
-        { name: 'Borradores', value: statusCount.draft, color: '#64748b' },
-        { name: 'Pendientes', value: statusCount.submitted, color: '#f59e0b' },
-        { name: 'Aprobadas', value: statusCount.approved, color: '#10b981' },
-        { name: 'Rechazadas', value: statusCount.rejected, color: '#ef4444' },
-    ];
+    return mapStatusCounts(statusCount);
 };
 
 // Obtener montos totales por mes (últimos 6 meses)
 export const getMonthlyRequisitionsAmount = async () => {
-    const { session } = await getCachedSession();
-    if (!session) throw new Error('No autenticado');
-
-    const { companyId } = await getCachedCompanyId();
-    if (!companyId) throw new Error('Empresa no encontrada');
+    const access = await getUserAccessContext();
 
     const monthsData = [];
 
@@ -66,12 +97,23 @@ export const getMonthlyRequisitionsAmount = async () => {
         const startDate = startOfMonth(date);
         const endDate = endOfMonth(date);
 
-        const { data, error } = await supabase
+        const baseQuery = supabase
             .from('requisitions')
-            .select('total_amount, business_status')
-            .eq('company_id', companyId)
+            .select('total_amount, business_status, project_id, created_by, company_id')
             .gte('created_at', startDate.toISOString())
             .lte('created_at', endDate.toISOString());
+
+        const { query, empty } = applyRequisitionAccessFilter(baseQuery, access);
+        if (empty) {
+            monthsData.push({
+                mes: format(date, 'MMM', { locale: es }),
+                aprobadas: 0,
+                pendientes: 0,
+            });
+            continue;
+        }
+
+        const { data, error } = await query;
 
         if (error) {
             logger.error('Error fetching monthly data:', error);
@@ -99,18 +141,20 @@ export const getMonthlyRequisitionsAmount = async () => {
 
 // Obtener productos más solicitados
 export const getTopProducts = async (limit = 10) => {
-    const { session } = await getCachedSession();
-    if (!session) throw new Error('No autenticado');
-
-    const { companyId } = await getCachedCompanyId();
-    if (!companyId) throw new Error('Empresa no encontrada');
+    const access = await getUserAccessContext();
 
     // Obtener todas las requisiciones aprobadas de la empresa
-    const { data: requisitions, error: reqError } = await supabase
+    const baseQuery = supabase
         .from('requisitions')
-        .select('id')
-        .eq('company_id', companyId)
+        .select('id, project_id, created_by, company_id')
         .eq('business_status', 'approved');
+
+    const { query, empty } = applyRequisitionAccessFilter(baseQuery, access);
+    if (empty) {
+        return [];
+    }
+
+    const { data: requisitions, error: reqError } = await query;
 
     if (reqError) {
         logger.error('Error fetching requisitions:', reqError);
@@ -192,66 +236,96 @@ export const getTopProducts = async (limit = 10) => {
 
 // Obtener estadísticas generales
 export const getGeneralStats = async () => {
-    const { session } = await getCachedSession();
-    if (!session) throw new Error('No autenticado');
+    const access = await getUserAccessContext();
 
-    const { companyId } = await getCachedCompanyId();
-    if (!companyId) throw new Error('Empresa no encontrada');
-
-    // Total de requisiciones
-    const { count: totalRequisitions } = await supabase
+    const totalQueryBase = supabase
         .from('requisitions')
-        .select('*', { count: 'exact', head: true })
-        .eq('company_id', companyId);
+        .select('*', { count: 'exact', head: true });
+    const { query: totalQuery, empty: totalEmpty } = applyRequisitionAccessFilter(totalQueryBase, access);
+    let totalRequisitions = 0;
+    if (!totalEmpty) {
+        const { count, error } = await totalQuery;
+        if (error) {
+            logger.error('Error counting requisitions:', error);
+        } else {
+            totalRequisitions = count || 0;
+        }
+    }
 
-    // Total aprobadas
-    const { data: approved } = await supabase
+    const approvedBase = supabase
         .from('requisitions')
-        .select('total_amount')
-        .eq('company_id', companyId)
+        .select('total_amount, project_id, created_by, company_id')
         .eq('business_status', 'approved');
+    const { query: approvedQuery, empty: approvedEmpty } = applyRequisitionAccessFilter(approvedBase, access);
+    let totalApproved = 0;
+    if (!approvedEmpty) {
+        const { data: approvedData, error: approvedError } = await approvedQuery;
+        if (approvedError) {
+            logger.error('Error fetching approved requisitions:', approvedError);
+        } else {
+            totalApproved = approvedData?.reduce((sum, r) => sum + (Number(r.total_amount) || 0), 0) || 0;
+        }
+    }
 
-    const totalApproved = approved?.reduce((sum, r) => sum + (Number(r.total_amount) || 0), 0) || 0;
-
-    // Total pendientes
-    const { count: pendingCount } = await supabase
+    const pendingBase = supabase
         .from('requisitions')
         .select('*', { count: 'exact', head: true })
-        .eq('company_id', companyId)
         .eq('business_status', 'submitted');
+    const { query: pendingQuery, empty: pendingEmpty } = applyRequisitionAccessFilter(pendingBase, access);
+    let pendingApprovals = 0;
+    if (!pendingEmpty) {
+        const { count: pendingCount, error: pendingError } = await pendingQuery;
+        if (pendingError) {
+            logger.error('Error counting pending requisitions:', pendingError);
+        } else {
+            pendingApprovals = pendingCount || 0;
+        }
+    }
 
-    // Total usuarios
-    const { count: totalUsers } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true })
-        .eq('company_id', companyId)
-        .eq('is_active', true);
+    let activeUsers = 0;
+    if (access.isAdmin) {
+        const { count, error } = await supabase
+            .from('profiles')
+            .select('*', { count: 'exact', head: true })
+            .eq('company_id', access.companyId)
+            .eq('is_active', true);
+        if (error) {
+            logger.error('Error counting active users:', error);
+        } else {
+            activeUsers = count || 0;
+        }
+    } else if (access.isSupervisor) {
+        const manageable = access.manageableUserIds || [];
+        activeUsers = manageable.length;
+    } else {
+        activeUsers = 1;
+    }
 
     return {
-        totalRequisitions: totalRequisitions || 0,
+        totalRequisitions,
         totalApproved: Math.round(totalApproved),
-        pendingApprovals: pendingCount || 0,
-        activeUsers: totalUsers || 0,
+        pendingApprovals,
+        activeUsers,
     };
 };
 
 // Obtener requisiciones por usuario (top 5)
 export const getRequisitionsByUser = async () => {
-    const { session } = await getCachedSession();
-    if (!session) throw new Error('No autenticado');
+    const access = await getUserAccessContext();
 
-    const { companyId } = await getCachedCompanyId();
-    if (!companyId) throw new Error('Empresa no encontrada');
-
-    // Obtener requisiciones sin join para evitar PGRST201
-    const { data: requisitions, error } = await supabase
+    const baseQuery = supabase
         .from('requisitions')
-        .select('created_by')
-        .eq('company_id', companyId);
+        .select('created_by, project_id, company_id');
+
+    const { query, empty } = applyRequisitionAccessFilter(baseQuery, access);
+    if (empty) {
+        return [];
+    }
+
+    const { data: requisitions, error } = await query;
 
     if (error) {
         logger.error('Error fetching requisitions by user:', error);
-        // Devolver array vacío en lugar de lanzar error
         return [];
     }
 
@@ -259,32 +333,58 @@ export const getRequisitionsByUser = async () => {
         return [];
     }
 
-    // Obtener IDs únicos de usuarios
-    const uniqueUserIds = [...new Set(requisitions.map(req => req.created_by))];
-
-    // Obtener nombres de usuarios en consulta separada para evitar error de permisos
-    let userNames = {};
-    try {
-        const { data: profiles, error: profilesError } = await supabase
-            .from('profiles')
-            .select('id, full_name')
-            .in('id', uniqueUserIds);
-
-        if (profilesError) {
-            logger.error('Error fetching profile names:', profilesError);
-        } else if (profiles) {
-            profiles.forEach(p => {
-                userNames[p.id] = p.full_name;
-            });
+    let filteredRequisitions = requisitions;
+    if (access.isSupervisor) {
+        const manageable = new Set(access.manageableUserIds || []);
+        filteredRequisitions = requisitions.filter(req => manageable.has(req.created_by));
+        if (filteredRequisitions.length === 0) {
+            return [];
         }
-    } catch (err) {
-        logger.error('Exception fetching profile names:', err);
     }
 
-    // Agrupar por usuario
+    if (access.isUser) {
+        filteredRequisitions = requisitions.filter(req => req.created_by === access.userId);
+        if (filteredRequisitions.length === 0) {
+            return [];
+        }
+    }
+
+    const uniqueUserIds = [...new Set(filteredRequisitions.map(req => req.created_by))];
+
+    let userNames = {};
+    if (uniqueUserIds.length > 0) {
+        try {
+            let profilesQuery = supabase
+                .from('profiles')
+                .select('id, full_name');
+
+            if (access.isAdmin) {
+                profilesQuery = profilesQuery
+                    .in('id', uniqueUserIds)
+                    .eq('company_id', access.companyId);
+            } else if (access.isSupervisor) {
+                profilesQuery = profilesQuery.in('id', uniqueUserIds);
+            } else {
+                profilesQuery = profilesQuery.eq('id', access.userId);
+            }
+
+            const { data: profiles, error: profilesError } = await profilesQuery;
+
+            if (profilesError) {
+                logger.error('Error fetching profile names:', profilesError);
+            } else if (profiles) {
+                profiles.forEach(p => {
+                    userNames[p.id] = p.full_name;
+                });
+            }
+        } catch (err) {
+            logger.error('Exception fetching profile names:', err);
+        }
+    }
+
     const userMap = {};
 
-    requisitions.forEach(req => {
+    filteredRequisitions.forEach(req => {
         const userId = req.created_by;
         const userName = userNames[userId] || `Usuario ${userId.slice(0, 8)}`;
 
@@ -297,7 +397,6 @@ export const getRequisitionsByUser = async () => {
         userMap[userId].total++;
     });
 
-    // Ordenar y tomar top 5
     const topUsers = Object.values(userMap)
         .sort((a, b) => b.total - a.total)
         .slice(0, 5);
