@@ -1,6 +1,7 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
 import { getCachedSession, getCachedCompanyId } from '@/lib/supabaseHelpers';
+import { getUserAccessContext, invalidateAccessContext } from '@/lib/accessControl';
 import logger from '@/utils/logger';
 import { formatErrorMessage } from '@/utils/errorHandler';
 
@@ -11,23 +12,28 @@ import { formatErrorMessage } from '@/utils/errorHandler';
  * @returns {Promise<Array>} Lista de proyectos.
  */
 export const getAllProjects = async () => {
-  // Validar sesión antes de hacer queries (usando cache)
-  const { session, error: sessionError } = await getCachedSession();
-  if (sessionError || !session) {
-    throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+  const access = await getUserAccessContext();
+
+  let query = supabase
+    .from('projects')
+    .select('id, company_id, name, description, status, supervisor_id, created_by, created_at, updated_at, active')
+    .eq('company_id', access.companyId);
+
+  if (!access.allProjects) {
+    const projectIds = access.accessibleProjectIds || [];
+    if (!projectIds.length) {
+      return [];
+    }
+    query = query.in('id', projectIds);
   }
 
-  // RLS filtra automáticamente según el rol del usuario
-  const { data, error } = await supabase
-    .from('projects')
-    .select('id, company_id, name, description, status, supervisor_id, created_by, created_at, updated_at, active');
-  
+  const { data, error } = await query;
+
   if (error) {
     logger.error('Error fetching projects:', error);
     throw new Error(formatErrorMessage(error));
   }
 
-  // Obtener supervisores por separado si es necesario
   const supervisorIds = [...new Set(data.map(p => p.supervisor_id).filter(Boolean))];
   let supervisors = {};
   if (supervisorIds.length > 0) {
@@ -53,34 +59,26 @@ export const getAllProjects = async () => {
  * @returns {Promise<Array>} Lista de proyectos.
  */
 export const getMyProjects = async () => {
-  // Validar sesión antes de hacer queries (usando cache)
-  const { session, error: sessionError } = await getCachedSession();
-  if (sessionError || !session) {
-    throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
-  }
-  
-  const { data: memberships, error } = await supabase
-    .from('project_members')
-    .select('project_id')
-    .eq('user_id', session.user.id);
+  const access = await getUserAccessContext();
 
-  if (error) {
-    logger.error('Error fetching my projects:', error);
+  if (access.allProjects) {
+    return getAllProjects();
+  }
+
+  const projectIds = access.accessibleProjectIds || [];
+  if (!projectIds.length) {
     return [];
   }
 
-  if (!memberships || memberships.length === 0) return [];
-
-  const projectIds = memberships.map(m => m.project_id);
-  // Optimizado: Solo seleccionar campos necesarios
-  const { data: projects, error: projectsError } = await supabase
+  const { data: projects, error } = await supabase
     .from('projects')
     .select('id, company_id, name, description, status, supervisor_id, created_by, created_at, updated_at, active')
-    .in('id', projectIds);
+    .in('id', projectIds)
+    .eq('company_id', access.companyId);
 
-  if (projectsError) {
-    logger.error('Error fetching projects:', projectsError);
-    return [];
+  if (error) {
+    logger.error('Error fetching accessible projects:', error);
+    throw new Error(formatErrorMessage(error));
   }
 
   return projects || [];
@@ -101,15 +99,19 @@ export const createProject = async (projectData) => {
     throw new Error("El nombre del proyecto debe tener al menos 2 caracteres.");
   }
 
-  // Optimizado: Usar helpers cacheados
-  const { session, error: sessionError } = await getCachedSession();
-  if (sessionError || !session) {
-    throw new Error("Usuario no autenticado.");
+  const access = await getUserAccessContext();
+  if (!access.isAdmin) {
+    throw new Error('Solo los administradores pueden crear proyectos.');
   }
 
-  const { companyId, error: companyError } = await getCachedCompanyId();
-  if (companyError || !companyId) {
-    throw new Error('No se pudo obtener el perfil del usuario.');
+  const { session, error: sessionError } = await getCachedSession();
+  if (sessionError || !session) {
+    throw new Error('Usuario no autenticado.');
+  }
+
+  const companyId = access.companyId;
+  if (!companyId) {
+    throw new Error('No se pudo determinar la empresa del usuario.');
   }
   
   // Limpiar y normalizar datos
@@ -140,7 +142,8 @@ export const createProject = async (projectData) => {
   if (!data) {
     throw new Error("No se pudo crear el proyecto.");
   }
-  
+
+  invalidateAccessContext();
   return data;
 };
 
@@ -156,6 +159,8 @@ export const updateProject = async (projectData) => {
   if (!projectData || !projectData.id) {
     throw new Error("Datos del proyecto inválidos.");
   }
+
+  const { id, ...updateData } = projectData;
   
   // Validar nombre si se está actualizando
   if (projectData.name !== undefined) {
@@ -167,14 +172,18 @@ export const updateProject = async (projectData) => {
     }
   }
 
-  // Validar sesión antes de hacer queries (usando cache)
-  const { session, error: sessionError } = await getCachedSession();
-  if (sessionError || !session) {
-    throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+  const access = await getUserAccessContext();
+  if (!access.isAdmin) {
+    if (!access.supervisedProjectIds.includes(id)) {
+      throw new Error('No tienes permisos para editar este proyecto.');
+    }
   }
 
-  const { id, ...updateData } = projectData;
-  
+  const { session, error: sessionError } = await getCachedSession();
+  if (sessionError || !session) {
+    throw new Error('Sesión no válida. Por favor, inicia sesión nuevamente.');
+  }
+
   // Limpiar y normalizar datos
   const cleanedData = { ...updateData };
   if (cleanedData.name) cleanedData.name = cleanedData.name.trim();
@@ -204,7 +213,7 @@ export const updateProject = async (projectData) => {
   if (!data) {
     throw new Error("No se pudo actualizar el proyecto.");
   }
-  
+  invalidateAccessContext();
   return data;
 };
 
@@ -215,10 +224,16 @@ export const updateProject = async (projectData) => {
  * @param {string} projectId - ID del proyecto a eliminar.
  */
 export const deleteProject = async (projectId) => {
-  // Validar sesión antes de hacer queries (usando cache)
+  const access = await getUserAccessContext();
+  if (!access.isAdmin) {
+    if (!access.supervisedProjectIds.includes(projectId)) {
+      throw new Error('No tienes permisos para eliminar este proyecto.');
+    }
+  }
+
   const { session, error: sessionError } = await getCachedSession();
   if (sessionError || !session) {
-    throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+    throw new Error('Sesión no válida. Por favor, inicia sesión nuevamente.');
   }
 
   const { error } = await supabase.from('projects').delete().eq('id', projectId);
@@ -226,6 +241,8 @@ export const deleteProject = async (projectId) => {
     logger.error('Error deleting project:', error);
     throw new Error(formatErrorMessage(error));
   }
+
+  invalidateAccessContext();
 };
 
 /**
@@ -237,10 +254,18 @@ export const deleteProject = async (projectId) => {
  * @returns {Promise<Array>} Lista de miembros.
  */
 export const getProjectMembers = async (projectId) => {
-    // Validar sesión antes de hacer queries (usando cache)
+    const access = await getUserAccessContext();
+
+    if (!access.isAdmin) {
+        const allowedProjects = access.accessibleProjectIds || [];
+        if (!allowedProjects.includes(projectId)) {
+            throw new Error('No tienes permisos para ver los miembros de este proyecto.');
+        }
+    }
+
     const { session, error: sessionError } = await getCachedSession();
     if (sessionError || !session) {
-        throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+        throw new Error('Sesión no válida. Por favor, inicia sesión nuevamente.');
     }
 
     const { data: memberships, error: membersError } = await supabase
@@ -286,10 +311,16 @@ export const getProjectMembers = async (projectId) => {
  * @param {boolean} requiresApproval - Si el usuario requiere aprobación para enviar requisiciones (default: true).
  */
 export const addProjectMember = async (projectId, userId, roleInProject = 'member', requiresApproval = true) => {
-    // Validar sesión antes de hacer queries (usando cache)
+    const access = await getUserAccessContext();
+    if (!access.isAdmin) {
+        if (!access.supervisedProjectIds.includes(projectId)) {
+            throw new Error('No tienes permisos para agregar miembros a este proyecto.');
+        }
+    }
+
     const { session, error: sessionError } = await getCachedSession();
     if (sessionError || !session) {
-        throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+        throw new Error('Sesión no válida. Por favor, inicia sesión nuevamente.');
     }
 
     const { error } = await supabase
@@ -304,6 +335,8 @@ export const addProjectMember = async (projectId, userId, roleInProject = 'membe
         logger.error('Error adding project member:', error);
         throw new Error(formatErrorMessage(error));
     }
+
+    invalidateAccessContext();
 };
 
 /**
@@ -314,10 +347,16 @@ export const addProjectMember = async (projectId, userId, roleInProject = 'membe
  * @param {string} userId - ID del usuario a eliminar.
  */
 export const removeProjectMember = async (projectId, userId) => {
-    // Validar sesión antes de hacer queries (usando cache)
+    const access = await getUserAccessContext();
+    if (!access.isAdmin) {
+        if (!access.supervisedProjectIds.includes(projectId)) {
+            throw new Error('No tienes permisos para eliminar miembros de este proyecto.');
+        }
+    }
+
     const { session, error: sessionError } = await getCachedSession();
     if (sessionError || !session) {
-        throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+        throw new Error('Sesión no válida. Por favor, inicia sesión nuevamente.');
     }
 
     const { error } = await supabase
@@ -328,6 +367,8 @@ export const removeProjectMember = async (projectId, userId) => {
         logger.error('Error removing project member:', error);
         throw new Error(formatErrorMessage(error));
     }
+
+    invalidateAccessContext();
 };
 
 /**
@@ -338,10 +379,16 @@ export const removeProjectMember = async (projectId, userId) => {
  * @param {string} roleInProject - Nuevo rol en el proyecto ('member', 'lead', etc.).
  */
 export const updateProjectMemberRole = async (projectId, userId, roleInProject) => {
-    // Validar sesión antes de hacer queries (usando cache)
+    const access = await getUserAccessContext();
+    if (!access.isAdmin) {
+        if (!access.supervisedProjectIds.includes(projectId)) {
+            throw new Error('No tienes permisos para actualizar miembros de este proyecto.');
+        }
+    }
+
     const { session, error: sessionError } = await getCachedSession();
     if (sessionError || !session) {
-        throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+        throw new Error('Sesión no válida. Por favor, inicia sesión nuevamente.');
     }
 
     const { error } = await supabase
@@ -353,6 +400,8 @@ export const updateProjectMemberRole = async (projectId, userId, roleInProject) 
         logger.error('Error updating project member role:', error);
         throw new Error(formatErrorMessage(error));
     }
+
+    invalidateAccessContext();
 };
 
 /**
@@ -363,10 +412,16 @@ export const updateProjectMemberRole = async (projectId, userId, roleInProject) 
  * @param {boolean} requiresApproval - Si el usuario requiere aprobación.
  */
 export const updateProjectMemberApproval = async (projectId, userId, requiresApproval) => {
-    // Validar sesión antes de hacer queries (usando cache)
+    const access = await getUserAccessContext();
+    if (!access.isAdmin) {
+        if (!access.supervisedProjectIds.includes(projectId)) {
+            throw new Error('No tienes permisos para actualizar esta configuración.');
+        }
+    }
+
     const { session, error: sessionError } = await getCachedSession();
     if (sessionError || !session) {
-        throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+        throw new Error('Sesión no válida. Por favor, inicia sesión nuevamente.');
     }
 
     // Validar que requiresApproval sea booleano
@@ -383,6 +438,8 @@ export const updateProjectMemberApproval = async (projectId, userId, requiresApp
         logger.error('Error updating project member approval:', error);
         throw new Error(formatErrorMessage(error));
     }
+
+    invalidateAccessContext();
 };
 
 /**
@@ -393,6 +450,14 @@ export const updateProjectMemberApproval = async (projectId, userId, requiresApp
 export const getProjectDetails = async (projectId) => {
   if (!projectId) {
     throw new Error("El ID del proyecto es requerido.");
+  }
+
+  const access = await getUserAccessContext();
+  if (!access.isAdmin) {
+    const allowedProjects = access.accessibleProjectIds || [];
+    if (!allowedProjects.includes(projectId)) {
+      throw new Error('No tienes permisos para ver este proyecto.');
+    }
   }
 
   // Validar sesión
@@ -406,6 +471,7 @@ export const getProjectDetails = async (projectId) => {
     .from('projects')
     .select('id, company_id, name, description, status, supervisor_id, created_by, created_at, updated_at, active')
     .eq('id', projectId)
+    .eq('company_id', access.companyId)
     .single();
 
   if (projectError) {

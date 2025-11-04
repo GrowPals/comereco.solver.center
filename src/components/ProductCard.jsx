@@ -1,19 +1,19 @@
 
-import React, { useState, useEffect, useCallback, memo } from 'react';
+import React, { useState, useEffect, useCallback, memo, useRef } from 'react';
 import { Heart, Plus, Loader2, Minus, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
 import { useFavorites } from '@/hooks/useFavorites';
-import { useToastNotification } from '@/components/ui/toast-notification';
 import OptimizedImage from '@/components/OptimizedImage';
 
 const ProductCard = memo(({ product }) => {
   const { addToCart, getItemQuantity, updateQuantity, removeFromCart } = useCart();
   const { favorites, toggleFavorite } = useFavorites();
-  const toast = useToastNotification();
 
   const [isAdding, setIsAdding] = useState(false);
   const [currentQuantity, setCurrentQuantity] = useState(0);
+  const [justInteracted, setJustInteracted] = useState(false);
+  const feedbackTimeoutRef = useRef(null);
 
   const isFavorite = Array.isArray(favorites) && favorites.includes(product.id);
 
@@ -21,6 +21,22 @@ const ProductCard = memo(({ product }) => {
     const quantity = getItemQuantity(product.id);
     setCurrentQuantity(quantity);
   }, [getItemQuantity, product.id]);
+
+  useEffect(() => () => {
+    if (feedbackTimeoutRef.current) {
+      clearTimeout(feedbackTimeoutRef.current);
+    }
+  }, []);
+
+  const triggerFeedback = useCallback(() => {
+    if (feedbackTimeoutRef.current) {
+      clearTimeout(feedbackTimeoutRef.current);
+    }
+    setJustInteracted(true);
+    feedbackTimeoutRef.current = setTimeout(() => {
+      setJustInteracted(false);
+    }, 650);
+  }, []);
 
   const handleAddToCart = useCallback(
     (event) => {
@@ -30,18 +46,19 @@ const ProductCard = memo(({ product }) => {
       setTimeout(() => {
         addToCart(product);
         setIsAdding(false);
-        toast.success('¡Producto añadido!', `${product.name || product.nombre} se agregó al carrito.`);
+        triggerFeedback();
       }, 260);
     },
-    [currentQuantity, addToCart, product, toast]
+    [currentQuantity, addToCart, product, triggerFeedback]
   );
 
   const handleIncrease = useCallback(
     (event) => {
       event.stopPropagation();
       updateQuantity(product.id, currentQuantity + 1);
+      triggerFeedback();
     },
-    [updateQuantity, product.id, currentQuantity]
+    [updateQuantity, product.id, currentQuantity, triggerFeedback]
   );
 
   const handleDecrease = useCallback(
@@ -52,8 +69,9 @@ const ProductCard = memo(({ product }) => {
       } else {
         updateQuantity(product.id, currentQuantity - 1);
       }
+      triggerFeedback();
     },
-    [updateQuantity, removeFromCart, product.id, currentQuantity]
+    [updateQuantity, removeFromCart, product.id, currentQuantity, triggerFeedback]
   );
 
   const handleToggleFavorite = useCallback(
@@ -73,7 +91,10 @@ const ProductCard = memo(({ product }) => {
 
   return (
     <article
-      className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus-within:-translate-y-1 focus-within:shadow-xl"
+      className={cn(
+        'group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus-within:-translate-y-1 focus-within:shadow-xl',
+        justInteracted && 'border-emerald-300 shadow-[0_0_0_3px_rgba(16,185,129,0.25)]'
+      )}
       role="article"
       aria-label={`Producto ${productName}, precio ${productPrice} pesos`}
     >

@@ -21,6 +21,7 @@ import EmptyState from '@/components/EmptyState';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import logger from '@/utils/logger';
+import { cn } from '@/lib/utils';
 
 const Approvals = () => {
     const navigate = useNavigate();
@@ -29,6 +30,7 @@ const Approvals = () => {
 
     const [rejectionModal, setRejectionModal] = useState({ isOpen: false, requisitionId: null });
     const [rejectionReason, setRejectionReason] = useState('');
+    const [dismissingIds, setDismissingIds] = useState([]);
 
     const { data: requisitions, isLoading } = useQuery({
         queryKey: ['pendingApprovals'],
@@ -38,11 +40,24 @@ const Approvals = () => {
     // Memoizar hora actual para evitar recalcular en cada render
     const currentTime = useMemo(() => format(new Date(), "HH:mm", { locale: es }), []);
 
+    const startDismiss = (id) => {
+        if (!id) return;
+        setDismissingIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
+    };
+
+    const clearDismiss = (id) => {
+        if (!id) return;
+        setDismissingIds((prev) => prev.filter((value) => value !== id));
+    };
+
     const mutation = useMutation({
         mutationFn: ({ requisitionId, status, reason }) => updateRequisitionStatus(requisitionId, status, reason),
         onSuccess: (data, variables) => {
-            queryClient.invalidateQueries(['pendingApprovals']);
-            queryClient.invalidateQueries(['requisitions']);
+            setTimeout(() => {
+                queryClient.invalidateQueries(['pendingApprovals']);
+                queryClient.invalidateQueries(['requisitions']);
+                clearDismiss(variables.requisitionId);
+            }, 220);
             toast({
                 title: 'Éxito',
                 description: `La requisición ha sido ${variables.status === 'approved' ? 'aprobada' : 'rechazada'}.`,
@@ -51,12 +66,14 @@ const Approvals = () => {
                 handleCloseRejectionModal();
             }
         },
-        onError: (error) => {
+        onError: (error, variables) => {
+            clearDismiss(variables?.requisitionId);
             toast({ variant: 'destructive', title: 'Error', description: error.message });
         },
     });
 
     const handleApprove = (requisitionId) => {
+        startDismiss(requisitionId);
         mutation.mutate({ requisitionId, status: 'approved' });
     };
 
@@ -74,6 +91,7 @@ const Approvals = () => {
             toast({ variant: 'destructive', title: 'Error', description: 'Debes proporcionar una razón para el rechazo.' });
             return;
         }
+        startDismiss(rejectionModal.requisitionId);
         mutation.mutate({
             requisitionId: rejectionModal.requisitionId,
             status: 'rejected',
@@ -125,10 +143,16 @@ const Approvals = () => {
                     <div className="max-w-7xl mx-auto">
                         {/* Grid de Cards */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            {requisitions?.map((req) => (
+                            {requisitions?.map((req) => {
+                                const isDismissing = dismissingIds.includes(req.id);
+                                return (
                                 <div
                                     key={req.id}
-                                    className="group relative bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer"
+                                    className={cn(
+                                        'group relative cursor-pointer overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl',
+                                        isDismissing && 'pointer-events-none opacity-0 translate-y-3 scale-[0.98]'
+                                    )}
+                                    style={isDismissing ? { maxHeight: 0, marginTop: 0, marginBottom: 0, paddingTop: 0, paddingBottom: 0 } : undefined}
                                     onClick={() => navigate(`/requisitions/${req.id}`)}
                                 >
                                     {/* Accent Bar */}
@@ -219,7 +243,8 @@ const Approvals = () => {
                                         </div>
                                     </div>
                                 </div>
-                            ))}
+                            );
+                            })}
                         </div>
                     </div>
                 )}

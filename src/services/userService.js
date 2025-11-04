@@ -1,6 +1,7 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
 import { getCachedSession, getCachedCompanyId } from '@/lib/supabaseHelpers';
+import { getUserAccessContext } from '@/lib/accessControl';
 import logger from '@/utils/logger';
 import { formatErrorMessage } from '@/utils/errorHandler';
 
@@ -11,30 +12,59 @@ import { formatErrorMessage } from '@/utils/errorHandler';
  * @returns {Promise<Array>} Una lista de perfiles de usuario.
  */
 export const fetchUsersInCompany = async () => {
-  // Validar sesión antes de hacer queries (usando cache)
-  const { session, error: sessionError } = await getCachedSession();
-  if (sessionError || !session) {
-    throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
+  const access = await getUserAccessContext();
+
+  if (access.isAdmin) {
+    const { companyId, error: companyError } = await getCachedCompanyId();
+    if (companyError || !companyId) {
+      logger.error("Error fetching current user's company", companyError);
+      return [];
+    }
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id, company_id, full_name, avatar_url, role_v2, phone, updated_at')
+      .eq('company_id', companyId);
+
+    if (error) {
+      logger.error('Error fetching users in company', error);
+      throw new Error(formatErrorMessage(error));
+    }
+    return data || [];
   }
 
-  // Optimizado: Usar helper cacheado para obtener company_id
-  const { companyId, error: companyError } = await getCachedCompanyId();
-  if (companyError || !companyId) {
-    logger.error("Error fetching current user's company", companyError);
-    return [];
+  if (access.isSupervisor) {
+    const manageableIds = access.manageableUserIds || [];
+    if (!manageableIds.length) {
+      return [];
+    }
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id, company_id, full_name, avatar_url, role_v2, updated_at')
+      .in('id', manageableIds)
+      .eq('company_id', access.companyId);
+
+    if (error) {
+      logger.error('Error fetching manageable users', error);
+      throw new Error(formatErrorMessage(error));
+    }
+
+    return data || [];
   }
 
-  // RLS filtra automáticamente por company_id, pero el filtro explícito añade claridad
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, company_id, full_name, avatar_url, role_v2, phone, updated_at')
-    .eq('company_id', companyId);
+    .select('id, company_id, full_name, avatar_url, role_v2, updated_at')
+    .eq('id', access.userId)
+    .single();
 
   if (error) {
-    logger.error('Error fetching users in company', error);
+    logger.error('Error fetching current user profile:', error);
     throw new Error(formatErrorMessage(error));
   }
-  return data || [];
+
+  return data ? [data] : [];
 };
 
 /**

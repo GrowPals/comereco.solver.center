@@ -1,6 +1,7 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
 import { getCachedSession } from '@/lib/supabaseHelpers';
+import { getUserAccessContext } from '@/lib/accessControl';
 import { formatErrorMessage } from '@/utils/errorHandler';
 import logger from '@/utils/logger';
 
@@ -65,12 +66,12 @@ export const fetchRequisitions = async (page = 1, pageSize = 10, sortBy = 'creat
         throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
     }
 
+    const access = await getUserAccessContext();
+
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 
-    // CORREGIDO: Según documentación técnica oficial, el campo es created_by (no requester_id)
-    // Hacer joins explícitos para evitar ambigüedades según mejores prácticas
-    const { data, error, count } = await supabase
+    let query = supabase
         .from('requisitions')
         .select(`
             id,
@@ -84,8 +85,23 @@ export const fetchRequisitions = async (page = 1, pageSize = 10, sortBy = 'creat
             approved_by,
             company_id
         `, { count: 'exact' })
+        .eq('company_id', access.companyId)
         .order(sortBy, { ascending })
         .range(from, to);
+
+    if (!access.isAdmin) {
+        if (access.isSupervisor) {
+            const projectIds = access.accessibleProjectIds || [];
+            if (!projectIds.length) {
+                return { data: [], total: 0 };
+            }
+            query = query.in('project_id', projectIds);
+        } else {
+            query = query.eq('created_by', session.user.id);
+        }
+    }
+
+    const { data, error, count } = await query;
 
     if (error) {
         logger.error("Error fetching requisitions:", error);
@@ -113,13 +129,27 @@ export const fetchRequisitionDetails = async (id) => {
     }
 
     // FIX: Evitar embeds ambiguos - consultas separadas según REFERENCIA_TECNICA_BD_SUPABASE.md
-    // Primero obtener la requisición base
-    // Optimizado: Seleccionar solo campos necesarios para evitar datos innecesarios
-    const { data: requisition, error: reqError } = await supabase
-        .from('requisitions')
-        .select('id, internal_folio, created_at, updated_at, total_amount, comments, business_status, integration_status, project_id, created_by, approved_by, company_id, bind_folio, bind_synced_at, bind_error_message, bind_sync_attempts, approved_at, rejected_at, rejection_reason')
-        .eq('id', id)
-        .single();
+  const access = await getUserAccessContext();
+
+  let requisitionQuery = supabase
+    .from('requisitions')
+    .select('id, internal_folio, created_at, updated_at, total_amount, comments, business_status, integration_status, project_id, created_by, approved_by, company_id, bind_folio, bind_synced_at, bind_error_message, bind_sync_attempts, approved_at, rejected_at, rejection_reason')
+    .eq('id', id)
+    .eq('company_id', access.companyId);
+
+  if (!access.isAdmin) {
+    if (access.isSupervisor) {
+      const projectIds = access.accessibleProjectIds || [];
+      if (!projectIds.length) {
+        throw new Error('No tienes permisos para ver esta requisición.');
+      }
+      requisitionQuery = requisitionQuery.in('project_id', projectIds);
+    } else {
+      requisitionQuery = requisitionQuery.eq('created_by', access.userId);
+    }
+  }
+
+  const { data: requisition, error: reqError } = await requisitionQuery.single();
 
     if (reqError) {
         logger.error("Error fetching requisition details:", reqError);
@@ -248,6 +278,38 @@ export const createRequisitionFromCart = async ({ projectId, comments, items }) 
         throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
     }
 
+    const access = await getUserAccessContext();
+
+    if (!access.isAdmin) {
+        const projectIds = access.accessibleProjectIds || [];
+        if (!projectIds.includes(projectId)) {
+            throw new Error('No tienes permisos para crear requisiciones en este proyecto.');
+        }
+    }
+
+    let requiresApproval = true;
+    if (access.isAdmin) {
+        requiresApproval = false;
+    } else {
+        const approvalsForProject = access.approvalsByProject?.[projectId];
+        if (approvalsForProject && Object.prototype.hasOwnProperty.call(approvalsForProject, access.userId)) {
+            requiresApproval = approvalsForProject[access.userId];
+        } else {
+            const { data: membership, error: membershipError } = await supabase
+                .from('project_members')
+                .select('requires_approval')
+                .eq('project_id', projectId)
+                .eq('user_id', session.user.id)
+                .single();
+
+            if (membershipError || !membership) {
+                throw new Error('No eres miembro de este proyecto.');
+            }
+
+            requiresApproval = membership.requires_approval !== false;
+        }
+    }
+
     // Transformar items del carrito al formato esperado por el RPC
     const rpcItems = items.map(item => ({
         product_id: item.id,
@@ -293,6 +355,21 @@ export const createRequisitionFromCart = async ({ projectId, comments, items }) 
         throw new Error('La requisición fue creada pero no se pudo recuperar.');
     }
 
+    if (!requiresApproval) {
+        const { error: autoApproveError } = await supabase
+            .from('requisitions')
+            .update({
+                business_status: 'approved',
+                approved_by: session.user.id,
+                approved_at: new Date().toISOString(),
+            })
+            .eq('id', newRequisition.id);
+
+        if (autoApproveError) {
+            logger.error('Error auto-approving requisition:', autoApproveError);
+        }
+    }
+
     // Limpiar el carrito del usuario después de crear la requisición
     const { error: cartError } = await supabase.rpc('clear_user_cart');
     if (cartError) {
@@ -313,13 +390,28 @@ export const fetchPendingApprovals = async () => {
     if (sessionError || !session) {
         throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
     }
-    
-    // CORREGIDO: Usar created_by según REFERENCIA_TECNICA_BD_SUPABASE.md
-    const { data: requisitions, error } = await supabase
+
+    const access = await getUserAccessContext();
+    if (!access.isAdmin && !access.isSupervisor) {
+        return [];
+    }
+
+    let query = supabase
         .from('requisitions')
-        .select('id, internal_folio, created_at, total_amount, project_id, created_by')
+        .select('id, internal_folio, created_at, total_amount, project_id, created_by, company_id')
         .eq('business_status', 'submitted')
+        .eq('company_id', access.companyId)
         .order('created_at', { ascending: true });
+
+    if (!access.isAdmin) {
+        const projectIds = access.accessibleProjectIds || [];
+        if (!projectIds.length) {
+            return [];
+        }
+        query = query.in('project_id', projectIds);
+    }
+
+    const { data: requisitions, error } = await query;
     
     if (error) {
         logger.error('Error fetching pending approvals:', error);
