@@ -23,7 +23,7 @@ export const fetchUsersInCompany = async () => {
 
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, company_id, full_name, avatar_url, role_v2, phone, updated_at')
+      .select('id, company_id, full_name, avatar_url, role_v2, phone, updated_at, can_submit_without_approval')
       .eq('company_id', companyId);
 
     if (error) {
@@ -41,7 +41,7 @@ export const fetchUsersInCompany = async () => {
 
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, company_id, full_name, avatar_url, role_v2, updated_at')
+      .select('id, company_id, full_name, avatar_url, role_v2, updated_at, can_submit_without_approval')
       .in('id', manageableIds)
       .eq('company_id', access.companyId);
 
@@ -55,7 +55,7 @@ export const fetchUsersInCompany = async () => {
 
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, company_id, full_name, avatar_url, role_v2, updated_at')
+    .select('id, company_id, full_name, avatar_url, role_v2, updated_at, can_submit_without_approval')
     .eq('id', access.userId)
     .single();
 

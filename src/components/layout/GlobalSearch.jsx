@@ -12,8 +12,10 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState({ productos: [], requisiciones: [], usuarios: [] });
   const [isLoading, setIsLoading] = useState(false);
+  const [isInteracting, setIsInteracting] = useState(false);
   const navigate = useNavigate();
   const inputRef = useRef(null);
+  const popoverRef = useRef(null);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const isMobileVariant = variant === 'mobile';
@@ -38,8 +40,9 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
   const handleSelect = useCallback((type, id) => {
     setOpen(false);
     setSearchTerm('');
+    setIsInteracting(false);
     if (type === 'product') {
-      navigate('/catalog');
+      navigate(`/producto/${id}`);
     } else if (type === 'requisition') {
       navigate(`/requisitions/${id}`);
     } else if (type === 'user') {
@@ -47,10 +50,39 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
     }
   }, [navigate]);
 
+  const handleInputFocus = useCallback(() => {
+    setIsInteracting(true);
+    setOpen(true);
+  }, []);
+
+  const handleInputChange = useCallback((e) => {
+    setSearchTerm(e.target.value);
+    if (!open) {
+      setOpen(true);
+    }
+  }, [open]);
+
+  const handleClearSearch = useCallback((e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setSearchTerm('');
+    setOpen(false);
+    inputRef.current?.focus();
+  }, []);
+
+  const handleOpenChange = useCallback((newOpen) => {
+    // Solo cerrar si no estamos interactuando con el input
+    if (!newOpen && !isInteracting) {
+      setOpen(false);
+    } else if (newOpen) {
+      setOpen(true);
+    }
+  }, [isInteracting]);
+
   const totalResults = results.productos.length + results.requisiciones.length + results.usuarios.length;
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         <div className="relative flex-1">
           <Search className={cn(
@@ -62,8 +94,12 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
             type="text"
             placeholder={isMobileVariant ? 'Buscar' : 'Buscar requisiciones, productos...'}
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onFocus={() => setOpen(true)}
+            onChange={handleInputChange}
+            onFocus={handleInputFocus}
+            onBlur={() => {
+              // Pequeño delay para permitir clics en los resultados
+              setTimeout(() => setIsInteracting(false), 200);
+            }}
             className={cn(
               'w-full border focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all',
               isMobileVariant
@@ -74,11 +110,8 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
           />
           {searchTerm && (
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setSearchTerm('');
-                inputRef.current?.focus();
-              }}
+              onClick={handleClearSearch}
+              onMouseDown={(e) => e.preventDefault()} // Prevenir pérdida de foco
               className={cn(
                 'absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-slate-600',
                 isMobileVariant && 'text-slate-500 hover:text-slate-700'
@@ -91,24 +124,19 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
         </div>
       </PopoverTrigger>
       <PopoverContent
+        ref={popoverRef}
         className={cn(
           'max-h-[500px] overflow-hidden p-0',
           isMobileVariant ? 'w-[min(420px,calc(100vw-2rem))]' : 'w-[400px]'
         )}
         align={isMobileVariant ? 'center' : 'start'}
+        onInteractOutside={(e) => {
+          // Prevenir cierre si el click es en el input principal
+          if (inputRef.current && inputRef.current.contains(e.target)) {
+            e.preventDefault();
+          }
+        }}
       >
-        <div className="p-4 border-b border-slate-200">
-          <div className="flex items-center gap-2">
-            <Search className="h-4 w-4 text-slate-500" />
-            <input
-              type="text"
-              placeholder="Buscar..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-1 bg-transparent border-none outline-none text-sm"
-            />
-          </div>
-        </div>
         <div className="overflow-y-auto max-h-[420px]">
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
@@ -120,7 +148,7 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
             </div>
           ) : totalResults === 0 ? (
             <div className="p-8 text-center text-slate-500">
-              <p className="text-sm">No se encontraron resultados</p>
+              <p className="text-sm">No se encontraron resultados para "{searchTerm}"</p>
             </div>
           ) : (
             <div className="p-2">
@@ -130,6 +158,7 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
                   {results.productos.map((product) => (
                     <button
                       key={product.id}
+                      onMouseDown={(e) => e.preventDefault()} // Prevenir pérdida de foco
                       onClick={() => handleSelect('product', product.id)}
                       className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer text-left"
                     >
@@ -148,6 +177,7 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
                   {results.requisiciones.map((req) => (
                     <button
                       key={req.id}
+                      onMouseDown={(e) => e.preventDefault()} // Prevenir pérdida de foco
                       onClick={() => handleSelect('requisition', req.id)}
                       className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer text-left"
                     >
@@ -166,6 +196,7 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
                   {results.usuarios.map((user) => (
                     <button
                       key={user.id}
+                      onMouseDown={(e) => e.preventDefault()} // Prevenir pérdida de foco
                       onClick={() => handleSelect('user', user.id)}
                       className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer text-left"
                     >

@@ -1,7 +1,7 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
 import { getCachedSession } from '@/lib/supabaseHelpers';
-import { getUserAccessContext } from '@/lib/accessControl';
+import { getUserAccessContext, getRequiresApprovalFromContext } from '@/lib/accessControl';
 import { formatErrorMessage } from '@/utils/errorHandler';
 import logger from '@/utils/logger';
 
@@ -288,12 +288,13 @@ export const createRequisitionFromCart = async ({ projectId, comments, items }) 
     }
 
     let requiresApproval = true;
-    if (access.isAdmin) {
+    if (access.isAdmin || access.canBypassApproval) {
         requiresApproval = false;
     } else {
-        const approvalsForProject = access.approvalsByProject?.[projectId];
-        if (approvalsForProject && Object.prototype.hasOwnProperty.call(approvalsForProject, access.userId)) {
-            requiresApproval = approvalsForProject[access.userId];
+        const cachedRequirement = getRequiresApprovalFromContext(access, projectId, access.userId);
+
+        if (cachedRequirement !== null) {
+            requiresApproval = cachedRequirement;
         } else {
             const { data: membership, error: membershipError } = await supabase
                 .from('project_members')

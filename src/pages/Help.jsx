@@ -1,9 +1,62 @@
 
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { HelpCircle, Mail, Book, MessageCircle, ExternalLink } from 'lucide-react';
+import { HelpCircle, Mail, MessageCircle, ExternalLink, User, UserCheck, UserCog, ShoppingCart, CheckCircle, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+
+const faqData = [
+  {
+    role: 'Para Todos',
+    icon: User,
+    color: 'text-sky-600',
+    questions: [
+      {
+        q: '¿Cómo crear una requisición?',
+        a: '1. Ve al <strong>Catálogo</strong> y agrega productos al carrito.<br>2. Haz clic en <strong>"Finalizar Compra"</strong> en el carrito.<br>3. Selecciona un proyecto, centro de costos y agrega comentarios si lo deseas.<br>4. La requisición quedará en estado <strong>"Borrador"</strong> hasta que la envíes para aprobación.'
+      },
+      {
+        q: '¿Qué son las plantillas?',
+        a: 'Las plantillas te permiten guardar configuraciones de carrito que usas frecuentemente. Puedes crear una plantilla desde el carrito o al hacer checkout, y luego reutilizarla para crear requisiciones más rápido.'
+      },
+      {
+        q: '¿Cómo funcionan los favoritos?',
+        a: 'Marca productos como favoritos haciendo clic en el ícono de corazón. Todos tus favoritos estarán disponibles en la sección <strong>"Favoritos"</strong> del menú para acceso rápido.'
+      }
+    ]
+  },
+  {
+    role: 'Supervisores',
+    icon: UserCheck,
+    color: 'text-emerald-600',
+    questions: [
+      {
+        q: '¿Cómo aprobar o rechazar una requisición?',
+        a: 'Ve a la sección de <strong>"Aprobaciones"</strong> desde el menú lateral. Ahí verás todas las requisiciones pendientes. Revisa los detalles y usa los botones de <strong>"Aprobar"</strong> o <strong>"Rechazar"</strong>. Si rechazas, deberás proporcionar un motivo.'
+      },
+      {
+        q: '¿Puedo editar una requisición antes de aprobarla?',
+        a: 'No directamente. Si una requisición necesita cambios, debes rechazarla indicando las correcciones necesarias para que el solicitante la edite y la envíe de nuevo.'
+      }
+    ]
+  },
+  {
+    role: 'Administradores',
+    icon: UserCog,
+    color: 'text-indigo-600',
+    questions: [
+      {
+        q: '¿Cómo gestiono usuarios y proyectos?',
+        a: 'En la sección de <strong>Administración</strong>, encontrarás opciones para <strong>"Gestión de Usuarios"</strong> y <strong>"Gestión de Proyectos"</strong>. Desde ahí puedes invitar nuevos miembros, asignar roles y crear o archivar proyectos.'
+      },
+      {
+        q: '¿Dónde veo los reportes y analíticas?',
+        a: 'La sección de <strong>"Reportes y Analíticas"</strong> te ofrece una vista detallada de los gastos por proyecto, usuario y categoría. Puedes exportar estos datos para un análisis más profundo.'
+      }
+    ]
+  }
+];
 
 const HelpPage = () => {
     return (
@@ -44,9 +97,9 @@ const HelpPage = () => {
                                 <Button
                                     variant="outline"
                                     className="w-full"
-                                    onClick={() => window.location.href = 'mailto:soporte@comereco.com'}
+                                    onClick={() => window.location.href = 'mailto:team@growpals.mx'}
                                 >
-                                    soporte@comereco.com
+                                    team@growpals.mx
                                     <ExternalLink className="ml-2 h-4 w-4" />
                                 </Button>
                             </CardContent>
@@ -77,49 +130,32 @@ const HelpPage = () => {
                     {/* Preguntas Frecuentes */}
                     <Card className="border-2">
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <Book className="h-5 w-5 text-amber-600" />
-                                Preguntas Frecuentes
+                            <CardTitle className="flex items-center gap-3 text-xl">
+                                <HelpCircle className="h-6 w-6 text-slate-700" />
+                                Guía de Usuario y Preguntas Frecuentes
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-6">
-                            <div className="space-y-2">
-                                <h3 className="font-semibold text-slate-900">¿Cómo crear una requisición?</h3>
-                                <p className="text-sm text-slate-600">
-                                    1. Ve al Catálogo y agrega productos al carrito<br />
-                                    2. Haz clic en "Finalizar Compra" en el carrito<br />
-                                    3. Selecciona un proyecto y agrega comentarios si lo deseas<br />
-                                    4. Crea la requisición - quedará en estado "draft" hasta que la envíes
-                                </p>
-                            </div>
-
-                            <div className="space-y-2">
-                                <h3 className="font-semibold text-slate-900">¿Cómo aprobar una requisición?</h3>
-                                <p className="text-sm text-slate-600">
-                                    Solo los administradores y supervisores pueden aprobar requisiciones. Ve a la sección de "Aprobaciones" desde el menú lateral, revisa los detalles y usa los botones de "Aprobar" o "Rechazar".
-                                </p>
-                            </div>
-
-                            <div className="space-y-2">
-                                <h3 className="font-semibold text-slate-900">¿Qué son las plantillas?</h3>
-                                <p className="text-sm text-slate-600">
-                                    Las plantillas te permiten guardar configuraciones de carrito que usas frecuentemente. Puedes crear una plantilla desde el carrito o al hacer checkout, y luego reutilizarla para crear requisiciones más rápido.
-                                </p>
-                            </div>
-
-                            <div className="space-y-2">
-                                <h3 className="font-semibold text-slate-900">¿Cómo funcionan los favoritos?</h3>
-                                <p className="text-sm text-slate-600">
-                                    Marca productos como favoritos haciendo clic en el ícono de corazón. Todos tus favoritos estarán disponibles en la sección "Favoritos" del menú para acceso rápido.
-                                </p>
-                            </div>
-
-                            <div className="space-y-2">
-                                <h3 className="font-semibold text-slate-900">¿Quién puede ver mis requisiciones?</h3>
-                                <p className="text-sm text-slate-600">
-                                    Todas las requisiciones son privadas de tu empresa gracias a nuestro sistema de seguridad RLS (Row Level Security). Solo los miembros de tu organización pueden verlas.
-                                </p>
-                            </div>
+                        <CardContent>
+                            <Accordion type="multiple" className="w-full">
+                                {faqData.map((section, index) => (
+                                    <div key={index} className="mb-4 last:mb-0">
+                                        <h3 className="flex items-center gap-2 text-lg font-semibold mb-2">
+                                            <section.icon className={`h-5 w-5 ${section.color}`} />
+                                            {section.role}
+                                        </h3>
+                                        {section.questions.map((faq, qIndex) => (
+                                            <AccordionItem key={qIndex} value={`item-${index}-${qIndex}`}>
+                                                <AccordionTrigger className="text-left font-medium text-slate-800 hover:no-underline">
+                                                    {faq.q}
+                                                </AccordionTrigger>
+                                                <AccordionContent>
+                                                    <p className="text-sm text-slate-600" dangerouslySetInnerHTML={{ __html: faq.a }} />
+                                                </AccordionContent>
+                                            </AccordionItem>
+                                        ))}
+                                    </div>
+                                ))}
+                            </Accordion>
                         </CardContent>
                     </Card>
 
@@ -133,8 +169,8 @@ const HelpPage = () => {
                                 <h3 className="font-bold text-slate-900 mb-1">¿No encuentras lo que buscas?</h3>
                                 <p className="text-sm text-slate-600">
                                     Nuestro equipo de soporte está disponible para ayudarte. Envíanos un correo a{' '}
-                                    <a href="mailto:soporte@comereco.com" className="text-blue-600 hover:underline font-medium">
-                                        soporte@comereco.com
+                                    <a href="mailto:team@growpals.mx" className="text-blue-600 hover:underline font-medium">
+                                        team@growpals.mx
                                     </a>
                                     {' '}y te responderemos lo antes posible.
                                 </p>

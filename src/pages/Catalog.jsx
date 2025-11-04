@@ -153,7 +153,7 @@ const CatalogPage = () => {
 
       <div className={cn('min-h-screen bg-slate-50', isDesktop ? 'pb-16' : 'pb-28')}>
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className={cn(isDesktop ? 'pt-10' : 'pt-6')}>
+          <div className={cn(isDesktop ? 'pt-6' : 'pt-2')}>
             {isDesktop ? (
               <div className="sticky top-16 z-30 grid grid-cols-[1.6fr,2fr,1.2fr] items-end gap-10 rounded-3xl border border-slate-200 bg-white/95 px-10 py-8 shadow-sm backdrop-blur">
                 <div className="space-y-2">
@@ -316,7 +316,7 @@ const CatalogPage = () => {
 
               {!showInitialLoading && !showEmptyState && !isError && (
                 <>
-                  <div className="grid grid-cols-1 gap-3 min-[360px]:grid-cols-2 sm:gap-5 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
+                  <div className="grid grid-cols-1 justify-items-start gap-4 sm:justify-items-center md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                     {products.map((product) => (
                       <ProductCard key={product.id} product={product} />
                     ))}

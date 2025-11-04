@@ -56,8 +56,8 @@ const FavoritesPage = () => {
         return (
             <>
                 <Helmet><title>{`Mis Favoritos - ComerECO`}</title></Helmet>
-                <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8">
-                    <div className="max-w-7xl mx-auto space-y-8">
+                <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 px-4 pb-8 pt-4 sm:px-6 sm:pt-6 lg:px-8">
+                    <div className="mx-auto max-w-7xl space-y-6 sm:space-y-8">
                         {/* Header Skeleton */}
                         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-slate-200">
                             <div className="flex items-center gap-4">
@@ -77,7 +77,7 @@ const FavoritesPage = () => {
                         </header>
 
                         {/* Grid Skeleton */}
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
+                        <div className="grid grid-cols-1 justify-items-start gap-4 sm:justify-items-center md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                             {[...Array(10)].map((_, i) => (
                                 <ProductCardSkeleton key={i} />
                             ))}
@@ -139,8 +139,8 @@ const FavoritesPage = () => {
     return (
         <>
             <Helmet><title>{`Mis Favoritos (${favoriteCount}) - ComerECO`}</title></Helmet>
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8">
-                <div className="max-w-7xl mx-auto space-y-8">
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 px-4 pb-10 pt-4 sm:px-6 sm:pt-6 lg:px-8">
+                <div className="mx-auto max-w-7xl space-y-6 sm:space-y-8">
                     {/* Header */}
                     <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-slate-200">
                         <div className="flex items-center gap-4">
@@ -183,7 +183,7 @@ const FavoritesPage = () => {
                     </div>
 
                     {/* Grid de Productos Favoritos */}
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
+                    <div className="grid grid-cols-1 justify-items-start gap-4 sm:justify-items-center md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                         {favoriteProducts.map((product) => (
                             <ProductCard key={product.id} product={product} />
                         ))}

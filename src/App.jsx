@@ -11,7 +11,6 @@ import { useSessionExpirationHandler } from '@/hooks/useSessionExpirationHandler
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
 import BottomNav from '@/components/layout/BottomNav';
-import Cart from '@/components/Cart';
 import PageLoader from '@/components/PageLoader';
 import SkipLinks from '@/components/SkipLinks';
 import AppProviders from '@/context/AppProviders';
@@ -32,6 +31,7 @@ const SettingsPage = lazy(() => import('@/pages/Settings'));
 const CatalogPage = lazy(() => import('@/pages/Catalog'));
 const NotificationsPage = lazy(() => import('@/pages/Notifications'));
 const CheckoutPage = lazy(() => import('@/pages/Checkout'));
+const CartPage = lazy(() => import('@/pages/Cart'));
 const TemplatesPage = lazy(() => import('@/pages/Templates'));
 const ProjectsPage = lazy(() => import('@/pages/Projects'));
 const ProjectDetail = lazy(() => import('@/pages/ProjectDetail'));
@@ -41,6 +41,7 @@ const FavoritesPage = lazy(() => import('@/pages/Favorites'));
 const ResetPasswordPage = lazy(() => import('@/pages/ResetPassword'));
 const HelpPage = lazy(() => import('@/pages/Help'));
 const NotFoundPage = lazy(() => import('@/pages/NotFound'));
+const ProductDetail = lazy(() => import('@/pages/ProductDetail'));
 
 
 // Componente para rutas privadas
@@ -162,7 +163,7 @@ const AppLayout = () => {
         {showNav && <Header setSidebarOpen={handleToggleSidebar} />}
 
         <main
-          className="relative w-full flex-1 bg-slate-50 pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-[calc(4.75rem+env(safe-area-inset-top))] transition-all duration-300 lg:pb-10 lg:pt-10"
+          className="relative w-full flex-1 bg-slate-50 pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-[calc(3.8rem+env(safe-area-inset-top))] transition-all duration-300 sm:pt-[calc(4.2rem+env(safe-area-inset-top))] lg:pb-10 lg:pt-10"
           id="main-content"
           role="main"
         >
@@ -209,7 +210,9 @@ const AppLayout = () => {
 
                         <Route path="/settings" element={<SettingsPage />} />
                         <Route path="/catalog" element={<CatalogPage />} />
+                        <Route path="/producto/:id" element={<ProductDetail />} />
                         <Route path="/notifications" element={<NotificationsPage />} />
+                        <Route path="/cart" element={<CartPage />} />
                         <Route path="/checkout" element={<CheckoutPage />} />
                         <Route path="/templates" element={<TemplatesPage />} />
                         <Route path="/favorites" element={<FavoritesPage />} />
@@ -226,12 +229,9 @@ const AppLayout = () => {
       </div>
 
       {showNav && (
-        <>
-          <div className="lg:hidden">
-            <BottomNav onMenuClick={() => setMobileNavOpen(true)} />
-          </div>
-          <Cart />
-        </>
+        <div className="lg:hidden">
+          <BottomNav onMenuClick={() => setMobileNavOpen(true)} />
+        </div>
       )}
     </div>
   );

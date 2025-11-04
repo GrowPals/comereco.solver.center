@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/customSupabaseClient';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useToast } from '@/components/ui/useToast';
-import { useState, useMemo, useCallback } from 'react';
+import { useMemo, useCallback } from 'react';
 import logger from '@/utils/logger';
 
 const fetchCartAPI = async (userId) => {
@@ -16,8 +16,9 @@ const fetchCartAPI = async (userId) => {
     // Obtener items del carrito primero
     const { data: cartItems, error: cartError } = await supabase
         .from('user_cart_items')
-        .select('quantity, product_id')
-        .eq('user_id', userId);
+        .select('quantity, product_id, created_at')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: true });
     
     if (cartError) {
         logger.error('Error fetching cart items:', cartError);
@@ -46,7 +47,8 @@ const fetchCartAPI = async (userId) => {
     const validItems = cartItems
         .map(item => ({
             ...productsMap[item.product_id],
-            quantity: item.quantity
+            quantity: item.quantity,
+            created_at: item.created_at
         }))
         .filter(item => item.id); // Filtrar productos que no se encontraron
 
@@ -145,8 +147,6 @@ export const useCart = () => {
     const { user } = useSupabaseAuth();
     const queryClient = useQueryClient();
     const { toast } = useToast();
-    const [isCartOpen, setIsCartOpen] = useState(false);
-
     const { data: items = [], isLoading, refetch } = useQuery({
         queryKey: ['cart', user?.id],
         queryFn: () => fetchCartAPI(user.id),
@@ -154,15 +154,12 @@ export const useCart = () => {
         staleTime: 1000 * 30, // 30 segundos - carrito puede cambiar frecuentemente
         refetchOnWindowFocus: true, // Refetch al enfocar para mantener sincronizado
     });
-    
+
     const mutationOptions = {
-        onMutate: async (variables) => {
-            await queryClient.cancelQueries({ queryKey: ['cart', user?.id] });
-            const previousCart = queryClient.getQueryData(['cart', user?.id]);
-            return { previousCart };
-        },
         onError: (err, variables, context) => {
-            queryClient.setQueryData(['cart', user?.id], context.previousCart);
+            if (context?.previousCart) {
+                queryClient.setQueryData(['cart', user?.id], context.previousCart);
+            }
             toast({ variant: 'destructive', title: 'Error en el carrito', description: err.message });
         },
         onSettled: () => {
@@ -179,10 +176,35 @@ export const useCart = () => {
             const newQuantity = (existingItem?.quantity || 0) + quantity;
             return upsertCartItemAPI({ userId: user.id, productId: product.id, quantity: newQuantity });
         },
+        onMutate: async ({ product, quantity = 1 }) => {
+            if (!user?.id) return { previousCart: [] };
+            await queryClient.cancelQueries({ queryKey: ['cart', user?.id] });
+            const previousCart = queryClient.getQueryData(['cart', user?.id]) || [];
+
+            const existingIndex = previousCart.findIndex(item => item.id === product.id);
+            let optimisticCart;
+
+            if (existingIndex !== -1) {
+                optimisticCart = previousCart.map((item, index) =>
+                    index === existingIndex
+                        ? { ...item, quantity: item.quantity + quantity }
+                        : item
+                );
+            } else {
+                optimisticCart = [
+                    ...previousCart,
+                    {
+                        ...product,
+                        quantity,
+                    },
+                ];
+            }
+
+            queryClient.setQueryData(['cart', user?.id], optimisticCart);
+            return { previousCart };
+        },
         ...mutationOptions,
-        onSuccess: () => {
-          toast({ title: '¡Producto agregado!'});
-        }
+        onSuccess: () => {}
     });
 
     const updateQuantityMutation = useMutation({
@@ -195,10 +217,25 @@ export const useCart = () => {
             }
             return upsertCartItemAPI({ userId: user.id, productId, quantity });
         },
+        onMutate: async ({ productId, quantity }) => {
+            if (!user?.id) return { previousCart: [] };
+            await queryClient.cancelQueries({ queryKey: ['cart', user?.id] });
+            const previousCart = queryClient.getQueryData(['cart', user?.id]) || [];
+
+            let optimisticCart;
+            if (quantity <= 0) {
+                optimisticCart = previousCart.filter(item => item.id !== productId);
+            } else {
+                optimisticCart = previousCart.map(item =>
+                    item.id === productId ? { ...item, quantity } : item
+                );
+            }
+
+            queryClient.setQueryData(['cart', user?.id], optimisticCart);
+            return { previousCart };
+        },
         ...mutationOptions,
-        onSuccess: () => {
-            toast({ title: 'Cantidad actualizada', variant: 'info' });
-        }
+        onSuccess: () => {}
     });
 
     const removeFromCartMutation = useMutation({
@@ -208,17 +245,31 @@ export const useCart = () => {
             }
             return removeCartItemAPI({ userId: user.id, productId });
         },
+        onMutate: async (productId) => {
+            if (!user?.id) return { previousCart: [] };
+            await queryClient.cancelQueries({ queryKey: ['cart', user?.id] });
+            const previousCart = queryClient.getQueryData(['cart', user?.id]) || [];
+
+            const optimisticCart = previousCart.filter(item => item.id !== productId);
+            queryClient.setQueryData(['cart', user?.id], optimisticCart);
+
+            return { previousCart };
+        },
         ...mutationOptions,
-         onSuccess: () => {
-          toast({ title: 'Producto eliminado', variant: 'info'});
-        }
+         onSuccess: () => {}
     });
 
     const clearCartMutation = useMutation({
         mutationFn: clearCartAPI,
+        onMutate: async () => {
+            if (!user?.id) return { previousCart: [] };
+            await queryClient.cancelQueries({ queryKey: ['cart', user?.id] });
+            const previousCart = queryClient.getQueryData(['cart', user?.id]) || [];
+            queryClient.setQueryData(['cart', user?.id], []);
+            return { previousCart };
+        },
         ...mutationOptions,
         onSuccess: () => {
-            toast({ title: 'Carrito vaciado' });
             queryClient.invalidateQueries({ queryKey: ['cart', user?.id] });
         }
     });
@@ -242,9 +293,6 @@ export const useCart = () => {
         items,
         isLoading,
         refetch,
-        isCartOpen,
-        setIsCartOpen,
-        toggleCart: () => setIsCartOpen(prev => !prev),
         addToCart: addToCartHandler,
         removeFromCart: removeFromCartHandler,
         updateQuantity: updateQuantityHandler,

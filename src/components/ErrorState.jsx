@@ -7,7 +7,6 @@ import { AlertTriangle, RefreshCw, LogIn, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getErrorContext } from '@/utils/errorHandler';
-import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
 const ErrorState = ({ 
@@ -18,7 +17,6 @@ const ErrorState = ({
   className = '',
   showDetails = false 
 }) => {
-  const navigate = useNavigate();
   const errorContext = error ? getErrorContext(error) : null;
 
   if (!errorContext) {
@@ -28,7 +26,7 @@ const ErrorState = ({
   const handleAction = () => {
     if (errorContext.action) {
       if (errorContext.action.path) {
-        navigate(errorContext.action.path);
+        window.location.href = errorContext.action.path;
       } else if (errorContext.action.fn === 'retry' && onRetry) {
         onRetry();
       }

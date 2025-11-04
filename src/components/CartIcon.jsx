@@ -1,16 +1,35 @@
 import React from 'react';
-import { useCart } from '@/context/CartContext';
 import { ShoppingCart } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { useCart } from '@/context/CartContext';
 import { cn } from '@/lib/utils';
 
 export function CartIcon({ variant = 'default' }) {
-  const { totalItems, toggleCart } = useCart();
+  const { totalItems } = useCart();
+  const navigate = useNavigate();
+  const location = useLocation();
   const isCompact = variant === 'compact';
+
+  const handleClick = () => {
+    if (location.pathname.startsWith('/cart')) {
+      const fallback = location.state?.from && location.state.from !== '/cart'
+        ? location.state.from
+        : '/catalog';
+      navigate(fallback, { replace: false });
+      return;
+    }
+
+    navigate('/cart', {
+      state: {
+        from: location.pathname,
+      },
+    });
+  };
 
   return (
     <Button
-      onClick={toggleCart}
+      onClick={handleClick}
       variant="ghost"
       size="icon"
       className={cn(
