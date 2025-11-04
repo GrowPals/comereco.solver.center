@@ -5,6 +5,110 @@ import { getUserAccessContext } from '@/lib/accessControl';
 import logger from '@/utils/logger';
 import { formatErrorMessage } from '@/utils/errorHandler';
 
+const PROFILE_BASE_FIELDS = [
+  'id',
+  'company_id',
+  'full_name',
+  'avatar_url',
+  'role_v2',
+  'is_active',
+  'updated_at',
+];
+const UNDEFINED_COLUMN_CODE = '42703';
+let supportsApprovalBypassFlag = true;
+let supportsProfileEmail = true;
+
+export const isApprovalBypassSupported = () => supportsApprovalBypassFlag;
+export const isProfileEmailSupported = () => supportsProfileEmail;
+
+const buildProfileSelect = ({ includePhone = false } = {}) => {
+  const fields = [...PROFILE_BASE_FIELDS];
+  if (includePhone) {
+    fields.push('phone');
+  }
+  if (supportsProfileEmail) {
+    fields.push('email');
+  }
+  if (supportsApprovalBypassFlag) {
+    fields.push('can_submit_without_approval');
+  }
+  return fields.join(', ');
+};
+
+const disableOptionalColumn = (message = '') => {
+  if (!message) {
+    return false;
+  }
+
+  if (supportsApprovalBypassFlag && message.includes('can_submit_without_approval')) {
+    supportsApprovalBypassFlag = false;
+    return true;
+  }
+
+  if (supportsProfileEmail && message.includes('email')) {
+    supportsProfileEmail = false;
+    return true;
+  }
+
+  return false;
+};
+
+const executeProfileQuery = async (configure, { includePhone = false, single = false } = {}) => {
+  const run = async () => {
+    let query = supabase.from('profiles').select(buildProfileSelect({ includePhone }));
+    query = configure(query);
+    if (single) {
+      return await query.single();
+    }
+    return await query;
+  };
+
+  let result = await run();
+
+  while (result?.error?.code === UNDEFINED_COLUMN_CODE) {
+    const updated = disableOptionalColumn(result?.error?.message || '');
+    if (!updated) {
+      break;
+    }
+    result = await run();
+  }
+
+  return result;
+};
+
+const executeProfileUpdate = async (applyFilters, changes, { includePhone = true } = {}) => {
+  const run = async () => {
+    let query = supabase.from('profiles').update(changes);
+    query = applyFilters(query);
+    return await query.select(buildProfileSelect({ includePhone })).single();
+  };
+
+  let result = await run();
+
+  while (result?.error?.code === UNDEFINED_COLUMN_CODE) {
+    const updated = disableOptionalColumn(result?.error?.message || '');
+    if (!updated) {
+      break;
+    }
+    if (!supportsApprovalBypassFlag && Object.prototype.hasOwnProperty.call(changes, 'can_submit_without_approval')) {
+      const { can_submit_without_approval, ...rest } = changes;
+      changes = rest;
+    }
+    if (!changes || Object.keys(changes).length === 0) {
+      return {
+        data: null,
+        error: {
+          code: 'UNSUPPORTED_COLUMN',
+          message: 'La base de datos aún no está actualizada para manejar envíos sin aprobación. Ejecuta las migraciones más recientes.',
+        },
+      };
+    }
+    result = await run();
+  }
+
+  return result;
+};
+
 /**
  * CORREGIDO: Valida sesión antes de hacer queries
  * Obtiene todos los perfiles de usuario de la compañía actual.
@@ -21,10 +125,10 @@ export const fetchUsersInCompany = async () => {
       return [];
     }
 
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('id, company_id, full_name, avatar_url, role_v2, phone, updated_at, can_submit_without_approval')
-      .eq('company_id', companyId);
+    const { data, error } = await executeProfileQuery(
+      (query) => query.eq('company_id', companyId),
+      { includePhone: true }
+    );
 
     if (error) {
       logger.error('Error fetching users in company', error);
@@ -39,11 +143,11 @@ export const fetchUsersInCompany = async () => {
       return [];
     }
 
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('id, company_id, full_name, avatar_url, role_v2, updated_at, can_submit_without_approval')
-      .in('id', manageableIds)
-      .eq('company_id', access.companyId);
+    const { data, error } = await executeProfileQuery(
+      (query) => query
+        .in('id', manageableIds)
+        .eq('company_id', access.companyId)
+    );
 
     if (error) {
       logger.error('Error fetching manageable users', error);
@@ -53,11 +157,10 @@ export const fetchUsersInCompany = async () => {
     return data || [];
   }
 
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('id, company_id, full_name, avatar_url, role_v2, updated_at, can_submit_without_approval')
-    .eq('id', access.userId)
-    .single();
+  const { data, error } = await executeProfileQuery(
+    (query) => query.eq('id', access.userId),
+    { single: true }
+  );
 
   if (error) {
     logger.error('Error fetching current user profile:', error);
@@ -235,16 +338,19 @@ export const updateUserProfile = async (userId, updateData) => {
       return obj;
     }, {});
 
-  if (Object.keys(filteredUpdate).length === 0) {
-    throw new Error("No hay campos válidos para actualizar.");
+  if (!supportsApprovalBypassFlag) {
+    delete filteredUpdate.can_submit_without_approval;
   }
 
-  const { data, error } = await supabase
-    .from('profiles')
-    .update(filteredUpdate)
-    .eq('id', userId)
-    .select('id, company_id, full_name, avatar_url, role_v2, phone, updated_at, can_submit_without_approval')
-    .single();
+  if (Object.keys(filteredUpdate).length === 0) {
+    throw new Error('No hay campos válidos para actualizar en esta versión del sistema.');
+  }
+
+  const { data, error } = await executeProfileUpdate(
+    (query) => query.eq('id', userId),
+    filteredUpdate,
+    { includePhone: true }
+  );
   
   if (error) {
     logger.error('Error updating user profile', error);

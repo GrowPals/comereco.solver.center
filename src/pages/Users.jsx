@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm, Controller } from 'react-hook-form';
@@ -38,10 +38,11 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
-import { fetchUsersInCompany, inviteUser, updateUserProfile, toggleUserStatus, deleteUser } from '@/services/userService';
+import { fetchUsersInCompany, inviteUser, updateUserProfile, toggleUserStatus, deleteUser, isApprovalBypassSupported, isProfileEmailSupported } from '@/services/userService';
 import { useToast } from '@/components/ui/useToast';
 import PageLoader from '@/components/PageLoader';
 import { Switch } from '@/components/ui/switch';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 
 // Mapeo de roles según app_role_v2 enum (admin | supervisor | user)
@@ -51,7 +52,7 @@ const roleMapping = {
     admin: { label: 'Admin', icon: Shield },
 };
 
-const UserForm = ({ user, onSave, onCancel, isLoading }) => {
+const UserForm = ({ user, onSave, onCancel, isLoading, approvalBypassSupported }) => {
     const { register, handleSubmit, watch, setValue, control, formState: { errors } } = useForm({
         mode: 'onBlur',
         defaultValues: {
@@ -63,7 +64,7 @@ const UserForm = ({ user, onSave, onCancel, isLoading }) => {
     });
 
     const role = watch('role');
-    const canBypass = watch('can_submit_without_approval');
+    const showApprovalToggle = Boolean(user && approvalBypassSupported);
 
     const onSubmit = (data) => {
         onSave({
@@ -123,7 +124,7 @@ const UserForm = ({ user, onSave, onCancel, isLoading }) => {
                     </SelectContent>
                 </Select>
             </div>
-            {user && (
+            {showApprovalToggle && (
               <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
                 <div className="pr-4">
                   <Label className="text-sm font-medium text-slate-700">Envío directo de requisiciones</Label>
@@ -143,6 +144,14 @@ const UserForm = ({ user, onSave, onCancel, isLoading }) => {
                 />
               </div>
             )}
+            {user && !approvalBypassSupported && (
+              <Alert className="border-amber-200 bg-amber-50">
+                <AlertTitle>Actualiza la base de datos</AlertTitle>
+                <AlertDescription>
+                  Para permitir envíos sin aprobación ejecuta las migraciones más recientes y recarga la página.
+                </AlertDescription>
+              </Alert>
+            )}
             <div className="flex justify-end space-x-2 pt-4">
                 <Button type="button" variant="ghost" onClick={onCancel}>Cancelar</Button>
                 <Button type="submit" isLoading={isLoading}>{user ? 'Guardar Cambios' : 'Invitar Usuario'}</Button>
@@ -160,10 +169,37 @@ const Users = () => {
     const { toast } = useToast();
     const queryClient = useQueryClient();
 
-    const { data: users, isLoading, isError } = useQuery({
+    const { data: users, isLoading, isError, error } = useQuery({
         queryKey: ['users'],
         queryFn: fetchUsersInCompany,
     });
+
+    const [approvalBypassSupported, setApprovalBypassSupported] = useState(isApprovalBypassSupported());
+    const [profileEmailSupported, setProfileEmailSupported] = useState(isProfileEmailSupported());
+
+    useEffect(() => {
+        setApprovalBypassSupported(isApprovalBypassSupported());
+        setProfileEmailSupported(isProfileEmailSupported());
+    }, [users, isError]);
+
+    const setupWarnings = [];
+    if (!approvalBypassSupported) {
+        setupWarnings.push('El permiso para enviar requisiciones sin aprobación aún no está disponible. Ejecuta la migración `20250205_add_profile_bypass_flag.sql` y recarga.');
+    }
+    if (!profileEmailSupported) {
+        setupWarnings.push('Los correos electrónicos no están disponibles desde la tabla `profiles`. Sincroniza el correo desde `auth.users` (por ejemplo, añadiendo una columna `email`) y vuelve a recargar.');
+    }
+
+    const resolveUserEmail = (user) => {
+        if (!user) return '';
+        if (user.email) return user.email;
+        return profileEmailSupported ? 'Correo no registrado' : 'Correo no disponible';
+    };
+
+    const resolveUserLabel = (user) => {
+        if (!user) return 'este usuario';
+        return user.full_name || resolveUserEmail(user) || 'este usuario';
+    };
 
     const mutationOptions = {
         onSuccess: () => {
@@ -243,7 +279,7 @@ const Users = () => {
         const action = currentStatus ? 'desactivar' : 'activar';
         const actionCap = currentStatus ? 'Desactivar' : 'Activar';
 
-        const confirmMessage = `¿Estás seguro de ${action} a ${user.full_name || user.email}?`;
+        const confirmMessage = `¿Estás seguro de ${action} a ${resolveUserLabel(user)}?`;
 
         if (window.confirm(confirmMessage)) {
             toggleStatusMutation.mutate({
@@ -267,7 +303,18 @@ const Users = () => {
     };
 
     if (isLoading) return <div className="p-8"><PageLoader /></div>;
-    if (isError) return <div className="p-8 text-destructive">Error al cargar usuarios.</div>;
+    if (isError) {
+        return (
+            <div className="p-8">
+                <Alert className="border-destructive/40 bg-red-50 text-destructive">
+                    <AlertTitle>Error al cargar usuarios</AlertTitle>
+                    <AlertDescription>
+                        {error?.message || 'Intenta recargar la página en unos segundos.'}
+                    </AlertDescription>
+                </Alert>
+            </div>
+        );
+    }
 
     return (
         <>
@@ -278,7 +325,7 @@ const Users = () => {
                 open={isDeleteDialogOpen}
                 onOpenChange={setDeleteDialogOpen}
                 title="¿Eliminar usuario?"
-                description={`¿Estás seguro de eliminar a ${userToDelete?.full_name || userToDelete?.email}? Esta acción no se puede deshacer y el usuario perderá acceso al sistema.`}
+                description={`¿Estás seguro de eliminar a ${resolveUserLabel(userToDelete)}? Esta acción no se puede deshacer y el usuario perderá acceso al sistema.`}
                 confirmText="Eliminar usuario"
                 cancelText="Cancelar"
                 variant="destructive"
@@ -311,13 +358,26 @@ const Users = () => {
                         </Button>
                     </header>
 
+                    {setupWarnings.length > 0 && (
+                        <Alert className="border-amber-200 bg-amber-50">
+                            <AlertTitle>Migraciones pendientes</AlertTitle>
+                            <AlertDescription>
+                                <ul className="list-disc space-y-1 pl-5">
+                                    {setupWarnings.map((warning, index) => (
+                                        <li key={index} className="text-sm text-slate-700">{warning}</li>
+                                    ))}
+                                </ul>
+                            </AlertDescription>
+                        </Alert>
+                    )}
+
                     {/* Users mobile list */}
                     <div className="space-y-4 md:hidden">
                         {users?.map((user) => (
                             <div key={user.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
                                 <div className="flex items-start gap-3">
-                                    <Avatar className="h-11 w-11 border border-slate-200">
-                                        <AvatarImage src={user.avatar_url} />
+                                        <Avatar className="h-11 w-11 border border-slate-200">
+                                            <AvatarImage src={user.avatar_url} />
                                         <AvatarFallback className="text-white font-semibold">
                                             {user.full_name?.charAt(0) || 'U'}
                                         </AvatarFallback>
@@ -326,7 +386,7 @@ const Users = () => {
                                         <div className="flex items-start justify-between gap-2">
                                             <div>
                                                 <p className="font-semibold text-slate-900 line-clamp-1">{user.full_name}</p>
-                                                <p className="text-sm text-slate-500 line-clamp-1">{user.email}</p>
+                                                <p className="text-sm text-slate-500 line-clamp-1">{resolveUserEmail(user)}</p>
                                             </div>
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
@@ -334,7 +394,7 @@ const Users = () => {
                                                         variant="ghost"
                                                         size="icon"
                                                         className="h-9 w-9 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-100"
-                                                        aria-label={`Acciones para ${user.full_name || user.email}`}
+                                                        aria-label={`Acciones para ${resolveUserLabel(user)}`}
                                                     >
                                                         <MoreHorizontal className="h-4 w-4" />
                                                     </Button>
@@ -419,7 +479,7 @@ const Users = () => {
                                                         </Badge>
                                                     )}
                                                 </div>
-                                                <p className="text-sm text-slate-600">{user.email}</p>
+                                                <p className="text-sm text-slate-600">{resolveUserEmail(user)}</p>
                                             </div>
                                         </div>
                                     </TableCell>
@@ -449,7 +509,7 @@ const Users = () => {
                                                 <Button
                                                     variant="ghost"
                                                     className="h-9 w-9 p-0 hover:bg-slate-100 rounded-xl"
-                                                    aria-label={`Acciones para ${user.full_name || user.email}`}
+                                                    aria-label={`Acciones para ${resolveUserLabel(user)}`}
                                                 >
                                                     <MoreHorizontal className="h-5 w-5" aria-hidden="true" />
                                                 </Button>
@@ -488,7 +548,7 @@ const Users = () => {
                             {editingUser ? 'Editar Usuario' : 'Invitar Nuevo Usuario'}
                         </DialogTitle>
                         <DialogDescription className="text-base">
-                            {editingUser ? 'Actualiza el rol o nombre del usuario.' : 'Envía una invitación por email para que se una a tu compañía.'}
+                            {editingUser ? `Actualiza el rol o nombre de ${resolveUserLabel(editingUser)}.` : 'Envía una invitación por email para que se una a tu compañía.'}
                         </DialogDescription>
                     </DialogHeader>
                     <UserForm 
@@ -496,6 +556,7 @@ const Users = () => {
                         onSave={handleSaveUser} 
                         onCancel={() => setIsFormOpen(false)}
                         isLoading={inviteMutation.isPending || updateMutation.isPending}
+                        approvalBypassSupported={approvalBypassSupported}
                     />
                 </DialogContent>
             </Dialog>
