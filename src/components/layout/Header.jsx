@@ -49,43 +49,20 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    // Deshabilitado el auto-hide para mantener el header siempre visible
     useEffect(() => {
-        if (typeof window === 'undefined' || isDesktop) {
-            return undefined;
-        }
-
-        const handleScroll = () => {
-            const current = window.scrollY;
-
-            if (current < 24) {
-                setShowMobileBar(true);
-                lastScrollY.current = current;
-                return;
-            }
-
-            if (current > lastScrollY.current + 12) {
-                setShowMobileBar(false);
-            } else if (current < lastScrollY.current - 12) {
-                setShowMobileBar(true);
-            }
-
-            lastScrollY.current = current;
-        };
-
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, [isDesktop]);
+        setShowMobileBar(true);
+    }, []);
 
     return (
         <header
             className={cn(
-                'sticky top-0 z-40 w-full transition-transform duration-300 ease-out',
+                'fixed top-0 z-40 w-full',
                 isDesktop
                     ? 'border-b border-slate-200 bg-white/95 px-4 py-3 shadow-sm backdrop-blur-md md:px-6 lg:px-10'
-                    : 'border-b border-transparent bg-white/95 px-4 pb-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] backdrop-blur-md'
+                    : 'border-b border-slate-200 bg-white px-4 pb-3 pt-3 shadow-sm'
             )}
             role="banner"
-            style={!isDesktop ? { transform: showMobileBar ? 'translateY(0)' : 'translateY(-110%)' } : undefined}
         >
             {isDesktop ? (
                 <div className="flex w-full items-center justify-between gap-6">

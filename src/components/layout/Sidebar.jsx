@@ -126,10 +126,12 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
     return (
         <aside
             className={cn(
-                'fixed inset-y-0 left-0 z-50 flex h-full flex-col overflow-y-auto bg-white transition-transform duration-300 ease-out lg:overflow-visible lg:border-r lg:border-slate-200 lg:shadow-md',
-                isMobileNavOpen ? 'translate-x-0 shadow-[0_20px_60px_rgba(15,23,42,0.25)]' : '-translate-x-full shadow-none',
+                'fixed inset-y-0 z-50 flex h-full flex-col overflow-y-auto bg-white transition-transform duration-300 ease-out',
+                // En móvil: menú desde la derecha
+                'lg:left-0 lg:border-r lg:border-slate-200 lg:shadow-md lg:overflow-visible',
+                isMobileNavOpen ? 'right-0 translate-x-0 shadow-[0_20px_60px_rgba(15,23,42,0.25)]' : 'right-0 translate-x-full shadow-none',
                 isSidebarOpen ? 'lg:w-72' : 'lg:w-20',
-                'w-full lg:translate-x-0'
+                'w-full max-w-sm lg:max-w-none lg:translate-x-0'
             )}
             role="complementary"
             aria-label="Menú de navegación"
