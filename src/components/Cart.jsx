@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo, memo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, memo, useCallback, useEffect, useRef } from 'react';
 import { useCart } from '@/context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -16,6 +16,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { createTemplate } from '@/services/templateService';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import OptimizedImage from '@/components/OptimizedImage';
+import { cn } from '@/lib/utils';
 
 const CartItem = memo(({ item }) => {
   const { updateQuantity, removeFromCart } = useCart();
