@@ -73,7 +73,7 @@ export const getUserAccessContext = async ({ forceRefresh = false } = {}) => {
     memberProjectIds: [],
     accessibleProjectIds: [],
     manageableUserIds: new Set([userId]),
-    approvalsByProject: new Map(),
+    approvalsByProject: {},
   };
 
   const { data: ownMemberships, error: membershipsError } = await supabase
@@ -113,7 +113,7 @@ export const getUserAccessContext = async ({ forceRefresh = false } = {}) => {
 
     if (accessibleSet.size === 0) {
       access.accessibleProjectIds = [];
-      access.approvalsByProject = ownApprovalMap;
+      access.approvalsByProject = mapToObject(ownApprovalMap);
     } else {
       const projectIds = [...accessibleSet];
       access.accessibleProjectIds = projectIds;
@@ -160,6 +160,45 @@ export const getUserAccessContext = async ({ forceRefresh = false } = {}) => {
 export const invalidateAccessContext = () => {
   accessCache = null;
   accessCacheTime = 0;
+};
+
+const getCollectionValue = (collection, key) => {
+  if (!collection) return undefined;
+  if (collection instanceof Map) {
+    return collection.get(key);
+  }
+  return collection[key];
+};
+
+const hasCollectionKey = (collection, key) => {
+  if (!collection) return false;
+  if (collection instanceof Map) {
+    return collection.has(key);
+  }
+  return Object.prototype.hasOwnProperty.call(collection, key);
+};
+
+export const getRequiresApprovalFromContext = (access, projectId, userId) => {
+  if (!access || !projectId || !userId) {
+    return null;
+  }
+
+  const projectKey = String(projectId);
+  const userKey = String(userId);
+  const approvalsByProject = access.approvalsByProject;
+
+  if (!approvalsByProject) {
+    return null;
+  }
+
+  const approvalsForProject = getCollectionValue(approvalsByProject, projectKey);
+
+  if (!hasCollectionKey(approvalsForProject, userKey)) {
+    return null;
+  }
+
+  const requiresApproval = getCollectionValue(approvalsForProject, userKey);
+  return requiresApproval !== false;
 };
 
 if (typeof window !== 'undefined') {

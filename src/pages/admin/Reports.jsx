@@ -380,7 +380,7 @@ const ReportsPage = () => {
     const exportToPDF = () => {
         toast({
             title: 'Función en desarrollo',
-            description: 'La exportación a PDF estará disponible próximamente. Use la exportación a Excel por ahora.',
+            description: 'La exportación a PDF estará disponible en una próxima actualización. Por favor, utilice la exportación a Excel mientras tanto.',
             variant: 'info'
         });
     };

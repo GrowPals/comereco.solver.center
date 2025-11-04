@@ -34,15 +34,11 @@ export const fetchUsersInCompany = async () => {
   }
 
   if (access.isSupervisor) {
-    const manageableIds = access.manageableUserIds || [];
-    if (!manageableIds.length) {
-      return [];
-    }
+    const manageableIds = new Set(access.manageableUserIds || []);
 
     const { data, error } = await supabase
       .from('profiles')
       .select('id, company_id, full_name, avatar_url, role_v2, updated_at')
-      .in('id', manageableIds)
       .eq('company_id', access.companyId);
 
     if (error) {
@@ -50,7 +46,10 @@ export const fetchUsersInCompany = async () => {
       throw new Error(formatErrorMessage(error));
     }
 
-    return data || [];
+    return (data || []).map((profile) => ({
+      ...profile,
+      is_manageable: manageableIds.has(profile.id),
+    }));
   }
 
   const { data, error } = await supabase

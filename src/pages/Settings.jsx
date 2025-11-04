@@ -211,7 +211,7 @@ const SecuritySettings = () => (
 
 const AppearanceSettings = ({ onSave, isSaving }) => (
      <SettingsCard title="Apariencia" description="Personaliza la apariencia de la aplicación." onSave={onSave} isSaving={isSaving}>
-        <div><Label>Tema</Label><RadioGroup defaultValue="light"><div className="flex gap-4 pt-2"><RadioGroupItem value="light" id="light"/><Label htmlFor="light">Claro</Label><RadioGroupItem value="dark" id="dark" disabled /><Label htmlFor="dark" className="text-muted-foreground">Oscuro (próximamente)</Label></div></RadioGroup></div>
+        <div><Label>Tema</Label><RadioGroup defaultValue="light"><div className="flex gap-4 pt-2"><RadioGroupItem value="light" id="light"/><Label htmlFor="light">Claro</Label><RadioGroupItem value="dark" id="dark" disabled /><Label htmlFor="dark" className="text-muted-foreground">Oscuro (disponible en una próxima actualización)</Label></div></RadioGroup></div>
     </SettingsCard>
 );
 

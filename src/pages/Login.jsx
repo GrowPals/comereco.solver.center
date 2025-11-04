@@ -57,7 +57,7 @@ const LoginPage = () => {
                 toast.success('¡Bienvenido de vuelta!', 'Has iniciado sesión correctamente.');
             } else {
                 const errorMessage = error.message?.includes('Invalid login credentials')
-                  ? 'Email o contraseña incorrectos.'
+                  ? 'Correo electrónico o contraseña incorrectos.'
                   : 'Ha ocurrido un error. Por favor, inténtalo de nuevo.';
                 setAuthError(errorMessage);
                 setIsShaking(true);
@@ -181,12 +181,12 @@ const LoginPage = () => {
                                 <FloatingInput
                                     id="email"
                                     type="email"
-                                    label="Email"
+                                    label="Correo Electrónico"
                                     icon={<Mail />}
                                     error={errors.email?.message}
                                     {...register('email', {
-                                        required: 'El email es requerido',
-                                        pattern: { value: /^\S+@\S+$/i, message: 'Formato de email inválido' }
+                                        required: 'El correo electrónico es requerido',
+                                        pattern: { value: /^\S+@\S+$/i, message: 'Formato de correo electrónico inválido' }
                                     })}
                                     disabled={isLoading}
                                 />
@@ -291,12 +291,12 @@ const LoginPage = () => {
                         <DialogHeader>
                             <DialogTitle>Recuperar contraseña</DialogTitle>
                             <DialogDescription>
-                                Ingresa tu email y te enviaremos un enlace para restablecer tu contraseña
+                                Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña
                             </DialogDescription>
                         </DialogHeader>
                         <form onSubmit={handleResetPassword} className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="reset-email">Email</Label>
+                                <Label htmlFor="reset-email">Correo Electrónico</Label>
                                 <div className="relative">
                                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                                     <input
@@ -304,7 +304,7 @@ const LoginPage = () => {
                                         type="email"
                                         value={resetEmail}
                                         onChange={(e) => setResetEmail(e.target.value)}
-                                        placeholder="tu@email.com"
+                                        placeholder="tu@correo.com"
                                         className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         disabled={isResetting}
                                         autoFocus

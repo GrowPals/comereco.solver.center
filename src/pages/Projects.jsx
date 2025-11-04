@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PlusCircle, MoreHorizontal, Edit, Trash2, Users, FolderKanban, UserPlus, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
@@ -194,6 +194,7 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
         enabled: !!project,
     });
     const { data: companyUsers } = useQuery({ queryKey: ['companyUsers'], queryFn: fetchUsersInCompany });
+    const { isSupervisor } = useUserPermissions();
     const [selectedUser, setSelectedUser] = useState(MANAGE_MEMBERS_PLACEHOLDER);
 
     useEffect(() => {
@@ -231,8 +232,17 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
         onError: (error) => toast({ variant: 'destructive', title: 'Error', description: error.message }),
     });
 
-    const availableUsers = (companyUsers || [])
-        .filter((u) => u && u.id && !members?.some(m => m.user_id === u.id));
+    const availableUsers = useMemo(() => {
+        const baseList = (companyUsers || []).filter(
+            (u) => u && u.id && !members?.some((m) => m.user_id === u.id),
+        );
+
+        if (!isSupervisor) {
+            return baseList;
+        }
+
+        return baseList.filter((u) => u?.is_manageable);
+    }, [companyUsers, members, isSupervisor]);
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>

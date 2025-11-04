@@ -207,9 +207,9 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
                         <div className="mt-2 space-y-3">
                             {imagePreview && (
                                 <div className="relative inline-block">
-                                    <img 
-                                        src={imagePreview} 
-                                        alt="Preview" 
+                                    <img
+                                        src={imagePreview}
+                                        alt="Vista previa de la imagen del producto"
                                         className="h-32 w-32 object-contain rounded-lg border-2 border-slate-200 bg-slate-50 p-2"
                                     />
                                     <Button

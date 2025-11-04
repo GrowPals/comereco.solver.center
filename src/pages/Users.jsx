@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
@@ -41,6 +41,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { fetchUsersInCompany, inviteUser, updateUserProfile, toggleUserStatus, deleteUser } from '@/services/userService';
 import { useToast } from '@/components/ui/useToast';
 import PageLoader from '@/components/PageLoader';
+import { useUserPermissions } from '@/hooks/useUserPermissions';
 
 
 // Mapeo de roles según app_role_v2 enum (admin | supervisor | user)
@@ -130,6 +131,7 @@ const Users = () => {
     const [userToDelete, setUserToDelete] = useState(null);
     const { toast } = useToast();
     const queryClient = useQueryClient();
+    const { isSupervisor, isAdmin } = useUserPermissions();
 
     const { data: users, isLoading, isError } = useQuery({
         queryKey: ['users'],
@@ -188,6 +190,22 @@ const Users = () => {
             mutationOptions.onSuccess();
         }
     });
+
+    const visibleUsers = useMemo(() => {
+        if (!users) {
+            return [];
+        }
+
+        if (isAdmin) {
+            return users;
+        }
+
+        if (isSupervisor) {
+            return users.filter((profile) => profile?.is_manageable);
+        }
+
+        return users;
+    }, [users, isAdmin, isSupervisor]);
 
     const handleOpenForm = (user = null) => {
         setEditingUser(user);
@@ -262,7 +280,7 @@ const Users = () => {
                                     Gestión de <span className="bg-gradient-primary bg-clip-text text-transparent">Usuarios</span>
                                 </h1>
                                 <p className="text-base text-slate-600">
-                                    {users?.length || 0} {users?.length === 1 ? 'usuario' : 'usuarios'} en tu organización
+                                    {visibleUsers.length} {visibleUsers.length === 1 ? 'usuario' : 'usuarios'} en tu organización
                                 </p>
                             </div>
                         </div>
@@ -278,7 +296,7 @@ const Users = () => {
 
                     {/* Users mobile list */}
                     <div className="space-y-4 md:hidden">
-                        {users?.map((user) => (
+                        {visibleUsers.map((user) => (
                             <div key={user.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
                                 <div className="flex items-start gap-3">
                                     <Avatar className="h-11 w-11 border border-slate-200">
@@ -365,7 +383,7 @@ const Users = () => {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {users?.map((user) => (
+                            {visibleUsers.map((user) => (
                                 <TableRow key={user.id} className="hover:bg-slate-50 transition-colors">
                                     <TableCell>
                                         <div className="flex items-center space-x-3">

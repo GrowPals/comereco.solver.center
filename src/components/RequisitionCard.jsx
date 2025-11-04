@@ -20,6 +20,15 @@ const statusStyles = {
   default: { badge: 'border-slate-300 bg-slate-50 text-slate-600', accent: 'bg-slate-400' }
 };
 
+const statusTranslations = {
+  draft: 'Borrador',
+  submitted: 'Enviada',
+  approved: 'Aprobada',
+  rejected: 'Rechazada',
+  ordered: 'Ordenada',
+  cancelled: 'Cancelada'
+};
+
 const RequisitionCard = memo(({ requisition }) => {
   const navigate = useNavigate();
   
@@ -130,7 +139,7 @@ const RequisitionCard = memo(({ requisition }) => {
             {/* Status Badge & Action */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 md:ml-auto">
               <Badge variant="outline" className={cn('text-xs font-semibold capitalize px-3 py-1.5', statusInfo.badge)}>
-                {(requisition.business_status || '').replace(/_/g, ' ')}
+                {statusTranslations[requisition.business_status] || requisition.business_status || 'Sin estado'}
               </Badge>
               <Button
                 variant="ghost"

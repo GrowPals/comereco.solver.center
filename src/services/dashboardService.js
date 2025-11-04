@@ -1,6 +1,7 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
 import { getCachedSession } from '@/lib/supabaseHelpers';
+import { getUserAccessContext } from '@/lib/accessControl';
 import logger from '@/utils/logger';
 import { formatErrorMessage } from '@/utils/errorHandler';
 
@@ -108,12 +109,31 @@ export const getRecentRequisitions = async () => {
             return [];
         }
 
-        const { data, error } = await supabase
+        const access = await getUserAccessContext();
+
+        let query = supabase
             .from('requisitions')
-            .select('id, internal_folio, created_at, total_amount, business_status, project_id')
-            .eq('created_by', session.user.id)
+            .select('id, internal_folio, created_at, total_amount, business_status, project_id, company_id, created_by')
             .order('created_at', { ascending: false })
             .limit(5);
+
+        if (access.isAdmin) {
+            query = query.eq('company_id', access.companyId);
+        } else if (access.isSupervisor) {
+            const projectIds = access.accessibleProjectIds || [];
+            if (!projectIds.length) {
+                return [];
+            }
+            query = query
+                .eq('company_id', access.companyId)
+                .in('project_id', projectIds);
+        } else {
+            query = query
+                .eq('company_id', access.companyId)
+                .eq('created_by', session.user.id);
+        }
+
+        const { data, error } = await query;
 
         if (error) {
             logger.error('Error fetching recent requisitions:', error);
@@ -153,18 +173,36 @@ export const getRecentRequisitions = async () => {
  * @returns {Promise<Array>} Lista de proyectos.
  */
 export const getSupervisorProjectsActivity = async () => {
-    // Validar sesión antes de hacer queries (usando cache)
     const { session, error: sessionError } = await getCachedSession();
     if (sessionError || !session) {
         return [];
     }
 
-    const { data, error } = await supabase
+    const access = await getUserAccessContext();
+
+    let query = supabase
         .from('projects')
-        .select('id, name, description')
+        .select('id, name, description, company_id')
+        .order('updated_at', { ascending: false })
         .limit(5);
 
-     if (error) {
+    if (access.isAdmin) {
+        query = query.eq('company_id', access.companyId);
+    } else if (access.isSupervisor) {
+        const supervisedIds = access.supervisedProjectIds || [];
+        if (!supervisedIds.length) {
+            return [];
+        }
+        query = query
+            .eq('company_id', access.companyId)
+            .in('id', supervisedIds);
+    } else {
+        return [];
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
         logger.error('Error fetching supervisor projects activity:', error);
         throw new Error(formatErrorMessage(error));
     }

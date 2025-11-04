@@ -3,7 +3,7 @@ import React, { useState, useMemo, memo, useCallback, useEffect, useRef } from '
 import { useCart } from '@/context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { X, ShoppingCart, Trash2, Plus, Minus, BookmarkPlus, ArrowRight, Package, Loader2 } from 'lucide-react';
+import { X, ShoppingCart, Trash2, Plus, Minus, BookmarkPlus, ArrowRight, Package, Loader2, CheckCircle2 } from 'lucide-react';
 import { useToast } from '@/components/ui/useToast';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
@@ -20,11 +20,24 @@ import { cn } from '@/lib/utils';
 
 const CartItem = memo(({ item }) => {
   const { updateQuantity, removeFromCart } = useCart();
+  const [justUpdated, setJustUpdated] = useState(false);
+  const feedbackTimerRef = useRef(null);
+
+  const triggerFeedback = useCallback(() => {
+    if (feedbackTimerRef.current) {
+      clearTimeout(feedbackTimerRef.current);
+    }
+    setJustUpdated(true);
+    feedbackTimerRef.current = setTimeout(() => {
+      setJustUpdated(false);
+    }, 500);
+  }, []);
 
   const handleIncrease = useCallback(() => {
     const newQuantity = (item.quantity || 0) + 1;
     updateQuantity(item.id, newQuantity);
-  }, [item.id, item.quantity, updateQuantity]);
+    triggerFeedback();
+  }, [item.id, item.quantity, updateQuantity, triggerFeedback]);
 
   const handleDecrease = useCallback(() => {
     const newQuantity = Math.max(0, (item.quantity || 0) - 1);
@@ -33,7 +46,8 @@ const CartItem = memo(({ item }) => {
     } else {
       updateQuantity(item.id, newQuantity);
     }
-  }, [item.id, item.quantity, updateQuantity, removeFromCart]);
+    triggerFeedback();
+  }, [item.id, item.quantity, updateQuantity, removeFromCart, triggerFeedback]);
 
   const handleRemove = useCallback(() => {
     removeFromCart(item.id);
@@ -44,10 +58,16 @@ const CartItem = memo(({ item }) => {
   const itemQuantity = useMemo(() => Number(item.quantity) || 0, [item.quantity]);
   const subtotal = useMemo(() => itemPrice * itemQuantity, [itemPrice, itemQuantity]);
 
+  useEffect(() => () => {
+    if (feedbackTimerRef.current) {
+      clearTimeout(feedbackTimerRef.current);
+    }
+  }, []);
+
   if (!item) return null;
 
   return (
-    <div className="flex items-start gap-4 py-4" role="listitem">
+    <div className={cn('flex items-start gap-4 py-4 transition-all duration-300', justUpdated && 'rounded-2xl bg-primary/5 ring-2 ring-primary/40')} role="listitem">
       <div className="w-20 h-20 bg-muted rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0">
         <OptimizedImage
           src={item.image_url}
@@ -115,59 +135,75 @@ CartItem.displayName = 'CartItem';
 
 const SaveTemplateModal = ({ isOpen, onOpenChange, cartItems }) => {
   const { user } = useSupabaseAuth();
-  const { toast } = useToast();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [feedback, setFeedback] = useState(null);
+  const [didJustSave, setDidJustSave] = useState(false);
+  const closeTimeoutRef = useRef(null);
 
   const handleSave = async () => {
-    if (!user) {
-        toast({
-            title: 'Inicia sesión',
-            description: 'Debes iniciar sesión para guardar plantillas.',
-            variant: 'destructive',
-        });
-        return;
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
     }
-    if (!name.trim()) {
-      toast({
-        title: 'Nombre requerido',
-        description: 'Por favor, asigna un nombre a tu plantilla.',
-        variant: 'destructive',
+
+    const trimmedName = name.trim();
+
+    if (!user) {
+      setFeedback({
+        type: 'error',
+        message: 'Debes iniciar sesión para guardar plantillas.',
       });
       return;
     }
 
+    if (!trimmedName) {
+      setFeedback({
+        type: 'error',
+        message: 'Asigna un nombre a tu plantilla antes de guardarla.',
+      });
+      return;
+    }
+
+    setFeedback(null);
     setIsSaving(true);
+
     try {
-        const templateItems = cartItems.map(item => ({
-            product_id: item.id,
-            quantity: item.quantity,
-            unit_price: item.price,
-            product_name: item.name
-        }));
+      const templateItems = cartItems.map(item => ({
+        product_id: item.id,
+        quantity: item.quantity,
+        unit_price: item.price,
+        product_name: item.name
+      }));
 
-        await createTemplate({
-            name,
-            description,
-            items: templateItems
-        });
+      await createTemplate({
+        name: trimmedName,
+        description,
+        items: templateItems
+      });
 
-        toast({
-            title: '✅ Plantilla Guardada',
-            description: `La plantilla "${name}" ha sido creada con éxito.`,
-        });
+      setFeedback({
+        type: 'success',
+        message: `Se guardó la plantilla "${trimmedName}".`,
+      });
+      setDidJustSave(true);
+
+      closeTimeoutRef.current = setTimeout(() => {
+        setDidJustSave(false);
+        setFeedback(null);
         setName('');
         setDescription('');
         onOpenChange(false);
+        closeTimeoutRef.current = null;
+      }, 800);
     } catch (error) {
-        toast({
-            title: 'Error al guardar',
-            description: error.message || 'No se pudo guardar la plantilla. Inténtalo de nuevo.',
-            variant: 'destructive',
-        });
+      setFeedback({
+        type: 'error',
+        message: error?.message || 'No se pudo guardar la plantilla. Inténtalo de nuevo.',
+      });
     } finally {
-        setIsSaving(false);
+      setIsSaving(false);
     }
   };
 
@@ -176,8 +212,21 @@ const SaveTemplateModal = ({ isOpen, onOpenChange, cartItems }) => {
       setName('');
       setDescription('');
       setIsSaving(false);
+      setFeedback(null);
+      setDidJustSave(false);
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+        closeTimeoutRef.current = null;
+      }
     }
   }, [isOpen]);
+
+  useEffect(() => () => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+  }, []);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -214,6 +263,20 @@ const SaveTemplateModal = ({ isOpen, onOpenChange, cartItems }) => {
                 className="rounded-xl"
               />
             </div>
+            {feedback && (
+              <div
+                className={cn(
+                  'rounded-xl border px-3 py-2 text-sm transition-all duration-200',
+                  feedback.type === 'error'
+                    ? 'border-destructive/40 bg-destructive/10 text-destructive'
+                    : 'border-emerald-400/60 bg-emerald-50 text-emerald-700 flex items-center gap-2',
+                )}
+                role="status"
+              >
+                {feedback.type === 'success' && <CheckCircle2 className="h-4 w-4" aria-hidden="true" />}
+                <span>{feedback.message}</span>
+              </div>
+            )}
           </div>
           <DialogFooter className="sticky bottom-0 flex flex-col gap-2 border-t border-slate-200 bg-white/95 px-6 py-4 backdrop-blur">
             <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
@@ -222,9 +285,18 @@ const SaveTemplateModal = ({ isOpen, onOpenChange, cartItems }) => {
                   Cancelar
                 </Button>
               </DialogClose>
-              <Button type="button" onClick={handleSave} className="rounded-xl shadow-button hover:shadow-button-hover" disabled={isSaving}>
+              <Button
+                type="button"
+                onClick={handleSave}
+                className={cn(
+                  'rounded-xl shadow-button hover:shadow-button-hover',
+                  didJustSave && 'bg-emerald-600 hover:bg-emerald-600 shadow-none',
+                )}
+                disabled={isSaving || didJustSave}
+              >
                 {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isSaving ? 'Guardando...' : 'Guardar'}
+                {!isSaving && didJustSave && <CheckCircle2 className="mr-2 h-4 w-4" aria-hidden="true" />}
+                {isSaving ? 'Guardando...' : didJustSave ? 'Guardado' : 'Guardar'}
               </Button>
             </div>
           </DialogFooter>
@@ -240,6 +312,7 @@ const Cart = () => {
   const navigate = useNavigate();
   const [isTemplateModalOpen, setTemplateModalOpen] = useState(false);
   const [isClearCartDialogOpen, setClearCartDialogOpen] = useState(false);
+  const [checkoutError, setCheckoutError] = useState('');
 
   const handleClearCart = () => {
     setClearCartDialogOpen(true);
@@ -257,13 +330,11 @@ const Cart = () => {
 
   const handleCheckout = () => {
     if (items.length === 0) {
-      toast({
-        title: "Carrito vacío",
-        description: "Agrega productos antes de proceder.",
-        variant: "destructive"
-      });
+      setCheckoutError('Agrega productos antes de proceder.');
+      setTimeout(() => setCheckoutError(''), 2500);
       return;
     }
+    setCheckoutError('');
     toggleCart();
     navigate('/checkout');
   };
@@ -394,6 +465,11 @@ const Cart = () => {
                     <ArrowRight className="ml-2" size={18} aria-hidden="true" />
                   </Button>
                   </div>
+                  {checkoutError && (
+                    <p className="text-sm font-medium text-destructive text-center" role="alert">
+                      {checkoutError}
+                    </p>
+                  )}
                 </div>
               </footer>
             )}

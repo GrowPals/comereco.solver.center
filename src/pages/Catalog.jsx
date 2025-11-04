@@ -151,9 +151,9 @@ const CatalogPage = () => {
         />
       </Helmet>
 
-      <div className={cn('min-h-screen bg-slate-50', isDesktop ? 'pb-14' : 'pb-28')}>
+      <div className={cn('min-h-screen bg-slate-50', isDesktop ? 'pb-14' : 'pb-20')}>
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className={cn(isDesktop ? 'pt-10' : 'pt-24')}>
+          <div className={cn(isDesktop ? 'pt-10' : 'pt-4')}>
             {isDesktop ? (
               <div className="sticky top-16 z-30 grid grid-cols-[1.6fr,2fr,1.2fr] items-end gap-10 rounded-3xl border border-slate-200 bg-white/95 px-10 py-8 shadow-sm backdrop-blur">
                 <div className="space-y-2">
@@ -308,7 +308,7 @@ const CatalogPage = () => {
                           ? 'Ajusta tu búsqueda o prueba con otra categoría para continuar explorando.'
                           : 'Cuando se añadan productos al catálogo, los verás aquí.'
                       }
-                      icon="Search"
+                      icon={Search}
                     />
                   </div>
                 </div>
@@ -316,7 +316,7 @@ const CatalogPage = () => {
 
               {!showInitialLoading && !showEmptyState && !isError && (
                 <>
-                  <div className="grid grid-cols-1 gap-4 min-[360px]:grid-cols-2 sm:gap-5 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
+                  <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
                     {products.map((product) => (
                       <ProductCard key={product.id} product={product} />
                     ))}

@@ -39,21 +39,21 @@ import TemplateItemsEditor from '@/components/TemplateItemsEditor';
 
 const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
     return (
-        <div className="group relative bg-white border-2 border-slate-200 rounded-2xl p-6 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+        <div className="group relative bg-white border-2 border-slate-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
             {/* Accent bar on hover */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
 
             <div>
                 <div className="flex justify-between items-start mb-3">
-                    <div className="flex items-center gap-3">
-                        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm">
-                            <LayoutTemplate className="h-6 w-6 text-blue-600" aria-hidden="true" />
+                    <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                        <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm flex-shrink-0">
+                            <LayoutTemplate className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" aria-hidden="true" />
                         </div>
-                        <h3 className="font-bold text-xl text-slate-900">{template.name}</h3>
+                        <h3 className="font-bold text-base sm:text-lg lg:text-xl text-slate-900 line-clamp-1">{template.name}</h3>
                     </div>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-9 w-9 p-0 hover:bg-slate-100 rounded-xl"><MoreHorizontal className="h-5 w-5" /></Button>
+                            <Button variant="ghost" className="h-8 w-8 sm:h-9 sm:w-9 p-0 hover:bg-slate-100 rounded-xl flex-shrink-0"><MoreHorizontal className="h-4 w-4 sm:h-5 sm:w-5" /></Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="rounded-xl">
                             <DropdownMenuItem onClick={() => onUse(template.id)}><Zap className="mr-2 h-4 w-4" /> Usar Plantilla</DropdownMenuItem>
@@ -62,9 +62,9 @@ const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
-                <p className="text-base text-slate-600 line-clamp-2 min-h-[3rem] leading-relaxed">{template.description || 'Sin descripción'}</p>
+                <p className="text-sm sm:text-base text-slate-600 line-clamp-2 min-h-[2.5rem] sm:min-h-[3rem] leading-relaxed">{template.description || 'Sin descripción'}</p>
             </div>
-            <div className="mt-6 pt-4 border-t border-slate-200 flex justify-between items-center text-sm">
+            <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-slate-200 flex flex-wrap justify-between items-center gap-2 text-xs sm:text-sm">
                 <span className="font-medium text-slate-700">{template.items?.length || 0} productos</span>
                 <span className="text-slate-600">Usada {template.usage_count || 0} veces</span>
                 {template.last_used_at && <span className="text-slate-500 text-xs">Últ: {format(parseISO(template.last_used_at), 'dd MMM', { locale: es })}</span>}
@@ -207,34 +207,34 @@ const TemplatesPage = () => {
     <>
       <Helmet><title>Plantillas - ComerECO</title></Helmet>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto space-y-8">
-          <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-slate-200">
-            <div className="flex items-center gap-4">
-              <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-md">
-                <LayoutTemplate className="h-7 w-7 text-blue-600" aria-hidden="true" />
+        <div className="max-w-7xl mx-auto space-y-6">
+          <header className="flex flex-col gap-4 pb-6 border-b border-slate-200">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-md">
+                <LayoutTemplate className="h-6 w-6 sm:h-7 sm:w-7 text-blue-600" aria-hidden="true" />
               </div>
-              <div>
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-slate-900 mb-1">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-slate-900 mb-1">
                   Plantillas de <span className="bg-gradient-primary bg-clip-text text-transparent">Requisición</span>
                 </h1>
-                <p className="text-base sm:text-lg text-slate-600">Reutiliza tus pedidos frecuentes con un solo clic.</p>
+                <p className="text-sm sm:text-base lg:text-lg text-slate-600">Reutiliza tus pedidos frecuentes con un solo clic.</p>
               </div>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-2 w-full">
               <Button
                 onClick={() => setFormModal({ isOpen: true, template: null })}
                 size="lg"
                 variant="outline"
-                className="shadow-button hover:shadow-button-hover whitespace-nowrap"
+                className="flex-1 sm:flex-none shadow-button hover:shadow-button-hover text-sm sm:text-base"
               >
-                <PlusCircle className="mr-2 h-5 w-5" /> Nueva Plantilla
+                <PlusCircle className="mr-2 h-4 w-4 sm:h-5 sm:w-5" /> Nueva Plantilla
               </Button>
               <Button
                 onClick={() => navigate('/catalog')}
                 size="lg"
-                className="shadow-button hover:shadow-button-hover whitespace-nowrap"
+                className="flex-1 sm:flex-none shadow-button hover:shadow-button-hover text-sm sm:text-base"
               >
-                <FilePlus className="mr-2 h-5 w-5" /> Desde Carrito
+                <FilePlus className="mr-2 h-4 w-4 sm:h-5 sm:w-5" /> Desde Carrito
               </Button>
             </div>
           </header>
