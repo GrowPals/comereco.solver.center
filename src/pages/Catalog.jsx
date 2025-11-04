@@ -233,8 +233,8 @@ const CatalogPage = () => {
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col gap-4 pb-6">
-                <div className="rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-sm">
+              <div className="flex flex-col gap-3 pb-5">
+                <div className="rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 shadow-sm">
                   <div className="flex items-center justify-between">
                     <h1 className="text-lg font-semibold text-slate-900">Catálogo</h1>
                     {hasActiveFilters && (
@@ -247,10 +247,10 @@ const CatalogPage = () => {
                       </button>
                     )}
                   </div>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-2 text-sm text-slate-500">
                     Escoge productos y actualiza cantidades sin perder tu posición.
                   </p>
-                  <div className="mt-4">
+                  <div className="mt-3">
                     <Select value={category} onValueChange={handleCategoryChange}>
                       <SelectTrigger className="h-11 w-full rounded-xl border-slate-200 bg-slate-50 text-left text-sm font-medium">
                         <div className="flex items-center gap-2 text-slate-600">
@@ -276,7 +276,7 @@ const CatalogPage = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between text-xs uppercase tracking-wide text-slate-500">
+                <div className="flex items-center justify-between text-[11px] uppercase tracking-wide text-slate-500">
                   <span>
                     <span className="text-base font-semibold text-slate-900">{totalCount}</span> productos
                   </span>
@@ -316,7 +316,7 @@ const CatalogPage = () => {
 
               {!showInitialLoading && !showEmptyState && !isError && (
                 <>
-                  <div className="grid grid-cols-1 gap-4 min-[360px]:grid-cols-2 sm:gap-5 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
+                  <div className="grid grid-cols-1 gap-3 min-[360px]:grid-cols-2 sm:gap-5 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
                     {products.map((product) => (
                       <ProductCard key={product.id} product={product} />
                     ))}

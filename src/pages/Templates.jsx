@@ -225,14 +225,14 @@ const TemplatesPage = () => {
                 onClick={() => setFormModal({ isOpen: true, template: null })}
                 size="lg"
                 variant="outline"
-                className="w-full whitespace-nowrap shadow-button hover:shadow-button-hover sm:w-auto"
+                className="w-full shadow-button hover:shadow-button-hover sm:w-auto sm:whitespace-nowrap"
               >
                 <PlusCircle className="mr-2 h-5 w-5" /> Nueva Plantilla
               </Button>
               <Button
                 onClick={() => navigate('/catalog')}
                 size="lg"
-                className="w-full whitespace-nowrap shadow-button hover:shadow-button-hover sm:w-auto"
+                className="w-full shadow-button hover:shadow-button-hover sm:w-auto sm:whitespace-nowrap"
               >
                 <FilePlus className="mr-2 h-5 w-5" /> Desde Carrito
               </Button>
@@ -240,7 +240,7 @@ const TemplatesPage = () => {
           </header>
 
           {templates && templates.length > 0 ? (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
               {templates.map((template) => (
                 <TemplateCard key={template.id} template={template} onEdit={(t) => setFormModal({ isOpen: true, template: t })} onDelete={(t) => setDeleteModal({ isOpen: true, template: t })} onUse={(id) => useTemplateMutation.mutate(id)} />
               ))}
