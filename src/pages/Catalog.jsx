@@ -151,9 +151,9 @@ const CatalogPage = () => {
         />
       </Helmet>
 
-      <div className={cn('min-h-screen bg-slate-50', isDesktop ? 'pb-14' : 'pb-28')}>
+      <div className={cn('min-h-screen bg-slate-50', isDesktop ? 'pb-16' : 'pb-28')}>
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className={cn(isDesktop ? 'pt-10' : 'pt-24')}>
+          <div className={cn(isDesktop ? 'pt-10' : 'pt-6')}>
             {isDesktop ? (
               <div className="sticky top-16 z-30 grid grid-cols-[1.6fr,2fr,1.2fr] items-end gap-10 rounded-3xl border border-slate-200 bg-white/95 px-10 py-8 shadow-sm backdrop-blur">
                 <div className="space-y-2">
