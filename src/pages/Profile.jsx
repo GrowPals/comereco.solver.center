@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Helmet } from 'react-helmet';
-import { User, Mail, Phone, Edit, Shield, Upload, Loader2, Trash2 } from 'lucide-react';
+import { User, Building, Mail, Phone, Edit, Save, X, Shield, Upload, Loader2, Trash2 } from 'lucide-react';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,17 +23,17 @@ const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name, e
   return (
     <div
       className={cn(
-        'flex flex-col gap-3 rounded-2xl border border-transparent bg-card/40 px-4 py-4 transition-colors sm:flex-row sm:items-center sm:gap-4',
+        'flex items-center gap-4 transition-colors',
         isEditableState
-          ? 'border-border/60 bg-muted/60 shadow-sm dark:border-border/70 dark:bg-[#0f1a2d]/80'
-          : 'hover:border-border/60 hover:bg-card/60 dark:hover:border-border/60'
+          ? 'rounded-2xl border border-border/60 bg-muted/40 px-4 py-4 shadow-sm dark:border-border/70 dark:bg-[#0f1a2d]/80'
+          : 'py-4'
       )}
     >
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm dark:border dark:border-primary-400/40 dark:bg-primary-500/20 dark:backdrop-blur">
-        <Icon className="h-5 w-5 text-primary-500 dark:text-primary-500" aria-hidden="true" />
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm dark:from-primary-500/15 dark:to-primary-600/10 dark:border dark:border-primary-500/25">
+        <Icon className="h-5 w-5 text-primary-500 dark:text-primary-200" aria-hidden="true" />
       </div>
       <div className="flex-1">
-        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground/80">{label}</p>
+        <p className="mb-1 text-sm font-medium text-muted-foreground">{label}</p>
         {isEditableState ? (
           <Input
             name={name}
@@ -43,7 +43,7 @@ const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name, e
             className="mt-1 h-10 rounded-xl border border-border/60 bg-background/95 text-foreground shadow-inner transition-colors focus-visible:border-primary-400 focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:border-border/60 dark:bg-[#121c30] dark:text-foreground"
           />
         ) : (
-          <p className="text-base font-semibold text-foreground">{value || placeholder || 'No especificado'}</p>
+          <p className="font-bold text-foreground">{value || placeholder || 'No especificado'}</p>
         )}
       </div>
     </div>
@@ -224,30 +224,27 @@ const ProfilePage = () => {
   }
 
   const { full_name, email, company, role_v2 } = user;
-  const roleLabel = role_v2 === 'admin' ? 'Administrador' : role_v2 === 'supervisor' ? 'Supervisor' : 'Usuario';
 
   return (
     <>
       <Helmet><title>Mi Perfil - ComerECO</title></Helmet>
 
-      <PageContainer className="pt-6 lg:pt-8">
-        <div className="mx-auto flex w-full max-w-lg flex-col gap-6 sm:max-w-3xl lg:max-w-5xl">
-          <Card className="relative overflow-hidden rounded-3xl border border-border/70 bg-card/95 shadow-2xl dark:border-border/80 dark:bg-[linear-gradient(160deg,rgba(16,24,41,0.95)_0%,rgba(12,20,34,0.98)_50%,rgba(9,14,26,1)_100%)]">
-            <div
-              className="absolute inset-0 -z-10 bg-gradient-to-br from-primary-200/50 via-transparent to-primary-300/30 dark:from-primary-500/20 dark:via-transparent dark:to-primary-400/5"
-              aria-hidden="true"
-            />
-            <CardContent className="relative px-6 py-7 sm:px-8 sm:py-8">
-              <div className="flex flex-col items-center gap-6 text-center sm:flex-row sm:items-start sm:text-left">
+      <PageContainer>
+      <div className="mx-auto w-full max-w-5xl space-y-8">
+        <Card className="overflow-hidden rounded-2xl border border-border bg-card/95 shadow-xl dark:border-border/80 dark:bg-[linear-gradient(135deg,rgba(18,25,41,0.92)_0%,rgba(13,18,32,0.94)_60%,rgba(10,14,26,0.95)_100%)] dark:shadow-[0_28px_60px_rgba(4,10,24,0.45)]">
+          <div className="h-32 bg-gradient-to-br from-primary-50 via-primary-100 to-primary-50 dark:from-[#1b2640] dark:via-[#151f34] dark:to-[#101827] dark:border-b dark:border-border/70" />
+          <CardContent className="p-8 pt-0">
+            <div className="flex -mt-16 flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+              <div className="flex items-start gap-4">
                 <div className="relative">
-                  <Avatar className="h-28 w-28 border-4 border-white/80 shadow-xl ring-4 ring-primary/10 dark:border-primary-500/40 dark:ring-primary/25">
+                  <Avatar className="h-32 w-32 border-4 border-white shadow-lg ring-4 ring-primary/10 dark:border-[#1f2b43] dark:ring-primary/35 dark:shadow-[0_16px_34px_rgba(12,22,41,0.45)]">
                     <AvatarImage src={avatarUrl ?? undefined} alt={profileData.full_name || full_name} />
-                    <AvatarFallback className="text-3xl font-semibold text-white">
+                    <AvatarFallback className="text-4xl font-bold text-white">
                       {initials}
                     </AvatarFallback>
                   </Avatar>
                   {isUploadingAvatar && (
-                    <div className="absolute inset-0 flex items-center justify-center rounded-full bg-background/85 backdrop-blur-sm dark:bg-[#0f172a]/90">
+                    <div className="absolute inset-0 flex items-center justify-center rounded-full bg-background/80 backdrop-blur-sm dark:bg-[#0f172a]/80">
                       <Loader2 className="h-7 w-7 animate-spin text-primary-500 dark:text-primary-300" />
                     </div>
                   )}
@@ -259,28 +256,23 @@ const ProfilePage = () => {
                     onChange={handleAvatarChange}
                   />
                 </div>
-                <div className="flex w-full flex-col items-center gap-4 sm:items-start">
+                <div className="flex flex-col gap-3">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-700/80 dark:text-primary-200/70">Mi perfil</p>
-                    <h2 className="mt-1 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                    <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-2xl md:text-3xl">
                       {profileData.full_name || full_name}
                     </h2>
-                    <p className="mt-1 text-base text-muted-foreground">
+                    <p className="mt-1 text-base text-muted-foreground sm:text-lg">
                       {company?.name || 'Compañía no asignada'}
                     </p>
-                    <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-primary-500/10 px-3 py-1 text-sm font-medium text-primary-700 dark:bg-primary-500/15 dark:text-primary-100">
-                      <Shield className="h-4 w-4" aria-hidden="true" />
-                      {roleLabel}
-                    </div>
                   </div>
-                  <div className="flex w-full flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                     <Button
                       type="button"
-                      variant="secondary"
+                      variant="outline"
                       size="sm"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={isUploadingAvatar}
-                      className="h-11 rounded-full bg-white/80 px-5 text-primary-700 shadow-sm transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-md dark:bg-primary-500/15 dark:text-primary-50"
+                      className="rounded-xl border border-primary-200 bg-white/90 text-primary-600 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:border-primary-500/40 dark:bg-primary-500/12 dark:text-primary-100 dark:hover:bg-primary-500/20"
                     >
                       {isUploadingAvatar ? (
                         <>
@@ -301,92 +293,50 @@ const ProfilePage = () => {
                         size="sm"
                         onClick={handleRemoveAvatar}
                         disabled={isUploadingAvatar}
-                        className="h-11 rounded-full px-5 text-muted-foreground hover:text-error dark:text-muted-foreground/80 dark:hover:text-error"
+                        className="rounded-xl text-muted-foreground hover:text-error dark:text-muted-foreground/80 dark:hover:text-error"
                       >
                         <Trash2 className="mr-2 h-4 w-4" />
                         Quitar
                       </Button>
                     )}
                   </div>
-                </div>
-              </div>
-
-              <div className="mt-6 grid w-full grid-cols-2 gap-3 sm:grid-cols-4">
-                {loading ? (
-                  Array.from({ length: 2 }).map((_, index) => (
-                    <Skeleton key={index} className="h-24 w-full rounded-2xl sm:col-span-2" />
-                  ))
-                ) : (
-                  <>
-                    <div className="flex flex-col justify-center rounded-2xl border border-white/70 bg-white/80 p-4 text-center shadow-sm backdrop-blur dark:border-primary-500/30 dark:bg-primary-500/15 sm:col-span-2">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/70">Requisiciones creadas</p>
-                      <p className="mt-2 text-2xl font-bold text-foreground">{stats.created}</p>
-                    </div>
-                    <div className="flex flex-col justify-center rounded-2xl border border-emerald-200/80 bg-emerald-50/80 p-4 text-center shadow-sm backdrop-blur dark:border-emerald-500/40 dark:bg-emerald-500/15 sm:col-span-2">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700/80 dark:text-emerald-200/70">Requisiciones aprobadas</p>
-                      <p className="mt-2 text-2xl font-bold text-foreground">{stats.approved}</p>
-                    </div>
-                  </>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="rounded-3xl border border-border/70 bg-card/95 shadow-xl dark:border-border/80 dark:bg-[#111a2c]">
-            <CardHeader className="pb-2">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <CardTitle className="text-xl font-semibold text-foreground">Información personal</CardTitle>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Gestiona tus datos básicos y de contacto para el equipo de ComerECO.
+                  <p className="text-xs text-muted-foreground/70 dark:text-muted-foreground/60">
+                    Usa tu logotipo o una foto profesional para que tu equipo te identifique fácilmente.
                   </p>
                 </div>
-                <div className="flex flex-row gap-2">
-                  {isEditing ? (
-                    <>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setIsEditing(false)}
-                        disabled={isSaving}
-                        className="h-10 rounded-full px-4"
-                      >
-                        Cancelar
-                      </Button>
-                      <Button
-                        type="button"
-                        size="sm"
-                        onClick={handleSave}
-                        disabled={isSaving}
-                        className="h-10 rounded-full px-4"
-                      >
-                        {isSaving ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Guardando
-                          </>
-                        ) : (
-                          'Guardar cambios'
-                        )}
-                      </Button>
-                    </>
-                  ) : (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setIsEditing(true)}
-                      className="h-10 rounded-full px-4"
-                    >
-                      <Edit className="mr-2 h-4 w-4" />
-                      Editar
-                    </Button>
-                  )}
-                </div>
               </div>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-3 sm:gap-4">
+              {isEditing ? (
+                <div className="flex gap-2 self-start">
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    onClick={() => setIsEditing(false)}
+                    disabled={isSaving}
+                    className="h-11 w-11 rounded-xl shadow-sm hover:shadow-md"
+                  >
+                    <X className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className="h-11 w-11 rounded-xl shadow-lg hover:shadow-xl"
+                  >
+                    <Save className={`h-5 w-5 ${isSaving ? 'animate-pulse' : ''}`} />
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  size="icon"
+                  variant="outline"
+                  onClick={() => setIsEditing(true)}
+                  className="h-11 w-11 self-start rounded-xl shadow-sm hover:shadow-md"
+                >
+                  <Edit className="h-5 w-5" />
+                </Button>
+              )}
+            </div>
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
               <ProfileInfoRow
                 icon={User}
                 label="Nombre Completo"
@@ -406,7 +356,7 @@ const ProfilePage = () => {
               <ProfileInfoRow
                 icon={Shield}
                 label="Rol"
-                value={roleLabel}
+                value={role_v2 === 'admin' ? 'Administrador' : role_v2 === 'supervisor' ? 'Supervisor' : 'Usuario'}
                 editable={false}
               />
               <ProfileInfoRow
@@ -419,26 +369,51 @@ const ProfilePage = () => {
                 editable={true}
                 placeholder="+52 123 456 7890"
               />
-            </CardContent>
-          </Card>
+            </div>
+          </CardContent>
+        </Card>
 
-          <Card className="rounded-3xl border border-border/70 bg-card/95 shadow-xl dark:border-border/80 dark:bg-[#101a2b]">
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm dark:from-primary-500/15 dark:to-primary-600/10">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <Card className="rounded-2xl border border-border shadow-lg dark:border-border">
+            <CardHeader className="pb-4">
+              <div className="mb-2 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm dark:from-primary-500/15 dark:to-primary-600/10">
                   <User className="h-5 w-5 text-primary-500" aria-hidden="true" />
                 </div>
-                <div>
-                  <CardTitle className="text-xl font-semibold text-foreground">Actividad reciente</CardTitle>
-                  <p className="text-sm text-muted-foreground">
-                    Tus últimas requisiciones creadas o aprobadas.
-                  </p>
+                <CardTitle className="text-2xl font-bold text-foreground">Estadísticas</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              {loading ? (
+                <Skeleton className="h-16 w-full rounded-xl" />
+              ) : (
+                <div className="rounded-xl border border-primary-200 bg-gradient-to-br from-primary-50 to-primary-100 p-4 shadow-inner dark:border-primary-500/40 dark:bg-[#101a2f]/85 dark:shadow-[inset_0_1px_12px_rgba(15,35,68,0.65)]">
+                  <p className="mb-1 text-sm font-medium text-muted-foreground dark:text-muted-foreground/70">Requisiciones creadas</p>
+                  <p className="text-3xl font-bold text-foreground">{stats.created}</p>
                 </div>
+              )}
+              {loading ? (
+                <Skeleton className="h-16 w-full rounded-xl" />
+              ) : (
+                <div className="rounded-xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-emerald-100 p-4 dark:border-emerald-500/30 dark:from-emerald-500/15 dark:to-emerald-600/15">
+                  <p className="mb-1 text-sm font-medium text-muted-foreground">Requisiciones Aprobadas</p>
+                  <p className="text-3xl font-bold text-foreground">{stats.approved}</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+          <Card className="rounded-2xl border border-border shadow-lg lg:col-span-2 dark:border-border">
+            <CardHeader className="pb-4">
+              <div className="mb-2 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm dark:from-primary-500/15 dark:to-primary-600/10">
+                  <User className="h-5 w-5 text-primary-500" aria-hidden="true" />
+                </div>
+                <CardTitle className="text-2xl font-bold text-foreground">Actividad Reciente</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
               {loading ? (
-                Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-24 w-full rounded-2xl" />)
+                Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-24 w-full rounded-xl" />)
               ) : recentRequisitions.length > 0 ? (
                 recentRequisitions.map(req => <RequisitionCard key={req.id} requisition={req} />)
               ) : (
@@ -452,6 +427,7 @@ const ProfilePage = () => {
             </CardContent>
           </Card>
         </div>
+      </div>
       </PageContainer>
     </>
   );
