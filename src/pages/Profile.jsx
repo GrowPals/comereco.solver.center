@@ -28,8 +28,8 @@ const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name, e
           : 'py-4'
       )}
     >
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm dark:from-primary-500/15 dark:to-primary-600/20 dark:border dark:border-primary-600/40">
-        <Icon className="h-5 w-5 text-primary-500 dark:text-primary-300" aria-hidden="true" />
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm dark:from-primary-500/15 dark:to-primary-600/10 dark:border dark:border-primary-500/25">
+        <Icon className="h-5 w-5 text-primary-500 dark:text-primary-500" aria-hidden="true" />
       </div>
       <div className="flex-1">
         <p className="mb-1 text-sm font-medium text-muted-foreground">{label}</p>
@@ -54,8 +54,8 @@ const MobileProfileInfoRow = ({ icon: Icon, label, value, placeholder, editable 
 
   return (
     <div className="flex items-start gap-4 rounded-2xl border border-border/50 bg-card/80 p-4 shadow-sm dark:border-border/60 dark:bg-[#122039]/80">
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-100 via-primary-50 to-primary-100 shadow-inner dark:from-primary-500/25 dark:via-primary-500/15 dark:to-primary-400/15">
-        <Icon className="h-5 w-5 text-primary-600 dark:text-primary-300" aria-hidden="true" />
+      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-50 via-primary-100 to-primary-50 shadow-inner dark:from-primary-500/20 dark:via-primary-500/15 dark:to-primary-600/15">
+        <Icon className="h-5 w-5 text-primary-600 dark:text-primary-500" aria-hidden="true" />
       </div>
       <div className="flex-1">
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/80">{label}</p>
