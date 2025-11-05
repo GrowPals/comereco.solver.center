@@ -50,6 +50,32 @@ const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name, e
   );
 };
 
+const MobileProfileInfoRow = ({ icon: Icon, label, value, placeholder, editable = false, name, onChange, isEditing }) => {
+  const isEditableState = isEditing && editable;
+
+  return (
+    <div className="flex items-start gap-4 rounded-2xl border border-border/50 bg-card/80 p-4 shadow-sm dark:border-border/60 dark:bg-[#122039]/80">
+      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500/15 via-primary-400/20 to-primary-300/20 shadow-inner dark:from-primary-500/25 dark:via-primary-500/15 dark:to-primary-500/10">
+        <Icon className="h-5 w-5 text-primary-600 dark:text-primary-200" aria-hidden="true" />
+      </div>
+      <div className="flex-1">
+        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/80">{label}</p>
+        {isEditableState ? (
+          <Input
+            name={name}
+            value={value || ''}
+            onChange={onChange}
+            placeholder={placeholder}
+            className="mt-2 h-10 rounded-xl border border-border/60 bg-background/90 text-foreground shadow-inner focus-visible:border-primary-400 focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          />
+        ) : (
+          <p className="mt-1 text-base font-semibold text-foreground">{value || placeholder || 'No especificado'}</p>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const ProfilePage = () => {
   const { user, loading: authLoading, refreshUserProfile } = useSupabaseAuth();
   const toast = useToastNotification();
