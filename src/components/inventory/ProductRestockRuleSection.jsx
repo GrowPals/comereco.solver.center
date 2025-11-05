@@ -12,6 +12,13 @@ import { useUserPermissions } from '@/hooks/useUserPermissions';
 import { useToast } from '@/components/ui/useToast';
 import { getAllProjects } from '@/services/projectService';
 import { cn } from '@/lib/utils';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 
 const STATUS_BADGES = {
   active: 'border-emerald-200 bg-emerald-50 text-emerald-700',
@@ -62,6 +69,48 @@ export const ProductRestockRuleSection = ({ product, stock }) => {
     if (!Number.isFinite(stock)) return false;
     return stock <= rule.min_stock;
   }, [rule, stock]);
+
+  const formattedUpdatedAt = useMemo(() => {
+    if (!rule?.updated_at) return null;
+    return new Date(rule.updated_at).toLocaleString('es-MX', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }, [rule?.updated_at]);
+
+  const numberFormatter = useMemo(() => new Intl.NumberFormat('es-MX'), []);
+
+  const metrics = useMemo(() => {
+    if (!rule) return [];
+
+    const items = [
+      {
+        label: 'Alcance',
+        value: rule.projects?.name || 'Regla general'
+      },
+      {
+        label: 'Stock mínimo',
+        value: `${numberFormatter.format(rule.min_stock ?? 0)} u`
+      },
+      {
+        label: 'Cantidad a solicitar',
+        value: `${numberFormatter.format(rule.reorder_quantity ?? 0)} u`
+      }
+    ];
+
+    if (Number.isFinite(stock)) {
+      items.push({
+        label: 'Stock actual',
+        value: `${numberFormatter.format(stock)} u`,
+        tone: isBelowMinimum ? 'warning' : 'default'
+      });
+    }
+
+    return items;
+  }, [isBelowMinimum, numberFormatter, rule, stock]);
 
   const handleSave = async (values) => {
     try {
@@ -115,9 +164,9 @@ export const ProductRestockRuleSection = ({ product, stock }) => {
   };
 
   return (
-    <section id="restock-rule" className="mt-16">
+    <section id="restock-rule" className="mt-20">
       <div className="space-y-6 rounded-3xl border border-slate-200 bg-white/95 p-6 shadow-sm sm:p-8">
-        <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <header className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-3 text-slate-600">
               <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100">
@@ -125,10 +174,9 @@ export const ProductRestockRuleSection = ({ product, stock }) => {
               </span>
               <span className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">Automatización</span>
             </div>
-            <h2 className="text-2xl font-semibold text-slate-900 sm:text-3xl">Regla de reabastecimiento</h2>
+            <h2 className="text-2xl font-semibold text-slate-900 sm:text-3xl">Panel de reabastecimiento</h2>
             <p className="text-sm text-slate-600">
-              Configura cuándo este producto debe generar una requisición automática. La edición completa se realiza desde
-              el modal.
+              Revisa y ajusta la regla automática de este producto sin salir de la ficha.
             </p>
           </div>
 
@@ -140,47 +188,57 @@ export const ProductRestockRuleSection = ({ product, stock }) => {
         </header>
 
         {canManageRestockRules && scopeOptions.length > 1 && (
-          <div className="flex flex-wrap gap-2">
-            {scopeOptions.map((option) => {
-              const isActive = selectedScope === option.id;
-              return (
-                <button
-                  key={option.id}
-                  type="button"
-                  onClick={() => setSelectedScope(option.id)}
-                  className={cn(
-                    'rounded-full border px-4 py-2 text-sm font-semibold transition-colors',
-                    isActive
-                      ? 'border-primary bg-primary text-white shadow-sm'
-                      : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900'
-                  )}
-                >
-                  {option.name}
-                </button>
-              );
-            })}
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div className="w-full max-w-sm">
+              <label className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">Alcance</label>
+              <Select value={selectedScope} onValueChange={setSelectedScope}>
+                <SelectTrigger className="mt-2 h-11 w-full rounded-2xl border-slate-200 bg-slate-50 text-sm font-medium text-slate-700">
+                  <SelectValue placeholder="Selecciona alcance" />
+                </SelectTrigger>
+                <SelectContent>
+                  {scopeOptions.map((option) => (
+                    <SelectItem key={option.id} value={option.id}>
+                      {option.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         )}
 
         {isLoading ? (
-          <Skeleton className="h-24 w-full rounded-3xl" />
+          <Skeleton className="h-28 w-full rounded-3xl" />
         ) : rule ? (
-          <div className="space-y-4">
-            <div className="space-y-1 text-sm text-slate-600">
-              <p><span className="font-semibold text-slate-900">Proyecto:</span> {rule.projects?.name || 'Regla general'}</p>
-              <p><span className="font-semibold text-slate-900">Cantidad a solicitar:</span> {rule.reorder_quantity} unidades</p>
-              <p><span className="font-semibold text-slate-900">Mínimo configurado:</span> {rule.min_stock} unidades</p>
+          <div className="space-y-5">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {metrics.map((metric) => (
+                <div
+                  key={metric.label}
+                  className={cn(
+                    'rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm',
+                    metric.tone === 'warning' && 'border-amber-200 bg-amber-50/80 shadow-none'
+                  )}
+                >
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">{metric.label}</p>
+                  <p className={cn('mt-1 text-lg font-semibold text-slate-900', metric.tone === 'warning' && 'text-amber-700')}>
+                    {metric.value}
+                  </p>
+                </div>
+              ))}
             </div>
+
+            {rule.notes && (
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+                {rule.notes}
+              </div>
+            )}
 
             {isBelowMinimum && (
               <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50/90 p-4 text-sm text-amber-700">
                 <AlertCircle className="mt-0.5 h-5 w-5" />
-                <p>El stock actual ({stock ?? 0} u) está en o por debajo del mínimo configurado.</p>
+                <p>El stock actual ({Number.isFinite(stock) ? numberFormatter.format(stock) : 0} u) está en o por debajo del mínimo configurado.</p>
               </div>
-            )}
-
-            {rule.notes && (
-              <p className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600">{rule.notes}</p>
             )}
 
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
@@ -205,18 +263,23 @@ export const ProductRestockRuleSection = ({ product, stock }) => {
                 Editar
               </Button>
             </div>
+
+            {formattedUpdatedAt && (
+              <p className="text-[11px] text-slate-500">Última actualización {formattedUpdatedAt}</p>
+            )}
           </div>
         ) : canManageRestockRules ? (
           <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-6 text-sm text-slate-600">
-            <p>Aún no hay una regla configurada para este producto. Crea una para automatizar el reabastecimiento.</p>
+            <p className="text-sm text-slate-600">
+              Aún no hay una regla configurada para este producto. Define el alcance, stock mínimo y cantidad recomendada para automatizar el reabastecimiento.
+            </p>
             <Button className="mt-4 rounded-2xl px-6" onClick={() => setDialogOpen(true)}>
               Crear regla
             </Button>
           </div>
         ) : (
           <p className="text-sm text-slate-600">
-            No hay reglas configuradas para este producto. Solicita a un supervisor que cree una regla si deseas activar la
-            automatización.
+            No hay reglas configuradas para este producto. Solicita a un supervisor que cree una regla si deseas activar la automatización.
           </p>
         )}
 

@@ -643,9 +643,6 @@ export default function ProductDetail() {
                 )}
               </div>
             </div>
-
-            <ProductRestockRuleSection product={product} stock={stock} />
-
             {/* Controles de cantidad y carrito */}
             <div className="space-y-4 p-5 bg-white border-2 border-slate-200 rounded-xl">
               <div className="flex items-center justify-between">
@@ -798,6 +795,8 @@ export default function ProductDetail() {
             currentProductId={id}
           />
         )}
+
+        <ProductRestockRuleSection product={product} stock={stock} />
       </div>
 
       {/* Botón flotante en móvil - mejorado */}

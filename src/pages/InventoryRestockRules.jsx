@@ -10,7 +10,6 @@ import { useUserPermissions } from '@/hooks/useUserPermissions';
 import { getAllProjects } from '@/services/projectService';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
@@ -45,19 +44,18 @@ const buildQueryFilters = (filters, searchTerm) => ({
   searchTerm
 });
 
-const SummaryStat = ({ icon: Icon, title, value, description }) => (
-  <Card className="h-full border-slate-200/80">
-    <CardContent className="flex items-center gap-4 p-5">
-      <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
+const SummaryStat = ({ icon: Icon, title, value }) => (
+  <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
+    <div className="flex items-center gap-3">
+      <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100">
         <Icon className="h-5 w-5 text-slate-600" />
       </span>
-      <div className="space-y-1">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">{title}</p>
-        <p className="text-3xl font-semibold text-slate-900">{value}</p>
-        <p className="text-sm text-slate-600 leading-snug">{description}</p>
+      <div className="leading-tight">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">{title}</p>
+        <p className="text-2xl font-semibold text-slate-900">{value}</p>
       </div>
-    </CardContent>
-  </Card>
+    </div>
+  </div>
 );
 
 const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshing }) => {
@@ -73,10 +71,13 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
   const projectOptions = Array.isArray(projects) ? projects : [];
 
   return (
-    <div className="rounded-3xl border border-slate-200/80 bg-white/95 p-6 shadow-sm">
-      <div className="grid gap-5 lg:grid-cols-5">
-        <div className="lg:col-span-2">
-          <label htmlFor="restock-search" className="block text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-500">
+    <div className="rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 shadow-sm sm:px-5 sm:py-4">
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(280px,2.2fr)_repeat(3,minmax(190px,1fr))] xl:gap-4">
+        <div className="flex flex-col justify-end">
+          <label
+            htmlFor="restock-search"
+            className="block text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500"
+          >
             Buscar
           </label>
           <div className="relative mt-2">
@@ -87,17 +88,17 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
               placeholder="Nombre, SKU o notas"
               value={filters.searchTerm}
               onChange={(event) => handleUpdate('searchTerm', event.target.value)}
-              className="h-12 rounded-2xl border-slate-200 bg-slate-50 pl-12 text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:border-primary focus:ring-primary/20"
+              className="h-11 rounded-2xl border-slate-200 bg-slate-50 pl-12 text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:border-primary focus:ring-primary/20"
             />
           </div>
         </div>
 
-        <div>
-          <label className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-500">
+        <div className="flex flex-col justify-end">
+          <label className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
             <Filter className="h-4 w-4" /> Estado
           </label>
           <Select value={filters.status} onValueChange={(value) => handleUpdate('status', value)}>
-            <SelectTrigger className="mt-2 h-12 rounded-2xl border-slate-200 bg-slate-50 text-sm font-medium text-slate-700">
+            <SelectTrigger className="mt-2 h-11 rounded-2xl border-slate-200 bg-slate-50 text-sm font-medium text-slate-700">
               <SelectValue placeholder="Estado" />
             </SelectTrigger>
             <SelectContent>
@@ -110,10 +111,10 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
           </Select>
         </div>
 
-        <div>
-          <label className="text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-500">Proyecto</label>
+        <div className="flex flex-col justify-end">
+          <label className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">Proyecto</label>
           <Select value={filters.projectId} onValueChange={(value) => handleUpdate('projectId', value)}>
-            <SelectTrigger className="mt-2 h-12 rounded-2xl border-slate-200 bg-slate-50 text-sm font-medium text-slate-700">
+            <SelectTrigger className="mt-2 h-11 rounded-2xl border-slate-200 bg-slate-50 text-sm font-medium text-slate-700">
               <SelectValue placeholder="Proyecto" />
             </SelectTrigger>
             <SelectContent>
@@ -128,10 +129,10 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
           </Select>
         </div>
 
-        <div>
-          <label className="text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-500">Categoría</label>
+        <div className="flex flex-col justify-end">
+          <label className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">Categoría</label>
           <Select value={filters.category} onValueChange={(value) => handleUpdate('category', value)}>
-            <SelectTrigger className="mt-2 h-12 rounded-2xl border-slate-200 bg-slate-50 text-sm font-medium text-slate-700">
+            <SelectTrigger className="mt-2 h-11 rounded-2xl border-slate-200 bg-slate-50 text-sm font-medium text-slate-700">
               <SelectValue placeholder="Categoría" />
             </SelectTrigger>
             <SelectContent>
@@ -149,11 +150,11 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
         </div>
       </div>
 
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 sm:justify-end">
         <Button
           variant="ghost"
           onClick={handleClear}
-          className="h-11 rounded-2xl border border-transparent text-sm font-semibold text-slate-600 hover:border-slate-200 hover:text-slate-900"
+          className="h-10 rounded-2xl border border-transparent text-sm font-semibold text-slate-600 hover:border-slate-200 hover:text-slate-900"
         >
           Limpiar filtros
         </Button>
@@ -161,7 +162,7 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
           variant="secondary"
           disabled={isRefreshing}
           onClick={() => onFiltersChange({ ...filters })}
-          className="h-11 rounded-2xl px-6 text-sm font-semibold"
+          className="h-10 rounded-2xl px-5 text-sm font-semibold"
         >
           <RefreshCw className={cn('mr-2 h-4 w-4', isRefreshing && 'animate-spin')} />
           Actualizar
@@ -229,19 +230,18 @@ const InventoryRestockRules = () => {
         <meta name="description" content="Configura las reglas de stock mínimo para automatizar requisiciones." />
       </Helmet>
 
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-8">
-        <section className="rounded-3xl border border-slate-200/80 bg-white/95 p-6 shadow-sm sm:p-7">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mx-auto flex w-full max-w-[92rem] flex-col gap-6 lg:gap-7">
+        <section className="rounded-3xl border border-slate-200/80 bg-white/95 px-5 py-4 shadow-sm sm:px-6 sm:py-5">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="space-y-1">
-              <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-[2rem]">Reabastecimiento automático</h1>
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-[2.05rem]">Reabastecimiento automático</h1>
               <p className="max-w-2xl text-sm text-slate-600">
-                Configura reglas para disparar requisiciones cuando el stock llegue a un mínimo. Mantén cada producto
-                bajo control y edita en segundos.
+                Configura reglas para disparar requisiciones cuando el stock llegue a un mínimo.
               </p>
             </div>
             <Button
               variant="outline"
-              className="hidden rounded-2xl px-6 text-sm font-semibold sm:inline-flex"
+              className="hidden h-11 rounded-2xl px-6 text-sm font-semibold lg:inline-flex"
               onClick={() => setFilters({ searchTerm: '', status: 'all', projectId: 'all', category: 'all', page: 1 })}
             >
               Reiniciar filtros
@@ -249,24 +249,21 @@ const InventoryRestockRules = () => {
           </div>
         </section>
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           <SummaryStat
             icon={Layers}
             title="Reglas registradas"
             value={total}
-            description="Configuraciones almacenadas para tu compañía."
           />
           <SummaryStat
             icon={ShieldCheck}
             title="Activas"
             value={activeCount}
-            description="Se evaluarán automáticamente en la próxima ejecución."
           />
           <SummaryStat
             icon={PauseCircle}
             title="Pausadas"
             value={pausedCount}
-            description="Disponibles para ajustes manuales antes de reactivar."
           />
         </div>
 
@@ -290,15 +287,15 @@ const InventoryRestockRules = () => {
           </div>
         </section>
 
-        <section className="rounded-3xl border border-slate-200/80 bg-white/95 p-4 shadow-sm">
+        <section className="rounded-3xl border border-slate-200/80 bg-white/95 px-4 py-4 shadow-sm sm:px-5">
           {isLoading ? (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {[...Array(6)].map((_, index) => (
                 <Skeleton key={index} className="h-48 w-full rounded-3xl" />
               ))}
             </div>
           ) : rules.length > 0 ? (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {rules.map((rule) => (
                 <RestockRuleCard key={rule.id} rule={rule} projects={projectOptions} />
               ))}

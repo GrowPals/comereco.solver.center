@@ -236,7 +236,10 @@ const AppLayout = () => {
 
       {showNav && (
         <div className="lg:hidden">
-          <BottomNav onMenuClick={() => setMobileNavOpen(true)} />
+          <BottomNav
+            isMenuOpen={isMobileNavOpen}
+            onMenuClick={() => setMobileNavOpen((prev) => !prev)}
+          />
         </div>
       )}
     </div>

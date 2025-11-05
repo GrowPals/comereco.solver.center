@@ -3,7 +3,7 @@ import React, { useMemo, memo } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Home, ClipboardList, Menu, Layers, Plus } from 'lucide-react';
 
-const BottomNav = memo(({ onMenuClick }) => {
+const BottomNav = memo(({ onMenuClick, isMenuOpen = false }) => {
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -111,11 +111,18 @@ const BottomNav = memo(({ onMenuClick }) => {
                     className="inline-flex flex-col items-center justify-center group transition-all duration-200"
                     aria-label="Abrir menú de navegación"
                     aria-haspopup="true"
+                    aria-expanded={isMenuOpen}
                 >
-                    <div className="relative flex items-center justify-center min-w-[44px] min-h-[44px] rounded-2xl transition-all duration-200 hover:bg-slate-50">
-                        <Menu className="w-6 h-6 text-slate-500 group-hover:text-slate-900 transition-colors duration-200" aria-hidden="true" />
+                    <div className={`relative flex items-center justify-center min-w-[44px] min-h-[44px] rounded-2xl transition-all duration-200 ${
+                        isMenuOpen ? 'bg-blue-50' : 'hover:bg-slate-50'
+                    }`}>
+                        <Menu className={`w-6 h-6 transition-colors duration-200 ${
+                            isMenuOpen ? 'text-blue-600' : 'text-slate-500 group-hover:text-slate-900'
+                        }`} aria-hidden="true" />
                     </div>
-                    <span className="text-[10px] font-semibold mt-1 text-slate-500 group-hover:text-slate-900 transition-colors duration-200">
+                    <span className={`text-[10px] font-semibold mt-1 transition-colors duration-200 ${
+                        isMenuOpen ? 'text-blue-600' : 'text-slate-500 group-hover:text-slate-900'
+                    }`}>
                         Menú
                     </span>
                 </button>

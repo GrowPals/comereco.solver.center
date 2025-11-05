@@ -155,7 +155,7 @@ const CatalogPage = () => {
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className={cn(isDesktop ? 'pt-6' : 'pt-2')}>
             {isDesktop ? (
-              <div className="sticky top-16 z-30 grid grid-cols-[1.6fr,2fr,1.2fr] items-end gap-10 rounded-3xl border border-slate-200 bg-white/95 px-10 py-8 shadow-sm backdrop-blur">
+              <div className="grid grid-cols-[1.6fr,2fr,1.2fr] items-end gap-10 rounded-3xl border border-slate-200 bg-white/95 px-10 py-8 shadow-sm">
                 <div className="space-y-2">
                   <h1 className="text-3xl font-semibold text-slate-900">Catálogo de productos</h1>
                   <p className="text-sm text-slate-600">
@@ -285,7 +285,7 @@ const CatalogPage = () => {
               </div>
             )}
 
-            <section>
+            <section className="mt-6 lg:mt-8">
               {showInitialLoading && <ProductCardSkeletonList count={pageSize} />}
 
               {isError && !showInitialLoading && (

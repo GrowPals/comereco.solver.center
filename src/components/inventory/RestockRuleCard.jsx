@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -99,6 +99,7 @@ const useRuleCardController = (rule, projects) => {
 };
 
 export const RestockRuleCard = ({ rule, projects }) => {
+  const navigate = useNavigate();
   const controller = useRuleCardController(rule, projects);
   const product = rule.products || {};
   const updatedAt = useMemo(
@@ -114,65 +115,70 @@ export const RestockRuleCard = ({ rule, projects }) => {
   );
 
   return (
-    <div className="flex h-full flex-col rounded-3xl border border-slate-200 bg-white/95 p-4 shadow-sm sm:p-5">
-      <div className="flex items-start justify-between gap-3">
-        <div className="space-y-1.5">
-          <p className="text-base font-semibold text-slate-900 leading-tight sm:text-lg">
-            {product.name || 'Producto sin nombre'}
-          </p>
-          <p className="text-sm font-medium text-slate-500">{controller.projectName}</p>
+    <div className="group flex h-full flex-col rounded-3xl border border-slate-200 bg-white/95 p-4 shadow-sm transition-shadow hover:shadow-md sm:p-5">
+      <div className="flex flex-1 flex-col gap-3">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0 flex-1 space-y-1">
+            <p className="line-clamp-2 text-[15px] font-semibold leading-tight text-slate-900 sm:text-lg">
+              {product.name || 'Producto sin nombre'}
+            </p>
+            <p className="truncate text-sm font-medium text-slate-500" title={controller.projectName}>
+              {controller.projectName}
+            </p>
+          </div>
+          <Badge className={cn('border px-3 py-1 text-xs font-semibold uppercase tracking-wide', controller.statusBadge)}>
+            {rule.status === 'active' ? 'Activa' : 'Pausada'}
+          </Badge>
         </div>
-        <Badge className={cn('border px-3 py-1 text-xs font-semibold uppercase tracking-wide', controller.statusBadge)}>
-          {rule.status === 'active' ? 'Activa' : 'Pausada'}
-        </Badge>
+
+        {!!rule.notes && (
+          <p className="line-clamp-2 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
+            {rule.notes}
+          </p>
+        )}
       </div>
 
-      {!!rule.notes && (
-        <p className="mt-2 line-clamp-2 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
-          {rule.notes}
-        </p>
-      )}
-
-      <div className="mt-4 flex flex-col gap-3">
-        <Button className="h-11 w-full rounded-2xl" onClick={() => controller.setDialogOpen(true)}>
-          <PencilLine className="mr-2 h-4 w-4" /> Editar
+      <div className="mt-4 space-y-3">
+        <Button className="h-11 w-full rounded-2xl text-sm font-semibold" onClick={() => controller.setDialogOpen(true)}>
+          <PencilLine className="mr-2 h-4 w-4" /> Editar regla
         </Button>
 
         <div className="grid grid-cols-2 gap-2">
           <Button
             variant="outline"
-            className="h-10 rounded-2xl"
+            className="h-10 rounded-2xl text-sm font-semibold"
             onClick={controller.handleToggleStatus}
             disabled={controller.isToggling}
           >
             {rule.status === 'active' ? (
-              <span className="flex items-center justify-center gap-1 text-sm font-semibold">
+              <span className="flex items-center justify-center gap-1">
                 <PauseCircle className="h-4 w-4" /> Pausar
               </span>
             ) : (
-              <span className="flex items-center justify-center gap-1 text-sm font-semibold">
+              <span className="flex items-center justify-center gap-1">
                 <PlayCircle className="h-4 w-4" /> Activar
               </span>
             )}
           </Button>
           <Button
             variant="ghost"
-            className="h-10 rounded-2xl text-red-600 hover:text-red-700 hover:bg-red-50"
+            className="h-10 rounded-2xl text-sm font-semibold text-red-600 hover:bg-red-50 hover:text-red-700"
             onClick={() => controller.setDeleteOpen(true)}
           >
-            <span className="flex items-center justify-center gap-1 text-sm font-semibold">
+            <span className="flex items-center justify-center gap-1">
               <Trash2 className="h-4 w-4" /> Eliminar
             </span>
           </Button>
         </div>
 
-        <Link
-          to={`/producto/${rule.product_id}`}
-          className="flex items-center gap-2 rounded-2xl border border-slate-200 p-2 text-xs font-semibold text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900"
+        <Button
+          variant="outline"
+          className="h-10 w-full rounded-2xl border-slate-300 text-sm font-semibold text-slate-700 hover:border-slate-400"
+          onClick={() => navigate(`/producto/${rule.product_id}`)}
         >
-          <ExternalLink className="h-4 w-4" />
+          <ExternalLink className="mr-2 h-4 w-4" />
           Ver producto
-        </Link>
+        </Button>
 
         <p className="text-[11px] text-slate-500">Última actualización {updatedAt}</p>
       </div>
