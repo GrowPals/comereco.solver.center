@@ -21,7 +21,7 @@ const BottomNav = memo(({ onMenuClick, isMenuOpen = false }) => {
 
     return (
         <nav
-            className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background shadow-[0_-8px_24px_rgba(15,23,42,0.08)] transition-colors duration-200 dark:border-border dark:bg-[#121929]/95 dark:shadow-[0_-16px_36px_rgba(5,10,24,0.45)] lg:hidden"
+            className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background shadow-[0_-8px_24px_rgba(15,23,42,0.08)] transition-colors duration-200 dark:border-border dark:bg-[#121929] dark:shadow-[0_-16px_36px_rgba(5,10,24,0.45)] lg:hidden"
             role="navigation"
             aria-label="Navegación móvil principal"
         >

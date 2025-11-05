@@ -48,7 +48,7 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
     return (
         <header
             className={cn(
-                'sticky top-0 z-40 w-full border-b border-border bg-background/95 shadow-sm transition-shadow',
+                'sticky top-0 z-40 w-full border-b border-border bg-background shadow-sm transition-shadow',
                 'px-4 pb-2 pt-[calc(env(safe-area-inset-top)+0.55rem)] sm:px-6 sm:py-3 lg:px-10',
                 'transition-colors duration-200 dark:bg-[#121929] dark:shadow-[0_18px_44px_rgba(5,10,24,0.35)]'
             )}
