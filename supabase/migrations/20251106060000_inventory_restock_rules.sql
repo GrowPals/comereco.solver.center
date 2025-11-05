@@ -123,4 +123,33 @@ CREATE POLICY "inventory_restock_rule_logs_delete"
 COMMENT ON TABLE public.inventory_restock_rules IS 'Rules that define minimum stock and automatic reorder quantities per product/project.';
 COMMENT ON TABLE public.inventory_restock_rule_logs IS 'Reserved for future tracking of automatic restock rule activations.';
 
+CREATE OR REPLACE VIEW public.inventory_restock_rules_view AS
+SELECT
+    r.id AS rule_id,
+    r.company_id,
+    r.product_id,
+    r.project_id,
+    r.min_stock,
+    r.reorder_quantity,
+    r.status,
+    r.notes,
+    r.preferred_vendor,
+    r.preferred_warehouse,
+    r.updated_at,
+    p.name AS product_name,
+    p.sku AS product_sku,
+    p.stock AS current_stock,
+    p.category AS product_category,
+    pr.name AS project_name,
+    pr.status AS project_status
+FROM public.inventory_restock_rules r
+LEFT JOIN public.products p ON p.id = r.product_id
+LEFT JOIN public.projects pr ON pr.id = r.project_id
+WHERE r.status = 'active';
+
+COMMENT ON VIEW public.inventory_restock_rules_view IS 'Active restock rules enriched with product and project metadata for integrations (n8n).';
+
+GRANT SELECT ON public.inventory_restock_rules_view TO authenticated;
+GRANT SELECT ON public.inventory_restock_rules_view TO service_role;
+
 COMMIT;
