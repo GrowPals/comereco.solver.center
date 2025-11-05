@@ -6,7 +6,61 @@ Esta carpeta contiene todos los workflows de n8n exportados en formato JSON.
 
 ## 📦 Workflows Disponibles
 
-### 1. bind-create-order.json ⭐ (Crítico)
+### 🆕 WF-02: Requisition Sync to BIND ⭐⭐⭐ (Nuevo - Recomendado)
+
+**Archivo:** `WF-02-Requisition-Sync-to-BIND.json`
+
+**Descripción:**
+Workflow completo y optimizado que sincroniza requisiciones aprobadas desde Supabase a BIND ERP. Incluye manejo completo de errores, retry automático, y logging detallado.
+
+**Trigger:**
+- Tipo: Schedule (Cron)
+- Frecuencia: Cada 15 minutos
+- Expresión: `*/15 * * * *`
+
+**Características:**
+- ✅ Transformación automática al formato de BIND
+- ✅ Manejo de errores con retry (hasta 3 intentos)
+- ✅ Logging completo en `bind_sync_logs`
+- ✅ Actualización de estados en tiempo real
+- ✅ Request IDs únicos para debugging
+- ✅ Procesa hasta 10 requisiciones por ejecución
+
+**Flujo:**
+```
+Schedule Trigger (cada 15 min)
+    ↓
+Query: Requisiciones Pendientes (approved + pending_sync)
+    ↓
+IF Has Requisitions? ─── No ──→ End
+    ↓ Yes
+Loop Each Requisition
+    ↓
+Transform to BIND Format (JavaScript)
+    ↓
+POST to BIND API
+    ↓
+Switch: Success or Error?
+    ├─ Success → Update: synced → Log Success → Loop
+    └─ Error   → Update: failed → Log Error   → Loop
+```
+
+**Credenciales requeridas:**
+- ✅ `Supabase Production` (Postgres)
+- ✅ `BIND ERP API` (HTTP Header Auth)
+
+**Variables de entorno:**
+- `BIND_API_URL` - URL base de BIND API
+
+**Documentación:**
+- 📖 [WF-02-README.md](./WF-02-README.md) - Documentación completa
+- ⚡ [WF-02-CONFIGURACION-RAPIDA.md](./WF-02-CONFIGURACION-RAPIDA.md) - Setup en 5 minutos
+
+**Estado:** ✅ **Listo para producción** - Importar y configurar
+
+---
+
+### 1. bind-create-order.json ⭐ (Legacy - Deprecado)
 
 **Descripción:**
 Workflow principal que crea órdenes de compra en BIND ERP cuando una requisición es aprobada.

@@ -66,7 +66,7 @@ const Pagination = memo(({
             {page}
           </Button>
         ) : (
-          <span key={index} className="px-3 text-slate-500 font-medium select-none">
+          <span key={index} className="px-3 font-medium select-none text-muted-foreground dark:text-neutral-400">
             {page}
           </span>
         )

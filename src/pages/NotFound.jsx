@@ -15,14 +15,14 @@ const NotFoundPage = () => {
       <Helmet>
         <title>Página no encontrada - ComerECO</title>
       </Helmet>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 flex items-center justify-center p-4">
+		<div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background/97 to-background p-4 dark:from-[#131f33] dark:via-[#101a2e] dark:to-[#0d1729]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="max-w-md w-full"
         >
-          <Card className="shadow-xl border-2 border-slate-200">
+          <Card className="border border-border shadow-xl dark:border-border">
             <CardContent className="p-8 text-center">
               <motion.div
                 initial={{ scale: 0 }}
@@ -30,20 +30,20 @@ const NotFoundPage = () => {
                 transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
                 className="mb-6"
               >
-                <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-red-50 to-red-100">
-                  <Search className="h-12 w-12 text-red-600" />
+                <div className="inline-flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-red-50 to-red-100 dark:from-red-500/20 dark:to-red-600/15">
+                  <Search className="h-12 w-12 text-red-600 dark:text-red-300" />
                 </div>
               </motion.div>
               
-              <h1 className="text-5xl font-bold text-slate-900 mb-4">
+              <h1 className="mb-4 text-5xl font-bold text-foreground">
                 404
               </h1>
               
-              <h2 className="text-2xl font-semibold text-slate-800 mb-3">
+              <h2 className="mb-3 text-2xl font-semibold text-foreground">
                 Página no encontrada
               </h2>
               
-              <p className="text-slate-600 mb-8">
+              <p className="mb-8 text-muted-foreground">
                 Lo sentimos, la página que buscas no existe o ha sido movida.
               </p>
               
@@ -75,4 +75,3 @@ const NotFoundPage = () => {
 };
 
 export default NotFoundPage;
-

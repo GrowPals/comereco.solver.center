@@ -151,55 +151,55 @@ const CatalogPage = () => {
         />
       </Helmet>
 
-      <div className={cn('min-h-screen bg-slate-50', isDesktop ? 'pb-16' : 'pb-28')}>
+      <div className={cn('min-h-screen bg-muted/70', isDesktop ? 'pb-16' : 'pb-28')}>
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className={cn(isDesktop ? 'pt-6' : 'pt-2')}>
             {isDesktop ? (
-              <div className="grid grid-cols-[1.6fr,2fr,1.2fr] items-end gap-10 rounded-3xl border border-slate-200 bg-white/95 px-10 py-8 shadow-sm">
+              <div className="grid grid-cols-[1.6fr,2fr,1.2fr] items-end gap-10 rounded-3xl border border-border bg-card/95 px-10 py-8 shadow-sm">
                 <div className="space-y-2">
-                  <h1 className="text-3xl font-semibold text-slate-900">Catálogo de productos</h1>
-                  <p className="text-sm text-slate-600">
+                  <h1 className="text-3xl font-semibold text-foreground">Catálogo de productos</h1>
+                  <p className="text-sm text-muted-foreground">
                     Encuentra proveedores y materiales clave en segundos. Filtra, compara y agrega sin fricción.
                   </p>
                 </div>
 
                 <div className="space-y-4">
                   <div className="relative">
-                    <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+                    <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground/70" />
                     <Input
                       value={searchTerm}
                       onChange={handleSearchChange}
                       placeholder="Buscar productos por nombre o SKU"
-                      className="h-12 rounded-2xl border-slate-200 bg-slate-50 pl-12 pr-12 text-base focus:border-blue-500 focus:bg-white"
+                      className="h-12 rounded-2xl border-border bg-muted/70 pl-12 pr-12 text-base focus:border-primary-500 focus:bg-card"
                     />
                     {searchTerm && (
                       <button
                         onClick={() => setSearchTerm('')}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-slate-600"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/70 transition-colors hover:text-muted-foreground"
                         aria-label="Limpiar búsqueda"
                       >
                         <X className="h-5 w-5" />
                       </button>
                     )}
                   </div>
-                  <div className="flex items-center justify-between text-sm text-slate-600">
+                  <div className="flex items-center justify-between text-sm text-muted-foreground">
                     <p>
-                      <span className="font-semibold text-slate-900">{totalCount}</span> productos disponibles
+                      <span className="font-semibold text-foreground">{totalCount}</span> productos disponibles
                       {debouncedSearchTerm && (
-                        <span className="ml-2 text-slate-500">“{debouncedSearchTerm}”</span>
+                        <span className="ml-2 text-muted-foreground/80">“{debouncedSearchTerm}”</span>
                       )}
                       {category !== 'all' && (
-                        <span className="ml-2 text-slate-500">· {category}</span>
+                        <span className="ml-2 text-muted-foreground/80">· {category}</span>
                       )}
                     </p>
-                    {isFetching && <span className="text-xs text-slate-400">Actualizando…</span>}
+                    {isFetching && <span className="text-xs text-muted-foreground/70">Actualizando…</span>}
                   </div>
                 </div>
 
                 <div className="flex flex-col items-end gap-3">
                   <Select value={category} onValueChange={handleCategoryChange}>
-                    <SelectTrigger className="h-12 w-full rounded-2xl border-slate-200 bg-white text-left font-medium">
-                      <div className="flex items-center gap-2 text-slate-600">
+                    <SelectTrigger className="h-12 w-full rounded-2xl border-border bg-card text-left font-medium">
+                      <div className="flex items-center gap-2 text-muted-foreground">
                         <Filter className="h-4 w-4" />
                         <SelectValue placeholder="Filtrar por categoría" />
                       </div>
@@ -207,7 +207,7 @@ const CatalogPage = () => {
                     <SelectContent className="rounded-2xl">
                       <SelectItem value="all">Todos los productos</SelectItem>
                       {isLoadingCategories ? (
-                        <div className="px-3 py-2 text-sm text-slate-500">Cargando…</div>
+                        <div className="px-3 py-2 text-sm text-muted-foreground/80">Cargando…</div>
                       ) : (
                         categories?.map((cat) =>
                           cat ? (
@@ -225,7 +225,7 @@ const CatalogPage = () => {
                       variant="outline"
                       size="sm"
                       onClick={clearFilters}
-                      className="h-10 rounded-xl border-slate-200 px-4 text-sm font-medium text-slate-600 hover:bg-slate-50"
+                      className="h-10 rounded-xl border-border px-4 text-sm font-medium text-muted-foreground hover:bg-muted/70"
                     >
                       <X className="mr-2 h-4 w-4" /> Limpiar filtros
                     </Button>
@@ -234,26 +234,26 @@ const CatalogPage = () => {
               </div>
             ) : (
               <div className="flex flex-col gap-3 pb-5">
-                <div className="rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 shadow-sm">
+                <div className="rounded-2xl border border-border bg-card/95 px-4 py-3 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <h1 className="text-lg font-semibold text-slate-900">Catálogo</h1>
+                    <h1 className="text-lg font-semibold text-foreground">Catálogo</h1>
                     {hasActiveFilters && (
                       <button
                         type="button"
                         onClick={clearFilters}
-                        className="text-xs font-semibold uppercase tracking-wide text-blue-600"
+                        className="text-xs font-semibold uppercase tracking-wide text-primary-600"
                       >
                         Limpiar
                       </button>
                     )}
                   </div>
-                  <p className="mt-2 text-sm text-slate-500">
+                  <p className="mt-2 text-sm text-muted-foreground/80">
                     Escoge productos y actualiza cantidades sin perder tu posición.
                   </p>
                   <div className="mt-3">
                     <Select value={category} onValueChange={handleCategoryChange}>
-                      <SelectTrigger className="h-11 w-full rounded-xl border-slate-200 bg-slate-50 text-left text-sm font-medium">
-                        <div className="flex items-center gap-2 text-slate-600">
+                      <SelectTrigger className="h-11 w-full rounded-xl border-border bg-muted/70 text-left text-sm font-medium">
+                        <div className="flex items-center gap-2 text-muted-foreground">
                           <Filter className="h-4 w-4" />
                           <SelectValue placeholder="Todas las categorías" />
                         </div>
@@ -261,7 +261,7 @@ const CatalogPage = () => {
                       <SelectContent className="rounded-2xl">
                         <SelectItem value="all">Todos los productos</SelectItem>
                         {isLoadingCategories ? (
-                          <div className="px-3 py-2 text-sm text-slate-500">Cargando…</div>
+                          <div className="px-3 py-2 text-sm text-muted-foreground/80">Cargando…</div>
                         ) : (
                           categories?.map((cat) =>
                             cat ? (
@@ -276,11 +276,11 @@ const CatalogPage = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between text-[11px] uppercase tracking-wide text-slate-500">
+                <div className="flex items-center justify-between text-[11px] uppercase tracking-wide text-muted-foreground/80">
                   <span>
-                    <span className="text-base font-semibold text-slate-900">{totalCount}</span> productos
+                    <span className="text-base font-semibold text-foreground">{totalCount}</span> productos
                   </span>
-                  {isFetching && <span className="text-[11px] text-slate-400">Actualizando…</span>}
+                  {isFetching && <span className="text-[11px] text-muted-foreground/70">Actualizando…</span>}
                 </div>
               </div>
             )}
@@ -289,7 +289,7 @@ const CatalogPage = () => {
               {showInitialLoading && <ProductCardSkeletonList count={pageSize} />}
 
               {isError && !showInitialLoading && (
-                <div className="flex min-h-[360px] items-center justify-center rounded-2xl bg-white/80 p-8">
+                <div className="flex min-h-[360px] items-center justify-center rounded-2xl bg-card/80 p-8">
                   <ErrorState
                     error={error}
                     onRetry={() => refetch()}
@@ -300,7 +300,7 @@ const CatalogPage = () => {
 
               {showEmptyState && (
                 <div className="flex min-h-[360px] items-center justify-center">
-                  <div className="w-full max-w-xl rounded-3xl border border-dashed border-slate-200 bg-white/95 p-10 text-center shadow-sm">
+                  <div className="w-full max-w-xl rounded-3xl border border-dashed border-border bg-card/95 p-10 text-center shadow-sm">
                     <EmptyState
                       title={hasActiveFilters ? 'No se encontraron resultados' : 'Aún no hay productos disponibles'}
                       message={
@@ -326,12 +326,12 @@ const CatalogPage = () => {
 
                   {isFetchingNextPage && (
                     <div className="flex items-center justify-center py-8">
-                      <Loader2 className="h-6 w-6 animate-spin text-slate-400" aria-hidden="true" />
+                      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground/70" aria-hidden="true" />
                     </div>
                   )}
 
                   {!hasNextPage && products.length > 0 && (
-                    <p className="py-10 text-center text-sm font-medium text-slate-500">
+                    <p className="py-10 text-center text-sm font-medium text-muted-foreground/80">
                       Has llegado al final del catálogo.
                     </p>
                   )}

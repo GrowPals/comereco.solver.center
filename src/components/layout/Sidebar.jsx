@@ -15,26 +15,37 @@ const MenuItem = memo(({ to, icon: Icon, children, onClick, badge }) => {
     return (
         <NavLink to={to} onClick={onClick}>
             <div
-                className={`flex items-center justify-between p-3.5 rounded-xl transition-all duration-200 group ${
+                className={cn(
+                    'group flex items-center justify-between rounded-xl p-3.5 transition-all duration-200',
                     isActive
-                        ? 'bg-primary-50 text-primary-700'
-                        : 'text-slate-700 hover:bg-slate-50 active:bg-slate-100'
-                }`}
+                        ? 'text-primary-600 shadow-sm dark:text-primary-200 dark:shadow-[0_12px_30px_rgba(18,41,70,0.45)]'
+                        : 'text-muted-foreground hover:bg-muted/70 active:bg-muted/80 dark:text-muted-foreground dark:hover:bg-muted/40 dark:active:bg-muted/50'
+                )}
             >
-                <div className="flex items-center gap-3 flex-1">
-                    <div className={`flex items-center justify-center w-10 h-10 rounded-lg transition-colors ${
-                        isActive ? 'bg-primary-100' : 'bg-slate-100 group-hover:bg-slate-200'
-                    }`}>
-                        <Icon className={`h-5 w-5 ${isActive ? 'text-primary-600' : 'text-slate-600'}`} />
+                <div className="flex flex-1 items-center gap-3">
+                    <div
+                        className={cn(
+                            'flex h-10 w-10 items-center justify-center rounded-lg transition-colors',
+                            isActive
+                                ? 'bg-gradient-to-b from-[rgba(66,165,255,0.25)] to-[rgba(66,165,255,0.05)] text-primary-600 ring-2 ring-primary/30 dark:text-primary-100'
+                                : 'bg-muted text-muted-foreground group-hover:bg-muted/90 group-hover:text-foreground dark:bg-muted/25 dark:text-muted-foreground dark:group-hover:bg-muted/50 dark:group-hover:text-foreground'
+                        )}
+                    >
+                        <Icon className="h-5 w-5" />
                     </div>
-                    <span className="font-medium text-[15px]">{children}</span>
+                    <span className="text-[15px] font-medium text-foreground">{children}</span>
                 </div>
                 {badge && (
-                    <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-red-500 text-white text-xs font-bold">
+                    <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-destructive px-1.5 text-xs font-bold text-destructive-foreground">
                         {badge}
                     </span>
                 )}
-                <ChevronRight className={`h-4 w-4 transition-transform ${isActive ? 'text-primary-600' : 'text-slate-400'}`} />
+                <ChevronRight
+                    className={cn(
+                        'h-4 w-4 transition-transform',
+                        isActive ? 'text-primary-500 dark:text-primary-200' : 'text-muted-foreground group-hover:text-foreground'
+                    )}
+                />
             </div>
         </NavLink>
     );
@@ -127,7 +138,8 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
     return (
         <aside
             className={cn(
-                'fixed inset-y-0 right-0 z-50 flex h-full w-full flex-col overflow-y-auto bg-white transition-transform duration-300 ease-out lg:left-0 lg:right-auto lg:overflow-visible lg:border-r lg:border-slate-200 lg:shadow-md',
+                'fixed inset-y-0 right-0 z-50 flex h-full w-full flex-col overflow-y-auto bg-card transition-transform duration-300 ease-out lg:left-0 lg:right-auto lg:overflow-visible lg:border-r lg:border-border lg:shadow-lg',
+                'transition-colors duration-200 dark:bg-[#1c1f2b]/96 dark:lg:border-[#232a3a]',
                 isMobileNavOpen ? 'translate-x-0 shadow-[0_20px_60px_rgba(15,23,42,0.25)]' : 'translate-x-full shadow-none',
                 isSidebarOpen ? 'lg:w-72' : 'lg:w-20',
                 'lg:translate-x-0'
@@ -136,35 +148,35 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
             aria-label="Menú de navegación"
             id="navigation"
         >
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 pb-4 pt-[calc(env(safe-area-inset-top)+1rem)] lg:hidden">
-                <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Menú principal</p>
+            <div className="flex items-center justify-between border-b border-border px-6 pb-4 pt-[calc(env(safe-area-inset-top)+1rem)] transition-colors lg:hidden dark:border-border">
+                <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Menú principal</p>
                 <button
                     type="button"
                     onClick={() => setMobileNavOpen(false)}
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-600 shadow-sm"
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground shadow-sm transition-colors hover:bg-muted/60 dark:border-border dark:text-muted-foreground dark:hover:bg-muted/40"
                     aria-label="Cerrar menú"
                 >
                     <X className="h-4 w-4" />
                 </button>
             </div>
             {/* Header del Sidebar - Perfil del Usuario */}
-            <div className="p-6 border-b border-slate-200">
+            <div className="border-b border-border p-6 transition-colors dark:border-border">
                 <NavLink to="/profile" onClick={handleNavClick}>
-                    <div className="flex items-center gap-4 hover:bg-slate-50 -m-2 p-2 rounded-xl transition-colors">
-                        <Avatar className="h-16 w-16 ring-2 ring-primary-100">
+                    <div className="-m-2 flex items-center gap-4 rounded-xl p-2 transition-colors hover:bg-muted/70 dark:hover:bg-muted/40">
+                        <Avatar className="h-16 w-16 ring-2 ring-primary/30 dark:ring-primary/40">
                             <AvatarImage alt={`Avatar de ${userName}`} src={user?.avatar_url} />
                             <AvatarFallback className="text-lg font-bold text-white">
                                 {userInitials}
                             </AvatarFallback>
                         </Avatar>
-                        <div className="flex-1 min-w-0">
-                            <p className="font-bold text-slate-900 text-base">{primaryName}</p>
-                            <p className="text-sm text-slate-500 truncate">{userEmail}</p>
-                            <span className="inline-block mt-1 text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">
+                        <div className="min-w-0 flex-1">
+                            <p className="text-base font-bold text-foreground">{primaryName}</p>
+                            <p className="truncate text-sm text-muted-foreground">{userEmail}</p>
+                            <span className="mt-1 inline-block rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary-600 dark:bg-primary/20 dark:text-primary-100">
                                 {isAdmin ? 'Administrador' : isSupervisor ? 'Supervisor' : 'Usuario'}
                             </span>
                         </div>
-                        <ChevronRight className="h-5 w-5 text-slate-400 flex-shrink-0" />
+                        <ChevronRight className="h-5 w-5 flex-shrink-0 text-muted-foreground" />
                     </div>
                 </NavLink>
             </div>
@@ -174,7 +186,7 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
                 {/* Secciones específicas del rol */}
                 {menuSections.map((section, idx) => (
                     <div key={idx} className="mb-6">
-                        <h3 className="px-3 mb-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                        <h3 className="mb-2 px-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">
                             {section.title}
                         </h3>
                         <div className="space-y-1">
@@ -195,7 +207,7 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
 
                 {/* Sección de Configuración y Ayuda */}
                 <div className="mb-6">
-                    <h3 className="px-3 mb-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    <h3 className="mb-2 px-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">
                         General
                     </h3>
                     <div className="space-y-1">
@@ -213,15 +225,15 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
             </nav>
 
             {/* Footer - Cerrar Sesión */}
-            <div className="p-4 border-t border-slate-200">
+            <div className="border-t border-border p-4 transition-colors dark:border-border">
                 <button
                     onClick={handleLogout}
-                    className="w-full flex items-center justify-between p-3.5 rounded-xl text-red-600 hover:bg-red-50 active:bg-red-100 transition-colors duration-150 group"
+                    className="group flex w-full items-center justify-between rounded-xl p-3.5 text-destructive transition-colors duration-150 hover:bg-destructive/10 active:bg-destructive/20"
                     aria-label="Cerrar sesión"
                 >
                     <div className="flex items-center gap-3">
-                        <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-red-50 group-hover:bg-red-100">
-                            <LogOut className="h-5 w-5 text-red-600" />
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-destructive/10 transition-colors group-hover:bg-destructive/20">
+                            <LogOut className="h-5 w-5 text-destructive" />
                         </div>
                         <span className="font-medium text-[15px]">Cerrar Sesión</span>
                     </div>

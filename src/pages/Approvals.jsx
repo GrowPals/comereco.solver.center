@@ -114,17 +114,17 @@ const Approvals = () => {
                 <div className="mx-auto mb-6 w-full max-w-7xl sm:mb-8">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div className="space-y-2">
-                            <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">
+                            <h1 className="text-3xl font-bold text-foreground sm:text-4xl">
                                 Aprobaciones Pendientes
                             </h1>
-                            <p className="text-sm text-slate-600 sm:text-base">
+                            <p className="text-sm text-muted-foreground sm:text-base">
                                 {requisitions?.length || 0} {requisitions?.length === 1 ? 'requisición' : 'requisiciones'} esperando tu revisión
                             </p>
                         </div>
                         {requisitions?.length > 0 && (
-                            <div className="flex w-full items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-2 shadow-sm sm:w-auto">
-                                <Clock className="h-5 w-5 text-slate-400" aria-hidden="true" />
-                                <span className="text-sm text-slate-600">Actualizado: {currentTime}</span>
+                            <div className="flex w-full items-center gap-3 rounded-xl border border-border bg-card px-4 py-2 shadow-sm sm:w-auto dark:border-border dark:bg-card">
+                                <Clock className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+                                <span className="text-sm text-muted-foreground">Actualizado: {currentTime}</span>
                             </div>
                         )}
                     </div>
@@ -132,7 +132,7 @@ const Approvals = () => {
 
                 {requisitions?.length === 0 ? (
                     <div className="mx-auto w-full max-w-7xl">
-                        <div className="bg-white rounded-2xl shadow-lg p-16">
+                        <div className="rounded-2xl border border-border bg-card p-16 shadow-lg dark:border-border dark:bg-card">
                             <EmptyState
                                 icon={<Check className="h-16 w-16 text-green-500" />}
                                 title="¡Todo al día!"
@@ -150,7 +150,7 @@ const Approvals = () => {
                                 <div
                                     key={req.id}
                                     className={cn(
-                                        'group relative cursor-pointer overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl',
+                                        'group relative cursor-pointer overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-border dark:bg-card',
                                         isDismissing && 'pointer-events-none opacity-0 translate-y-3 scale-[0.98]'
                                     )}
                                     style={isDismissing ? { maxHeight: 0, marginTop: 0, marginBottom: 0, paddingTop: 0, paddingBottom: 0 } : undefined}
@@ -163,35 +163,35 @@ const Approvals = () => {
                                         {/* Header */}
                                         <div className="flex items-start justify-between mb-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
-                                                    <FileText className="h-6 w-6 text-slate-600" />
+                                                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-500/15 dark:to-primary-600/10">
+                                                    <FileText className="h-6 w-6 text-primary-500" />
                                                 </div>
                                                 <div>
-                                                    <p className="text-sm font-medium text-slate-500 mb-1">Folio</p>
-                                                    <p className="text-xl font-bold text-slate-900">{req.internal_folio}</p>
+                                                    <p className="mb-1 text-sm font-medium text-muted-foreground">Folio</p>
+                                                    <p className="text-xl font-bold text-foreground">{req.internal_folio}</p>
                                                 </div>
                                             </div>
 
                                             {/* Badge de Estado */}
-                                            <div className="px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200">
-                                                <span className="text-xs font-semibold text-amber-700">Pendiente</span>
+                                            <div className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 dark:border-amber-400/60 dark:bg-amber-500/15">
+                                                <span className="text-xs font-semibold text-amber-700 dark:text-amber-200">Pendiente</span>
                                             </div>
                                         </div>
 
                                         {/* Info Grid */}
-                                        <div className="grid grid-cols-2 gap-4 mb-5 pb-5 border-b border-slate-100">
+                                        <div className="mb-5 grid grid-cols-2 gap-4 border-b border-border/70 pb-5 dark:border-border">
                                             <div className="flex items-center gap-2">
-                                                <User className="h-4 w-4 text-slate-400" />
+                                                <User className="h-4 w-4 text-muted-foreground" />
                                                 <div>
-                                                    <p className="text-xs text-slate-500">Solicitante</p>
-                                                    <p className="text-sm font-medium text-slate-700">{req.creator?.full_name || 'N/A'}</p>
+                                                    <p className="text-xs text-muted-foreground">Solicitante</p>
+                                                    <p className="text-sm font-medium text-foreground">{req.creator?.full_name || 'N/A'}</p>
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                <Calendar className="h-4 w-4 text-slate-400" />
+                                                <Calendar className="h-4 w-4 text-muted-foreground" />
                                                 <div>
-                                                    <p className="text-xs text-slate-500">Fecha</p>
-                                                    <p className="text-sm font-medium text-slate-700">
+                                                    <p className="text-xs text-muted-foreground">Fecha</p>
+                                                    <p className="text-sm font-medium text-foreground">
                                                         {format(new Date(req.created_at), "d MMM, yyyy", { locale: es })}
                                                     </p>
                                                 </div>
@@ -201,12 +201,12 @@ const Approvals = () => {
                                         {/* Monto */}
                                         <div className="flex items-center justify-between mb-5">
                                             <div className="flex items-center gap-2">
-                                                <div className="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center">
-                                                    <DollarSign className="h-5 w-5 text-slate-600" />
+                                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 dark:bg-emerald-500/20">
+                                                    <DollarSign className="h-5 w-5 text-emerald-600 dark:text-emerald-200" />
                                                 </div>
                                                 <div>
-                                                    <p className="text-xs text-slate-500 mb-0.5">Monto Total</p>
-                                                    <p className="text-2xl font-bold text-slate-900">
+                                                    <p className="mb-0.5 text-xs text-muted-foreground">Monto Total</p>
+                                                    <p className="text-2xl font-bold text-foreground">
                                                         ${req.total_amount.toLocaleString('es-MX')}
                                                     </p>
                                                 </div>

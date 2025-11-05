@@ -21,8 +21,8 @@ import {
 } from '@/components/ui/select';
 
 const STATUS_BADGES = {
-  active: 'border-emerald-200 bg-emerald-50 text-emerald-700',
-  paused: 'border-amber-200 bg-amber-50 text-amber-700'
+  active: 'border-emerald-200 bg-emerald-100/80 text-emerald-700 dark:border-emerald-500/40 dark:bg-emerald-500/20 dark:text-emerald-200',
+  paused: 'border-amber-200 bg-amber-100/80 text-amber-700 dark:border-amber-500/40 dark:bg-amber-500/15 dark:text-amber-200'
 };
 
 export const ProductRestockRuleSection = ({ product, stock }) => {
@@ -165,17 +165,17 @@ export const ProductRestockRuleSection = ({ product, stock }) => {
 
   return (
     <section id="restock-rule" className="mt-20">
-      <div className="space-y-6 rounded-3xl border border-slate-200 bg-white/95 p-6 shadow-sm sm:p-8">
+      <div className="space-y-6 rounded-3xl border border-border bg-card/95 p-6 shadow-sm dark:border-border dark:bg-card/85 sm:p-8">
         <header className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="space-y-2">
-            <div className="flex items-center gap-3 text-slate-600">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100">
+            <div className="flex items-center gap-3 text-muted-foreground">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted/70 dark:bg-card/70">
                 <Settings2 className="h-5 w-5" />
               </span>
-              <span className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">Automatización</span>
+              <span className="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">Automatización</span>
             </div>
-            <h2 className="text-2xl font-semibold text-slate-900 sm:text-3xl">Panel de reabastecimiento</h2>
-            <p className="text-sm text-slate-600">
+            <h2 className="text-2xl font-semibold text-foreground sm:text-3xl">Panel de reabastecimiento</h2>
+            <p className="text-sm text-muted-foreground">
               Revisa y ajusta la regla automática de este producto sin salir de la ficha.
             </p>
           </div>
@@ -190,9 +190,9 @@ export const ProductRestockRuleSection = ({ product, stock }) => {
         {canManageRestockRules && scopeOptions.length > 1 && (
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div className="w-full max-w-sm">
-              <label className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">Alcance</label>
+              <label className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Alcance</label>
               <Select value={selectedScope} onValueChange={setSelectedScope}>
-                <SelectTrigger className="mt-2 h-11 w-full rounded-2xl border-slate-200 bg-slate-50 text-sm font-medium text-slate-700">
+                <SelectTrigger className="mt-2 h-11 w-full rounded-2xl border-border bg-muted/60 text-sm font-medium text-foreground dark:border-border dark:bg-card">
                   <SelectValue placeholder="Selecciona alcance" />
                 </SelectTrigger>
                 <SelectContent>
@@ -216,12 +216,12 @@ export const ProductRestockRuleSection = ({ product, stock }) => {
                 <div
                   key={metric.label}
                   className={cn(
-                    'rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm',
-                    metric.tone === 'warning' && 'border-amber-200 bg-amber-50/80 shadow-none'
+                    'rounded-2xl border border-border bg-card px-4 py-3 shadow-sm dark:border-border dark:bg-card',
+                    metric.tone === 'warning' && 'border-amber-200 bg-amber-50/90 text-amber-700 shadow-none dark:border-amber-500/40 dark:bg-amber-500/15 dark:text-amber-200'
                   )}
                 >
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">{metric.label}</p>
-                  <p className={cn('mt-1 text-lg font-semibold text-slate-900', metric.tone === 'warning' && 'text-amber-700')}>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">{metric.label}</p>
+                  <p className={cn('mt-1 text-lg font-semibold text-foreground', metric.tone === 'warning' && 'text-amber-700 dark:text-amber-200')}>
                     {metric.value}
                   </p>
                 </div>
@@ -229,13 +229,13 @@ export const ProductRestockRuleSection = ({ product, stock }) => {
             </div>
 
             {rule.notes && (
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+              <div className="rounded-2xl border border-border bg-muted/60 p-4 text-sm text-muted-foreground dark:border-border dark:bg-card/50">
                 {rule.notes}
               </div>
             )}
 
             {isBelowMinimum && (
-              <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50/90 p-4 text-sm text-amber-700">
+              <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50/90 p-4 text-sm text-amber-700 dark:border-amber-500/40 dark:bg-amber-500/15 dark:text-amber-200">
                 <AlertCircle className="mt-0.5 h-5 w-5" />
                 <p>El stock actual ({Number.isFinite(stock) ? numberFormatter.format(stock) : 0} u) está en o por debajo del mínimo configurado.</p>
               </div>
@@ -254,7 +254,7 @@ export const ProductRestockRuleSection = ({ product, stock }) => {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-11 rounded-2xl px-5 text-red-600 hover:text-red-700 hover:bg-red-50"
+                className="h-11 rounded-2xl px-5 text-destructive transition-colors hover:bg-destructive/10"
                 onClick={() => setDeleteOpen(true)}
               >
                 Eliminar
@@ -265,12 +265,12 @@ export const ProductRestockRuleSection = ({ product, stock }) => {
             </div>
 
             {formattedUpdatedAt && (
-              <p className="text-[11px] text-slate-500">Última actualización {formattedUpdatedAt}</p>
+              <p className="text-[11px] text-muted-foreground">Última actualización {formattedUpdatedAt}</p>
             )}
           </div>
         ) : canManageRestockRules ? (
-          <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-6 text-sm text-slate-600">
-            <p className="text-sm text-slate-600">
+          <div className="rounded-3xl border border-dashed border-border/80 bg-muted/60 p-6 text-sm text-muted-foreground dark:border-border dark:bg-card/50">
+            <p className="text-sm text-muted-foreground">
               Aún no hay una regla configurada para este producto. Define el alcance, stock mínimo y cantidad recomendada para automatizar el reabastecimiento.
             </p>
             <Button className="mt-4 rounded-2xl px-6" onClick={() => setDialogOpen(true)}>
@@ -278,7 +278,7 @@ export const ProductRestockRuleSection = ({ product, stock }) => {
             </Button>
           </div>
         ) : (
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-muted-foreground">
             No hay reglas configuradas para este producto. Solicita a un supervisor que cree una regla si deseas activar la automatización.
           </p>
         )}

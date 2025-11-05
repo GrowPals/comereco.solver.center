@@ -86,8 +86,8 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
       <PopoverTrigger asChild>
         <div className="relative flex-1">
           <Search className={cn(
-            'pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400',
-            isMobileVariant && 'text-slate-500'
+            'pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground',
+            isMobileVariant && 'text-muted-foreground'
           )} />
           <input
             ref={inputRef}
@@ -101,10 +101,10 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
               setTimeout(() => setIsInteracting(false), 200);
             }}
             className={cn(
-              'w-full border focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all',
+              'w-full border focus:outline-none focus:ring-2 focus:ring-primary-300 transition-all',
               isMobileVariant
-                ? 'h-12 rounded-2xl border-slate-200 bg-slate-100 pl-12 pr-4 text-base font-medium text-slate-900 focus:bg-white shadow-sm'
-                : 'h-11 rounded-xl border-slate-200 bg-slate-50 pl-12 pr-4'
+                ? 'h-12 rounded-2xl border-border bg-muted/70 pl-12 pr-4 text-base font-medium text-foreground focus:bg-background shadow-sm dark:border-border dark:bg-card dark:focus:bg-neutral-900'
+                : 'h-11 rounded-xl border-border bg-muted/60 pl-12 pr-4 text-foreground dark:border-border dark:bg-card'
             )}
             aria-label="Buscar en la aplicación"
           />
@@ -113,8 +113,8 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
               onClick={handleClearSearch}
               onMouseDown={(e) => e.preventDefault()} // Prevenir pérdida de foco
               className={cn(
-                'absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-slate-600',
-                isMobileVariant && 'text-slate-500 hover:text-slate-700'
+                'absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground',
+                isMobileVariant && 'text-muted-foreground hover:text-foreground'
               )}
               aria-label="Limpiar búsqueda"
             >
@@ -137,35 +137,35 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
           }
         }}
       >
-        <div className="overflow-y-auto max-h-[420px]">
+        <div className="max-h-[420px] overflow-y-auto">
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
           ) : searchTerm.length < 2 ? (
-            <div className="p-8 text-center text-slate-500">
+            <div className="p-8 text-center text-muted-foreground">
               <p className="text-sm">Escribe al menos 2 caracteres para buscar...</p>
             </div>
           ) : totalResults === 0 ? (
-            <div className="p-8 text-center text-slate-500">
+            <div className="p-8 text-center text-muted-foreground">
               <p className="text-sm">No se encontraron resultados para "{searchTerm}"</p>
             </div>
           ) : (
             <div className="p-2">
               {results.productos.length > 0 && (
                 <div className="mb-4">
-                  <h3 className="px-3 py-2 text-xs font-semibold text-slate-500 uppercase">Productos</h3>
+                  <h3 className="px-3 py-2 text-xs font-semibold uppercase text-muted-foreground">Productos</h3>
                   {results.productos.map((product) => (
                     <button
                       key={product.id}
                       onMouseDown={(e) => e.preventDefault()} // Prevenir pérdida de foco
                       onClick={() => handleSelect('product', product.id)}
-                      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer text-left"
+                      className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-muted/70 dark:hover:bg-muted/40"
                     >
-                      <Package className="h-4 w-4 text-blue-600 flex-shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm truncate">{product.name}</p>
-                        <p className="text-xs text-slate-500">SKU: {product.sku}</p>
+                      <Package className="h-4 w-4 flex-shrink-0 text-primary-500" />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-foreground">{product.name}</p>
+                        <p className="text-xs text-muted-foreground">SKU: {product.sku}</p>
                       </div>
                     </button>
                   ))}
@@ -173,18 +173,18 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
               )}
               {results.requisiciones.length > 0 && (
                 <div className="mb-4">
-                  <h3 className="px-3 py-2 text-xs font-semibold text-slate-500 uppercase">Requisiciones</h3>
+                  <h3 className="px-3 py-2 text-xs font-semibold uppercase text-muted-foreground">Requisiciones</h3>
                   {results.requisiciones.map((req) => (
                     <button
                       key={req.id}
                       onMouseDown={(e) => e.preventDefault()} // Prevenir pérdida de foco
                       onClick={() => handleSelect('requisition', req.id)}
-                      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer text-left"
+                      className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-muted/70 dark:hover:bg-muted/40"
                     >
-                      <FileText className="h-4 w-4 text-green-600 flex-shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm truncate">Folio: {req.internal_folio}</p>
-                        <p className="text-xs text-slate-500 line-clamp-1">{req.comments || 'Sin comentarios'}</p>
+                      <FileText className="h-4 w-4 flex-shrink-0 text-emerald-500" />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-foreground">Folio: {req.internal_folio}</p>
+                        <p className="text-xs text-muted-foreground line-clamp-1">{req.comments || 'Sin comentarios'}</p>
                       </div>
                     </button>
                   ))}
@@ -192,18 +192,18 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
               )}
               {results.usuarios.length > 0 && (
                 <div>
-                  <h3 className="px-3 py-2 text-xs font-semibold text-slate-500 uppercase">Usuarios</h3>
+                  <h3 className="px-3 py-2 text-xs font-semibold uppercase text-muted-foreground">Usuarios</h3>
                   {results.usuarios.map((user) => (
                     <button
                       key={user.id}
                       onMouseDown={(e) => e.preventDefault()} // Prevenir pérdida de foco
                       onClick={() => handleSelect('user', user.id)}
-                      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer text-left"
+                      className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-muted/70 dark:hover:bg-muted/40"
                     >
-                      <User className="h-4 w-4 text-purple-600 flex-shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm truncate">{user.full_name}</p>
-                        <p className="text-xs text-slate-500 capitalize">{user.role_v2}</p>
+                      <User className="h-4 w-4 flex-shrink-0 text-purple-500" />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-foreground">{user.full_name}</p>
+                        <p className="text-xs text-muted-foreground capitalize">{user.role_v2}</p>
                       </div>
                     </button>
                   ))}

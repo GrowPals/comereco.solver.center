@@ -31,8 +31,8 @@ const CartItemRow = memo(({ item, onDecrease, onIncrease, onRemove }) => {
   const subtotal = useMemo(() => itemPrice * itemQuantity, [itemPrice, itemQuantity]);
 
   return (
-    <div className="flex flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:border-blue-200 hover:shadow-md sm:flex-row sm:items-center sm:gap-6">
-      <div className="flex-shrink-0 overflow-hidden rounded-xl bg-slate-100">
+    <div className="flex flex-col rounded-2xl border border-border bg-card p-4 shadow-sm transition-all duration-200 hover:border-primary-200 hover:shadow-md sm:flex-row sm:items-center sm:gap-6">
+      <div className="flex-shrink-0 overflow-hidden rounded-xl bg-muted">
         <OptimizedImage
           src={item.image_url}
           alt={`Imagen de ${item.name || 'producto'}`}
@@ -44,13 +44,13 @@ const CartItemRow = memo(({ item, onDecrease, onIncrease, onRemove }) => {
 
       <div className="mt-3 flex w-full flex-col gap-3 sm:mt-0 sm:flex-1">
         <div>
-          <p className="line-clamp-2 text-base font-semibold text-slate-900 sm:text-lg">
+          <p className="line-clamp-2 text-base font-semibold text-foreground sm:text-lg">
             {item.name || 'Producto sin nombre'}
           </p>
           {item.sku && (
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400 sm:text-sm">SKU: {item.sku}</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground/70 sm:text-sm">SKU: {item.sku}</p>
           )}
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-muted-foreground/80">
             ${itemPrice.toFixed(2)} / {item.unit || 'unidad'}
           </p>
         </div>
@@ -61,18 +61,18 @@ const CartItemRow = memo(({ item, onDecrease, onIncrease, onRemove }) => {
               variant="outline"
               size="icon"
               onClick={onDecrease}
-              className="h-10 w-10 rounded-full border-slate-200 text-slate-600 transition-all duration-200 hover:border-red-200 hover:bg-red-50 hover:text-red-600 active:scale-95"
+              className="h-10 w-10 rounded-full border-border text-muted-foreground transition-all duration-200 hover:border-red-200 hover:bg-red-50 hover:text-red-600 active:scale-95"
               aria-label={`Reducir cantidad de ${item.name || 'producto'}`}
             >
               {itemQuantity <= 1 ? <Trash2 className="h-4 w-4" aria-hidden="true" /> : <Minus className="h-4 w-4" aria-hidden="true" />}
             </Button>
-            <span className="min-w-[3rem] rounded-full bg-slate-100 px-4 py-2 text-center text-base font-semibold text-slate-900">
+            <span className="min-w-[3rem] rounded-full bg-muted px-4 py-2 text-center text-base font-semibold text-foreground">
               {itemQuantity}
             </span>
             <Button
               size="icon"
               onClick={onIncrease}
-              className="h-10 w-10 rounded-full bg-blue-600 text-white transition-all duration-200 hover:bg-blue-700 active:scale-95"
+              className="h-10 w-10 rounded-full bg-primary-600 text-white transition-all duration-200 hover:bg-primary-700 active:scale-95"
               aria-label={`Aumentar cantidad de ${item.name || 'producto'}`}
             >
               <Plus className="h-4 w-4" aria-hidden="true" />
@@ -80,8 +80,8 @@ const CartItemRow = memo(({ item, onDecrease, onIncrease, onRemove }) => {
           </div>
 
           <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end sm:justify-center sm:text-right">
-            <span className="text-sm text-slate-500">Subtotal</span>
-            <span className="text-lg font-bold text-slate-900">${subtotal.toFixed(2)}</span>
+            <span className="text-sm text-muted-foreground/80">Subtotal</span>
+            <span className="text-lg font-bold text-foreground">${subtotal.toFixed(2)}</span>
             <Button
               variant="ghost"
               size="sm"
@@ -169,11 +169,11 @@ const SaveTemplateModal = ({ isOpen, onOpenChange, cartItems }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md border border-slate-200 bg-white shadow-2xl p-0">
+      <DialogContent className="sm:max-w-md border border-border bg-card shadow-2xl p-0">
         <div className="flex max-h-[calc(100dvh-4rem)] flex-col">
           <DialogHeader className="px-6 pt-6">
             <DialogTitle className="flex items-center gap-2 text-xl">
-              <BookmarkPlus className="h-5 w-5 text-blue-600" />
+              <BookmarkPlus className="h-5 w-5 text-primary-600" />
               Guardar como Plantilla
             </DialogTitle>
           </DialogHeader>
@@ -203,7 +203,7 @@ const SaveTemplateModal = ({ isOpen, onOpenChange, cartItems }) => {
               />
             </div>
           </div>
-          <DialogFooter className="sticky bottom-0 flex flex-col gap-2 border-t border-slate-200 bg-white/95 px-6 py-4 backdrop-blur">
+          <DialogFooter className="sticky bottom-0 flex flex-col gap-2 border-t border-border bg-card/95 px-6 py-4 backdrop-blur">
             <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
               <Button variant="outline" onClick={() => onOpenChange(false)} className="rounded-xl">
                 Cancelar
@@ -211,7 +211,7 @@ const SaveTemplateModal = ({ isOpen, onOpenChange, cartItems }) => {
               <Button
                 onClick={handleSave}
                 disabled={isSaving}
-                className="rounded-xl bg-blue-600 text-white shadow-button hover:bg-blue-700 hover:shadow-button-hover"
+                className="rounded-xl bg-primary-600 text-white shadow-button hover:bg-primary-700 hover:shadow-button-hover"
               >
                 {isSaving ? 'Guardando…' : 'Guardar'}
               </Button>
@@ -310,20 +310,20 @@ const CartPage = () => {
       <PageContainer className="pb-28 sm:pb-24">
         <div className="mx-auto w-full max-w-6xl pt-2 sm:pt-4">
           <div className="flex flex-col gap-6">
-            <header className="flex items-start justify-between gap-4 border-b border-slate-200 pb-5">
+            <header className="flex items-start justify-between gap-4 border-b border-border pb-5">
               <div className="flex flex-1 items-start gap-3">
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={handleBack}
-                  className="rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm hover:bg-slate-100"
+                  className="rounded-full border border-border bg-card text-muted-foreground shadow-sm hover:bg-muted"
                   aria-label="Regresar"
                 >
                   <ArrowLeft className="h-5 w-5" aria-hidden="true" />
                 </Button>
                 <div className="min-w-0">
-                  <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">Tu Carrito</h1>
-                  <p className="text-sm text-slate-500 sm:text-base">
+                  <h1 className="text-2xl font-bold text-foreground sm:text-3xl">Tu Carrito</h1>
+                  <p className="text-sm text-muted-foreground/80 sm:text-base">
                     {totalItems === 0
                       ? 'Aún no tienes productos en el carrito.'
                       : totalItems === 1
@@ -346,16 +346,16 @@ const CartPage = () => {
             </header>
 
             {items.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-200 bg-white/70 px-8 py-16 text-center shadow-sm sm:px-16">
-                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+              <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-border bg-card/70 px-8 py-16 text-center shadow-sm sm:px-16">
+                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-muted text-muted-foreground/70">
                   <Package className="h-12 w-12" aria-hidden="true" />
                 </div>
-                <h2 className="mt-6 text-2xl font-semibold text-slate-900">Tu carrito está vacío</h2>
-                <p className="mt-2 max-w-md text-sm text-slate-500 sm:text-base">
+                <h2 className="mt-6 text-2xl font-semibold text-foreground">Tu carrito está vacío</h2>
+                <p className="mt-2 max-w-md text-sm text-muted-foreground/80 sm:text-base">
                   Explora el catálogo y agrega productos para crear tu próxima requisición.
                 </p>
                 <Button
-                  className="mt-6 rounded-xl bg-blue-600 text-white hover:bg-blue-700"
+                  className="mt-6 rounded-xl bg-primary-600 text-white hover:bg-primary-700"
                   onClick={handleExplore}
                 >
                   Ver catálogo
@@ -375,21 +375,21 @@ const CartPage = () => {
                   ))}
                 </div>
 
-                <aside className="hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-lg lg:block lg:sticky lg:top-32 lg:h-fit">
-                  <h2 className="text-lg font-semibold text-slate-900">Resumen</h2>
-                  <div className="mt-4 space-y-3 text-sm text-slate-600">
+                <aside className="hidden rounded-2xl border border-border bg-card p-6 shadow-lg lg:block lg:sticky lg:top-32 lg:h-fit">
+                  <h2 className="text-lg font-semibold text-foreground">Resumen</h2>
+                  <div className="mt-4 space-y-3 text-sm text-muted-foreground">
                     <div className="flex justify-between">
                       <span>Subtotal</span>
-                      <span className="font-semibold text-slate-900">${subtotal.toFixed(2)}</span>
+                      <span className="font-semibold text-foreground">${subtotal.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>IVA (16%)</span>
-                      <span className="font-semibold text-slate-900">${vat.toFixed(2)}</span>
+                      <span className="font-semibold text-foreground">${vat.toFixed(2)}</span>
                     </div>
                     <Separator />
-                    <div className="flex items-center justify-between text-base font-bold text-slate-900">
+                    <div className="flex items-center justify-between text-base font-bold text-foreground">
                       <span>Total</span>
-                      <span>${total.toFixed(2)} <span className="text-xs font-normal text-slate-500">MXN</span></span>
+                      <span>${total.toFixed(2)} <span className="text-xs font-normal text-muted-foreground/80">MXN</span></span>
                     </div>
                   </div>
 
@@ -397,14 +397,14 @@ const CartPage = () => {
                     <Button
                       variant="outline"
                       onClick={() => setTemplateModalOpen(true)}
-                      className="w-full rounded-xl border-slate-200 text-slate-700 hover:border-blue-200 hover:text-blue-600"
+                      className="w-full rounded-xl border-border text-foreground/90 hover:border-primary-200 hover:text-primary-600"
                     >
                       <BookmarkPlus className="mr-2 h-4 w-4" aria-hidden="true" />
                       Guardar como plantilla
                     </Button>
                     <Button
                       onClick={handleCheckout}
-                      className="w-full rounded-xl bg-blue-600 text-white shadow-button hover:bg-blue-700 hover:shadow-button-hover"
+                      className="w-full rounded-xl bg-primary-600 text-white shadow-button hover:bg-primary-700 hover:shadow-button-hover"
                     >
                       Finalizar compra
                     </Button>
@@ -424,9 +424,9 @@ const CartPage = () => {
       </PageContainer>
 
       {items.length > 0 && (
-        <div className="fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+5.5rem)] z-40 border-t border-slate-200 bg-white/95 px-4 py-4 shadow-[0_-10px_30px_rgba(15,23,42,0.08)] backdrop-blur lg:hidden">
+        <div className="fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+5.5rem)] z-40 border-t border-border bg-card/95 px-4 py-4 shadow-[0_-10px_30px_rgba(15,23,42,0.08)] backdrop-blur lg:hidden">
           <div className="mx-auto flex w-full max-w-3xl flex-col gap-3">
-            <div className="flex items-center justify-between text-sm font-semibold text-slate-900">
+            <div className="flex items-center justify-between text-sm font-semibold text-foreground">
               <span>Total</span>
               <span className="text-lg">${total.toFixed(2)}</span>
             </div>
@@ -434,13 +434,13 @@ const CartPage = () => {
               <Button
                 variant="outline"
                 onClick={() => setTemplateModalOpen(true)}
-                className="rounded-xl border-slate-200 text-slate-700 hover:border-blue-200 hover:text-blue-600"
+                className="rounded-xl border-border text-foreground/90 hover:border-primary-200 hover:text-primary-600"
               >
                 Plantilla
               </Button>
               <Button
                 onClick={handleCheckout}
-                className="rounded-xl bg-blue-600 text-white shadow-button hover:bg-blue-700 hover:shadow-button-hover"
+                className="rounded-xl bg-primary-600 text-white shadow-button hover:bg-primary-700 hover:shadow-button-hover"
               >
                 Comprar
               </Button>

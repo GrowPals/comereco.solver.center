@@ -39,39 +39,53 @@ import TemplateItemsEditor from '@/components/TemplateItemsEditor';
 import PageContainer from '@/components/layout/PageContainer';
 
 const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
-    return (
-        <div className="group relative bg-white border-2 border-slate-200 rounded-2xl p-6 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-            {/* Accent bar on hover */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+  return (
+    <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card/95 p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-border dark:bg-card/85">
+      {/* Accent bar on hover */}
+      <div className="absolute inset-x-0 top-0 h-1 scale-x-0 bg-gradient-primary transition-transform duration-300 group-hover:scale-x-100" />
 
-            <div>
-                <div className="flex justify-between items-start mb-3">
-                    <div className="flex items-center gap-3">
-                        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm">
-                            <LayoutTemplate className="h-6 w-6 text-blue-600" aria-hidden="true" />
-                        </div>
-                        <h3 className="font-bold text-xl text-slate-900">{template.name}</h3>
-                    </div>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-9 w-9 p-0 hover:bg-slate-100 rounded-xl"><MoreHorizontal className="h-5 w-5" /></Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="rounded-xl">
-                            <DropdownMenuItem onClick={() => onUse(template.id)}><Zap className="mr-2 h-4 w-4" /> Usar Plantilla</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => onEdit(template)}><Edit className="mr-2 h-4 w-4" /> Editar</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => onDelete(template)} className="text-red-600"><Trash2 className="mr-2 h-4 w-4" /> Eliminar</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-                <p className="text-base text-slate-600 line-clamp-2 min-h-[3rem] leading-relaxed">{template.description || 'Sin descripción'}</p>
+      <div>
+        <div className="mb-3 flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm dark:from-primary-500/15 dark:to-primary-600/10">
+              <LayoutTemplate className="h-6 w-6 text-primary-500" aria-hidden="true" />
             </div>
-            <div className="mt-6 pt-4 border-t border-slate-200 flex justify-between items-center text-sm">
-                <span className="font-medium text-slate-700">{template.items?.length || 0} productos</span>
-                <span className="text-slate-600">Usada {template.usage_count || 0} veces</span>
-                {template.last_used_at && <span className="text-slate-500 text-xs">Últ: {format(parseISO(template.last_used_at), 'dd MMM', { locale: es })}</span>}
-            </div>
+            <h3 className="text-xl font-bold text-foreground">{template.name}</h3>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-9 w-9 rounded-xl p-0 transition-colors hover:bg-muted/70 dark:hover:bg-muted/40">
+                <MoreHorizontal className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="rounded-xl border-border bg-card dark:border-border dark:bg-card">
+              <DropdownMenuItem onClick={() => onUse(template.id)}>
+                <Zap className="mr-2 h-4 w-4" /> Usar Plantilla
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onEdit(template)}>
+                <Edit className="mr-2 h-4 w-4" /> Editar
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onDelete(template)} className="text-destructive focus:text-destructive">
+                <Trash2 className="mr-2 h-4 w-4" /> Eliminar
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-    );
+        <p className="min-h-[3rem] text-base leading-relaxed text-muted-foreground">
+          {template.description || 'Sin descripción'}
+        </p>
+      </div>
+      <div className="mt-6 flex items-center justify-between border-t border-border/70 pt-4 text-sm text-muted-foreground dark:border-border">
+        <span className="font-medium text-foreground">{template.items?.length || 0} productos</span>
+        <span>Usada {template.usage_count || 0} veces</span>
+        {template.last_used_at && (
+          <span className="text-xs">
+            Últ: {format(parseISO(template.last_used_at), 'dd MMM', { locale: es })}
+          </span>
+        )}
+      </div>
+    </div>
+  );
 };
 
 const TemplateFormModal = ({ template, isOpen, onClose, onSave }) => {
@@ -88,7 +102,7 @@ const TemplateFormModal = ({ template, isOpen, onClose, onSave }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-4xl border border-slate-200 bg-white shadow-2xl p-0">
+      <DialogContent className="sm:max-w-4xl border border-border bg-card shadow-2xl p-0 dark:border-border dark:bg-card">
         <div className="flex max-h-[calc(100dvh-3.5rem)] flex-col">
           <DialogHeader className="px-6 pt-6">
             <DialogTitle className="text-2xl font-bold">
@@ -136,7 +150,7 @@ const TemplateFormModal = ({ template, isOpen, onClose, onSave }) => {
             </div>
           </div>
 
-          <DialogFooter className="sticky bottom-0 flex flex-col gap-2 border-t border-slate-200 bg-white/95 px-6 py-4 backdrop-blur">
+          <DialogFooter className="sticky bottom-0 flex flex-col gap-2 border-t border-border bg-background/90 px-6 py-4 backdrop-blur dark:border-border dark:bg-card/80">
             <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
               <Button variant="outline" onClick={onClose} className="rounded-xl">
                 Cancelar
@@ -209,16 +223,16 @@ const TemplatesPage = () => {
       <Helmet><title>Plantillas - ComerECO</title></Helmet>
       <PageContainer className="pb-24 sm:pb-16">
         <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
-          <header className="flex flex-col gap-6 border-b border-slate-200 pb-6 sm:flex-row sm:items-center sm:justify-between sm:pb-8">
+          <header className="flex flex-col gap-6 border-b border-border pb-6 sm:flex-row sm:items-center sm:justify-between sm:pb-8 dark:border-border">
             <div className="flex w-full items-start gap-3 sm:items-center sm:gap-4">
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 shadow-md sm:h-14 sm:w-14">
-                <LayoutTemplate className="h-6 w-6 text-blue-600 sm:h-7 sm:w-7" aria-hidden="true" />
+              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-md sm:h-14 sm:w-14 dark:from-primary-500/15 dark:to-primary-600/10">
+                <LayoutTemplate className="h-6 w-6 text-primary-500 sm:h-7 sm:w-7" aria-hidden="true" />
               </div>
               <div className="min-w-0">
-                <h1 className="mb-1 text-xl font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
+                <h1 className="mb-1 text-xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
                   Plantillas de <span className="bg-gradient-primary bg-clip-text text-transparent">Requisición</span>
                 </h1>
-                <p className="text-sm text-slate-600 sm:text-lg">Reutiliza tus pedidos frecuentes con un solo clic.</p>
+                <p className="text-sm text-muted-foreground sm:text-lg">Reutiliza tus pedidos frecuentes con un solo clic.</p>
               </div>
             </div>
             <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
@@ -247,7 +261,7 @@ const TemplatesPage = () => {
               ))}
             </div>
           ) : (
-            <div className="rounded-2xl border-2 border-slate-200 bg-white p-8 shadow-lg sm:p-12 lg:p-16">
+            <div className="rounded-2xl border border-border bg-card p-8 shadow-lg dark:border-border dark:bg-card sm:p-12 lg:p-16">
               <EmptyState
                 icon={Bot}
                 title="Aún no tienes plantillas"
@@ -262,7 +276,7 @@ const TemplatesPage = () => {
       {formModal.isOpen && <TemplateFormModal isOpen={formModal.isOpen} onClose={() => setFormModal({ isOpen: false, template: null })} template={formModal.template} onSave={handleSave} />}
       
       <Dialog open={deleteModal.isOpen} onOpenChange={() => setDeleteModal({ isOpen: false, template: null })}>
-        <DialogContent className="sm:max-w-md border border-slate-200 bg-white shadow-2xl">
+        <DialogContent className="sm:max-w-md border border-border bg-card shadow-2xl dark:border-border dark:bg-card">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold">¿Eliminar plantilla "{deleteModal.template?.name}"?</DialogTitle>
             <DialogDescription className="text-base">Esta acción no se puede deshacer.</DialogDescription>

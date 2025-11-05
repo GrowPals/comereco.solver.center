@@ -13,26 +13,27 @@ import { useToastNotification } from '@/components/ui/toast-notification';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import PageContainer from '@/components/layout/PageContainer';
+import { useTheme } from '@/context/ThemeContext';
 
 const TABS = [
     { id: 'general', name: 'General', icon: Settings },
     { id: 'notifications', name: 'Notificaciones', icon: Bell },
     { id: 'privacy', name: 'Privacidad', icon: Eye },
     { id: 'security', name: 'Seguridad', icon: Lock },
-    { id: 'appearance', name: 'Preferencias', icon: Palette },
+    { id: 'appearance', name: 'Apariencia', icon: Palette },
 ];
 
 const SettingsCard = ({ title, description, children, onSave, isSaving }) => (
-    <Card className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg">
+    <Card className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
         <CardHeader className="space-y-3 pb-4">
-            <CardTitle className="text-2xl font-bold text-slate-900">{title}</CardTitle>
-            {description && <CardDescription className="text-base text-slate-600">{description}</CardDescription>}
+            <CardTitle className="text-2xl font-bold text-foreground">{title}</CardTitle>
+            {description && <CardDescription className="text-base text-muted-foreground">{description}</CardDescription>}
         </CardHeader>
         <CardContent className="space-y-6 pb-24 pt-0">
             {children}
         </CardContent>
         {onSave && (
-            <div className="sticky bottom-0 left-0 right-0 z-10 mt-auto border-t border-slate-200 bg-white/95 px-6 py-4 backdrop-blur">
+            <div className="sticky bottom-0 left-0 right-0 z-10 mt-auto border-t border-border bg-card/95 px-6 py-4 backdrop-blur">
                 <Button onClick={onSave} disabled={isSaving} className="w-full rounded-xl shadow-lg hover:shadow-xl" size="lg">
                     {isSaving ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : null}
                     Guardar Cambios
@@ -61,7 +62,7 @@ const SettingsPage = () => {
             case 'notifications': return <NotificationSettings onSave={() => handleSave('Notificaciones')} isSaving={isSaving} />;
             case 'privacy': return <PrivacySettings onSave={() => handleSave('Privacidad')} isSaving={isSaving} />;
             case 'security': return <SecuritySettings onSave={() => handleSave('Seguridad')} isSaving={isSaving} />;
-            case 'appearance': return <AppearanceSettings onSave={() => handleSave('Preferencias')} isSaving={isSaving} />;
+            case 'appearance': return <AppearanceSettings />;
             default: return null;
         }
     };
@@ -71,13 +72,13 @@ const SettingsPage = () => {
             <Helmet><title>Configuración - ComerECO</title></Helmet>
             <PageContainer>
                 <div className="mx-auto flex w-full max-w-7xl flex-col-reverse gap-6 pb-6 pt-2 lg:grid lg:grid-cols-[22rem,minmax(0,1fr)] lg:items-start lg:gap-10">
-                    <aside className="order-2 w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg lg:order-1 lg:sticky lg:top-24 lg:h-fit">
-                    <div className="hidden border-b border-slate-200 p-6 lg:block">
+                    <aside className="order-2 w-full overflow-hidden rounded-2xl border border-border bg-card shadow-lg lg:order-1 lg:sticky lg:top-24 lg:h-fit">
+                    <div className="hidden border-b border-border p-6 lg:block">
                         <div className="flex items-center gap-3">
-                            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm">
-                                <Settings className="h-6 w-6 text-blue-600" aria-hidden="true" />
+                            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center shadow-sm">
+                                <Settings className="h-6 w-6 text-primary-600" aria-hidden="true" />
                             </div>
-                            <h2 className="text-2xl font-bold text-slate-900">Configuración</h2>
+                            <h2 className="text-2xl font-bold text-foreground">Configuración</h2>
                         </div>
                     </div>
                     {/* Mobile Dropdown */}
@@ -102,15 +103,15 @@ const SettingsPage = () => {
                                 className={cn(
                                     'w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200',
                                     activeTab === tab.id
-                                        ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 font-bold shadow-md border-2 border-blue-200'
-                                        : 'hover:bg-slate-100 text-slate-700 hover:shadow-sm'
+                                        ? 'bg-gradient-to-r from-primary-50 to-primary-100 text-primary-700 font-bold shadow-md border-2 border-primary-200'
+                                        : 'hover:bg-muted text-foreground/90 hover:shadow-sm'
                                 )}
                             >
                                 <div className={cn(
                                     "h-9 w-9 rounded-lg flex items-center justify-center transition-all duration-200",
-                                    activeTab === tab.id ? 'bg-gradient-to-br from-blue-100 to-blue-200' : 'bg-slate-100'
+                                    activeTab === tab.id ? 'bg-gradient-to-br from-primary-100 to-primary-200' : 'bg-muted'
                                 )}>
-                                    <tab.icon className={cn("h-5 w-5", activeTab === tab.id ? 'text-blue-600' : 'text-slate-600')} aria-hidden="true" />
+                                    <tab.icon className={cn("h-5 w-5", activeTab === tab.id ? 'text-primary-600' : 'text-muted-foreground')} aria-hidden="true" />
                                 </div>
                                 <span>{tab.name}</span>
                             </button>
@@ -181,17 +182,17 @@ const SecuritySettings = () => (
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>
-        <div className="pt-6 border-t-2 border-slate-200">
-            <h3 className="font-bold text-slate-900 text-lg mb-2">Sesiones Activas</h3>
-            <p className="text-sm text-slate-600 mb-4">Estas son las sesiones activas en tu cuenta.</p>
-            <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200">
+        <div className="pt-6 border-t-2 border-border">
+            <h3 className="font-bold text-foreground text-lg mb-2">Sesiones Activas</h3>
+            <p className="text-sm text-muted-foreground mb-4">Estas son las sesiones activas en tu cuenta.</p>
+            <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-br from-background to-background/80 border-2 border-border dark:from-[#111a2e] dark:to-[#1a2642]">
                 <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
-                        <Monitor className="h-5 w-5 text-blue-600" aria-hidden="true" />
+                    <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center">
+                        <Monitor className="h-5 w-5 text-primary-600" aria-hidden="true" />
                     </div>
                     <div>
-                        <p className="font-bold text-slate-900">Chrome en Windows</p>
-                        <p className="text-xs text-slate-600">Este dispositivo</p>
+                        <p className="font-bold text-foreground">Chrome en Windows</p>
+                        <p className="text-xs text-muted-foreground">Este dispositivo</p>
                     </div>
                 </div>
                 <Badge variant="success" className="shadow-sm">Activa</Badge>
@@ -210,10 +211,31 @@ const SecuritySettings = () => (
     </SettingsCard>
 );
 
-const AppearanceSettings = ({ onSave, isSaving }) => (
-     <SettingsCard title="Apariencia" description="Personaliza la apariencia de la aplicación." onSave={onSave} isSaving={isSaving}>
-        <div><Label>Tema</Label><RadioGroup defaultValue="light"><div className="flex gap-4 pt-2"><RadioGroupItem value="light" id="light"/><Label htmlFor="light">Claro</Label><RadioGroupItem value="dark" id="dark" disabled /><Label htmlFor="dark" className="text-muted-foreground">Oscuro (próximamente)</Label></div></RadioGroup></div>
-    </SettingsCard>
-);
+const AppearanceSettings = () => {
+    const { theme, setTheme, isDark } = useTheme();
+    const currentTheme = isDark ? 'dark' : (theme || 'light');
+
+    const handleThemeChange = (value) => {
+        setTheme(value);
+    };
+
+    return (
+        <SettingsCard title="Apariencia" description="Personaliza la apariencia de la aplicación.">
+            <div className="space-y-4">
+                <Label className="text-sm font-semibold">Tema</Label>
+                <RadioGroup value={currentTheme} onValueChange={handleThemeChange} className="flex flex-col gap-3 pt-2 sm:flex-row">
+                    <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/40 px-4 py-3 transition-colors hover:border-primary/60">
+                        <RadioGroupItem value="light" id="theme-light" />
+                        <Label htmlFor="theme-light" className="font-medium">Claro</Label>
+                    </div>
+                    <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/40 px-4 py-3 transition-colors hover:border-primary/60">
+                        <RadioGroupItem value="dark" id="theme-dark" />
+                        <Label htmlFor="theme-dark" className="font-medium">Oscuro</Label>
+                    </div>
+                </RadioGroup>
+            </div>
+        </SettingsCard>
+    );
+};
 
 export default SettingsPage;

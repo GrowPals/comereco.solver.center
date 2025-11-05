@@ -8,13 +8,13 @@ import React from 'react';
 
 export const StatCardSkeleton = () => {
   return (
-    <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 animate-pulse">
+    <div className="bg-card rounded-lg p-6 shadow-sm border border-border animate-pulse">
       <div className="flex items-center justify-between mb-4">
-        <div className="h-4 bg-gray-200 rounded w-1/3" />
-        <div className="w-10 h-10 bg-gray-200 rounded" />
+        <div className="h-4 w-1/3 rounded bg-muted/70" />
+        <div className="h-10 w-10 rounded bg-muted/70" />
       </div>
-      <div className="h-8 bg-gray-200 rounded w-1/2 mb-2" />
-      <div className="h-3 bg-gray-200 rounded w-2/3" />
+      <div className="mb-2 h-8 w-1/2 rounded bg-muted/70" />
+      <div className="h-3 w-2/3 rounded bg-muted/60" />
     </div>
   );
 };
@@ -31,21 +31,21 @@ const DashboardSkeleton = () => {
       </div>
 
       {/* Chart area */}
-      <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 animate-pulse">
-        <div className="h-6 bg-gray-200 rounded w-1/4 mb-4" />
-        <div className="h-64 bg-gray-200 rounded" />
+      <div className="bg-card rounded-lg p-6 shadow-sm border border-border animate-pulse">
+        <div className="mb-4 h-6 w-1/4 rounded bg-muted/70" />
+        <div className="h-64 rounded bg-muted/60" />
       </div>
 
       {/* Recent activity */}
-      <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 animate-pulse">
-        <div className="h-6 bg-gray-200 rounded w-1/3 mb-4" />
+      <div className="bg-card rounded-lg p-6 shadow-sm border border-border animate-pulse">
+        <div className="mb-4 h-6 w-1/3 rounded bg-muted/70" />
         <div className="space-y-3">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-gray-200 rounded-full" />
+              <div className="h-10 w-10 rounded-full bg-muted/70" />
               <div className="flex-1 space-y-2">
-                <div className="h-4 bg-gray-200 rounded w-3/4" />
-                <div className="h-3 bg-gray-200 rounded w-1/2" />
+                <div className="h-4 w-3/4 rounded bg-muted/70" />
+                <div className="h-3 w-1/2 rounded bg-muted/60" />
               </div>
             </div>
           ))}

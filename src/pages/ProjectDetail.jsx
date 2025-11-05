@@ -55,8 +55,8 @@ const ProjectDetail = () => {
   }
 
   const statusConfig = {
-    active: { text: 'Activo', variant: 'success', accent: 'bg-green-500' },
-    archived: { text: 'Archivado', variant: 'muted', accent: 'bg-slate-400' },
+    active: { text: 'Activo', variant: 'success', accent: 'bg-gradient-accent' },
+    archived: { text: 'Archivado', variant: 'muted', accent: 'bg-muted' },
   };
 
   const requisitionStatusConfig = {
@@ -85,7 +85,7 @@ const ProjectDetail = () => {
       <PageContainer>
         <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
           {/* Header */}
-          <header className="relative overflow-hidden rounded-2xl border-2 border-slate-200 bg-white p-5 shadow-lg sm:p-8">
+          <header className="relative overflow-hidden rounded-2xl border-2 border-border bg-card p-5 shadow-lg sm:p-8">
             <div className={`absolute top-0 left-0 right-0 h-1.5 ${currentStatus.accent}`} />
             
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
@@ -95,16 +95,16 @@ const ProjectDetail = () => {
                   size="icon"
                   onClick={handleNavigateBack}
                   aria-label="Volver"
-                  className="rounded-xl border-slate-200 bg-white shadow-sm transition-all hover:border-blue-200 hover:bg-blue-50"
+                  className="rounded-xl border-border bg-card shadow-sm transition-all hover:border-primary-200 hover:bg-primary-50"
                 >
                   <ArrowLeft className="h-5 w-5" />
                 </Button>
                 <div className="flex-1">
-                  <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+                  <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
                     {project.name}
                   </h1>
                   {project.description && (
-                    <p className="mt-2 text-sm text-slate-600 sm:text-base">{project.description}</p>
+                    <p className="mt-2 text-sm text-muted-foreground sm:text-base">{project.description}</p>
                   )}
                   <div className="mt-4 flex flex-wrap items-center gap-3">
                     <Badge variant={isActive ? 'success' : 'muted'} className="shadow-sm">
@@ -114,13 +114,13 @@ const ProjectDetail = () => {
                       {currentStatus.text}
                     </Badge>
                     {project.supervisor && (
-                      <div className="flex items-center gap-2 text-sm text-slate-600">
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Shield className="h-4 w-4" />
                         <span className="font-semibold">Supervisor:</span>
                         <span>{project.supervisor.full_name}</span>
                       </div>
                     )}
-                    <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Calendar className="h-4 w-4" />
                       <span>Creado: {format(new Date(project.created_at), 'dd MMM, yyyy', { locale: es })}</span>
                     </div>
@@ -136,10 +136,10 @@ const ProjectDetail = () => {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-slate-600 mb-1">Total Requisiciones</p>
-                    <p className="text-3xl font-bold text-slate-900">{totalRequisitions}</p>
+                    <p className="text-sm font-medium text-muted-foreground mb-1">Total Requisiciones</p>
+                    <p className="text-3xl font-bold text-foreground">{totalRequisitions}</p>
                   </div>
-                  <FileText className="h-8 w-8 text-blue-600" />
+                  <FileText className="h-8 w-8 text-primary-600" />
                 </div>
               </CardContent>
             </Card>
@@ -147,7 +147,7 @@ const ProjectDetail = () => {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-slate-600 mb-1">Aprobadas</p>
+                    <p className="text-sm font-medium text-muted-foreground mb-1">Aprobadas</p>
                     <p className="text-3xl font-bold text-green-600">{approvedRequisitions}</p>
                   </div>
                   <CheckCircle2 className="h-8 w-8 text-green-600" />
@@ -158,7 +158,7 @@ const ProjectDetail = () => {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-slate-600 mb-1">Pendientes</p>
+                    <p className="text-sm font-medium text-muted-foreground mb-1">Pendientes</p>
                     <p className="text-3xl font-bold text-amber-600">{pendingRequisitions}</p>
                   </div>
                   <Clock className="h-8 w-8 text-amber-600" />
@@ -169,10 +169,10 @@ const ProjectDetail = () => {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-slate-600 mb-1">Total Invertido</p>
-                    <p className="text-3xl font-bold text-slate-900">${totalAmount.toFixed(2)}</p>
+                    <p className="text-sm font-medium text-muted-foreground mb-1">Total Invertido</p>
+                    <p className="text-3xl font-bold text-foreground">${totalAmount.toFixed(2)}</p>
                   </div>
-                  <TrendingUp className="h-8 w-8 text-blue-600" />
+                  <TrendingUp className="h-8 w-8 text-primary-600" />
                 </div>
               </CardContent>
             </Card>
@@ -183,10 +183,10 @@ const ProjectDetail = () => {
             <Card className="shadow-md border-2">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm">
-                    <Users className="h-6 w-6 text-blue-600" />
+                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center shadow-sm">
+                    <Users className="h-6 w-6 text-primary-600" />
                   </div>
-                  <CardTitle className="text-2xl font-bold text-slate-900">Miembros del Proyecto</CardTitle>
+                  <CardTitle className="text-2xl font-bold text-foreground">Miembros del Proyecto</CardTitle>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -197,7 +197,7 @@ const ProjectDetail = () => {
                       return (
                         <div
                           key={member.membership_id || member.user_id}
-                          className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border-2 border-slate-200 hover:border-blue-300 transition-colors"
+                          className="flex items-center justify-between p-4 bg-muted/70 rounded-xl border-2 border-border hover:border-primary-200 transition-colors"
                         >
                         <div className="flex items-center gap-3">
                           <Avatar className="h-10 w-10">
@@ -207,10 +207,10 @@ const ProjectDetail = () => {
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <p className="font-semibold text-slate-900">
+                            <p className="font-semibold text-foreground">
                               {memberProfile?.full_name || 'Usuario Desconocido'}
                             </p>
-                            <p className="text-sm text-slate-600">{memberProfile?.email}</p>
+                            <p className="text-sm text-muted-foreground">{memberProfile?.email}</p>
                           </div>
                         </div>
                         <div className="flex flex-col items-end gap-1">
@@ -241,10 +241,10 @@ const ProjectDetail = () => {
             <Card className="shadow-md border-2">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm">
-                    <FileText className="h-6 w-6 text-blue-600" />
+                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center shadow-sm">
+                    <FileText className="h-6 w-6 text-primary-600" />
                   </div>
-                  <CardTitle className="text-2xl font-bold text-slate-900">Requisiciones Recientes</CardTitle>
+                  <CardTitle className="text-2xl font-bold text-foreground">Requisiciones Recientes</CardTitle>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -256,12 +256,12 @@ const ProjectDetail = () => {
                         <div
                           key={requisition.id}
                           onClick={() => handleNavigateToRequisition(requisition.id)}
-                          className="group cursor-pointer p-4 bg-slate-50 rounded-xl border-2 border-slate-200 hover:border-blue-300 hover:shadow-md transition-all duration-200"
+                          className="group cursor-pointer p-4 bg-muted/70 rounded-xl border-2 border-border hover:border-primary-200 hover:shadow-md transition-all duration-200"
                         >
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-2">
-                              <Package className="h-4 w-4 text-slate-600" />
-                              <span className="font-mono font-semibold text-slate-900">
+                              <Package className="h-4 w-4 text-muted-foreground" />
+                              <span className="font-mono font-semibold text-foreground">
                                 #{requisition.internal_folio}
                               </span>
                             </div>
@@ -270,14 +270,14 @@ const ProjectDetail = () => {
                             </Badge>
                           </div>
                           <div className="flex items-center justify-between text-sm">
-                            <span className="text-slate-600">
+                            <span className="text-muted-foreground">
                               {requisition.creator?.full_name || 'Desconocido'}
                             </span>
-                            <span className="font-semibold text-slate-900">
+                            <span className="font-semibold text-foreground">
                               ${(Number(requisition.total_amount) || 0).toFixed(2)}
                             </span>
                           </div>
-                          <p className="text-xs text-slate-500 mt-1">
+                          <p className="text-xs text-muted-foreground/80 mt-1">
                             {format(new Date(requisition.created_at), 'dd MMM, yyyy HH:mm', { locale: es })}
                           </p>
                         </div>

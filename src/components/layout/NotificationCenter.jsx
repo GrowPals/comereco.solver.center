@@ -168,7 +168,7 @@ const NotificationCenter = ({ variant = 'popover' }) => {
             <Button
                 variant="ghost"
                 size="icon"
-                className="relative h-11 w-11 overflow-visible rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
+                className="relative h-11 w-11 overflow-visible rounded-full border border-border bg-card text-foreground shadow-sm transition-colors hover:bg-muted/70 dark:border-border dark:bg-card dark:hover:bg-muted/40"
                 aria-label={`Ver notificaciones${unreadCount > 0 ? `, ${unreadCount} sin leer` : ''}`}
                 onClick={() => navigate('/notifications')}
             >
@@ -185,7 +185,7 @@ const NotificationCenter = ({ variant = 'popover' }) => {
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon" className="relative overflow-visible rounded-full hover:bg-primary-50 transition-colors" aria-label={`Ver notificaciones, ${unreadCount} no leídas`}>
+                <Button variant="ghost" size="icon" className="relative overflow-visible rounded-full transition-colors hover:bg-primary/10 dark:hover:bg-primary/20" aria-label={`Ver notificaciones, ${unreadCount} no leídas`}>
                     <Bell className="h-5 w-5" />
                     {unreadCount > 0 && (
                         <div className="absolute -top-1.5 -right-1.5 z-20 flex h-5 min-w-[1.75rem] items-center justify-center rounded-full bg-gradient-error px-1.5 text-[10px] font-bold text-white leading-[20px] shadow-md animate-pulse">
@@ -194,18 +194,18 @@ const NotificationCenter = ({ variant = 'popover' }) => {
                     )}
                 </Button>
             </PopoverTrigger>
-            <PopoverContent align="end" className="w-[380px] p-0 shadow-2xl rounded-2xl border-neutral-200">
-                <div className="p-4 flex items-center justify-between border-b border-neutral-200 bg-gradient-to-r from-neutral-50 to-white">
+            <PopoverContent align="end" className="w-[380px] rounded-2xl border-border p-0 shadow-2xl">
+                <div className="flex items-center justify-between border-b border-border bg-gradient-to-r from-background via-background/95 to-background p-4 dark:from-neutral-900 dark:via-neutral-900/80 dark:to-neutral-900">
                     <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-lg bg-gradient-primary flex items-center justify-center">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-primary">
                             <Bell className="h-4 w-4 text-white" />
                         </div>
-                        <h3 className="font-bold text-base text-neutral-900">Notificaciones</h3>
+                        <h3 className="text-base font-bold text-foreground">Notificaciones</h3>
                         {unreadCount > 0 && (
-                            <span className="text-xs font-semibold text-neutral-500">({unreadCount} nuevas)</span>
+                            <span className="text-xs font-semibold text-muted-foreground">({unreadCount} nuevas)</span>
                         )}
                     </div>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-neutral-100" onClick={() => setOpen(false)}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-muted/70 dark:hover:bg-muted/40" onClick={() => setOpen(false)}>
                         <X className="w-4 h-4"/>
                     </Button>
                 </div>
@@ -215,17 +215,17 @@ const NotificationCenter = ({ variant = 'popover' }) => {
                         notifications.map(n => <NotificationItem key={n.id} notification={n} onRead={handleMarkAsRead} />)
                     ) : (
                         <div className="p-12 text-center">
-                            <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-100 to-primary-50 flex items-center justify-center mb-4">
+                            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-100 to-primary-50 dark:from-primary/20 dark:to-primary/10">
                                 <CheckCheck className="h-8 w-8 text-primary-600" />
                             </div>
-                            <p className="font-bold text-neutral-900 text-base">Todo al día</p>
-                            <p className="text-sm text-neutral-600 mt-1">No tienes notificaciones nuevas.</p>
+                            <p className="text-base font-bold text-foreground">Todo al día</p>
+                            <p className="mt-1 text-sm text-muted-foreground">No tienes notificaciones nuevas.</p>
                         </div>
                     )}
                 </div>
 
                 {notifications.length > 0 && (
-                    <div className="p-3 border-t border-neutral-200 text-center bg-neutral-50/50">
+                    <div className="border-t border-border bg-muted/40 p-3 text-center dark:bg-card/60">
                         <Button variant="link" size="sm" className="font-semibold" onClick={() => { setOpen(false); navigate('/notifications'); }}>
                             Ver todas las notificaciones →
                         </Button>

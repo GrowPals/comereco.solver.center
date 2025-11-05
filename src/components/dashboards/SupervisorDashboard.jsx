@@ -34,11 +34,11 @@ const SupervisorDashboard = ({ user }) => {
     return (
         <div className="space-y-8">
             <div className="flex flex-col gap-2">
-                <h1 className="text-4xl font-bold text-neutral-900">
+                <h1 className="text-4xl font-bold text-foreground">
                     Dashboard de <span className="bg-gradient-primary bg-clip-text text-transparent">Supervisor</span>
                 </h1>
-                <p className="text-base text-neutral-600">
-                    Bienvenido, <span className="font-semibold text-neutral-900">{user.full_name}</span>. Revisa las requisiciones pendientes.
+        <p className="text-base text-muted-foreground">
+            Bienvenido, <span className="font-semibold text-foreground">{user.full_name}</span>. Revisa las requisiciones pendientes.
                 </p>
             </div>
 
@@ -70,11 +70,11 @@ const SupervisorDashboard = ({ user }) => {
                             projects?.map(p => (
                                 <div
                                     key={p.id}
-                                    className="p-4 bg-gradient-to-br from-neutral-50 to-white border border-neutral-200 rounded-lg hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group"
+                                    className="p-4 rounded-lg border border-border bg-card/95 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-md cursor-pointer group"
                                     onClick={() => navigate(`/projects`)}
                                 >
-                                    <p className="font-semibold text-sm text-neutral-900 group-hover:text-primary-600 transition-colors">{p.name}</p>
-                                    <p className="text-xs text-neutral-500 line-clamp-1 mt-1">{p.description}</p>
+                                    <p className="font-semibold text-sm text-foreground transition-colors group-hover:text-primary-600">{p.name}</p>
+                                    <p className="mt-1 text-xs text-muted-foreground line-clamp-1">{p.description}</p>
                                 </div>
                             ))
                         )}

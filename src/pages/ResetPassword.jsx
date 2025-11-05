@@ -9,6 +9,7 @@ import { RippleButton } from '@/components/ui/ripple-button';
 import { FloatingInput } from '@/components/ui/floating-input';
 import { useToastNotification } from '@/components/ui/toast-notification';
 import logger from '@/utils/logger';
+import { cn } from '@/lib/utils';
 
 const ResetPassword = () => {
     const { register, handleSubmit, formState: { errors }, watch } = useForm();
@@ -83,17 +84,17 @@ const ResetPassword = () => {
         return (
             <>
                 <Helmet><title>Contraseña Actualizada - ComerECO</title></Helmet>
-                <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-white to-blue-50 flex items-center justify-center p-4">
+				<div className="flex min-h-screen w-full items-center justify-center bg-gradient-to-br from-background via-background/97 to-background p-4 dark:from-[#131f33] dark:via-[#101a2e] dark:to-[#0d1729]">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border-2 border-slate-200 p-10 max-w-md w-full text-center"
+                        className="w-full max-w-md rounded-3xl border-2 border-border bg-background/90 p-10 text-center shadow-2xl backdrop-blur-sm dark:border-border dark:bg-card/85"
                     >
-                        <CheckCircle2 className="h-20 w-20 text-green-500 mx-auto mb-6" />
-                        <h2 className="text-3xl font-bold text-slate-900 mb-3">
+                        <CheckCircle2 className="mx-auto mb-6 h-20 w-20 text-green-500" />
+                        <h2 className="mb-3 text-3xl font-bold text-foreground">
                             ¡Contraseña Actualizada!
                         </h2>
-                        <p className="text-slate-600 mb-6">
+                        <p className="mb-6 text-muted-foreground">
                             Tu contraseña ha sido cambiada exitosamente. Serás redirigido al dashboard...
                         </p>
                     </motion.div>
@@ -106,10 +107,10 @@ const ResetPassword = () => {
         <>
             <Helmet><title>Restablecer Contraseña - ComerECO</title></Helmet>
 
-            <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-white to-blue-50 flex items-center justify-center p-4 font-sans relative overflow-hidden">
+	<div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-gradient-to-br from-background via-background/97 to-background p-4 font-sans dark:from-[#1b2d4d] dark:via-[#152441] dark:to-[#1b2d4d]">
                 {/* Decorative gradient orbs */}
-                <div className="absolute top-10 left-10 w-[500px] h-[500px] bg-gradient-to-br from-blue-200/40 to-blue-300/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '8s' }} />
-                <div className="absolute bottom-10 right-10 w-[400px] h-[400px] bg-gradient-to-br from-blue-300/30 to-blue-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '6s', animationDelay: '1s' }} />
+                <div className="absolute left-10 top-10 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-primary-200/40 to-primary-300/20 blur-3xl animate-pulse dark:from-primary-500/15 dark:to-primary-600/10" style={{ animationDuration: '8s' }} />
+                <div className="absolute bottom-10 right-10 h-[400px] w-[400px] rounded-full bg-gradient-to-br from-primary-300/30 to-primary-400/10 blur-3xl animate-pulse dark:from-primary-500/10 dark:to-primary-600/10" style={{ animationDuration: '6s', animationDelay: '1s' }} />
 
                 <div className="w-full max-w-md relative z-10">
                     {/* Logo */}
@@ -131,14 +132,17 @@ const ResetPassword = () => {
                         initial={{ opacity: 0, scale: 0.92, y: 30 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-                        className={`bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border-2 border-slate-200 p-6 sm:p-10 ${isShaking ? 'animate-shake' : ''}`}
+                        className={cn(
+                            "rounded-3xl border-2 border-border bg-background/90 p-6 shadow-2xl backdrop-blur-sm sm:p-10 dark:border-border dark:bg-card/85",
+                            isShaking && 'animate-shake'
+                        )}
                     >
                         <div className="text-center mb-8">
                             <h1 className="text-4xl font-bold mb-3 tracking-tight">
-                                <span className="text-slate-900">Restablecer </span>
+                                <span className="text-foreground">Restablecer </span>
                                 <span className="bg-gradient-primary bg-clip-text text-transparent">Contraseña</span>
                             </h1>
-                            <p className="text-slate-600 text-base">
+                            <p className="text-base text-muted-foreground">
                                 Ingresa tu nueva contraseña
                             </p>
                         </div>
@@ -166,9 +170,9 @@ const ResetPassword = () => {
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-900 transition-colors duration-200 z-20 p-2 rounded-lg hover:bg-slate-100 active:bg-slate-200 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                                        className="absolute right-2 top-1/2 z-20 flex min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center rounded-lg p-2 text-muted-foreground transition-colors duration-200 hover:bg-muted/70 hover:text-foreground active:bg-muted/60 dark:hover:bg-muted/40"
                                         disabled={isLoading}
-                                        aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                        aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                                     >
                                         {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                                     </button>
@@ -195,9 +199,9 @@ const ResetPassword = () => {
                                     <button
                                         type="button"
                                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-900 transition-colors duration-200 z-20 p-2 rounded-lg hover:bg-slate-100 active:bg-slate-200 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                                        className="absolute right-2 top-1/2 z-20 flex min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center rounded-lg p-2 text-muted-foreground transition-colors duration-200 hover:bg-muted/70 hover:text-foreground active:bg-muted/60 dark:hover:bg-muted/40"
                                         disabled={isLoading}
-                                        aria-label={showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                        aria-label={showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                                     >
                                         {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                                     </button>
@@ -205,9 +209,9 @@ const ResetPassword = () => {
                             </div>
 
                             {/* Password Requirements */}
-                            <div className="text-sm text-slate-600 space-y-1 bg-slate-50 p-4 rounded-lg">
-                                <p className="font-semibold mb-2">Tu contraseña debe tener:</p>
-                                <p className={password?.length >= 6 ? 'text-green-600' : ''}>
+                            <div className="rounded-lg bg-muted/60 p-4 text-sm text-muted-foreground space-y-1 dark:bg-card/40">
+                                <p className="mb-2 font-semibold text-foreground">Tu contraseña debe tener:</p>
+                                <p className={password?.length >= 6 ? 'text-green-600 dark:text-green-400' : ''}>
                                     • Al menos 6 caracteres
                                 </p>
                             </div>
@@ -241,7 +245,7 @@ const ResetPassword = () => {
                                 <button
                                     type="button"
                                     onClick={() => navigate('/login')}
-                                    className="text-sm text-slate-600 hover:text-slate-900 transition-colors"
+                                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                                     disabled={isLoading}
                                 >
                                     Volver al inicio de sesión

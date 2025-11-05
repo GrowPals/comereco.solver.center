@@ -45,54 +45,54 @@ const ProjectCard = ({ project, onEdit, onDelete, onManageMembers, onView }) => 
   const { canManageProjects } = useUserPermissions();
   const isActive = project.status === 'active';
   return (
-    <div className="group relative bg-white border-2 border-slate-200 rounded-2xl p-6 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+    <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-border dark:bg-card">
       {/* Accent bar on hover */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
 
       <div>
-        <div className="flex justify-between items-start mb-3">
+        <div className="mb-3 flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm">
-              <FolderKanban className="h-6 w-6 text-blue-600" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm dark:from-primary-500/15 dark:to-primary-600/10">
+              <FolderKanban className="h-6 w-6 text-primary-500" />
             </div>
-            <h3 className="font-bold text-xl text-slate-900">{project.name}</h3>
+            <h3 className="text-xl font-bold text-foreground">{project.name}</h3>
           </div>
           {canManageProjects && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-9 w-9 p-0 hover:bg-slate-100 rounded-xl">
+                <Button variant="ghost" className="h-9 w-9 rounded-xl p-0 transition-colors hover:bg-muted/70 dark:hover:bg-muted/40">
                   <MoreHorizontal className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="rounded-xl">
+              <DropdownMenuContent align="end" className="rounded-xl border-border bg-card dark:border-border dark:bg-card">
                 <DropdownMenuItem onClick={() => onEdit(project)}>
                   <Edit className="mr-2 h-4 w-4" /> Editar
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onManageMembers(project)}>
                   <Users className="mr-2 h-4 w-4" /> Miembros
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onDelete(project)} className="text-red-600">
+                <DropdownMenuItem onClick={() => onDelete(project)} className="text-destructive focus:text-destructive">
                   <Trash2 className="mr-2 h-4 w-4" /> Eliminar
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           )}
         </div>
-        <p className="text-base text-slate-600 line-clamp-2 min-h-[3rem] leading-relaxed">{project.description}</p>
+        <p className="min-h-[3rem] text-base leading-relaxed text-muted-foreground">{project.description}</p>
       </div>
 
-      <div className="mt-6 pt-4 border-t border-slate-200 flex flex-col gap-3">
-        <div className="flex justify-between items-center">
+      <div className="mt-6 flex flex-col gap-3 border-t border-border pt-4 dark:border-border">
+        <div className="flex items-center justify-between">
           <Badge variant={isActive ? 'success' : 'muted'} className="shadow-sm">
             {isActive ? 'Activo' : 'Archivado'}
           </Badge>
-          <div className="text-sm text-slate-600">
-            <span className="font-medium text-slate-900">{project.supervisor?.full_name || 'Sin asignar'}</span>
+          <div className="text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">{project.supervisor?.full_name || 'Sin asignar'}</span>
           </div>
         </div>
         <Button
           variant="outline"
-          className="w-full group-hover:border-blue-300 group-hover:text-blue-600 transition-colors"
+          className="w-full transition-colors group-hover:border-primary-400 group-hover:text-primary-500"
           onClick={() => onView(project)}
         >
           Ver Detalles
@@ -142,7 +142,7 @@ const ProjectFormModal = ({ project, isOpen, onClose, onSave, supervisors, isAdm
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg border border-slate-200 bg-white shadow-2xl p-0">
+      <DialogContent className="sm:max-w-lg p-0 shadow-2xl">
         <div className="flex max-h-[calc(100dvh-4rem)] flex-col">
           <DialogHeader className="px-6 pt-6">
             <DialogTitle className="text-2xl font-bold">
@@ -176,23 +176,23 @@ const ProjectFormModal = ({ project, isOpen, onClose, onSave, supervisors, isAdm
                 </Select>
               </div>
             ) : (
-              <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
-                <Label className="text-sm font-medium text-slate-700">Supervisor asignado</Label>
-                <p className="text-sm text-slate-600">Serás asignado automáticamente como supervisor de este proyecto.</p>
+              <div className="rounded-xl border border-border bg-muted/60 px-3 py-2">
+                <Label className="text-sm font-medium text-muted-foreground">Supervisor asignado</Label>
+                <p className="text-sm text-muted-foreground">Serás asignado automáticamente como supervisor de este proyecto.</p>
               </div>
             )}
-            <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+            <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/60 px-3 py-2">
               <input
                 type="checkbox"
                 id="active"
                 checked={status === 'active'}
                 onChange={(e) => setStatus(e.target.checked ? 'active' : 'archived')}
-                className="h-4 w-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+                className="h-4 w-4 rounded border-border text-primary-600 focus:ring-primary-500"
               />
-              <Label htmlFor="active" className="text-sm font-medium text-slate-700">Activo</Label>
+              <Label htmlFor="active" className="text-sm font-medium text-muted-foreground">Activo</Label>
             </div>
           </div>
-          <DialogFooter className="sticky bottom-0 flex flex-col gap-2 border-t border-slate-200 bg-white/95 px-6 py-4 backdrop-blur">
+          <DialogFooter className="sticky bottom-0 flex flex-col gap-2 border-t border-border bg-background/90 px-6 py-4 backdrop-blur">
             <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
               <Button variant="outline" onClick={onClose} className="rounded-xl">Cancelar</Button>
               <Button onClick={handleSubmit} className="rounded-xl shadow-button hover:shadow-button-hover">Guardar</Button>
@@ -257,7 +257,7 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-2xl border border-slate-200 bg-white shadow-2xl p-0">
+            <DialogContent className="max-w-2xl p-0 shadow-2xl">
                 <div className="flex max-h-[calc(100dvh-4rem)] flex-col">
                     <DialogHeader className="px-6 pt-6">
                         <DialogTitle>Gestionar Miembros de "{project?.name}"</DialogTitle>
@@ -274,7 +274,7 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
                                         Seleccionar miembro…
                                     </SelectItem>
                                     {availableUsers.length === 0 ? (
-                                        <div className="px-3 py-2 text-sm text-slate-500">Sin usuarios disponibles</div>
+                                        <div className="px-3 py-2 text-sm text-muted-foreground">Sin usuarios disponibles</div>
                                     ) : (
                                         availableUsers.map(u => (
                                             <SelectItem key={u.id} value={String(u.id)}>{u.full_name || u.email}</SelectItem>
@@ -294,13 +294,13 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
                         </div>
                         <div className="space-y-2 pr-2">
                             {isLoadingMembers ? (
-                                <p className="py-4 text-center text-slate-500">Cargando miembros...</p>
+                                <p className="py-4 text-center text-muted-foreground">Cargando miembros...</p>
                             ) : members && members.length > 0 ? (
                                 members.map(member => (
-                                    <div key={member.user_id} className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 p-3">
+                                    <div key={member.user_id} className="flex items-center justify-between rounded-xl border border-border bg-muted/60 p-3">
                                         <div className="flex-1">
-                                            <p className="font-medium text-slate-900">{member.user.full_name}</p>
-                                            <p className="text-sm text-slate-500">
+                                            <p className="font-medium text-foreground">{member.user.full_name}</p>
+                                            <p className="text-sm text-muted-foreground">
                                                 {member.requires_approval ? 'Requiere aprobación' : 'Aprobación automática'}
                                             </p>
                                         </div>
@@ -334,11 +334,11 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
                                     </div>
                                 ))
                             ) : (
-                                <p className="py-8 text-center text-slate-500">No hay miembros en este proyecto</p>
+                                <p className="py-8 text-center text-muted-foreground">No hay miembros en este proyecto</p>
                             )}
                         </div>
                     </div>
-                    <DialogFooter className="sticky bottom-0 border-t border-slate-200 bg-white/95 px-6 py-4 backdrop-blur">
+                    <DialogFooter className="sticky bottom-0 border-t border-border bg-background/90 px-6 py-4 backdrop-blur">
                         <Button onClick={onClose} className="rounded-xl">Cerrar</Button>
                     </DialogFooter>
                 </div>
@@ -390,16 +390,16 @@ const ProjectsPage = () => {
       <PageContainer>
         <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
           {/* Header */}
-          <header className="flex flex-col gap-4 border-b border-slate-200 pb-5 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
+          <header className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
             <div className="flex items-center gap-3 sm:gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 shadow-sm sm:h-14 sm:w-14">
-                <FolderKanban className="h-6 w-6 text-blue-600 sm:h-7 sm:w-7" aria-hidden="true" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm sm:h-14 sm:w-14">
+                <FolderKanban className="h-6 w-6 text-primary-500 sm:h-7 sm:w-7" aria-hidden="true" />
               </div>
               <div className="space-y-1">
-                <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+                <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
                   <span className="bg-gradient-primary bg-clip-text text-transparent">Proyectos</span>
                 </h1>
-                <p className="text-sm text-slate-600 sm:text-base">
+                <p className="text-sm text-muted-foreground sm:text-base">
                   {projects?.length || 0} {projects?.length === 1 ? 'proyecto' : 'proyectos'} en gestión
                 </p>
               </div>

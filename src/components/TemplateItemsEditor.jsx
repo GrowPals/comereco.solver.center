@@ -142,7 +142,7 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <Label className="text-lg font-semibold text-slate-900">
+        <Label className="text-lg font-semibold text-foreground">
           Productos ({localItems.length})
         </Label>
         {!readOnly && (
@@ -161,11 +161,11 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
       {/* Lista de items */}
       <div className="space-y-2">
         {localItems.length === 0 ? (
-          <div className="bg-slate-50 rounded-xl p-8 text-center border-2 border-dashed border-slate-200">
-            <Package className="h-12 w-12 text-slate-400 mx-auto mb-3" />
-            <p className="text-slate-600 font-medium">No hay productos en esta plantilla</p>
+          <div className="rounded-xl border-2 border-dashed border-border bg-muted/60 p-8 text-center dark:bg-card/40">
+            <Package className="mx-auto mb-3 h-12 w-12 text-muted-foreground" />
+            <p className="font-medium text-muted-foreground">No hay productos en esta plantilla</p>
             {!readOnly && (
-              <p className="text-sm text-slate-500 mt-1">
+              <p className="mt-1 text-sm text-muted-foreground/80">
                 Haz clic en "Agregar Producto" para comenzar
               </p>
             )}
@@ -178,7 +178,7 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
             return (
               <div
                 key={item.product_id}
-                className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:border-blue-200 hover:shadow-md"
+                className="rounded-2xl border border-border bg-card p-4 shadow-sm transition-all duration-200 hover:border-primary/40 hover:shadow-md dark:border-border dark:hover:border-primary/30 dark:shadow-[0_14px_35px_rgba(8,15,32,0.35)]"
               >
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-[auto,minmax(0,1fr),auto,auto,auto] lg:items-center lg:gap-6">
                   {/* Imagen */}
@@ -186,26 +186,26 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
                     <img
                       src={product.image_url || '/placeholder.svg'}
                       alt={product.name}
-                      className="h-20 w-20 rounded-xl border border-slate-200 object-cover shadow-xs sm:h-16 sm:w-16"
+                      className="h-20 w-20 rounded-xl border border-border object-cover shadow-xs sm:h-16 sm:w-16"
                     />
                   </div>
 
                   {/* Info */}
                   <div className="min-w-0 space-y-1">
-                    <p className="text-base font-semibold leading-snug text-slate-900 line-clamp-2">{product.name}</p>
-                    <p className="text-sm text-slate-600">
+                    <p className="line-clamp-2 text-base font-semibold leading-snug text-foreground">{product.name}</p>
+                    <p className="text-sm text-muted-foreground">
                       SKU: {product.sku} • ${product.price?.toFixed(2) || '0.00'}
                     </p>
                   </div>
 
                   {/* Cantidad */}
                   <div className="flex flex-col gap-3 lg:col-auto lg:flex-row lg:items-center lg:gap-4">
-                    <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-2 py-1.5">
+                    <div className="flex items-center gap-2 rounded-2xl border border-border bg-muted/70 px-2 py-1.5 dark:border-border dark:bg-card/60">
                       <button
                         type="button"
                         onClick={() => handleStepQuantity(item.product_id, -1)}
                         disabled={readOnly || item.quantity <= 1}
-                        className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-slate-600 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+                        className="flex h-11 w-11 items-center justify-center rounded-xl bg-card text-muted-foreground transition-colors hover:bg-muted/70 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-card dark:hover:bg-muted/40"
                         aria-label={`Disminuir cantidad de ${product.name}`}
                       >
                         <Minus className="h-4 w-4" />
@@ -223,21 +223,21 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
                         type="button"
                         onClick={() => handleStepQuantity(item.product_id, 1)}
                         disabled={readOnly}
-                        className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-slate-600 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+                        className="flex h-11 w-11 items-center justify-center rounded-xl bg-card text-muted-foreground transition-colors hover:bg-muted/70 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-card dark:hover:bg-muted/40"
                         aria-label={`Incrementar cantidad de ${product.name}`}
                       >
                         <Plus className="h-4 w-4" />
                       </button>
                     </div>
-                    <span className="text-sm font-medium text-slate-500">
+                    <span className="text-sm font-medium text-muted-foreground">
                       {product.unit || 'pza'}
                     </span>
                   </div>
 
                   {/* Subtotal */}
                   <div className="flex flex-col gap-1 text-left lg:text-right">
-                    <p className="text-sm text-slate-500">Subtotal</p>
-                    <p className="text-lg font-bold text-slate-900">
+                    <p className="text-sm text-muted-foreground">Subtotal</p>
+                    <p className="text-lg font-bold text-foreground">
                       ${((product.price || 0) * item.quantity).toFixed(2)}
                     </p>
                   </div>
@@ -249,7 +249,7 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleRemoveItem(item.product_id)}
-                        className="h-10 w-10 rounded-xl text-red-600 hover:bg-red-50 hover:text-red-700"
+                        className="h-10 w-10 rounded-xl text-destructive transition-colors hover:bg-destructive/10 hover:text-destructive"
                         aria-label={`Eliminar ${product.name} de la plantilla`}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -265,7 +265,7 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
 
       {/* Modal para agregar producto */}
       <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-        <DialogContent className="sm:max-w-2xl border border-slate-200 bg-white shadow-2xl p-0">
+        <DialogContent className="sm:max-w-2xl border border-border bg-card p-0">
           <div className="flex max-h-[calc(100dvh-4rem)] flex-col">
             <DialogHeader className="px-6 pt-6">
               <DialogTitle className="text-2xl font-bold">Agregar Producto a la Plantilla</DialogTitle>
@@ -276,7 +276,7 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
               <div>
                 <Label htmlFor="search">Buscar Producto</Label>
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="search"
                   value={searchQuery}
@@ -292,7 +292,7 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
               <Label htmlFor="product">Producto</Label>
               {isLoadingProducts ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+                  <Loader2 className="h-6 w-6 animate-spin text-primary-600" />
                 </div>
               ) : (
                 <Select value={selectedProductId} onValueChange={setSelectedProductId}>
@@ -301,7 +301,7 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
                   </SelectTrigger>
                   <SelectContent>
                     {availableProducts.length === 0 ? (
-                      <div className="p-4 text-center text-sm text-slate-500">
+                      <div className="p-4 text-center text-sm text-muted-foreground">
                         {searchQuery ? 'No se encontraron productos' : 'Todos los productos ya están agregados'}
                       </div>
                     ) : (
@@ -311,11 +311,11 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
                             <img
                               src={product.image_url || '/placeholder.svg'}
                               alt={product.name}
-                              className="h-8 w-8 rounded-lg border border-slate-200 object-cover"
+                              className="h-8 w-8 rounded-lg border border-border object-cover"
                             />
                             <div className="flex-1">
                               <p className="font-medium">{product.name}</p>
-                              <p className="text-xs text-slate-500">
+                              <p className="text-xs text-muted-foreground">
                                 {product.sku} • ${product.price?.toFixed(2) || '0.00'} • {product.category}
                               </p>
                             </div>
@@ -342,8 +342,8 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
 
             {/* Preview del producto seleccionado */}
             {selectedProductId && (
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <p className="mb-2 text-sm font-semibold text-slate-700">Vista previa</p>
+              <div className="rounded-xl border border-border bg-muted/60 p-4 dark:bg-card/40">
+                <p className="mb-2 text-sm font-semibold text-muted-foreground">Vista previa</p>
                 {(() => {
                   const product = products.find(p => p.id === selectedProductId);
                   if (!product) return null;
@@ -352,17 +352,17 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
                       <img
                         src={product.image_url || '/placeholder.svg'}
                         alt={product.name}
-                        className="h-16 w-16 rounded-xl border border-slate-200 object-cover shadow-sm"
+                        className="h-16 w-16 rounded-xl border border-border object-cover shadow-sm"
                       />
                       <div className="flex-1">
-                        <p className="font-bold text-slate-900">{product.name}</p>
-                        <p className="text-sm text-slate-600">
+                        <p className="font-bold text-foreground">{product.name}</p>
+                        <p className="text-sm text-muted-foreground">
                           {quantity} {product.unit || 'pza'} × ${product.price?.toFixed(2) || '0.00'}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm text-slate-500">Subtotal</p>
-                        <p className="text-xl font-bold text-slate-900">
+                        <p className="text-sm text-muted-foreground">Subtotal</p>
+                        <p className="text-xl font-bold text-foreground">
                           ${((product.price || 0) * parseInt(quantity || 1)).toFixed(2)}
                         </p>
                       </div>
@@ -373,7 +373,7 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
             )}
             </div>
 
-            <DialogFooter className="sticky bottom-0 flex flex-col gap-2 border-t border-slate-200 bg-white/95 px-6 py-4 backdrop-blur">
+            <DialogFooter className="sticky bottom-0 flex flex-col gap-2 border-t border-border bg-background/90 px-6 py-4 backdrop-blur dark:bg-card/80">
               <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
                 <Button
                   variant="outline"

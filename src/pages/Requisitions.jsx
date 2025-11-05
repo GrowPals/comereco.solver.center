@@ -63,13 +63,13 @@ const RequisitionsPage = () => {
       <PageContainer>
         <div className="mx-auto w-full max-w-7xl">
           {/* Header */}
-          <header className="mb-6 border-b border-slate-200 pb-4 sm:mb-8 sm:pb-6">
+          <header className="mb-6 border-b border-border pb-4 sm:mb-8 sm:pb-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="space-y-2">
-                <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
+                <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
                   Mis Requisiciones
                 </h1>
-                <p className="text-sm text-slate-600 sm:text-base">
+                <p className="text-sm text-muted-foreground sm:text-base">
                   Historial y seguimiento de todas tus solicitudes
                 </p>
               </div>
@@ -79,9 +79,9 @@ const RequisitionsPage = () => {
                   size="icon"
                   onClick={() => refetch()}
                   disabled={isFetching}
-                  className="h-12 w-12 rounded-xl border border-slate-200 bg-white shadow-sm hover:bg-slate-100"
+                  className="h-12 w-12 rounded-xl border border-border bg-card shadow-sm hover:bg-muted"
                 >
-                  <RefreshCw className={`h-5 w-5 ${isFetching ? 'animate-spin text-blue-500' : 'text-slate-600'}`} />
+                  <RefreshCw className={`h-5 w-5 ${isFetching ? 'animate-spin text-primary-500' : 'text-muted-foreground'}`} />
                 </Button>
                 <Button
                   onClick={() => navigate('/requisitions/new')}
@@ -96,10 +96,10 @@ const RequisitionsPage = () => {
           </header>
 
           {/* Filters */}
-          <div className="mb-6 flex flex-col gap-4 rounded-xl border-2 border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:flex-wrap sm:items-center">
+          <div className="mb-6 flex flex-col gap-4 rounded-xl border-2 border-border bg-card p-4 shadow-sm sm:flex-row sm:flex-wrap sm:items-center">
             <div className="flex items-center gap-2 text-sm">
-              <Filter className="h-5 w-5 text-slate-600" />
-              <span className="font-semibold text-slate-900">Filtros:</span>
+              <Filter className="h-5 w-5 text-muted-foreground" />
+              <span className="font-semibold text-foreground">Filtros:</span>
             </div>
             <Select value={selectedProject} onValueChange={(value) => { setSelectedProject(value); setPage(1); }}>
               <SelectTrigger className="w-full min-w-[200px] rounded-xl sm:w-[220px]">
@@ -133,7 +133,7 @@ const RequisitionsPage = () => {
                 variant="ghost"
                 size="sm"
                 onClick={clearFilters}
-                className="w-full rounded-xl border border-transparent text-slate-600 hover:border-slate-200 hover:text-slate-900 sm:w-auto"
+                className="w-full rounded-xl border border-transparent text-muted-foreground hover:border-border hover:text-foreground sm:w-auto"
               >
                 <X className="mr-2 h-4 w-4" />
                 Limpiar filtros
@@ -161,11 +161,11 @@ const RequisitionsPage = () => {
             <>
               {/* Requisitions Count */}
               <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100">
-                  <FileText className="h-5 w-5 text-blue-600" />
+                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-primary-50 to-primary-100">
+                  <FileText className="h-5 w-5 text-primary-600" />
                 </div>
-                <p className="text-sm text-slate-600 sm:text-base">
-                  <span className="mr-1 text-2xl font-bold text-slate-900 sm:text-3xl">
+                <p className="text-sm text-muted-foreground sm:text-base">
+                  <span className="mr-1 text-2xl font-bold text-foreground sm:text-3xl">
                     {hasFilters ? filteredRequisitions.length : totalCount}
                   </span>
                   {hasFilters ? 'requisiciones encontradas' : 'requisiciones en total'}
@@ -192,7 +192,7 @@ const RequisitionsPage = () => {
             </>
           ) : (
             <div className="flex items-center justify-center min-h-[500px]">
-              <div className="bg-white rounded-2xl shadow-xl p-16 max-w-lg mx-auto">
+              <div className="bg-card rounded-2xl shadow-xl p-16 max-w-lg mx-auto">
                 <EmptyState
                   icon={FileText}
                   title={hasFilters ? "No se encontraron requisiciones" : "No tienes requisiciones"}

@@ -28,8 +28,20 @@ const RecentRequisitions = () => {
             case 'approved': return 'success';
             case 'rejected': return 'destructive';
             case 'submitted': return 'warning';
+            case 'cancelled': return 'destructive';
             case 'draft': return 'secondary';
             default: return 'default';
+        }
+    };
+
+    const getStatusLabel = (status) => {
+        switch (status) {
+            case 'approved': return 'Aprobada';
+            case 'rejected': return 'Rechazada';
+            case 'submitted': return 'Enviada';
+            case 'cancelled': return 'Cancelada';
+            case 'draft': return 'Borrador';
+            default: return status;
         }
     };
 
@@ -37,28 +49,28 @@ const RecentRequisitions = () => {
         <Card className="shadow-sm">
             <CardHeader className="pb-6">
                 <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-md">
+                    <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-md">
                         <Clock className="h-5 w-5 text-white" />
                     </div>
-                    <CardTitle className="text-xl font-bold text-slate-900">Actividad Reciente</CardTitle>
+                    <CardTitle className="text-xl font-bold text-foreground">Actividad Reciente</CardTitle>
                 </div>
             </CardHeader>
             <CardContent className="px-0">
                 <div className="overflow-x-auto">
                     <Table>
                         <TableHeader>
-                            <TableRow className="border-slate-200">
-                                <TableHead className="font-bold text-slate-700">Folio</TableHead>
-                                <TableHead className="hidden sm:table-cell font-bold text-slate-700">Proyecto</TableHead>
-                                <TableHead className="hidden md:table-cell font-bold text-slate-700">Fecha</TableHead>
-                                <TableHead className="font-bold text-slate-700">Total</TableHead>
-                                <TableHead className="text-right font-bold text-slate-700">Estado</TableHead>
+                            <TableRow className="border-border">
+                                <TableHead className="font-bold text-foreground/90">Folio</TableHead>
+                                <TableHead className="hidden sm:table-cell font-bold text-foreground/90">Proyecto</TableHead>
+                                <TableHead className="hidden md:table-cell font-bold text-foreground/90">Fecha</TableHead>
+                                <TableHead className="font-bold text-foreground/90">Total</TableHead>
+                                <TableHead className="text-right font-bold text-foreground/90">Estado</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {isLoading ? (
                                 Array.from({ length: 5 }).map((_, i) => (
-                                    <TableRow key={i} className="border-slate-100">
+                                    <TableRow key={i} className="border-border/70">
                                         <TableCell><Skeleton className="h-4 w-20 rounded" /></TableCell>
                                         <TableCell className="hidden sm:table-cell"><Skeleton className="h-4 w-24 rounded" /></TableCell>
                                         <TableCell className="hidden md:table-cell"><Skeleton className="h-4 w-20 rounded" /></TableCell>
@@ -68,9 +80,9 @@ const RecentRequisitions = () => {
                                 ))
                             ) : safeRequisitions.length === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={5} className="text-center text-slate-500 py-12">
+                                    <TableCell colSpan={5} className="text-center text-muted-foreground/80 py-12">
                                         <div className="flex flex-col items-center gap-2">
-                                            <Clock className="h-12 w-12 text-slate-300" />
+                                            <Clock className="h-12 w-12 text-muted-foreground/50" />
                                             <p className="font-medium">{isError ? 'No se pudieron cargar las requisiciones' : 'No hay requisiciones recientes'}</p>
                                         </div>
                                     </TableCell>
@@ -80,22 +92,22 @@ const RecentRequisitions = () => {
                                     <TableRow
                                         key={req.id}
                                         onClick={() => navigate(`/requisitions/${req.id}`)}
-                                        className="cursor-pointer hover:bg-slate-50 transition-colors border-slate-100"
+                                        className="cursor-pointer hover:bg-muted/70 transition-colors border-border/70"
                                     >
-                                        <TableCell className="font-bold text-slate-900">{req.internal_folio}</TableCell>
-                                        <TableCell className="hidden sm:table-cell text-slate-600">{req.project?.name || 'N/A'}</TableCell>
-                                        <TableCell className="hidden md:table-cell text-slate-600">
+                                        <TableCell className="font-bold text-foreground">{req.internal_folio}</TableCell>
+                                        <TableCell className="hidden sm:table-cell text-muted-foreground">{req.project?.name || 'N/A'}</TableCell>
+                                        <TableCell className="hidden md:table-cell text-muted-foreground">
                                             {format(parseISO(req.created_at), 'dd MMM yyyy', { locale: es })}
                                         </TableCell>
-                                        <TableCell className="font-semibold text-slate-900">
+                                        <TableCell className="font-semibold text-foreground">
                                             ${req.total_amount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
                                         </TableCell>
                                         <TableCell className="text-right">
                                             <Badge
                                                 variant={getStatusVariant(req.business_status)}
-                                                className="font-semibold capitalize"
+                                                className="font-semibold"
                                             >
-                                                {req.business_status}
+                                                {getStatusLabel(req.business_status)}
                                             </Badge>
                                         </TableCell>
                                     </TableRow>

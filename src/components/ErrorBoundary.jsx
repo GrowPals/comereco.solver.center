@@ -84,14 +84,14 @@ class ErrorBoundary extends React.Component {
       if (level === 'component') {
         // Error a nivel de componente - UI más discreta
         return (
-          <div className="p-4 bg-error-light border border-error rounded-lg">
+          <div className="rounded-lg border border-error bg-error/10 p-4 dark:border-error dark:bg-error/15">
             <div className="flex items-start gap-3">
               <AlertTriangle className="w-5 h-5 text-error flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <h3 className="font-semibold text-gray-900 mb-1">
+                <h3 className="mb-1 font-semibold text-foreground">
                   Error en el componente
                 </h3>
-                <p className="text-sm text-gray-600 mb-3">
+                <p className="mb-3 text-sm text-muted-foreground">
                   Este componente no se pudo cargar correctamente.
                 </p>
                 <Button
@@ -106,10 +106,10 @@ class ErrorBoundary extends React.Component {
             </div>
             {import.meta.env.DEV && this.state.error && (
               <details className="mt-4 text-xs">
-                <summary className="cursor-pointer font-medium text-gray-700">
+                <summary className="cursor-pointer font-medium text-muted-foreground">
                   Detalles técnicos (solo en desarrollo)
                 </summary>
-                <pre className="mt-2 p-2 bg-white rounded text-xs overflow-auto">
+                <pre className="mt-2 overflow-auto rounded bg-card p-2 text-xs text-foreground">
                   {this.state.error.toString()}
                   {'\n'}
                   {this.state.error.stack}
@@ -181,4 +181,3 @@ export function withErrorBoundary(Component, errorBoundaryProps = {}) {
  * // Usando HOC
  * export default withErrorBoundary(MyComponent, { level: 'component' });
  */
-

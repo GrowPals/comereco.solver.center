@@ -6,21 +6,21 @@ const EmptyState = ({ icon, title, description, buttonText, onButtonClick, actio
   // Instanciar el componente del icono si es un componente
   const IconComponent = icon;
   const iconElement = IconComponent && typeof IconComponent !== 'string' ? (
-    <IconComponent className="w-16 h-16 text-slate-400" aria-hidden="true" />
+    <IconComponent className="h-16 w-16 text-muted-foreground" aria-hidden="true" />
   ) : null;
 
   // Usar message si description no está disponible (para compatibilidad)
   const displayDescription = description || message;
 
   return (
-    <div className="text-center p-12 animate-fadeIn">
-      <div className="flex justify-center mb-6">
-        <div className="h-24 w-24 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center shadow-md">
+    <div className="animate-fadeIn p-12 text-center">
+      <div className="mb-6 flex justify-center">
+        <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-muted/60 shadow-md dark:bg-card/70">
           {iconElement}
         </div>
       </div>
-      <h2 className="text-3xl font-bold text-slate-900 mb-3">{title}</h2>
-      <p className="text-base text-slate-600 max-w-md mx-auto leading-relaxed">{displayDescription}</p>
+      <h2 className="mb-3 text-3xl font-bold text-foreground">{title}</h2>
+      <p className="mx-auto max-w-md text-base leading-relaxed text-muted-foreground">{displayDescription}</p>
       {actionButton && (
         <div className="mt-8">
           {actionButton}

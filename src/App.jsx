@@ -139,7 +139,7 @@ const AppLayout = () => {
   const showNav = !pathsWithoutNav.some(path => location.pathname.startsWith(path));
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-background transition-colors duration-200">
       <SkipLinks />
 
       {showNav && (
@@ -150,7 +150,7 @@ const AppLayout = () => {
             aria-label="Cerrar menú de navegación"
             onClick={() => setMobileNavOpen(false)}
             className={cn(
-              'fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm transition-opacity lg:hidden',
+              'fixed inset-0 z-40 bg-neutral-900/40 backdrop-blur-sm transition-opacity lg:hidden dark:bg-[#0f1726]/70',
               isMobileNavOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
             )}
           />
@@ -164,7 +164,7 @@ const AppLayout = () => {
         {showNav && <Header setSidebarOpen={handleToggleSidebar} />}
 
         <main
-          className="relative w-full flex-1 overflow-x-hidden bg-slate-50 pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-[calc(env(safe-area-inset-top)+1rem)] transition-all duration-300 sm:pt-[calc(env(safe-area-inset-top)+1.5rem)] lg:pb-10 lg:pt-10"
+          className="relative w-full flex-1 overflow-x-hidden bg-gradient-to-b from-background via-background to-background pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-[calc(env(safe-area-inset-top)+1rem)] transition-all duration-300 sm:pt-[calc(env(safe-area-inset-top)+1.5rem)] lg:pb-10 lg:pt-10 dark:from-[#0d1117] dark:via-[#111a24] dark:to-[#090f1a]"
           id="main-content"
           role="main"
         >

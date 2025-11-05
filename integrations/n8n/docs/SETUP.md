@@ -1,7 +1,77 @@
-# 🚀 Setup de n8n - Guía Completa
+# 🚀 Setup de n8n para Automatización de Inventario - Guía Completa
 
-**Tiempo estimado:** 15-30 minutos
-**Última actualización:** 2025-11-02
+**Tiempo estimado:** 30-45 minutos
+**Última actualización:** 2025-11-05
+**Enfoque:** Sistema de monitoreo y reabastecimiento automático de inventario
+
+---
+
+## 🎯 ¿Qué vamos a automatizar?
+
+Con el sistema de **Inventory Restock Monitoring** que acabamos de implementar en Supabase, n8n va a:
+
+1. **Monitorear productos con stock bajo** (cada hora o en tiempo real)
+2. **Enviar alertas** cuando el stock cae bajo el mínimo
+3. **Crear órdenes de compra automáticamente** en BIND ERP
+4. **Sincronizar requisiciones** aprobadas con BIND
+5. **Registrar logs** de todas las operaciones
+
+### El Flujo Completo
+
+```
+1. Supabase → check_products_below_min_stock()
+   ↓ (encuentra productos bajo mínimo)
+
+2. n8n → Detecta alertas
+   ↓
+
+3. n8n → Envía notificaciones (Email/Slack/WhatsApp)
+   ↓
+
+4. n8n → Crea orden de compra en BIND ERP
+   ↓
+
+5. n8n → Log en inventory_restock_rule_logs
+   ↓
+
+6. Dashboard actualizado en tiempo real
+```
+
+---
+
+## 🧩 Componentes del Sistema
+
+### 1. **Supabase (Base de Datos)**
+- **Qué es:** Tu base de datos PostgreSQL con funciones personalizadas
+- **Rol:** Almacena productos, reglas de restock, y detecta stock bajo
+- **Funciones clave:**
+  - `check_products_below_min_stock()` - Detecta productos que necesitan reorden
+  - `log_restock_rule_trigger()` - Registra cada evento
+  - Vista `restock_alerts_dashboard` - Dashboard con niveles de alerta
+
+### 2. **n8n (Orquestador de Automatizaciones)**
+- **Qué es:** Herramienta de automatización tipo Zapier/Make pero open-source
+- **Rol:** Conecta Supabase con BIND, envía notificaciones, ejecuta lógica
+- **Por qué n8n:**
+  - ✅ Visual (drag & drop de nodos)
+  - ✅ Self-hosted (no depende de servicios externos)
+  - ✅ Triggers basados en tiempo (cron) o eventos (webhooks)
+  - ✅ Conexión directa a Postgres/Supabase
+  - ✅ Puede llamar APIs REST (BIND ERP)
+
+### 3. **Docker (Contenedor para n8n)**
+- **Qué es:** Plataforma para correr aplicaciones en contenedores aislados
+- **Rol:** Ejecuta n8n de forma consistente en cualquier servidor
+- **Por qué Docker:**
+  - ✅ Instalación en 1 comando
+  - ✅ Mismo comportamiento en desarrollo y producción
+  - ✅ Fácil de actualizar y hacer backup
+  - ✅ No contamina tu sistema con dependencias
+
+### 4. **BIND ERP (Sistema Externo)**
+- **Qué es:** Tu sistema ERP para gestión de compras/inventario
+- **Rol:** Recibe órdenes de compra desde n8n
+- **Integración:** n8n usa la API REST de BIND para crear órdenes
 
 ---
 
@@ -9,303 +79,701 @@
 
 Antes de empezar, asegúrate de tener:
 
-- [ ] Docker y Docker Compose instalados
-- [ ] Credenciales de Supabase (host, user, password)
-- [ ] Token de API de BIND ERP
-- [ ] Puerto 5678 disponible
+### En tu Servidor/Máquina de Producción
+- [ ] **Docker y Docker Compose** instalados
+  - Verificar: `docker --version` y `docker-compose --version`
+  - Si no: [Instalar Docker](https://docs.docker.com/engine/install/)
+
+- [ ] **Puerto 5678 disponible** (para n8n UI)
+  - Verificar: `sudo lsof -i :5678` (debe estar vacío)
+
+### Credenciales que Necesitas
+- [ ] **Supabase Database Password**
+  - Obtener de: Dashboard Supabase → Settings → Database
+  - O del archivo `.env.supabase` (si ya lo configuraste)
+
+- [ ] **BIND ERP API Token**
+  - Obtener de: Dashboard BIND → Settings → API Keys
+  - Formato: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...`
+
+- [ ] **Email SMTP Credentials** (opcional, para alertas)
+  - Gmail, SendGrid, o cualquier SMTP
 
 ---
 
-## 🎯 Opción 1: Docker (Recomendado)
+## 🎯 Opción 1: Docker en Servidor (Producción - RECOMENDADO)
 
-### Paso 1: Preparar Variables de Entorno
+### ¿Por qué Docker para Producción?
+
+Docker nos permite:
+- **Consistencia:** El mismo ambiente en desarrollo, staging y producción
+- **Aislamiento:** n8n corre aislado sin afectar otros servicios
+- **Persistencia:** Los workflows y credenciales se guardan en volúmenes
+- **Fácil deployment:** Un solo comando para desplegar
+- **Auto-restart:** Si n8n crashea, Docker lo reinicia automáticamente
+
+### Paso 1: Preparar el Servidor
 
 ```bash
-# Ir a la carpeta de n8n
-cd integrations/n8n
+# 1. Conectar al servidor de producción
+ssh user@tu-servidor.com
 
-# Copiar template de variables
-cp .env.example .env
+# 2. Crear directorio para n8n
+mkdir -p ~/n8n-production
+cd ~/n8n-production
 
-# Editar con tus credenciales
+# 3. Verificar Docker
+docker --version
+docker-compose --version
+
+# Si no están instalados:
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo usermod -aG docker $USER
+# Logout y login de nuevo
+```
+
+### Paso 2: Crear docker-compose.yml
+
+```bash
+cat > docker-compose.yml << 'EOF'
+version: '3.8'
+
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n-production
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_PASSWORD}
+      - N8N_HOST=${N8N_HOST}
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - WEBHOOK_URL=${WEBHOOK_URL}
+      - GENERIC_TIMEZONE=America/Mexico_City
+      - TZ=America/Mexico_City
+
+      # Supabase Connection
+      - SUPABASE_DB_HOST=${SUPABASE_DB_HOST}
+      - SUPABASE_DB_PASSWORD=${SUPABASE_DB_PASSWORD}
+      - SUPABASE_PROJECT_REF=${SUPABASE_PROJECT_REF}
+
+      # BIND ERP
+      - BIND_API_URL=${BIND_API_URL}
+      - BIND_API_TOKEN=${BIND_API_TOKEN}
+
+      # Email (opcional)
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./backup:/backup
+    networks:
+      - n8n-network
+
+volumes:
+  n8n_data:
+    driver: local
+
+networks:
+  n8n-network:
+    driver: bridge
+EOF
+```
+
+### Paso 3: Configurar Variables de Entorno
+
+```bash
+cat > .env << 'EOF'
+# ========================================
+# n8n Configuration
+# ========================================
+N8N_PASSWORD=TuPasswordSeguro2025!
+N8N_HOST=n8n.tu-dominio.com
+WEBHOOK_URL=https://n8n.tu-dominio.com/
+
+# ========================================
+# Supabase Database
+# ========================================
+SUPABASE_DB_HOST=db.azjaehrdzdfgrumbqmuc.supabase.co
+SUPABASE_DB_PASSWORD=VicmaBigez2405.
+SUPABASE_PROJECT_REF=azjaehrdzdfgrumbqmuc
+
+# ========================================
+# BIND ERP API
+# ========================================
+BIND_API_URL=https://api.bind-erp.com
+BIND_API_TOKEN=Bearer tu-token-aqui
+
+# ========================================
+# Email Notifications (Opcional)
+# ========================================
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=tu-email@gmail.com
+SMTP_PASSWORD=tu-app-password
+
+EOF
+
+# ⚠️ IMPORTANTE: Editar con tus valores reales
 nano .env
 ```
 
-**Completar estos valores en `.env`:**
+### Paso 4: Iniciar n8n
 
 ```bash
-# Cambiar estos valores:
-N8N_BASIC_AUTH_PASSWORD=tu-password-seguro-aqui  # Min 16 caracteres
-
-SUPABASE_DB_HOST=db.azjaehrdzdfgrumbqmuc.supabase.co
-SUPABASE_DB_PASSWORD=tu-password-de-supabase
-
-BIND_API_URL=https://api.bind-erp.com  # URL real de BIND
-BIND_API_TOKEN=tu-token-de-bind-aqui
-```
-
-### Paso 2: Iniciar n8n
-
-```bash
-# Iniciar en modo detached
+# Iniciar n8n en background
 docker-compose up -d
 
-# Ver logs
+# Ver logs en tiempo real
 docker-compose logs -f
 
 # Esperar a ver:
 # "Editor is now accessible via: http://localhost:5678"
+# Presiona Ctrl+C para salir de logs
 ```
 
-### Paso 3: Verificar Instalación
+### Paso 5: Verificar Instalación
 
 ```bash
-# Verificar que n8n está corriendo
-docker ps | grep n8n
+# 1. Verificar que está corriendo
+docker ps
 
 # Debería mostrar:
-# CONTAINER ID   IMAGE            STATUS
-# abc123...      n8nio/n8n:latest Up 30 seconds
+# CONTAINER ID   IMAGE              STATUS          PORTS
+# abc123...      n8nio/n8n:latest   Up 30 seconds   0.0.0.0:5678->5678/tcp
 
-# Test de health
+# 2. Health check
 curl http://localhost:5678/healthz
 
-# Debería retornar: { "status": "ok" }
+# Debería retornar: {"status":"ok"}
+
+# 3. Ver versión
+docker exec -it n8n-production n8n --version
 ```
 
-### Paso 4: Acceder a n8n
+### Paso 6: Acceder a n8n UI
 
 ```bash
-# Abrir en navegador
-open http://localhost:5678
+# Opción A: Si estás en el servidor
+# Abrir túnel SSH desde tu máquina local:
+ssh -L 5678:localhost:5678 user@tu-servidor.com
 
-# O manualmente:
+# Luego abrir en tu navegador local:
 # http://localhost:5678
+
+# Opción B: Configurar dominio (recomendado para producción)
+# Ver sección "Configurar Dominio con HTTPS" más abajo
 ```
 
 **Credenciales de acceso:**
-- Usuario: `admin` (definido en .env)
-- Password: `<tu-password-de-.env>`
+- Usuario: `admin`
+- Password: El que pusiste en `N8N_PASSWORD` del `.env`
 
 ---
 
-## 🎯 Opción 2: n8n Cloud
+## 🎯 Opción 2: n8n Cloud (Más Fácil pero con Limitaciones)
 
 ### Ventajas
 - ✅ Sin instalar nada
 - ✅ Backup automático
 - ✅ Actualizaciones automáticas
+- ✅ HTTPS incluido
 - ✅ Plan gratuito: 5000 ejecuciones/mes
 
 ### Desventajas
 - ❌ Latencia ligeramente mayor
-- ❌ No permite acceso a `localhost` (Supabase debe ser público)
+- ❌ No puede acceder a `localhost` (Supabase debe ser público)
+- ❌ Límite de ejecuciones en plan gratuito
+- ❌ Menos control sobre la infraestructura
 
-### Paso 1: Crear Cuenta
+### Pasos
 
-1. Ir a https://n8n.cloud
-2. Sign Up (gratis)
-3. Verificar email
+1. **Crear cuenta:** https://n8n.cloud
+2. **Verificar email**
+3. **Importar workflows** (ver sección más abajo)
+4. **Configurar credenciales** (mismos pasos que Docker)
 
-### Paso 2: Importar Workflows
-
-1. En n8n Cloud dashboard
-2. Workflows → Import from File
-3. Seleccionar `workflows/bind-create-order.json`
-4. Configurar credenciales (ver abajo)
+**Recomendación:** Usa n8n Cloud solo para pruebas o si tu Supabase ya es público.
+Para producción con Supabase privado, usa Docker.
 
 ---
 
-## 🔑 Configurar Credenciales
+## 🔑 Configurar Credenciales en n8n
 
-### Credencial 1: Supabase Database
+Una vez que n8n esté corriendo, configura las credenciales:
 
-1. En n8n UI: **Credentials** → **New** → buscar "Postgres"
-2. Llenar datos:
+### Credencial 1: Supabase PostgreSQL
+
+1. En n8n UI: **Credentials** → **+ Add Credential** → Buscar **"Postgres"**
+
+2. Llenar formulario:
 
 ```yaml
-Name: Supabase Database
+Credential Name: Supabase Production DB
 Host: db.azjaehrdzdfgrumbqmuc.supabase.co
 Database: postgres
-User: postgres
-Password: <ver en .env>
+User: postgres.azjaehrdzdfgrumbqmuc
+Password: <tu password de Supabase>
 Port: 5432
-SSL Mode: allow  # ← Importante para Supabase
+SSL: Require  # ← IMPORTANTE para Supabase
 ```
 
 3. Click **Test Connection**
-   - ✅ Debería decir "Connection successful"
-   - ❌ Si falla, verificar:
-     - Host correcto (sin https://)
-     - Password correcto
-     - SSL = `allow` o `require`
+   - ✅ "Connection successful" → Excelente
+   - ❌ Error → Ver troubleshooting abajo
 
 4. **Save**
 
-### Credencial 2: BIND API Token
+### Credencial 2: BIND ERP API
 
-1. En n8n UI: **Credentials** → **New** → buscar "Header Auth"
-2. Llenar datos:
+1. En n8n UI: **Credentials** → **+ Add Credential** → Buscar **"Header Auth"**
+
+2. Llenar formulario:
 
 ```yaml
-Name: BIND API Token
+Credential Name: BIND ERP API Token
 Header Name: Authorization
 Header Value: Bearer <tu-token-de-bind>
 ```
 
 **IMPORTANTE:** Incluir "Bearer " antes del token
 
-3. **Save** (no hay test para Header Auth)
+3. **Save**
+
+### Credencial 3: Email SMTP (Opcional)
+
+1. **Credentials** → **+ Add Credential** → Buscar **"SMTP"**
+
+2. Ejemplo con Gmail:
+
+```yaml
+Credential Name: Gmail Alerts
+User: tu-email@gmail.com
+Password: <app password de Gmail>
+Host: smtp.gmail.com
+Port: 587
+Security: STARTTLS
+```
+
+3. **Save**
 
 ---
 
-## 📦 Importar Workflows
+## 📦 Crear Workflows de Inventario
 
-### Workflow: bind-create-order
+Ahora vamos a crear los workflows que automatizan el monitoreo de inventario.
 
-1. En n8n UI: **Workflows** → **Add Workflow** → **Import from File**
-2. Seleccionar: `workflows/bind-create-order.json`
-3. Click **Import**
+### Workflow 1: Daily Stock Check (Revisión Diaria)
 
-**El workflow aparecerá con algunos nodos en rojo (credenciales faltantes)**
+**Propósito:** Revisa productos bajo stock mínimo y envía alertas
 
-4. Click en cada nodo rojo:
-   - Nodos Postgres → Seleccionar "Supabase Database"
-   - Nodo HTTP Request → Seleccionar "BIND API Token"
+**Cómo crearlo:**
 
-5. **Save Workflow**
+1. En n8n: **Workflows** → **+ Add Workflow**
+2. Nombre: `Daily Inventory Stock Check`
+3. Agregar nodos:
 
-6. **Activar workflow:**
-   - Toggle switch en esquina superior derecha
-   - Debe cambiar a verde
+#### Nodo 1: Schedule Trigger
+```yaml
+Type: Schedule Trigger
+Trigger Interval: Every Day
+Time: 08:00 AM (hora de México)
+```
 
-7. **Verificar ejecuciones:**
-   - Ir a **Executions** tab
-   - Debería aparecer una ejecución cada 30 segundos
-   - Si no hay mensajes en cola, verá "No Data"
+#### Nodo 2: Postgres (Check Low Stock)
+```yaml
+Type: Postgres
+Credential: Supabase Production DB
+Operation: Execute Query
+Query:
+  SELECT * FROM check_products_below_min_stock();
+```
+
+Esto ejecuta la función SQL que creamos y retorna productos bajo mínimo.
+
+#### Nodo 3: IF (¿Hay productos bajo stock?)
+```yaml
+Type: IF
+Condition: {{ $json.product_id }} is not empty
+```
+
+#### Nodo 4A: Email Alert (Si hay productos)
+```yaml
+Type: Send Email
+Credential: Gmail Alerts
+To: inventory@tu-empresa.com
+Subject: 🚨 {{ $items().length }} productos bajo stock mínimo
+Body:
+  Productos que necesitan reorden:
+
+  {% for item in $items() %}
+  - {{ item.product_name }} (SKU: {{ item.product_sku }})
+    Stock actual: {{ item.current_stock }}
+    Mínimo: {{ item.min_stock }}
+    Déficit: {{ item.stock_deficit }} unidades
+    Reordenar: {{ item.reorder_quantity }} unidades
+    Proveedor preferido: {{ item.preferred_vendor }}
+  {% endfor %}
+
+  Ver dashboard: https://tu-app.vercel.app/inventory/alerts
+```
+
+#### Nodo 5: Log Trigger (Registrar evento)
+```yaml
+Type: Postgres
+Credential: Supabase Production DB
+Operation: Execute Query
+Query:
+  SELECT log_restock_rule_trigger(
+    '{{ $json.rule_id }}'::uuid,
+    '{{ $json.product_id }}'::uuid,
+    {{ $json.project_id ? "'" + $json.project_id + "'::uuid" : "NULL" }},
+    {{ $json.current_stock }},
+    'triggered',
+    '{"source": "n8n_daily_check", "alert_sent": true}'::jsonb
+  );
+```
+
+4. **Save Workflow**
+5. **Activate** (toggle switch arriba a la derecha)
 
 ---
 
-## ✅ Verificación Completa
+### Workflow 2: Real-Time Critical Alerts
 
-### Test 1: Conexión a Supabase
+**Propósito:** Detecta stock crítico (0 unidades) y alerta inmediatamente
 
-```bash
-# En n8n, crear workflow temporal de test:
-# 1. Agregar nodo Postgres
-# 2. Seleccionar credencial "Supabase Database"
-# 3. Operation: Execute Query
-# 4. Query:
-SELECT NOW() as current_time, current_database() as db_name;
-
-# 5. Execute Node
-# 6. Debería retornar:
-# {
-#   "current_time": "2025-11-02T10:30:00Z",
-#   "db_name": "postgres"
-# }
+#### Nodo 1: Schedule Trigger
+```yaml
+Trigger Interval: Every 15 minutes
 ```
 
-### Test 2: BIND API
-
-```bash
-# En n8n, crear nodo HTTP Request:
-# 1. Method: GET
-# 2. URL: {{ $env.BIND_API_URL }}/api/health
-# 3. Authentication: "BIND API Token"
-# 4. Execute Node
-
-# Debería retornar status 200 con:
-# { "status": "ok" }
-
-# Si retorna 401:
-# - Token inválido
-# Si retorna 404:
-# - URL incorrecta
+#### Nodo 2: Query Critical Stock
+```yaml
+Query:
+  SELECT * FROM restock_alerts_dashboard
+  WHERE alert_level = 'CRITICAL'
+  AND last_trigger_date < NOW() - INTERVAL '1 hour';
 ```
 
-### Test 3: PGMQ Queue
+Esto evita alertas duplicadas (solo si no hubo alerta en la última hora).
+
+#### Nodo 3: IF (¿Hay críticos?)
+```yaml
+Condition: {{ $items().length }} > 0
+```
+
+#### Nodo 4: Multiple Alerts (Slack + Email + WhatsApp)
+
+**Slack:**
+```yaml
+Type: Slack
+Message: 🚨 CRÍTICO: {{ $json.product_name }} sin stock
+```
+
+**Email:**
+```yaml
+Type: Send Email
+Subject: 🆘 CRÍTICO: Stock agotado
+Priority: High
+```
+
+**WhatsApp (vía Twilio o similar):**
+```yaml
+Type: HTTP Request
+URL: https://api.whatsapp.com/send
+Method: POST
+Body: {...}
+```
+
+---
+
+### Workflow 3: Auto Create Purchase Orders
+
+**Propósito:** Crea órdenes de compra automáticamente en BIND cuando stock < 50% del mínimo
+
+#### Nodo 1: Schedule Trigger
+```yaml
+Every 1 hour
+```
+
+#### Nodo 2: Query High Priority
+```yaml
+Query:
+  SELECT * FROM restock_alerts_dashboard
+  WHERE alert_level IN ('CRITICAL', 'HIGH')
+  AND triggers_last_30_days < 5  -- No crear si ya se crearon muchas
+  ORDER BY stock_deficit DESC
+  LIMIT 20;
+```
+
+#### Nodo 3: Loop Over Products
+```yaml
+Type: Loop Over Items
+```
+
+#### Nodo 4: Create BIND Order
+```yaml
+Type: HTTP Request
+Credential: BIND ERP API Token
+Method: POST
+URL: {{ $env.BIND_API_URL }}/api/v1/purchase-orders
+Headers:
+  Content-Type: application/json
+Body:
+  {
+    "client_id": "{{ $json.company_id }}",
+    "items": [
+      {
+        "product_id": "{{ $json.product_sku }}",
+        "quantity": {{ $json.reorder_quantity }},
+        "unit_price": 0,  // BIND calcula precio
+        "notes": "Reorden automático - Stock crítico"
+      }
+    ],
+    "vendor": "{{ $json.preferred_vendor }}",
+    "warehouse": "{{ $json.preferred_warehouse }}",
+    "notes": "Orden creada automáticamente por n8n - Stock deficit: {{ $json.stock_deficit }}"
+  }
+```
+
+#### Nodo 5: Log Success
+```sql
+SELECT log_restock_rule_trigger(
+  '{{ $json.rule_id }}'::uuid,
+  '{{ $json.product_id }}'::uuid,
+  {{ $json.project_id }},
+  {{ $json.current_stock }},
+  'auto_order_created',
+  json_build_object(
+    'source', 'n8n_auto_purchase',
+    'bind_order_id', '{{ $response.order_id }}',
+    'quantity_ordered', {{ $json.reorder_quantity }}
+  )::jsonb
+);
+```
+
+---
+
+## ✅ Testing y Verificación
+
+### Test 1: Verificar Conexión a Supabase
+
+En n8n, crea workflow temporal de test:
+
+1. **Schedule Trigger Manual**
+2. **Postgres Node:**
+```sql
+SELECT NOW() as current_time,
+       current_database() as db_name,
+       current_user;
+```
+3. **Execute Workflow**
+4. Verifica output:
+```json
+{
+  "current_time": "2025-11-05T14:30:00Z",
+  "db_name": "postgres",
+  "current_user": "postgres"
+}
+```
+
+### Test 2: Probar Función de Stock Bajo
 
 ```sql
--- En nodo Postgres de n8n
-SELECT COUNT(*) as total_messages
-FROM pgmq.q_requisition_outbox_queue;
-
--- Debería retornar número (puede ser 0)
+-- En nodo Postgres
+SELECT * FROM check_products_below_min_stock();
 ```
 
-### Test 4: Workflow End-to-End
+Si retorna 0 filas → No hay productos bajo mínimo (perfecto!)
+Si retorna filas → Esos productos necesitan reorden
+
+### Test 3: Ver Dashboard de Alertas
 
 ```sql
--- 1. Crear requisición de prueba en Supabase
-UPDATE requisitions
-SET integration_status = 'pending_sync'
-WHERE id = '<una-requisicion-real>';
-
--- 2. Esperar 30 segundos
-
--- 3. Ir a n8n → Executions
--- Debería ver nueva ejecución con datos procesados
-
--- 4. Verificar en Supabase
 SELECT
-  integration_status,
-  bind_order_id,
-  bind_synced_at
-FROM requisitions
-WHERE id = '<la-misma-requisicion>';
+  product_name,
+  alert_level,
+  current_stock,
+  min_stock,
+  stock_deficit
+FROM restock_alerts_dashboard
+ORDER BY
+  CASE alert_level
+    WHEN 'CRITICAL' THEN 1
+    WHEN 'HIGH' THEN 2
+    WHEN 'MEDIUM' THEN 3
+    ELSE 4
+  END;
+```
 
--- Esperado:
--- integration_status: 'synced' (o 'rejected' si hubo error)
--- bind_order_id: 'PO-2025-XXXX' (folio de BIND)
--- bind_synced_at: <timestamp reciente>
+### Test 4: Simular Stock Bajo
+
+Para probar los workflows sin esperar a que realmente baje el stock:
+
+```sql
+-- 1. Crear regla de restock temporal
+INSERT INTO inventory_restock_rules (
+  company_id,
+  product_id,
+  min_stock,
+  reorder_quantity,
+  status
+) VALUES (
+  (SELECT id FROM companies LIMIT 1),
+  (SELECT id FROM products LIMIT 1),
+  100,  -- Mínimo alto para forzar alerta
+  50,
+  'active'
+);
+
+-- 2. Esperar 1 minuto
+
+-- 3. Ejecutar workflow manualmente en n8n
+
+-- 4. Verificar que llegó email/alerta
+
+-- 5. Limpiar regla de prueba
+DELETE FROM inventory_restock_rules
+WHERE notes LIKE '%test%';
+```
+
+---
+
+## 🌐 Configurar Dominio con HTTPS (Producción)
+
+Para acceder a n8n desde cualquier lugar con HTTPS:
+
+### Opción A: Usar Nginx como Reverse Proxy
+
+```bash
+# 1. Instalar Nginx
+sudo apt install nginx certbot python3-certbot-nginx
+
+# 2. Crear config de Nginx
+sudo nano /etc/nginx/sites-available/n8n
+
+# Contenido:
+server {
+    listen 80;
+    server_name n8n.tu-dominio.com;
+
+    location / {
+        proxy_pass http://localhost:5678;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+# 3. Habilitar sitio
+sudo ln -s /etc/nginx/sites-available/n8n /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+
+# 4. Obtener certificado SSL (HTTPS)
+sudo certbot --nginx -d n8n.tu-dominio.com
+
+# 5. Renovación automática
+sudo certbot renew --dry-run
+```
+
+### Opción B: Usar Cloudflare Tunnel (Más Fácil)
+
+```bash
+# 1. Instalar cloudflared
+wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+sudo dpkg -i cloudflared-linux-amd64.deb
+
+# 2. Login
+cloudflared tunnel login
+
+# 3. Crear tunnel
+cloudflared tunnel create n8n-prod
+
+# 4. Configurar DNS
+cloudflared tunnel route dns n8n-prod n8n.tu-dominio.com
+
+# 5. Crear config
+cat > ~/.cloudflared/config.yml << 'EOF'
+tunnel: <tunnel-id>
+credentials-file: /home/user/.cloudflared/<tunnel-id>.json
+
+ingress:
+  - hostname: n8n.tu-dominio.com
+    service: http://localhost:5678
+  - service: http_status:404
+EOF
+
+# 6. Iniciar tunnel
+cloudflared tunnel run n8n-prod
 ```
 
 ---
 
 ## 🐛 Troubleshooting
 
-### Problema 1: n8n no inicia
+### Problema 1: "Connection Refused" al conectar a Supabase
 
+**Causa:** IP del servidor no está whitelisted en Supabase
+
+**Solución:**
 ```bash
-# Ver logs de error
-docker-compose logs
+# 1. Obtener IP pública del servidor
+curl ifconfig.me
 
-# Errores comunes:
-# - Puerto 5678 ocupado → cambiar N8N_PORT en .env
-# - Volumen no monta → docker-compose down -v && docker-compose up -d
+# 2. Ir a Supabase Dashboard:
+# Settings → Database → Connection Pooling → Network Restrictions
+# → Add Allowed IP: <tu-ip-del-servidor>
+
+# 3. También agregar 0.0.0.0/0 temporalmente para testear
+# (remover después por seguridad)
 ```
 
-### Problema 2: No puede conectar a Supabase
+### Problema 2: n8n no guarda workflows
 
+**Causa:** Volumen no montado correctamente
+
+**Solución:**
 ```bash
-# Test de conexión manual
-docker exec -it n8n sh
-apk add postgresql-client
-psql -h db.azjaehrdzdfgrumbqmuc.supabase.co -U postgres -d postgres
-
-# Si falla:
-# - Verificar host (debe ser db.XXXXX.supabase.co)
-# - Verificar password
-# - Verificar que IP de servidor está whitelisted en Supabase
+docker-compose down
+docker volume ls  # Ver volúmenes
+docker volume inspect n8n-production_n8n_data  # Ver mountpoint
+docker-compose up -d
 ```
 
 ### Problema 3: Workflow no ejecuta
 
 **Verificar:**
-- [ ] Workflow está **activado** (toggle verde)
-- [ ] Schedule Trigger tiene cron correcto: `*/30 * * * * *`
+- [ ] Workflow está **Activated** (toggle verde)
+- [ ] Schedule Trigger tiene cron correcto
 - [ ] No hay errores en nodos (íconos rojos)
-- [ ] Ver **Executions** tab para errores
+- [ ] Ir a **Executions** tab para ver logs
 
-### Problema 4: Error 401 en BIND API
+### Problema 4: Error en función SQL
 
-```bash
-# Verificar token
-echo $BIND_API_TOKEN
+```sql
+-- Test manual en Supabase SQL Editor
+SELECT * FROM check_products_below_min_stock();
 
-# Regenerar en BIND si es necesario
-# Actualizar en n8n: Credentials → BIND API Token → Edit
+-- Si falla, verificar migración aplicada:
+SELECT version FROM supabase_migrations.schema_migrations
+WHERE version = '20251106060000';
+
+-- Debería retornar 1 fila
 ```
 
 ---
@@ -313,97 +781,88 @@ echo $BIND_API_TOKEN
 ## 🔧 Comandos Útiles
 
 ```bash
-# Ver logs en tiempo real
-docker logs -f n8n
+# Ver logs de n8n
+docker logs -f n8n-production
 
 # Reiniciar n8n
-docker restart n8n
+docker restart n8n-production
 
-# Detener n8n
-docker-compose down
+# Backup de workflows
+docker exec n8n-production tar -czf /backup/n8n-backup-$(date +%Y%m%d).tar.gz /home/node/.n8n
 
-# Iniciar n8n
-docker-compose up -d
+# Copiar backup a host
+docker cp n8n-production:/backup/n8n-backup-20251105.tar.gz ./
 
-# Entrar al contenedor
-docker exec -it n8n sh
+# Restaurar backup
+docker cp ./n8n-backup-20251105.tar.gz n8n-production:/tmp/
+docker exec n8n-production tar -xzf /tmp/n8n-backup-20251105.tar.gz -C /
 
-# Backup de datos n8n
-docker cp n8n:/home/node/.n8n ./backup-n8n-$(date +%Y%m%d)
+# Ver uso de recursos
+docker stats n8n-production
 
-# Limpiar todo y empezar de cero
-docker-compose down -v
-rm -rf ~/.n8n  # Solo si usas volumen local
+# Actualizar n8n a última versión
+docker-compose pull
 docker-compose up -d
 ```
 
 ---
 
-## 📊 Monitoreo
+## 📊 Monitoreo en Producción
 
 ### Health Check Automático
 
 ```bash
-# Agregar a cron (cada 5 minutos)
-*/5 * * * * curl -f http://localhost:5678/healthz || docker restart n8n
+# Agregar a crontab
+crontab -e
+
+# Agregar esta línea:
+*/5 * * * * curl -f http://localhost:5678/healthz || docker restart n8n-production
 ```
 
-### Logs
+### Alertas de n8n Down
 
-```bash
-# Ver últimas 100 líneas
-docker logs n8n --tail 100
+Usar servicio como UptimeRobot o crear workflow de auto-monitoreo:
 
-# Filtrar por workflow
-docker logs n8n 2>&1 | grep "bind-create-order"
-
-# Ver solo errores
-docker logs n8n 2>&1 | grep -i "error"
-```
-
----
-
-## 🔄 Actualizar n8n
-
-```bash
-# Detener n8n
-docker-compose down
-
-# Descargar última versión
-docker-compose pull
-
-# Iniciar con nueva versión
-docker-compose up -d
-
-# Verificar versión
-docker exec -it n8n n8n --version
+```yaml
+Schedule: Every 5 minutes
+Check: curl http://localhost:5678/healthz
+If Failed: Send urgent alert to Slack/Email/Phone
 ```
 
 ---
 
-## 📚 Próximos Pasos
+## 🚀 Próximos Pasos
 
-1. ✅ n8n instalado y corriendo
-2. ✅ Credenciales configuradas
-3. ✅ Workflow importado y activado
-4. → Probar con requisición real
-5. → Configurar monitoreo
-6. → Implementar más workflows
+1. ✅ n8n instalado en producción
+2. ✅ Credenciales de Supabase configuradas
+3. ✅ Workflows de inventario creados
+4. → **Probar con datos reales**
+5. → Configurar alertas de WhatsApp/Slack
+6. → Dashboard de métricas en Grafana (opcional)
+7. → Implementar workflow de sincronización con BIND
+
+---
+
+## 📚 Referencias
+
+- [n8n Docker Docs](https://docs.n8n.io/hosting/installation/docker/)
+- [Supabase Connection Guide](../../../docs/SUPABASE_CONNECTION_GUIDE.md)
+- [Inventory Monitoring Docs](../../../docs/INVENTORY_RESTOCK_MONITORING.md)
+- [Database Functions Reference](../../../docs/DATABASE_FUNCTIONS.md)
 
 ---
 
-## 🔗 Referencias
-
-- [Docker Compose Docs](https://docs.docker.com/compose/)
-- [n8n Docker Guide](https://docs.n8n.io/hosting/installation/docker/)
-- [n8n Environment Variables](https://docs.n8n.io/hosting/configuration/environment-variables/)
-- [Supabase Connection Guide](https://supabase.com/docs/guides/database/connecting-to-postgres)
-
----
+## ✍️ Notas de Implementación
 
 **Setup completado por:** _______________________
 **Fecha:** _______________________
-**Notas adicionales:**
--
--
--
+**Servidor:** _______________________
+**Dominio n8n:** _______________________
+
+**Workflows activos:**
+- [ ] Daily Stock Check
+- [ ] Real-Time Critical Alerts
+- [ ] Auto Purchase Orders
+- [ ] BIND Requisition Sync
+
+**Próxima revisión:** _______________________

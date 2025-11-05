@@ -66,16 +66,16 @@ const HelpPage = () => {
             <PageContainer>
                 <div className="mx-auto max-w-5xl space-y-6 sm:space-y-8">
                     {/* Header */}
-                    <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-slate-200">
+                    <header className="flex flex-col items-start gap-6 border-b border-border pb-8 sm:flex-row sm:items-center sm:justify-between dark:border-border">
                         <div className="flex items-center gap-4">
-                            <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-md">
-                                <HelpCircle className="h-7 w-7 text-blue-600" aria-hidden="true" />
+                            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-md dark:from-primary-500/15 dark:to-primary-600/10">
+                                <HelpCircle className="h-7 w-7 text-primary-500" aria-hidden="true" />
                             </div>
                             <div>
-                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-slate-900 mb-1">
+                                <h1 className="mb-1 text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
                                     Centro de <span className="bg-gradient-primary bg-clip-text text-transparent">Ayuda</span>
                                 </h1>
-                                <p className="text-base sm:text-lg text-slate-600">
+                                <p className="text-base text-muted-foreground sm:text-lg">
                                     Encuentra respuestas y soporte para usar ComerECO
                                 </p>
                             </div>
@@ -83,16 +83,16 @@ const HelpPage = () => {
                     </header>
 
                     {/* Sección de Contacto Rápido */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <Card className="border-2 hover:shadow-lg transition-shadow duration-300">
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <Card className="border border-border transition-shadow duration-300 hover:shadow-lg dark:border-border">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
-                                    <Mail className="h-5 w-5 text-blue-600" />
+                                    <Mail className="h-5 w-5 text-primary-500" />
                                     Contacto por Email
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-sm text-slate-600 mb-4">
+                                <p className="mb-4 text-sm text-muted-foreground">
                                     ¿Tienes una pregunta específica o necesitas asistencia técnica?
                                 </p>
                                 <Button
@@ -106,15 +106,15 @@ const HelpPage = () => {
                             </CardContent>
                         </Card>
 
-                        <Card className="border-2 hover:shadow-lg transition-shadow duration-300">
+                        <Card className="border border-border transition-shadow duration-300 hover:shadow-lg dark:border-border">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
-                                    <MessageCircle className="h-5 w-5 text-green-600" />
+                                    <MessageCircle className="h-5 w-5 text-emerald-500" />
                                     Chat en Vivo
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-sm text-slate-600 mb-4">
+                                <p className="mb-4 text-sm text-muted-foreground">
                                     Habla directamente con nuestro equipo de soporte en tiempo real.
                                 </p>
                                 <Button
@@ -129,10 +129,10 @@ const HelpPage = () => {
                     </div>
 
                     {/* Preguntas Frecuentes */}
-                    <Card className="border-2">
+                    <Card className="border border-border dark:border-border">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-3 text-xl">
-                                <HelpCircle className="h-6 w-6 text-slate-700" />
+                                <HelpCircle className="h-6 w-6 text-muted-foreground" />
                                 Guía de Usuario y Preguntas Frecuentes
                             </CardTitle>
                         </CardHeader>
@@ -140,17 +140,17 @@ const HelpPage = () => {
                             <Accordion type="multiple" className="w-full">
                                 {faqData.map((section, index) => (
                                     <div key={index} className="mb-4 last:mb-0">
-                                        <h3 className="flex items-center gap-2 text-lg font-semibold mb-2">
+                                        <h3 className="mb-2 flex items-center gap-2 text-lg font-semibold text-foreground">
                                             <section.icon className={`h-5 w-5 ${section.color}`} />
                                             {section.role}
                                         </h3>
                                         {section.questions.map((faq, qIndex) => (
                                             <AccordionItem key={qIndex} value={`item-${index}-${qIndex}`}>
-                                                <AccordionTrigger className="text-left font-medium text-slate-800 hover:no-underline">
+                                                <AccordionTrigger className="text-left font-medium text-foreground hover:no-underline">
                                                     {faq.q}
                                                 </AccordionTrigger>
                                                 <AccordionContent>
-                                                    <p className="text-sm text-slate-600" dangerouslySetInnerHTML={{ __html: faq.a }} />
+                                                    <p className="text-sm text-muted-foreground" dangerouslySetInnerHTML={{ __html: faq.a }} />
                                                 </AccordionContent>
                                             </AccordionItem>
                                         ))}
@@ -161,16 +161,16 @@ const HelpPage = () => {
                     </Card>
 
                     {/* Info adicional */}
-                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-6">
+                    <div className="rounded-2xl border border-[rgba(66,84,112,0.55)] bg-[rgba(18,25,41,0.9)] p-6 shadow-[0_20px_45px_rgba(5,10,24,0.35)]">
                         <div className="flex items-start gap-4">
-                            <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                                <HelpCircle className="h-5 w-5 text-blue-600" />
+                            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-[rgba(66,165,255,0.15)]">
+                                <HelpCircle className="h-5 w-5 text-info" />
                             </div>
                             <div>
-                                <h3 className="font-bold text-slate-900 mb-1">¿No encuentras lo que buscas?</h3>
-                                <p className="text-sm text-slate-600">
+                                <h3 className="mb-1 font-bold text-foreground">¿No encuentras lo que buscas?</h3>
+                                <p className="text-sm text-muted-foreground">
                                     Nuestro equipo de soporte está disponible para ayudarte. Envíanos un correo a{' '}
-                                    <a href="mailto:team@growpals.mx" className="text-blue-600 hover:underline font-medium">
+                                    <a href="mailto:team@growpals.mx" className="font-medium text-primary-600 hover:underline">
                                         team@growpals.mx
                                     </a>
                                     {' '}y te responderemos lo antes posible.

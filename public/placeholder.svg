@@ -1,14 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
   <rect width="400" height="400" fill="#f0f4f8"/>
   <g transform="translate(200, 200)">
-    <!-- Package icon -->
     <rect x="-60" y="-40" width="120" height="80" fill="none" stroke="#cbd5e1" stroke-width="3" rx="8"/>
     <rect x="-60" y="-40" width="120" height="25" fill="#e2e8f0" rx="8"/>
     <path d="M -60 -15 L 0 -5 L 60 -15" stroke="#94a3b8" stroke-width="2" fill="none"/>
     <circle cx="0" cy="-10" r="12" fill="#3b82f6" opacity="0.8"/>
-    <text x="0" y="-6" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle" font-weight="bold">C</text>
+    <text x="0" y="-6" font-family="Inter, sans-serif" font-size="16" fill="white" text-anchor="middle" font-weight="bold">C</text>
   </g>
-  <text x="200" y="280" font-family="Inter, Arial, sans-serif" font-size="18" fill="#64748b" text-anchor="middle">
+  <text x="200" y="280" font-family="Inter, sans-serif" font-size="18" fill="#64748b" text-anchor="middle">
     Imagen no disponible
   </text>
 </svg>

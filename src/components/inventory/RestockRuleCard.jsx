@@ -10,11 +10,6 @@ import { useToast } from '@/components/ui/useToast';
 import { PauseCircle, PlayCircle, PencilLine, Trash2, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-const STATUS_BADGES = {
-  active: 'border-emerald-200 bg-emerald-50 text-emerald-700',
-  paused: 'border-amber-200 bg-amber-50 text-amber-700'
-};
-
 const useRuleCardController = (rule, projects) => {
   const { toast } = useToast();
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -32,8 +27,6 @@ const useRuleCardController = (rule, projects) => {
   } = useRestockRuleMutations({ productId: rule.product_id, projectId: rule.project_id ?? null });
 
   const projectName = rule.projects?.name || 'Regla general';
-  const statusBadge = STATUS_BADGES[rule.status ?? 'paused'];
-
   const handleSubmit = async (values) => {
     try {
       await saveRule({
@@ -93,7 +86,6 @@ const useRuleCardController = (rule, projects) => {
     handleToggleStatus,
     handleDelete,
     projectName,
-    statusBadge,
     projects: projectList
   };
 };
@@ -115,38 +107,46 @@ export const RestockRuleCard = ({ rule, projects }) => {
   );
 
   return (
-    <div className="group flex h-full flex-col rounded-3xl border border-slate-200 bg-white/95 p-4 shadow-sm transition-shadow hover:shadow-md sm:p-5">
+    <div className="group flex h-full flex-col rounded-3xl border border-border bg-card/95 p-4 shadow-sm transition-shadow hover:shadow-md dark:border-border dark:bg-card/85 sm:p-5">
       <div className="flex flex-1 flex-col gap-3">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1 space-y-1">
-            <p className="line-clamp-2 text-[15px] font-semibold leading-tight text-slate-900 sm:text-lg">
+            <p className="line-clamp-2 text-[15px] font-semibold leading-tight text-foreground sm:text-lg">
               {product.name || 'Producto sin nombre'}
             </p>
-            <p className="truncate text-sm font-medium text-slate-500" title={controller.projectName}>
+            <p className="truncate text-sm font-medium text-muted-foreground" title={controller.projectName}>
               {controller.projectName}
             </p>
           </div>
-          <Badge className={cn('border px-3 py-1 text-xs font-semibold uppercase tracking-wide', controller.statusBadge)}>
+          <Badge
+            className="border px-3 py-1 text-xs font-semibold uppercase tracking-wide"
+            style={rule.status === 'active'
+              ? { background: 'rgba(0, 200, 83, 0.16)', borderColor: 'rgba(0, 200, 83, 0.45)', color: '#66ffb2' }
+              : { background: 'rgba(255, 192, 70, 0.18)', borderColor: 'rgba(255, 192, 70, 0.45)', color: '#ffd480' }}
+          >
             {rule.status === 'active' ? 'Activa' : 'Pausada'}
           </Badge>
         </div>
 
         {!!rule.notes && (
-          <p className="line-clamp-2 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
+          <p className="line-clamp-2 rounded-2xl border border-border bg-muted/60 p-3 text-xs text-muted-foreground dark:border-border dark:bg-card/50">
             {rule.notes}
           </p>
         )}
       </div>
 
       <div className="mt-4 space-y-3">
-        <Button className="h-11 w-full rounded-2xl text-sm font-semibold" onClick={() => controller.setDialogOpen(true)}>
+      <Button className="h-11 w-full rounded-2xl text-sm font-semibold" onClick={() => controller.setDialogOpen(true)}>
           <PencilLine className="mr-2 h-4 w-4" /> Editar regla
         </Button>
 
         <div className="grid grid-cols-2 gap-2">
           <Button
-            variant="outline"
-            className="h-10 rounded-2xl text-sm font-semibold"
+            variant="ghost"
+            className="h-10 rounded-2xl text-sm font-semibold shadow-sm transition-all duration-200 hover:-translate-y-0.5"
+            style={rule.status === 'active'
+              ? { background: 'rgba(33, 46, 69, 0.65)', color: '#f1f5ff' }
+              : { background: '#00C853', color: '#06111c' }}
             onClick={controller.handleToggleStatus}
             disabled={controller.isToggling}
           >
@@ -161,26 +161,26 @@ export const RestockRuleCard = ({ rule, projects }) => {
             )}
           </Button>
           <Button
-            variant="ghost"
-            className="h-10 rounded-2xl text-sm font-semibold text-red-600 hover:bg-red-50 hover:text-red-700"
-            onClick={() => controller.setDeleteOpen(true)}
-          >
-            <span className="flex items-center justify-center gap-1">
-              <Trash2 className="h-4 w-4" /> Eliminar
-            </span>
+          variant="ghost"
+          className="h-10 rounded-2xl text-sm font-semibold text-error transition-all duration-200 hover:bg-[rgba(239,83,80,0.18)] hover:-translate-y-0.5"
+          onClick={() => controller.setDeleteOpen(true)}
+        >
+          <span className="flex items-center justify-center gap-1">
+            <Trash2 className="h-4 w-4" /> Eliminar
+          </span>
           </Button>
         </div>
 
         <Button
           variant="outline"
-          className="h-10 w-full rounded-2xl border-slate-300 text-sm font-semibold text-slate-700 hover:border-slate-400"
+          className="h-10 w-full rounded-2xl border-border text-sm font-semibold text-foreground transition-colors hover:border-primary-400 hover:text-primary-500 dark:border-border"
           onClick={() => navigate(`/producto/${rule.product_id}`)}
         >
           <ExternalLink className="mr-2 h-4 w-4" />
           Ver producto
         </Button>
 
-        <p className="text-[11px] text-slate-500">Última actualización {updatedAt}</p>
+        <p className="text-[11px] text-muted-foreground">Última actualización {updatedAt}</p>
       </div>
 
       <Dialog open={controller.isDialogOpen} onOpenChange={controller.setDialogOpen}>
@@ -216,10 +216,10 @@ export const RestockRuleCard = ({ rule, projects }) => {
 };
 
 export const EmptyRulesPlaceholder = () => (
-  <div className="flex flex-col items-center justify-center gap-3 rounded-3xl border border-dashed border-slate-300 bg-slate-50/80 py-16 px-6 text-center">
-    <PencilLine className="h-8 w-8 text-slate-400" />
-    <h3 className="text-lg font-semibold text-slate-900">Sin reglas configuradas</h3>
-    <p className="max-w-sm text-sm text-slate-600">
+  <div className="flex flex-col items-center justify-center gap-3 rounded-3xl border border-dashed border-border/80 bg-muted/60 py-16 px-6 text-center dark:border-border dark:bg-card/50">
+    <PencilLine className="h-8 w-8 text-muted-foreground" />
+    <h3 className="text-lg font-semibold text-foreground">Sin reglas configuradas</h3>
+    <p className="max-w-sm text-sm text-muted-foreground">
       Usa “Editar” desde la tarjeta de cada producto o ingresa a la ficha para crear la primera regla de reabastecimiento.
     </p>
   </div>

@@ -33,7 +33,7 @@ import { useToast } from '@/components/ui/useToast';
 // Componente de tarjeta de estadística
 const StatCard = ({ icon: Icon, title, value, subtitle, color = 'blue', trend }) => {
     const colorClasses = {
-        blue: 'from-blue-50 to-blue-100 text-blue-600',
+        blue: 'from-primary-50 to-primary-100 text-primary-600',
         green: 'from-green-50 to-green-100 text-green-600',
         amber: 'from-amber-50 to-amber-100 text-amber-600',
         purple: 'from-purple-50 to-purple-100 text-purple-600',
@@ -44,10 +44,10 @@ const StatCard = ({ icon: Icon, title, value, subtitle, color = 'blue', trend })
             <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                     <div className="flex-1">
-                        <p className="text-sm font-medium text-slate-600 mb-2">{title}</p>
-                        <p className="text-3xl font-bold text-slate-900 mb-1">{value}</p>
+                        <p className="text-sm font-medium text-muted-foreground mb-2">{title}</p>
+                        <p className="text-3xl font-bold text-foreground mb-1">{value}</p>
                         {subtitle && (
-                            <p className="text-xs text-slate-500">{subtitle}</p>
+                            <p className="text-xs text-muted-foreground/80">{subtitle}</p>
                         )}
                     </div>
                     <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${colorClasses[color]} flex items-center justify-center shadow-md`}>
@@ -70,10 +70,10 @@ const SimpleBarChart = ({ data, title, subtitle, dataKey, nameKey }) => {
             <Card className="border-2">
                 <CardHeader>
                     <CardTitle>{title}</CardTitle>
-                    {subtitle && <p className="text-sm text-slate-600">{subtitle}</p>}
+                    {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
                 </CardHeader>
                 <CardContent className="flex items-center justify-center py-12">
-                    <p className="text-slate-500">No hay datos disponibles</p>
+                    <p className="text-muted-foreground/80">No hay datos disponibles</p>
                 </CardContent>
             </Card>
         );
@@ -85,7 +85,7 @@ const SimpleBarChart = ({ data, title, subtitle, dataKey, nameKey }) => {
         <Card className="border-2">
             <CardHeader>
                 <CardTitle>{title}</CardTitle>
-                {subtitle && <p className="text-sm text-slate-600 mt-1">{subtitle}</p>}
+                {subtitle && <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>}
             </CardHeader>
             <CardContent>
                 <div className="space-y-5">
@@ -96,10 +96,10 @@ const SimpleBarChart = ({ data, title, subtitle, dataKey, nameKey }) => {
                         return (
                             <div key={index} className="space-y-3">
                                 <div className="flex items-baseline justify-between text-sm">
-                                    <span className="font-medium text-slate-700 leading-tight">{item[nameKey]}</span>
-                                    <span className="font-semibold text-slate-900">{value}</span>
+                                    <span className="font-medium text-foreground/90 leading-tight">{item[nameKey]}</span>
+                                    <span className="font-semibold text-foreground">{value}</span>
                                 </div>
-                                <div className="w-full h-3.5 rounded-full bg-slate-100/80">
+                                <div className="w-full h-3.5 rounded-full bg-muted/80">
                                     <div
                                         className="h-full rounded-full transition-all duration-500"
                                         style={{ width: `${percentage}%`, background: BAR_GRADIENT }}
@@ -123,7 +123,7 @@ const MonthlyTrendChart = ({ data }) => {
                     <CardTitle>Tendencia Mensual</CardTitle>
                 </CardHeader>
                 <CardContent className="flex items-center justify-center py-12">
-                    <p className="text-slate-500">No hay datos disponibles</p>
+                    <p className="text-muted-foreground/80">No hay datos disponibles</p>
                 </CardContent>
             </Card>
         );
@@ -137,21 +137,21 @@ const MonthlyTrendChart = ({ data }) => {
         <Card className="border-2">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5 text-blue-600" />
+                    <TrendingUp className="h-5 w-5 text-primary-600" />
                     Tendencia de Requisiciones (Últimos 6 Meses)
                 </CardTitle>
-                <p className="text-sm text-slate-600 mt-1">Montos en MXN</p>
+                <p className="text-sm text-muted-foreground mt-1">Montos en MXN</p>
             </CardHeader>
             <CardContent>
                 <div className="space-y-6">
                     <div className="flex justify-end gap-4">
                         <div className="flex items-center gap-2">
                             <div className="h-3 w-3 rounded-full" style={{ background: APPROVED_GRADIENT }} />
-                            <span className="text-xs font-medium text-slate-600">Aprobadas</span>
+                            <span className="text-xs font-medium text-muted-foreground">Aprobadas</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="h-3 w-3 rounded-full" style={{ background: PENDING_GRADIENT }} />
-                            <span className="text-xs font-medium text-slate-600">Pendientes</span>
+                            <span className="text-xs font-medium text-muted-foreground">Pendientes</span>
                         </div>
                     </div>
 
@@ -165,12 +165,12 @@ const MonthlyTrendChart = ({ data }) => {
                             return (
                                 <div key={index} className="space-y-2">
                                     <div className="flex items-center justify-between text-sm">
-                                        <span className="font-bold text-slate-900 w-16">{item.mes}</span>
+                                        <span className="font-bold text-foreground w-16">{item.mes}</span>
                                         <div className="flex gap-4 text-xs">
-                                            <span className="text-slate-700 font-semibold">
+                                            <span className="text-foreground/90 font-semibold">
                                                 ${approvedValue.toLocaleString('es-MX')}
                                             </span>
-                                            <span className="text-slate-600 font-semibold">
+                                            <span className="text-muted-foreground font-semibold">
                                                 ${pendingValue.toLocaleString('es-MX')}
                                             </span>
                                         </div>
@@ -216,7 +216,7 @@ const SimplePieChart = ({ data }) => {
                     <CardTitle>Requisiciones por Estado</CardTitle>
                 </CardHeader>
                 <CardContent className="flex items-center justify-center py-12">
-                    <p className="text-slate-500">No hay datos disponibles</p>
+                    <p className="text-muted-foreground/80">No hay datos disponibles</p>
                 </CardContent>
             </Card>
         );
@@ -228,7 +228,7 @@ const SimplePieChart = ({ data }) => {
         <Card className="border-2">
             <CardHeader>
                 <CardTitle>Distribución de Requisiciones</CardTitle>
-                <p className="text-sm text-slate-600 mt-1">Total: {total} requisiciones</p>
+                <p className="text-sm text-muted-foreground mt-1">Total: {total} requisiciones</p>
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
@@ -243,16 +243,16 @@ const SimplePieChart = ({ data }) => {
                                             className="w-4 h-4 rounded-full"
                                             style={{ backgroundColor: item.color }}
                                         />
-                                        <span className="text-sm font-medium text-slate-700">{item.name}</span>
+                                        <span className="text-sm font-medium text-foreground/90">{item.name}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <span className="text-sm font-bold text-slate-900">{item.value}</span>
+                                        <span className="text-sm font-bold text-foreground">{item.value}</span>
                                         <Badge variant="outline" className="text-xs">
                                             {percentage}%
                                         </Badge>
                                     </div>
                                 </div>
-                                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
                                     <div
                                         className="h-full rounded-full transition-all duration-500"
                                         style={{
@@ -392,16 +392,16 @@ const ReportsPage = () => {
             <PageContainer>
                 <div className="mx-auto max-w-7xl space-y-6 sm:space-y-8">
                     {/* Header */}
-                    <header className="flex flex-col items-start gap-5 border-b border-slate-200 pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:pb-6">
+                    <header className="flex flex-col items-start gap-5 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:pb-6">
                         <div className="flex items-center gap-4 sm:gap-5">
-                            <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-md">
-                                <BarChart2 className="h-7 w-7 text-blue-600" aria-hidden="true" />
+                            <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center shadow-md">
+                                <BarChart2 className="h-7 w-7 text-primary-600" aria-hidden="true" />
                             </div>
                             <div>
-                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-slate-900 mb-1">
+                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-1">
                                     Reportes y <span className="bg-gradient-primary bg-clip-text text-transparent">Analíticas</span>
                                 </h1>
-                                <p className="text-sm text-slate-600 sm:text-base">
+                                <p className="text-sm text-muted-foreground sm:text-base">
                                     Visualiza el desempeño y tendencias de tu organización
                                 </p>
                             </div>
@@ -417,7 +417,7 @@ const ReportsPage = () => {
                             <Button
                                 onClick={exportToPDF}
                                 variant="outline"
-                                className="w-full border-2 hover:bg-slate-50 sm:w-auto"
+                                className="w-full border-2 hover:bg-muted/70 sm:w-auto"
                             >
                                 <Download className="h-4 w-4 mr-2" />
                                 Exportar PDF
@@ -485,14 +485,14 @@ const ReportsPage = () => {
                     />
 
                     {/* Info Footer */}
-                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-6">
+                    <div className="rounded-2xl border border-[rgba(66,84,112,0.55)] bg-[rgba(18,25,41,0.92)] p-6 shadow-[0_20px_45px_rgba(5,10,24,0.35)]">
                         <div className="flex items-start gap-4">
-                            <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                                <AlertCircle className="h-5 w-5 text-blue-600" />
+                            <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-info/15 flex items-center justify-center">
+                                <AlertCircle className="h-5 w-5 text-info" />
                             </div>
                             <div>
-                                <h3 className="font-bold text-slate-900 mb-1">Actualizaciones automáticas</h3>
-                                <p className="text-sm text-slate-600">
+                                <h3 className="font-bold text-foreground mb-1">Actualizaciones automáticas</h3>
+                                <p className="text-sm text-muted-foreground">
                                     Los datos en esta página se actualizan automáticamente cada 5 minutos.
                                     Los reportes reflejan únicamente los datos de tu organización gracias a nuestro sistema de seguridad RLS (Row Level Security).
                                 </p>

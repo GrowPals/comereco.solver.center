@@ -130,15 +130,15 @@ const RequisitionDetail = () => {
     const { internal_folio, created_at, business_status, created_by, creator, items, total_amount, comments, project, project_id } = requisition;
 
     const statusConfig = {
-        draft: { text: 'Borrador', variant: 'muted', accent: 'bg-slate-400' },
-        submitted: { text: 'Enviada', variant: 'warning', accent: 'bg-amber-500' },
+        draft: { text: 'Borrador', variant: 'muted', accent: 'bg-muted' },
+        submitted: { text: 'Enviada', variant: 'warning', accent: 'bg-gradient-warning' },
         approved: { text: 'Aprobada', variant: 'success', accent: 'bg-gradient-accent' },
-        rejected: { text: 'Rechazada', variant: 'danger', accent: 'bg-red-500' },
-        ordered: { text: 'Ordenada', variant: 'info', accent: 'bg-gradient-primary' },
-        cancelled: { text: 'Cancelada', variant: 'muted', accent: 'bg-slate-500' },
+        rejected: { text: 'Rechazada', variant: 'danger', accent: 'bg-gradient-error' },
+        ordered: { text: 'Ordenada', variant: 'info', accent: 'bg-gradient-info' },
+        cancelled: { text: 'Cancelada', variant: 'muted', accent: 'bg-muted' },
     };
 
-    const currentStatus = statusConfig[business_status] || { text: business_status, variant: 'muted', accent: 'bg-slate-400' };
+    const currentStatus = statusConfig[business_status] || { text: business_status, variant: 'muted', accent: 'bg-muted' };
 
     const handleNavigateToProject = useCallback(() => {
         if (project_id) {
@@ -152,7 +152,7 @@ const RequisitionDetail = () => {
             <PageContainer>
                 <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
                     {/* Header with accent bar */}
-                    <header className="relative bg-white rounded-2xl border-2 border-slate-200 p-6 sm:p-8 shadow-lg overflow-hidden">
+                    <header className="relative rounded-2xl border-2 border-border bg-card p-6 shadow-lg overflow-hidden sm:p-8">
                         {/* Top accent bar based on status */}
                         <div className={`absolute top-0 left-0 right-0 h-1.5 ${currentStatus.accent}`} />
 
@@ -168,21 +168,21 @@ const RequisitionDetail = () => {
                                     <ArrowLeft className="h-5 w-5" aria-hidden="true" />
                                 </Button>
                                 <div className="flex-1">
-                                    <h1 className="text-4xl font-bold tracking-tight text-slate-900 mb-2">
+                                    <h1 className="text-4xl font-bold tracking-tight text-foreground mb-2">
                                         Requisición <span className="bg-gradient-primary bg-clip-text text-transparent">#{internal_folio}</span>
                                     </h1>
-                                    <p className="text-base text-slate-600 flex items-center gap-2">
-                                        Creada por <span className="font-semibold text-slate-900">{creator?.full_name || 'Desconocido'}</span> el {formattedDate}
+                                    <p className="text-base text-muted-foreground flex items-center gap-2">
+                                        Creada por <span className="font-semibold text-foreground">{creator?.full_name || 'Desconocido'}</span> el {formattedDate}
                                     </p>
                                     {project && (
                                         <div className="flex items-center gap-2 mt-2">
-                                            <FolderOpen className="h-4 w-4 text-slate-500" />
-                                            <span className="text-sm text-slate-600">Proyecto:</span>
+                                            <FolderOpen className="h-4 w-4 text-muted-foreground/80" />
+                                            <span className="text-sm text-muted-foreground">Proyecto:</span>
                                             <Button
                                                 variant="link"
                                                 size="sm"
                                                 onClick={handleNavigateToProject}
-                                                className="h-auto p-0 text-blue-600 hover:text-blue-700 font-semibold"
+                                                className="h-auto p-0 text-primary-600 hover:text-primary-700 font-semibold"
                                             >
                                                 {project.name}
                                             </Button>
@@ -202,10 +202,10 @@ const RequisitionDetail = () => {
                             <Card className="shadow-md border-2">
                                 <CardHeader className="pb-4">
                                     <div className="flex items-center gap-3">
-                                        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm">
-                                            <FileText className="h-6 w-6 text-blue-600" aria-hidden="true" />
+                                        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center shadow-sm">
+                                            <FileText className="h-6 w-6 text-primary-600" aria-hidden="true" />
                                         </div>
-                                        <CardTitle className="text-2xl font-bold text-slate-900">Ítems de la Requisición</CardTitle>
+                                        <CardTitle className="text-2xl font-bold text-foreground">Ítems de la Requisición</CardTitle>
                                     </div>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
@@ -216,22 +216,22 @@ const RequisitionDetail = () => {
                                             return (
                                                 <div
                                                     key={uniqueKey}
-                                                    className="group relative bg-slate-50 rounded-xl p-4 border-2 border-slate-200 hover:border-blue-300 hover:shadow-md transition-all duration-200"
+                                                    className="group relative bg-muted/80 rounded-xl p-4 border-2 border-border hover:border-primary-300 hover:shadow-md transition-all duration-200"
                                                 >
                                                     <div className="flex flex-col sm:flex-row justify-between gap-4">
                                                         <div className="flex-1">
-                                                            <p className="font-bold text-lg text-slate-900 mb-1">
+                                                            <p className="font-bold text-lg text-foreground mb-1">
                                                                 {item.product?.name || 'Producto no encontrado'}
                                                             </p>
-                                                            <p className="text-sm font-medium text-slate-600">
-                                                                SKU: <span className="font-mono bg-white px-2 py-0.5 rounded border border-slate-200">{item.product?.sku || 'N/A'}</span>
+                                                            <p className="text-sm font-medium text-muted-foreground">
+                                                                SKU: <span className="font-mono rounded border border-border bg-muted/60 px-2 py-0.5">{item.product?.sku || 'N/A'}</span>
                                                             </p>
                                                         </div>
                                                         <div className="text-right sm:min-w-[180px]">
-                                                            <p className="text-base font-semibold text-slate-700 mb-1">
+                                                            <p className="text-base font-semibold text-foreground/90 mb-1">
                                                                 {item.quantity} x ${(Number(item.unit_price) || 0).toFixed(2)}
                                                             </p>
-                                                            <p className="text-xl font-bold text-slate-900">
+                                                            <p className="text-xl font-bold text-foreground">
                                                                 ${(Number(item.subtotal) || 0).toFixed(2)}
                                                             </p>
                                                         </div>
@@ -243,9 +243,9 @@ const RequisitionDetail = () => {
 
                                     {/* Total Section */}
                                     <Separator className="my-6" />
-                                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border-2 border-blue-200">
+                                    <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl p-6 border-2 border-primary-200">
                                         <div className="flex justify-between items-center">
-                                            <span className="text-xl font-bold text-slate-900">Total de Requisición</span>
+                                            <span className="text-xl font-bold text-foreground">Total de Requisición</span>
                                             <span className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
                                                 ${(Number(total_amount) || 0).toFixed(2)}
                                             </span>
@@ -258,15 +258,15 @@ const RequisitionDetail = () => {
                                 <Card className="shadow-md border-2">
                                     <CardHeader className="pb-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm">
-                                                <MessageSquare className="h-6 w-6 text-blue-600" aria-hidden="true" />
+                                            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center shadow-sm">
+                                                <MessageSquare className="h-6 w-6 text-primary-600" aria-hidden="true" />
                                             </div>
-                                            <CardTitle className="text-2xl font-bold text-slate-900">Comentarios</CardTitle>
+                                            <CardTitle className="text-2xl font-bold text-foreground">Comentarios</CardTitle>
                                         </div>
                                     </CardHeader>
                                     <CardContent>
-                                        <div className="bg-slate-50 rounded-xl p-5 border-2 border-slate-200">
-                                            <p className="text-base text-slate-700 whitespace-pre-wrap leading-relaxed">{comments}</p>
+                                        <div className="bg-muted/80 rounded-xl p-5 border-2 border-border">
+                                            <p className="text-base text-foreground/90 whitespace-pre-wrap leading-relaxed">{comments}</p>
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -277,7 +277,7 @@ const RequisitionDetail = () => {
                         <div className="lg:col-span-1">
                             <Card className="shadow-md border-2 sticky top-8">
                                 <CardHeader className="pb-4">
-                                    <CardTitle className="text-2xl font-bold text-slate-900">Acciones</CardTitle>
+                                    <CardTitle className="text-2xl font-bold text-foreground">Acciones</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     {isOwner && business_status === 'draft' && (

@@ -4,21 +4,21 @@ import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const badgeVariants = cva(
-  'inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+  'inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-200/40 focus:ring-offset-2 ring-offset-background',
   {
     variants: {
       variant: {
-        default: 'border-blue-200 bg-gradient-to-r from-blue-100 to-blue-50 text-blue-700 shadow-sm',
-        secondary: 'border-slate-200 bg-slate-100 text-slate-700 shadow-sm',
+        default: 'border-primary-200 bg-gradient-to-r from-primary-100 to-primary-50 text-primary-700 shadow-sm dark:border-primary-500/40 dark:from-primary-500/20 dark:to-primary-500/5 dark:text-primary-200',
+        secondary: 'border-border bg-muted text-foreground/90 shadow-sm dark:border-border dark:bg-card/80 dark:text-foreground/80',
 
-        success: 'bg-gradient-to-r from-emerald-100 to-emerald-50 text-emerald-700 border-emerald-200 shadow-sm',
-        warning: 'bg-gradient-to-r from-amber-100 to-amber-50 text-amber-700 border-amber-200 shadow-sm',
-        danger: 'bg-gradient-to-r from-red-100 to-red-50 text-red-700 border-red-200 shadow-sm',
-        destructive: 'bg-gradient-to-r from-red-100 to-red-50 text-red-700 border-red-200 shadow-sm',
-        info: 'bg-gradient-to-r from-blue-100 to-blue-50 text-blue-700 border-blue-200 shadow-sm',
+        success: 'bg-gradient-to-r from-emerald-100 to-emerald-50 text-emerald-700 border-emerald-200 shadow-sm dark:border-emerald-500/40 dark:from-emerald-500/20 dark:to-emerald-500/5 dark:text-emerald-200',
+        warning: 'bg-gradient-to-r from-amber-100 to-amber-50 text-amber-700 border-amber-200 shadow-sm dark:border-amber-500/45 dark:from-amber-500/25 dark:to-amber-500/5 dark:text-amber-200',
+        danger: 'bg-gradient-to-r from-red-100 to-red-50 text-red-700 border-red-200 shadow-sm dark:border-red-500/45 dark:from-red-500/20 dark:to-red-500/5 dark:text-red-200',
+        destructive: 'bg-gradient-to-r from-red-100 to-red-50 text-red-700 border-red-200 shadow-sm dark:border-red-500/45 dark:from-red-500/20 dark:to-red-500/5 dark:text-red-200',
+        info: 'bg-gradient-to-r from-info-light to-info-light/70 text-info-dark border-info-light/70 shadow-sm dark:border-info/40 dark:from-info/25 dark:to-info/10 dark:text-info-light',
 
-        muted: 'bg-slate-100 text-slate-600 border-slate-200',
-        outline: 'text-slate-700 border-slate-300 bg-white hover:bg-slate-50',
+        muted: 'bg-muted text-muted-foreground border-border dark:border-border dark:bg-card/70 dark:text-muted-foreground',
+        outline: 'text-foreground/90 border-border/80 bg-background hover:bg-muted/60 dark:text-foreground/80 dark:border-border dark:bg-card dark:hover:bg-muted/40/80',
       },
     },
     defaultVariants: {

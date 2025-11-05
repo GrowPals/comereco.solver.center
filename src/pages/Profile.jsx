@@ -17,11 +17,11 @@ import PageContainer from '@/components/layout/PageContainer';
 
 const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name, editable = false, placeholder }) => (
   <div className="flex items-center gap-4 py-4">
-    <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm">
-      <Icon className="h-5 w-5 text-blue-600" aria-hidden="true" />
+    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm dark:from-primary-500/15 dark:to-primary-600/10">
+      <Icon className="h-5 w-5 text-primary-500" aria-hidden="true" />
     </div>
     <div className="flex-1">
-      <p className="text-sm text-slate-600 font-medium mb-1">{label}</p>
+      <p className="mb-1 text-sm font-medium text-muted-foreground">{label}</p>
       {isEditing && editable ? (
         <Input
           name={name}
@@ -31,7 +31,7 @@ const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name, e
           className="mt-1 h-9 rounded-xl"
         />
       ) : (
-        <p className="font-bold text-slate-900">{value || placeholder || 'No especificado'}</p>
+        <p className="font-bold text-foreground">{value || placeholder || 'No especificado'}</p>
       )}
     </div>
   </div>
@@ -161,17 +161,17 @@ const ProfilePage = () => {
 
       <PageContainer>
       <div className="mx-auto w-full max-w-5xl space-y-8">
-        <Card className="overflow-hidden border-2 border-slate-200 shadow-lg rounded-2xl">
-          <div className="bg-gradient-to-br from-blue-50 via-blue-100 to-blue-50 h-32" />
+        <Card className="overflow-hidden rounded-2xl border border-border shadow-lg dark:border-border">
+          <div className="h-32 bg-gradient-to-br from-primary-50 via-primary-100 to-primary-50 dark:from-primary-500/15 dark:via-primary-600/15 dark:to-primary-500/15" />
           <CardContent className="p-8 pt-0">
-            <div className="flex flex-col sm:flex-row items-start sm:items-end -mt-16 gap-6">
-              <Avatar className="h-32 w-32 border-4 border-white shadow-lg">
+            <div className="flex -mt-16 flex-col items-start gap-6 sm:flex-row sm:items-end">
+              <Avatar className="h-32 w-32 border-4 border-white shadow-lg dark:border-border">
                 <AvatarImage src={user.avatar_url} alt={full_name} />
                 <AvatarFallback className="text-4xl font-bold text-white">{fallback}</AvatarFallback>
               </Avatar>
               <div className="flex-1 pb-2">
-                <h2 className="text-2xl sm:text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">{profileData.full_name}</h2>
-                <p className="text-base sm:text-lg text-slate-600 mt-1">{company?.name || 'Compañía no asignada'}</p>
+                <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-2xl md:text-3xl">{profileData.full_name}</h2>
+                <p className="mt-1 text-base text-muted-foreground sm:text-lg">{company?.name || 'Compañía no asignada'}</p>
               </div>
               {isEditing ? (
                 <div className="flex gap-2">
@@ -234,42 +234,42 @@ const ProfilePage = () => {
           </CardContent>
         </Card>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Card className="border-2 border-slate-200 shadow-lg rounded-2xl">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <Card className="rounded-2xl border border-border shadow-lg dark:border-border">
             <CardHeader className="pb-4">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm">
-                  <User className="h-5 w-5 text-blue-600" aria-hidden="true" />
+              <div className="mb-2 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm dark:from-primary-500/15 dark:to-primary-600/10">
+                  <User className="h-5 w-5 text-primary-500" aria-hidden="true" />
                 </div>
-                <CardTitle className="text-2xl font-bold text-slate-900">Estadísticas</CardTitle>
+                <CardTitle className="text-2xl font-bold text-foreground">Estadísticas</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="space-y-5">
               {loading ? (
                 <Skeleton className="h-16 w-full rounded-xl" />
               ) : (
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl border-2 border-blue-200">
-                  <p className="text-sm text-slate-600 font-medium mb-1">Requisiciones Creadas</p>
-                  <p className="text-3xl font-bold text-slate-900">{stats.created}</p>
+                <div className="rounded-xl border border-primary-200 bg-gradient-to-br from-primary-50 to-primary-100 p-4 dark:border-primary-500/30 dark:from-primary-500/15 dark:to-primary-600/15">
+                  <p className="mb-1 text-sm font-medium text-muted-foreground">Requisiciones Creadas</p>
+                  <p className="text-3xl font-bold text-foreground">{stats.created}</p>
                 </div>
               )}
               {loading ? (
                 <Skeleton className="h-16 w-full rounded-xl" />
               ) : (
-                <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 p-4 rounded-xl border-2 border-emerald-200">
-                  <p className="text-sm text-slate-600 font-medium mb-1">Requisiciones Aprobadas</p>
-                  <p className="text-3xl font-bold text-slate-900">{stats.approved}</p>
+                <div className="rounded-xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-emerald-100 p-4 dark:border-emerald-500/30 dark:from-emerald-500/15 dark:to-emerald-600/15">
+                  <p className="mb-1 text-sm font-medium text-muted-foreground">Requisiciones Aprobadas</p>
+                  <p className="text-3xl font-bold text-foreground">{stats.approved}</p>
                 </div>
               )}
             </CardContent>
           </Card>
-          <Card className="lg:col-span-2 border-2 border-slate-200 shadow-lg rounded-2xl">
+          <Card className="rounded-2xl border border-border shadow-lg lg:col-span-2 dark:border-border">
             <CardHeader className="pb-4">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm">
-                  <User className="h-5 w-5 text-blue-600" aria-hidden="true" />
+              <div className="mb-2 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm dark:from-primary-500/15 dark:to-primary-600/10">
+                  <User className="h-5 w-5 text-primary-500" aria-hidden="true" />
                 </div>
-                <CardTitle className="text-2xl font-bold text-slate-900">Actividad Reciente</CardTitle>
+                <CardTitle className="text-2xl font-bold text-foreground">Actividad Reciente</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -278,11 +278,11 @@ const ProfilePage = () => {
               ) : recentRequisitions.length > 0 ? (
                 recentRequisitions.map(req => <RequisitionCard key={req.id} requisition={req} />)
               ) : (
-                <div className="text-center py-12">
-                  <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center mx-auto mb-4">
-                    <User className="h-8 w-8 text-slate-400" aria-hidden="true" />
+                <div className="py-12 text-center">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-muted to-muted/70 dark:from-card dark:to-card/80">
+                    <User className="h-8 w-8 text-muted-foreground" aria-hidden="true" />
                   </div>
-                  <p className="text-slate-600 font-medium">No tienes actividad reciente</p>
+                  <p className="font-medium text-muted-foreground">No tienes actividad reciente</p>
                 </div>
               )}
             </CardContent>

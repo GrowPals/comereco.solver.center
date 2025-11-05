@@ -11,13 +11,34 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
 const statusStyles = {
-  draft: { badge: 'border-slate-300 bg-slate-50 text-slate-700', accent: 'bg-slate-400' },
-  submitted: { badge: 'border-amber-300 bg-amber-50 text-amber-700', accent: 'bg-amber-500' },
-  approved: { badge: 'border-emerald-300 bg-emerald-50 text-emerald-700', accent: 'bg-gradient-accent' },
-  rejected: { badge: 'border-red-300 bg-red-50 text-red-700', accent: 'bg-red-500' },
-  ordered: { badge: 'border-blue-300 bg-blue-50 text-blue-700', accent: 'bg-gradient-primary' },
-  cancelled: { badge: 'border-slate-300 bg-slate-50 text-slate-600', accent: 'bg-slate-400' },
-  default: { badge: 'border-slate-300 bg-slate-50 text-slate-600', accent: 'bg-slate-400' }
+  draft: {
+    badge: 'border-border bg-muted/70 text-muted-foreground dark:border-border dark:bg-card/70 dark:text-foreground/80',
+    accent: 'bg-muted/80 dark:bg-muted/70',
+  },
+  submitted: {
+    badge: 'border-amber-200 bg-amber-100/80 text-amber-700 dark:border-amber-400/60 dark:bg-amber-500/20 dark:text-amber-200',
+    accent: 'bg-amber-500',
+  },
+  approved: {
+    badge: 'border-emerald-200 bg-emerald-100/80 text-emerald-700 dark:border-emerald-400/60 dark:bg-emerald-500/20 dark:text-emerald-200',
+    accent: 'bg-gradient-accent',
+  },
+  rejected: {
+    badge: 'border-red-200 bg-red-100/80 text-red-700 dark:border-red-400/60 dark:bg-red-500/20 dark:text-red-200',
+    accent: 'bg-red-500',
+  },
+  ordered: {
+    badge: 'border-primary-200 bg-primary-50/80 text-primary-700 dark:border-primary-400/60 dark:bg-primary-500/20 dark:text-primary-200',
+    accent: 'bg-gradient-primary',
+  },
+  cancelled: {
+    badge: 'border-[rgba(239,83,80,0.4)] bg-[rgba(239,83,80,0.18)] text-error dark:border-[rgba(239,83,80,0.35)] dark:bg-[rgba(239,83,80,0.15)] dark:text-error',
+    accent: 'bg-[rgba(239,83,80,0.4)]',
+  },
+  default: {
+    badge: 'border-border bg-muted/70 text-muted-foreground dark:border-border dark:bg-card/70 dark:text-foreground/80',
+    accent: 'bg-muted/80 dark:bg-muted/70',
+  },
 };
 
 const statusTranslations = {
@@ -91,12 +112,12 @@ const RequisitionCard = memo(({ requisition }) => {
           <div className="flex flex-col md:flex-row md:items-center gap-6">
             {/* Folio Section */}
             <div className="flex items-center gap-4 md:min-w-[200px]">
-              <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100">
-                <Hash className="w-7 h-7 text-blue-600" aria-hidden="true" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-500/15 dark:to-primary-600/10">
+                <Hash className="h-7 w-7 text-primary-600" aria-hidden="true" />
               </div>
               <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Folio</p>
-                <p className="font-bold text-xl text-slate-900">{requisition.internal_folio || 'N/A'}</p>
+                <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Folio</p>
+                <p className="text-xl font-bold text-foreground">{requisition.internal_folio || 'N/A'}</p>
               </div>
             </div>
 
@@ -104,34 +125,34 @@ const RequisitionCard = memo(({ requisition }) => {
             <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-4">
               {/* Solicitante */}
               <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-slate-50">
-                  <User className="w-5 h-5 text-slate-600" aria-hidden="true" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted/60 dark:bg-card/70">
+                  <User className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500 font-medium mb-0.5">Solicitante</p>
-                  <p className="font-semibold text-sm text-slate-900 truncate">{requisition.creator?.full_name || 'No disponible'}</p>
+                  <p className="mb-0.5 text-xs font-medium text-muted-foreground">Solicitante</p>
+                  <p className="truncate text-sm font-semibold text-foreground">{requisition.creator?.full_name || 'No disponible'}</p>
                 </div>
               </div>
 
               {/* Fecha */}
               <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-slate-50">
-                  <Calendar className="w-5 h-5 text-slate-600" aria-hidden="true" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted/60 dark:bg-card/70">
+                  <Calendar className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500 font-medium mb-0.5">Fecha</p>
-                  <p className="font-semibold text-sm text-slate-900">{formattedDate}</p>
+                  <p className="mb-0.5 text-xs font-medium text-muted-foreground">Fecha</p>
+                  <p className="text-sm font-semibold text-foreground">{formattedDate}</p>
                 </div>
               </div>
 
               {/* Monto */}
               <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-emerald-50">
-                  <DollarSign className="w-5 h-5 text-emerald-600" aria-hidden="true" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-success/20 dark:bg-success/25">
+                  <DollarSign className="h-5 w-5 text-success dark:text-success-light" aria-hidden="true" />
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500 font-medium mb-0.5">Monto Total</p>
-                  <p className="text-lg font-bold text-slate-900 tracking-tight">{formattedAmount}</p>
+                  <p className="mb-0.5 text-xs font-medium text-muted-foreground">Monto Total</p>
+                  <p className="text-lg font-bold tracking-tight text-foreground">{formattedAmount}</p>
                 </div>
               </div>
             </div>
@@ -148,7 +169,7 @@ const RequisitionCard = memo(({ requisition }) => {
                   e.stopPropagation();
                   handleCardClick();
                 }}
-                className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-xl group-hover:translate-x-1 transition-transform duration-200"
+                className="rounded-xl text-primary-600 transition-transform duration-200 hover:bg-primary/10 hover:text-primary-700 group-hover:translate-x-1 dark:hover:bg-primary/20"
                 aria-label={`Ver detalles de requisición ${requisition.internal_folio}`}
               >
                 Ver Detalle <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />

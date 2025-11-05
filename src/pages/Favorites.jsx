@@ -60,18 +60,18 @@ const FavoritesPage = () => {
                 <PageContainer>
                     <div className="mx-auto max-w-7xl space-y-6 sm:space-y-8">
                         {/* Header Skeleton */}
-                        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-slate-200">
+                        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-border">
                             <div className="flex items-center gap-4">
-                                <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100 flex items-center justify-center shadow-md">
+                                <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-warning/12 to-warning/5 flex items-center justify-center shadow-md dark:from-warning/30 dark:to-warning/10">
                                     <Star className="h-7 w-7 text-amber-600" aria-hidden="true" />
                                 </div>
                                 <div>
-                                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-slate-900 mb-1">
+                                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-1">
                                         Mis <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">Favoritos</span>
                                     </h1>
                                     <div className="flex items-center gap-2">
-                                        <Loader2 className="h-4 w-4 animate-spin text-slate-400" />
-                                        <p className="text-base sm:text-lg text-slate-600">Cargando tus productos...</p>
+                                        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground/70" />
+                                        <p className="text-base sm:text-lg text-muted-foreground">Cargando tus productos...</p>
                                     </div>
                                 </div>
                             </div>
@@ -95,7 +95,7 @@ const FavoritesPage = () => {
             <>
                 <Helmet><title>{`Mis Favoritos - ComerECO`}</title></Helmet>
                 <PageContainer className="flex items-center justify-center">
-                    <div className="bg-white rounded-2xl shadow-lg p-12 max-w-md border-2 border-red-100">
+                    <div className="bg-card rounded-2xl shadow-lg p-12 max-w-md border-2 border-error/30">
                         <EmptyState
                             icon={AlertCircle}
                             title="Error al Cargar Favoritos"
@@ -118,7 +118,7 @@ const FavoritesPage = () => {
             <>
                 <Helmet><title>Mis Favoritos - ComerECO</title></Helmet>
                 <PageContainer className="flex items-center justify-center">
-                    <div className="bg-white rounded-2xl shadow-lg p-12 max-w-md border-2 border-slate-200">
+                    <div className="bg-card rounded-2xl shadow-lg p-12 max-w-md border-2 border-border">
                         <EmptyState
                             icon={Star}
                             title="Aún no tienes favoritos"
@@ -143,16 +143,16 @@ const FavoritesPage = () => {
             <PageContainer className="pb-12">
                 <div className="mx-auto max-w-7xl space-y-6 sm:space-y-8">
                     {/* Header */}
-                    <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-slate-200">
+                    <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-border">
                         <div className="flex items-center gap-4">
-                            <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100 flex items-center justify-center shadow-md">
+                            <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-warning/12 to-warning/5 flex items-center justify-center shadow-md dark:from-warning/30 dark:to-warning/10">
                                 <Star className="h-7 w-7 text-amber-600 fill-amber-600" aria-hidden="true" />
                             </div>
                             <div>
-                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-slate-900 mb-1">
+                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-1">
                                     Mis <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">Favoritos</span>
                                 </h1>
-                                <p className="text-base sm:text-lg text-slate-600">
+                                <p className="text-base sm:text-lg text-muted-foreground">
                                     {favoriteCount} {favoriteCount === 1 ? 'producto guardado' : 'productos guardados'}
                                 </p>
                             </div>
@@ -169,14 +169,14 @@ const FavoritesPage = () => {
                     </header>
 
                     {/* Info Card */}
-                    <div className="hidden bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-2xl p-6 md:block">
+                    <div className="hidden rounded-2xl border-2 border-warning/30 bg-gradient-to-r from-warning/10 to-warning/5 p-6 md:block">
                         <div className="flex items-start gap-4">
                             <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
                                 <Star className="h-5 w-5 text-amber-600 fill-amber-600" />
                             </div>
                             <div>
-                                <h3 className="font-bold text-slate-900 mb-1">Tus productos favoritos</h3>
-                                <p className="text-sm text-slate-600">
+                                <h3 className="font-bold text-foreground mb-1">Tus productos favoritos</h3>
+                                <p className="text-sm text-muted-foreground">
                                     Estos son los productos que has marcado como favoritos. Puedes agregarlos rápidamente a tu carrito o quitarlos de favoritos en cualquier momento.
                                 </p>
                             </div>
@@ -191,17 +191,17 @@ const FavoritesPage = () => {
                     </div>
 
                     {/* Footer CTA */}
-                    <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-md sm:p-8">
-                        <h3 className="text-xl font-bold text-slate-900 mb-2">
+                    <div className="rounded-2xl border border-border bg-card p-6 text-center shadow-md sm:p-8">
+                        <h3 className="text-xl font-bold text-foreground mb-2">
                             ¿Buscas más productos?
                         </h3>
-                        <p className="mx-auto mb-5 max-w-md text-sm text-slate-600 sm:mb-6 sm:text-base">
+                        <p className="mx-auto mb-5 max-w-md text-sm text-muted-foreground sm:mb-6 sm:text-base">
                             Explora nuestro catálogo completo y encuentra exactamente lo que necesitas para tu proyecto.
                         </p>
                         <Button
                             onClick={() => navigate('/catalog')}
                             size="lg"
-                            className="shadow-lg hover:shadow-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+                            className="shadow-lg hover:shadow-xl bg-gradient-to-r from-primary-500 to-primary-700 hover:from-primary-600 hover:to-primary-800"
                         >
                             <ShoppingBag className="mr-2 h-5 w-5" />
                             Ver Catálogo Completo

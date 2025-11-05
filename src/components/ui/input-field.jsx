@@ -40,7 +40,7 @@ const InputField = React.forwardRef(({
         </p>
       )}
       {helperText && !error && (
-        <p id={`${inputId}-helper`} className="text-sm text-gray-500 mt-1.5">
+        <p id={`${inputId}-helper`} className="text-sm text-muted-foreground mt-1.5">
           {helperText}
         </p>
       )}

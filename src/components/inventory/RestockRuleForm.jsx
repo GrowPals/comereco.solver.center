@@ -24,7 +24,8 @@ const buildDefaultValues = (rule) => ({
     preferredWarehouse: rule?.preferred_warehouse ?? ''
 });
 
-const numberInputClass = 'w-full rounded-xl border border-slate-300 px-4 py-3 text-base shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none';
+const numberInputClass =
+    'w-full rounded-xl border border-border bg-background px-4 py-3 text-base shadow-sm transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-200/40 focus:outline-none dark:border-border dark:bg-card dark:focus:border-primary-400';
 
 export const RestockRuleForm = ({
     rule,
@@ -157,7 +158,7 @@ export const RestockRuleForm = ({
                             )}
                         />
                     </Label>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-muted-foreground">
                         {isActive
                             ? 'Cuando el stock llegue al mínimo se generará una alerta para n8n.'
                             : 'La regla está pausada y no generará alertas.'}
@@ -211,4 +212,3 @@ export const RestockRuleForm = ({
 };
 
 export default RestockRuleForm;
-

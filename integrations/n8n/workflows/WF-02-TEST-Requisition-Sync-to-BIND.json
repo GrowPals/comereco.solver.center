@@ -1,0 +1,464 @@
+{
+  "name": "WF-02-TEST: Sync Requisitions to BIND (Testing)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Get pending requisitions with all BIND mapping data\nWITH bind_data AS (\n  SELECT\n    r.id as requisition_id,\n    r.internal_folio,\n    r.company_id,\n    r.project_id,\n    r.total_amount,\n    r.comments,\n    r.approved_at,\n    r.approved_by,\n    r.business_status,\n    r.integration_status,\n    r.bind_sync_attempts,\n    r.items as requisition_items,\n    -- Project info\n    p.name as project_name,\n    p.description as project_location,\n    -- Company info\n    c.name as company_name,\n    c.bind_location_id,\n    c.bind_price_list_id,\n    -- Approver info (email viene de auth.users)\n    pr.full_name as approver_name,\n    au.email as approver_email,\n    -- BIND Mappings usando funciones\n    public.get_bind_client_id(r.company_id) as bind_client_id,\n    public.get_bind_branch_id(r.project_id) as bind_branch_id,\n    public.get_bind_warehouse_id(r.project_id) as bind_warehouse_id\n  FROM requisitions r\n  LEFT JOIN projects p ON p.id = r.project_id\n  LEFT JOIN companies c ON c.id = r.company_id\n  LEFT JOIN profiles pr ON pr.id = r.approved_by\n  LEFT JOIN auth.users au ON au.id = r.approved_by\n  WHERE\n    r.business_status = 'approved'\n    AND r.integration_status = 'pending_sync'\n    AND r.bind_synced_at IS NULL\n    AND r.bind_sync_attempts < 3\n  ORDER BY r.approved_at ASC\n  LIMIT 10\n)\nSELECT * FROM bind_data;",
+        "options": {}
+      },
+      "id": "postgres-query-pending",
+      "name": "Get Pending Requisitions",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [450, 300],
+      "credentials": {
+        "postgres": {
+          "id": "supabase-production",
+          "name": "Supabase Production"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.length }}",
+              "operation": "larger",
+              "value2": 0
+            }
+          ]
+        }
+      },
+      "id": "if-has-requisitions",
+      "name": "Has Requisitions?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "note",
+              "name": "note",
+              "value": "No requisitions pending sync",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "no-data-end",
+      "name": "No Data - End",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [850, 500]
+    },
+    {
+      "parameters": {
+        "mode": "each",
+        "options": {}
+      },
+      "id": "loop-items",
+      "name": "Loop Each Requisition",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [850, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// TRANSFORM TO BIND ERP API FORMAT\n// ============================================\n\nconst requisition = $input.item.json;\n\n// Parse items from JSONB\nconst items = typeof requisition.requisition_items === 'string'\n  ? JSON.parse(requisition.requisition_items)\n  : requisition.requisition_items;\n\n// ============================================\n// VALORES FIJOS DE BIND (desde bind_mappings)\n// ============================================\n// Estos IDs son fijos para ComerECO en BIND ERP\n// Si son null, usar valores por defecto del ambiente de prueba\n\nconst BIND_DEFAULTS = {\n  // IDs fijos que NO cambian por proyecto\n  AddressID: \"efff1744-da2f-499d-952f-20b9140a95bf\",     // Dirección de ComerECO\n  CurrencyID: \"b7e2c065-bd52-40ca-b508-3accdd538860\",    // MXN (Peso Mexicano)\n  \n  // IDs que vienen de bind_mappings o usar defaults\n  ClientID: requisition.bind_client_id || \"d02c1c47-c9a5-4728-93a0-29e6b6136a15\",\n  LocationID: requisition.bind_location_id || \"d7ef64f2-fd1e-437a-bd93-af01985be5a5\",\n  PriceListID: requisition.bind_price_list_id || \"1d5f1d2f-7cd1-4e44-83cc-d47789f70b51\",\n  WarehouseID: requisition.bind_warehouse_id || \"a8605382-7b48-47e2-9fb6-a25cfb7cf735\"\n};\n\n// ============================================\n// TRANSFORM PRODUCTS\n// ============================================\n// Convertir items de requisición al formato Products de BIND\n\nconst bindProducts = items.map(item => ({\n  ID: item.bind_product_id || item.product_id,  // ID del producto en BIND\n  Price: parseFloat(item.unit_price || 0),\n  Qty: parseInt(item.quantity || 1),\n  VAT: 0,  // IVA por defecto (puede cambiar según producto)\n  Comments: item.comments || \"\",\n  Unit: item.unit || \"pza\"\n}));\n\n// ============================================\n// BUILD BIND API PAYLOAD\n// ============================================\n// Formato EXACTO que espera BIND ERP API\n\nconst bindPayload = {\n  AddressID: BIND_DEFAULTS.AddressID,\n  ClientID: BIND_DEFAULTS.ClientID,\n  CurrencyID: BIND_DEFAULTS.CurrencyID,\n  LocationID: BIND_DEFAULTS.LocationID,\n  OrderDate: new Date().toISOString(),\n  PriceListID: BIND_DEFAULTS.PriceListID,\n  WarehouseID: BIND_DEFAULTS.WarehouseID,\n  Comments: requisition.comments || `Requisición ${requisition.internal_folio} - COMERECO`,\n  PurchaseOrder: requisition.internal_folio,  // Usar folio interno como referencia\n  Products: bindProducts,\n  Services: []  // Por ahora sin servicios\n};\n\n// ============================================\n// METADATA PARA LOGGING\n// ============================================\n\nconst metadata = {\n  requisition_id: requisition.requisition_id,\n  company_id: requisition.company_id,\n  internal_folio: requisition.internal_folio,\n  sync_attempt: (requisition.bind_sync_attempts || 0) + 1,\n  n8n_execution_id: $execution.id,\n  timestamp: new Date().toISOString(),\n  bind_mappings_used: {\n    client_id: requisition.bind_client_id || 'DEFAULT',\n    location_id: requisition.bind_location_id || 'DEFAULT',\n    price_list_id: requisition.bind_price_list_id || 'DEFAULT',\n    warehouse_id: requisition.bind_warehouse_id || 'DEFAULT'\n  }\n};\n\nconsole.log('✅ Transformación BIND completada:');\nconsole.log('  Requisición:', requisition.internal_folio);\nconsole.log('  Productos:', bindProducts.length);\nconsole.log('  ClientID:', BIND_DEFAULTS.ClientID);\n\nreturn {\n  json: {\n    bind_payload: bindPayload,\n    metadata: metadata\n  }\n};"
+      },
+      "id": "transform-to-bind",
+      "name": "Transform to BIND Format",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// MOCK BIND POST RESPONSE (PARA TESTING)\n// ============================================\n// ⚠️ NODO DE PRUEBA: Simula respuesta de BIND POST sin hacer request real\n// Formato REAL de BIND: Solo devuelve el ID de la orden creada\n// Response: {\"data\": \"uuid-de-la-orden\"}\n\nconst bindPayload = $input.item.json.bind_payload;\nconst metadata = $input.item.json.metadata;\n\n// Generar UUID simulado para la orden\nconst mockOrderId = `8eed5dee-5a19-498a-8d21-${Date.now().toString().slice(-12)}`;\n\n// Log para debugging\nconsole.log('🧪 MOCK BIND POST Response (solo ID):');\nconsole.log('  Order ID:', mockOrderId);\nconsole.log('  Requisición:', metadata.internal_folio);\nconsole.log('  ⚠️ NOTA: Este es un MOCK - no se creó orden real en BIND');\n\n// FORMATO EXACTO que regresa BIND en el POST\nreturn {\n  json: {\n    data: mockOrderId\n  }\n};"
+      },
+      "id": "mock-bind-post",
+      "name": "MOCK BIND POST Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1250, 200],
+      "notes": "⚠️ NODO DE PRUEBA: Simula respuesta de BIND POST (solo ID) sin hacer POST real"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// CAPTURAR ID DE LA ORDEN CREADA EN BIND\n// ============================================\n// BIND POST response solo regresa: {\"data\": \"order-uuid\"}\n\nconst postResponse = $input.first().json;\nconst metadata = $('Transform to BIND Format').item.json.metadata;\n\n// El POST regresa solo el UUID como texto en el campo \"data\"\nconst orderId = postResponse.data;\n\nif (!orderId) {\n  console.error('❌ ERROR: No se recibió ID de la orden');\n  console.error('Response recibida:', JSON.stringify(postResponse));\n  throw new Error('No se recibió order ID de BIND API');\n}\n\nconsole.log('✅ Orden creada exitosamente en BIND');\nconsole.log('📋 Order ID:', orderId);\nconsole.log('📦 Requisición:', metadata.internal_folio);\n\nreturn {\n  json: {\n    orderId: orderId,\n    requisition_id: metadata.requisition_id,\n    company_id: metadata.company_id,\n    internal_folio: metadata.internal_folio,\n    sync_attempt: metadata.sync_attempt,\n    timestamp: metadata.timestamp\n  }\n};"
+      },
+      "id": "capture-order-id",
+      "name": "Capture Order ID",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1350, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// MOCK BIND GET ORDER RESPONSE (PARA TESTING)\n// ============================================\n// ⚠️ NODO DE PRUEBA: Simula respuesta de BIND GET Order sin hacer request real\n// Simula la respuesta del GET Order que contiene todos los datos\n\nconst orderId = $input.item.json.orderId;\nconst metadata = $('Transform to BIND Format').item.json.metadata;\nconst bindPayload = $('Transform to BIND Format').item.json.bind_payload;\n\n// Simular response completo de BIND GET Order\nconst mockOrderDetails = {\n  ID: orderId,\n  Number: `PO-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9999)).padStart(4, '0')}`,\n  StatusID: 0,\n  Status: \"Pendiente\",\n  ClientID: bindPayload.ClientID,\n  LocationID: bindPayload.LocationID,\n  WarehouseID: bindPayload.WarehouseID,\n  PriceListID: bindPayload.PriceListID,\n  AddressID: bindPayload.AddressID,\n  CurrencyID: bindPayload.CurrencyID,\n  OrderDate: bindPayload.OrderDate,\n  Comments: bindPayload.Comments,\n  PurchaseOrder: bindPayload.PurchaseOrder,\n  CreatedAt: new Date().toISOString(),\n  UpdatedAt: new Date().toISOString(),\n  TotalAmount: bindPayload.Products.reduce((sum, p) => sum + (p.Price * p.Qty), 0),\n  TotalProducts: bindPayload.Products.length,\n  Products: bindPayload.Products.map((p, idx) => ({\n    LineNumber: idx + 1,\n    ProductID: p.ID,\n    Quantity: p.Qty,\n    UnitPrice: p.Price,\n    VAT: p.VAT,\n    Subtotal: p.Price * p.Qty,\n    Comments: p.Comments,\n    Unit: p.Unit\n  })),\n  TestMode: true,\n  Note: \"Respuesta simulada de GET Order - no se consultó orden real en BIND\"\n};\n\nconsole.log('🧪 MOCK BIND GET Order Response:');\nconsole.log('  Order ID:', mockOrderDetails.ID);\nconsole.log('  Number:', mockOrderDetails.Number);\nconsole.log('  Status:', mockOrderDetails.Status);\nconsole.log('  Total:', mockOrderDetails.TotalAmount);\nconsole.log('  ⚠️ NOTA: Este es un MOCK - no se consultó orden real en BIND');\n\nreturn {\n  json: mockOrderDetails\n};"
+      },
+      "id": "mock-bind-get",
+      "name": "MOCK BIND GET Order",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1450, 200],
+      "notes": "⚠️ NODO DE PRUEBA: Simula respuesta de BIND GET Order (datos completos) sin hacer GET real"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.ID }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "success"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "error"
+        }
+      },
+      "id": "switch-result",
+      "name": "Success or Error?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [1650, 200]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE requisitions\nSET\n  integration_status = 'synced',\n  bind_order_id = '{{ $('MOCK BIND GET Order').item.json.ID }}',\n  bind_folio = '{{ $('MOCK BIND GET Order').item.json.Number }}',\n  bind_status = 'StatusID: {{ $('MOCK BIND GET Order').item.json.StatusID }}',\n  bind_synced_at = NOW(),\n  bind_error_message = NULL,\n  updated_at = NOW()\nWHERE id = '{{ $('Capture Order ID').item.json.requisition_id }}';",
+        "options": {}
+      },
+      "id": "update-success",
+      "name": "Update Status: Synced",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1850, 100],
+      "credentials": {
+        "postgres": {
+          "id": "supabase-production",
+          "name": "Supabase Production"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO bind_sync_logs (\n  company_id,\n  sync_type,\n  entity_type,\n  entity_id,\n  bind_id,\n  status,\n  request_payload,\n  response_payload,\n  synced_at\n) VALUES (\n  '{{ $('Capture Order ID').item.json.company_id }}',\n  'requisition',\n  'requisition',\n  '{{ $('Capture Order ID').item.json.requisition_id }}',\n  '{{ $('MOCK BIND GET Order').item.json.ID }}',\n  'success',\n  '{{ JSON.stringify($('Transform to BIND Format').item.json.bind_payload) }}'::jsonb,\n  '{{ JSON.stringify($('MOCK BIND GET Order').item.json) }}'::jsonb,\n  NOW()\n);",
+        "options": {}
+      },
+      "id": "log-success",
+      "name": "Log Success",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2050, 100],
+      "credentials": {
+        "postgres": {
+          "id": "supabase-production",
+          "name": "Supabase Production"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE requisitions\nSET\n  integration_status = 'sync_failed',\n  bind_error_message = '{{ $json.error_message || $json.message || \"Unknown error\" }}',\n  bind_sync_attempts = bind_sync_attempts + 1,\n  updated_at = NOW()\nWHERE id = '{{ $('Capture Order ID').item.json.requisition_id }}';",
+        "options": {}
+      },
+      "id": "update-error",
+      "name": "Update Status: Failed",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1850, 300],
+      "credentials": {
+        "postgres": {
+          "id": "supabase-production",
+          "name": "Supabase Production"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO bind_sync_logs (\n  company_id,\n  sync_type,\n  entity_type,\n  entity_id,\n  status,\n  request_payload,\n  error_message,\n  synced_at\n) VALUES (\n  '{{ $('Capture Order ID').item.json.company_id }}',\n  'requisition',\n  'requisition',\n  '{{ $('Capture Order ID').item.json.requisition_id }}',\n  'failed',\n  '{{ JSON.stringify($('Transform to BIND Format').item.json.bind_payload) }}'::jsonb,\n  '{{ $json.error_message || $json.message || \"Unknown error\" }}',\n  NOW()\n);",
+        "options": {}
+      },
+      "id": "log-error",
+      "name": "Log Error",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2050, 300],
+      "credentials": {
+        "postgres": {
+          "id": "supabase-production",
+          "name": "Supabase Production"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "status",
+              "name": "status",
+              "value": "={{ $('MOCK BIND GET Order').item.json.ID ? 'synced' : 'failed' }}",
+              "type": "string"
+            },
+            {
+              "id": "requisition_id",
+              "name": "requisition_id",
+              "value": "={{ $('Capture Order ID').item.json.requisition_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "merge-results",
+      "name": "Merge Results",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [2250, 200]
+    },
+    {
+      "parameters": {},
+      "id": "loop-back",
+      "name": "Loop Back",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [2450, 200]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Pending Requisitions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Pending Requisitions": {
+      "main": [
+        [
+          {
+            "node": "Has Requisitions?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Requisitions?": {
+      "main": [
+        [
+          {
+            "node": "Loop Each Requisition",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Data - End",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Each Requisition": {
+      "main": [
+        [
+          {
+            "node": "Transform to BIND Format",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Back",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transform to BIND Format": {
+      "main": [
+        [
+          {
+            "node": "MOCK BIND POST Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MOCK BIND POST Response": {
+      "main": [
+        [
+          {
+            "node": "Capture Order ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Capture Order ID": {
+      "main": [
+        [
+          {
+            "node": "MOCK BIND GET Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MOCK BIND GET Order": {
+      "main": [
+        [
+          {
+            "node": "Success or Error?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Success or Error?": {
+      "main": [
+        [
+          {
+            "node": "Update Status: Synced",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Status: Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Status: Synced": {
+      "main": [
+        [
+          {
+            "node": "Log Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Success": {
+      "main": [
+        [
+          {
+            "node": "Merge Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Status: Failed": {
+      "main": [
+        [
+          {
+            "node": "Log Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Error": {
+      "main": [
+        [
+          {
+            "node": "Merge Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Results": {
+      "main": [
+        [
+          {
+            "node": "Loop Each Requisition",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "BIND Integration",
+      "id": "bind-integration"
+    },
+    {
+      "name": "Testing",
+      "id": "testing"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2025-11-05T00:00:00.000Z",
+  "versionId": "1"
+}

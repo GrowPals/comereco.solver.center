@@ -144,10 +144,10 @@ function ProductImage({ src, alt, className }) {
   if (imageError || !src) {
     return (
       <div className={cn(
-        "flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200",
+        "flex items-center justify-center bg-gradient-to-br from-muted/60 to-muted/20 dark:from-card/70 dark:to-card/50",
         className
       )}>
-        <Package className="w-24 h-24 text-slate-400" />
+        <Package className="h-24 w-24 text-muted-foreground" />
       </div>
     );
   }
@@ -156,10 +156,10 @@ function ProductImage({ src, alt, className }) {
     <div className="relative">
       {imageLoading && (
         <div className={cn(
-          "absolute inset-0 flex items-center justify-center bg-slate-100 animate-pulse",
+          "absolute inset-0 flex items-center justify-center bg-muted animate-pulse",
           className
         )}>
-          <Package className="w-20 h-20 text-slate-300 animate-pulse" />
+          <Package className="h-20 w-20 animate-pulse text-muted-foreground/60" />
         </div>
       )}
       <img
@@ -263,8 +263,8 @@ function RelatedProducts({ products, currentProductId }) {
     <div className="mt-12 pt-8 border-t">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-xl font-bold text-slate-900">Productos relacionados</h3>
-          <p className="text-sm text-slate-500 mt-1">Otros productos que te pueden interesar</p>
+          <h3 className="text-xl font-bold text-foreground">Productos relacionados</h3>
+          <p className="text-sm text-muted-foreground/80 mt-1">Otros productos que te pueden interesar</p>
         </div>
         <div className="hidden md:flex gap-2">
           <button
@@ -273,8 +273,8 @@ function RelatedProducts({ products, currentProductId }) {
             className={cn(
               "p-2 rounded-full transition-all",
               canScrollLeft
-                ? "bg-white border shadow-sm hover:shadow-md text-slate-700"
-                : "bg-slate-100 text-slate-300 cursor-not-allowed"
+                ? "bg-card border shadow-sm hover:shadow-md text-foreground/90"
+                : "bg-muted text-muted-foreground/50 cursor-not-allowed"
             )}
           >
             <ChevronLeft className="w-5 h-5" />
@@ -285,8 +285,8 @@ function RelatedProducts({ products, currentProductId }) {
             className={cn(
               "p-2 rounded-full transition-all",
               canScrollRight
-                ? "bg-white border shadow-sm hover:shadow-md text-slate-700"
-                : "bg-slate-100 text-slate-300 cursor-not-allowed"
+                ? "bg-card border shadow-sm hover:shadow-md text-foreground/90"
+                : "bg-muted text-muted-foreground/50 cursor-not-allowed"
             )}
           >
             <ChevronRight className="w-5 h-5" />
@@ -325,7 +325,7 @@ function RelatedProducts({ products, currentProductId }) {
                 className="h-full p-4 hover:shadow-lg transition-all cursor-pointer group"
                 onClick={() => handleProductClick(product.id)}
               >
-                <div className="aspect-[4/3] mb-4 overflow-hidden rounded-lg bg-slate-50">
+                <div className="aspect-[4/3] mb-4 overflow-hidden rounded-lg bg-muted/70">
                   <ProductImage
                     src={product.image_url}
                     alt={productName}
@@ -343,7 +343,7 @@ function RelatedProducts({ products, currentProductId }) {
                         maximumFractionDigits: 2
                       })}
                     </p>
-                    <p className="text-xs text-slate-500">{productUnit}</p>
+                    <p className="text-xs text-muted-foreground/80">{productUnit}</p>
                   </div>
                   {isInStock && (
                     <Badge variant="secondary" className="text-xs">
@@ -481,7 +481,7 @@ export default function ProductDetail() {
   // Estados de carga y error
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-muted/70">
         <div className="max-w-7xl mx-auto p-4 md:p-8">
           <div className="mb-6">
             <Skeleton className="h-8 w-24" />
@@ -502,15 +502,15 @@ export default function ProductDetail() {
 
   if (error || !product) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-muted/70 flex items-center justify-center p-4">
         <div className="text-center space-y-4 max-w-md">
           <div className="mx-auto w-20 h-20 bg-red-100 rounded-full flex items-center justify-center">
             <AlertCircle className="w-10 h-10 text-red-600" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900">
+          <h2 className="text-2xl font-bold text-foreground">
             Producto no disponible
           </h2>
-          <p className="text-slate-600">
+          <p className="text-muted-foreground">
             {error?.message || 'Este producto no está disponible actualmente o no existe.'}
           </p>
           <Button
@@ -541,14 +541,14 @@ export default function ProductDetail() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen bg-gradient-to-b from-slate-50 to-white pb-20 lg:pb-8"
+      className="min-h-screen bg-gradient-to-b from-background via-background/97 to-background pb-20 lg:pb-8 dark:from-[#1b2d4d] dark:via-[#152441] dark:to-[#1b2d4d]"
     >
       {/* Contenido Principal */}
       <div className="max-w-7xl mx-auto p-4 md:p-8">
         {/* Botón de volver - sin barra, parte del fondo */}
         <button
           onClick={() => navigate(-1)}
-          className="mb-6 flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors"
+          className="mb-6 flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
           <span className="font-medium">Volver</span>
@@ -562,7 +562,7 @@ export default function ProductDetail() {
             transition={{ duration: 0.3 }}
             className="relative"
           >
-            <div className="aspect-[16/9] lg:aspect-[4/3] rounded-2xl overflow-hidden bg-white shadow-lg">
+            <div className="aspect-[16/9] lg:aspect-[4/3] rounded-2xl overflow-hidden bg-card shadow-lg">
               <ProductImage
                 src={product.image_url}
                 alt={productName}
@@ -576,8 +576,8 @@ export default function ProductDetail() {
               className={cn(
                 "absolute top-4 right-4 p-2.5 rounded-full transition-all shadow-lg backdrop-blur-sm",
                 isFavorite
-                  ? "bg-white/95 text-red-500 hover:bg-red-50"
-                  : "bg-white/95 text-slate-600 hover:bg-slate-100"
+                  ? "bg-card/95 text-red-500 hover:bg-red-50"
+                  : "bg-card/95 text-muted-foreground hover:bg-muted"
               )}
               aria-label={isFavorite ? "Quitar de favoritos" : "Agregar a favoritos"}
             >
@@ -600,19 +600,19 @@ export default function ProductDetail() {
                 </Badge>
               )}
               {productSku && (
-                <span className="text-sm text-slate-500 font-mono">
+                <span className="text-sm text-muted-foreground/80 font-mono">
                   SKU: {productSku}
                 </span>
               )}
             </div>
 
             {/* Nombre del producto */}
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 leading-tight">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground leading-tight">
               {productName}
             </h1>
 
             {/* Precio y disponibilidad */}
-            <div className="space-y-3 p-5 bg-slate-50 rounded-xl">
+            <div className="space-y-3 p-5 bg-muted/70 rounded-xl">
               <div className="flex items-baseline gap-3">
                 <span className="text-4xl font-bold text-emerald-600">
                   ${productPrice.toLocaleString('es-MX', {
@@ -620,7 +620,7 @@ export default function ProductDetail() {
                     maximumFractionDigits: 2
                   })}
                 </span>
-                <span className="text-lg text-slate-600">/ {productUnit}</span>
+                <span className="text-lg text-muted-foreground">/ {productUnit}</span>
               </div>
 
               <div className="flex items-center gap-3">
@@ -637,16 +637,16 @@ export default function ProductDetail() {
                   {isInStock ? "Disponible" : "Sin stock"}
                 </div>
                 {stock !== undefined && stock !== null && (
-                  <span className="text-sm text-slate-600">
+                  <span className="text-sm text-muted-foreground">
                     {stock} unidades
                   </span>
                 )}
               </div>
             </div>
             {/* Controles de cantidad y carrito */}
-            <div className="space-y-4 p-5 bg-white border-2 border-slate-200 rounded-xl">
+            <div className="space-y-4 p-5 bg-card border-2 border-border rounded-xl">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
+                <span className="text-sm font-semibold text-foreground/90 uppercase tracking-wide">
                   Cantidad
                 </span>
                 <div className="flex items-center gap-3">
@@ -657,8 +657,8 @@ export default function ProductDetail() {
                       "w-10 h-10 rounded-full flex items-center justify-center transition-all",
                       "border-2 hover:scale-110",
                       quantity <= 1
-                        ? "border-slate-200 text-slate-300 cursor-not-allowed"
-                        : "border-slate-300 text-slate-700 hover:border-emerald-500 hover:bg-emerald-50"
+                        ? "border-border text-muted-foreground/50 cursor-not-allowed"
+                        : "border-border/80 text-foreground/90 hover:border-emerald-500 hover:bg-emerald-50"
                     )}
                   >
                     <Minus className="w-4 h-4" />
@@ -668,13 +668,13 @@ export default function ProductDetail() {
                     type="number"
                     value={quantity}
                     onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                    className="w-20 h-10 text-center font-bold text-lg border-2 border-slate-200 rounded-lg focus:border-emerald-500 focus:outline-none"
+                    className="w-20 h-10 text-center font-bold text-lg border-2 border-border rounded-lg focus:border-emerald-500 focus:outline-none"
                   />
 
                   <button
                     onClick={() => handleQuantityChange(1)}
                     className="w-10 h-10 rounded-full flex items-center justify-center transition-all
-                             border-2 border-slate-300 text-slate-700 hover:border-emerald-500 hover:bg-emerald-50 hover:scale-110"
+                             border-2 border-border/80 text-foreground/90 hover:border-emerald-500 hover:bg-emerald-50 hover:scale-110"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
@@ -721,8 +721,8 @@ export default function ProductDetail() {
             {/* Descripción */}
             {productDescription && (
               <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-slate-900">Descripción</h3>
-                <p className="text-slate-600 leading-relaxed">
+                <h3 className="text-lg font-semibold text-foreground">Descripción</h3>
+                <p className="text-muted-foreground leading-relaxed">
                   {productDescription}
                 </p>
               </div>
@@ -730,21 +730,21 @@ export default function ProductDetail() {
 
             {/* Historial de pedidos */}
             {orderHistory && (
-              <Card className="p-5 bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
+              <Card className="p-5 bg-gradient-to-br from-primary-50 to-indigo-50 border-primary-200">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <BarChart3 className="w-5 h-5 text-blue-600" />
+                  <div className="p-2 bg-primary-100 rounded-lg">
+                    <BarChart3 className="w-5 h-5 text-primary-600" />
                   </div>
-                  <h3 className="font-semibold text-slate-900">Tu historial con este producto</h3>
+                  <h3 className="font-semibold text-foreground">Tu historial con este producto</h3>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Calendar className="w-4 h-4" />
                       Última compra
                     </div>
-                    <p className="font-semibold text-slate-900">
+                    <p className="font-semibold text-foreground">
                       {new Date(orderHistory.last_ordered).toLocaleDateString('es-MX', {
                         year: 'numeric',
                         month: 'short',
@@ -754,31 +754,31 @@ export default function ProductDetail() {
                   </div>
 
                   <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <TrendingUp className="w-4 h-4" />
                       Cantidad promedio
                     </div>
-                    <p className="font-semibold text-slate-900">
+                    <p className="font-semibold text-foreground">
                       {Math.round(orderHistory.average_quantity)} {productUnit}
                     </p>
                   </div>
 
                   <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Package className="w-4 h-4" />
                       Total comprado
                     </div>
-                    <p className="font-semibold text-slate-900">
+                    <p className="font-semibold text-foreground">
                       {orderHistory.total_ordered} {productUnit}
                     </p>
                   </div>
 
                   <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <RefreshCw className="w-4 h-4" />
                       Veces pedido
                     </div>
-                    <p className="font-semibold text-slate-900">
+                    <p className="font-semibold text-foreground">
                       {orderHistory.order_count} {orderHistory.order_count === 1 ? 'vez' : 'veces'}
                     </p>
                   </div>
@@ -800,15 +800,15 @@ export default function ProductDetail() {
       </div>
 
       {/* Botón flotante en móvil - mejorado */}
-      <div className="fixed bottom-0 left-0 right-0 p-3 bg-white/95 backdrop-blur-md border-t lg:hidden shadow-2xl">
+      <div className="fixed bottom-0 left-0 right-0 p-3 bg-card/95 backdrop-blur-md border-t lg:hidden shadow-2xl">
         <div className="max-w-md mx-auto flex gap-3">
-          <div className="flex items-center gap-1 bg-slate-100 rounded-lg px-2 flex-shrink-0">
+          <div className="flex items-center gap-1 bg-muted rounded-lg px-2 flex-shrink-0">
             <button
               onClick={() => handleQuantityChange(-1)}
               disabled={quantity <= 1}
               className={cn(
                 "p-1.5",
-                quantity <= 1 ? "text-slate-300" : "text-slate-700"
+                quantity <= 1 ? "text-muted-foreground/50" : "text-foreground/90"
               )}
             >
               <Minus className="w-4 h-4" />
@@ -816,7 +816,7 @@ export default function ProductDetail() {
             <span className="font-bold text-base px-2 min-w-[2rem] text-center">{quantity}</span>
             <button
               onClick={() => handleQuantityChange(1)}
-              className="p-1.5 text-slate-700"
+              className="p-1.5 text-foreground/90"
             >
               <Plus className="w-4 h-4" />
             </button>

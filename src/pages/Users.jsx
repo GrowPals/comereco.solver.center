@@ -126,10 +126,10 @@ const UserForm = ({ user, onSave, onCancel, isLoading, approvalBypassSupported }
                 </Select>
             </div>
             {showApprovalToggle && (
-              <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+              <div className="flex items-center justify-between rounded-xl border border-border bg-muted/60 px-4 py-3 dark:border-border dark:bg-card/60">
                 <div className="pr-4">
-                  <Label className="text-sm font-medium text-slate-700">Envío directo de requisiciones</Label>
-                  <p className="text-xs text-slate-500">Permite que este usuario envíe requisiciones sin aprobación previa del supervisor.</p>
+                  <Label className="text-sm font-medium text-foreground">Envío directo de requisiciones</Label>
+                  <p className="text-xs text-muted-foreground">Permite que este usuario envíe requisiciones sin aprobación previa del supervisor.</p>
                 </div>
                 <Controller
                   name="can_submit_without_approval"
@@ -146,7 +146,7 @@ const UserForm = ({ user, onSave, onCancel, isLoading, approvalBypassSupported }
               </div>
             )}
             {user && !approvalBypassSupported && (
-              <Alert className="border-amber-200 bg-amber-50">
+              <Alert className="border-amber-200 bg-amber-50 dark:border-amber-400/60 dark:bg-amber-500/15">
                 <AlertTitle>Actualiza la base de datos</AlertTitle>
                 <AlertDescription>
                   Para permitir envíos sin aprobación ejecuta las migraciones más recientes y recarga la página.
@@ -335,16 +335,16 @@ const Users = () => {
             <PageContainer>
                 <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
                     {/* Header */}
-                    <header className="flex flex-col gap-4 border-b border-slate-200 pb-5 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
+                    <header className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
                         <div className="flex items-center gap-3 sm:gap-4">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 shadow-sm sm:h-14 sm:w-14">
-                                <UserIcon className="h-6 w-6 text-blue-600 sm:h-7 sm:w-7" aria-hidden="true" />
+                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm sm:h-14 sm:w-14 dark:from-primary-500/15 dark:to-primary-600/10">
+                                <UserIcon className="h-6 w-6 text-primary-600 sm:h-7 sm:w-7" aria-hidden="true" />
                             </div>
                             <div className="space-y-1">
-                                <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+                                <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
                                     Gestión de <span className="bg-gradient-primary bg-clip-text text-transparent">Usuarios</span>
                                 </h1>
-                                <p className="text-sm text-slate-600 sm:text-base">
+                                <p className="text-sm text-muted-foreground sm:text-base">
                                     {users?.length || 0} {users?.length === 1 ? 'usuario' : 'usuarios'} en tu organización
                                 </p>
                             </div>
@@ -360,12 +360,12 @@ const Users = () => {
                     </header>
 
                     {setupWarnings.length > 0 && (
-                        <Alert className="border-amber-200 bg-amber-50">
+                        <Alert className="border-amber-200 bg-amber-50 dark:border-amber-400/60 dark:bg-amber-500/15">
                             <AlertTitle>Migraciones pendientes</AlertTitle>
                             <AlertDescription>
                                 <ul className="list-disc space-y-1 pl-5">
                                     {setupWarnings.map((warning, index) => (
-                                        <li key={index} className="text-sm text-slate-700">{warning}</li>
+                                        <li key={index} className="text-sm text-muted-foreground">{warning}</li>
                                     ))}
                                 </ul>
                             </AlertDescription>
@@ -375,9 +375,9 @@ const Users = () => {
                     {/* Users mobile list */}
                     <div className="space-y-4 md:hidden">
                         {users?.map((user) => (
-                            <div key={user.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                            <div key={user.id} className="rounded-2xl border border-border bg-card p-4 shadow-sm dark:border-border dark:bg-card">
                                 <div className="flex items-start gap-3">
-                                        <Avatar className="h-11 w-11 border border-slate-200">
+                                        <Avatar className="h-11 w-11 border border-border dark:border-border">
                                             <AvatarImage src={user.avatar_url} />
                                         <AvatarFallback className="text-white font-semibold">
                                             {user.full_name?.charAt(0) || 'U'}
@@ -386,21 +386,21 @@ const Users = () => {
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-start justify-between gap-2">
                                             <div>
-                                                <p className="font-semibold text-slate-900 line-clamp-1">{user.full_name}</p>
-                                                <p className="text-sm text-slate-500 line-clamp-1">{resolveUserEmail(user)}</p>
+                                                <p className="font-semibold text-foreground line-clamp-1">{user.full_name}</p>
+                                                <p className="text-sm text-muted-foreground line-clamp-1">{resolveUserEmail(user)}</p>
                                             </div>
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="h-9 w-9 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-100"
+                                                        className="h-9 w-9 rounded-xl border border-border text-muted-foreground transition-colors hover:bg-muted/70 dark:border-border dark:hover:bg-muted/40"
                                                         aria-label={`Acciones para ${resolveUserLabel(user)}`}
                                                     >
                                                         <MoreHorizontal className="h-4 w-4" />
                                                     </Button>
                                                 </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end" className="rounded-xl">
+                                                <DropdownMenuContent align="end" className="rounded-xl border-border bg-card dark:border-border dark:bg-card">
                                                     <DropdownMenuItem onClick={() => handleOpenForm(user)}>
                                                         Editar usuario
                                                     </DropdownMenuItem>
@@ -421,7 +421,7 @@ const Users = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-slate-600">
+                                <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                                     <Badge variant="outline" className="font-semibold">
                                         {roleMapping[user.role_v2]?.icon && (
                                             React.createElement(roleMapping[user.role_v2].icon, { className: 'mr-1 h-4 w-4' })
@@ -431,7 +431,7 @@ const Users = () => {
                                     <Badge variant={user.is_active !== false ? 'success' : 'destructive'}>
                                         {user.is_active !== false ? 'Activo' : 'Inactivo'}
                                     </Badge>
-                                    <span className="ml-auto text-xs text-slate-500">
+                                    <span className="ml-auto text-xs text-muted-foreground">
                                         {new Date(user.updated_at).toLocaleDateString('es-MX', {
                                             year: 'numeric',
                                             month: 'short',
@@ -444,7 +444,7 @@ const Users = () => {
                     </div>
 
                     {/* Users Table */}
-                    <div className="hidden overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-lg md:block">
+                    <div className="hidden overflow-hidden rounded-2xl border-2 border-border bg-card shadow-lg dark:border-border dark:bg-card md:block">
                         <Table>
                         <TableHeader>
                             <TableRow>
@@ -457,10 +457,10 @@ const Users = () => {
                         </TableHeader>
                         <TableBody>
                             {users?.map((user) => (
-                                <TableRow key={user.id} className="hover:bg-slate-50 transition-colors">
+                                <TableRow key={user.id} className="transition-colors hover:bg-muted/70 dark:hover:bg-muted/40/60">
                                     <TableCell>
                                         <div className="flex items-center space-x-3">
-                                            <Avatar className="h-11 w-11 border-2 border-slate-200">
+                                            <Avatar className="h-11 w-11 border-2 border-border dark:border-border">
                                                 <AvatarImage src={user.avatar_url} />
                                                 <AvatarFallback className="text-white font-semibold">
                                                     {user.full_name?.charAt(0) || 'U'}
@@ -468,9 +468,9 @@ const Users = () => {
                                             </Avatar>
                                             <div className="flex-1">
                                                 <div className="flex items-center gap-2">
-                                                    <p className="font-bold text-slate-900">{user.full_name}</p>
+                                                    <p className="font-bold text-foreground">{user.full_name}</p>
                                                 </div>
-                                                <p className="text-sm text-slate-600">{resolveUserEmail(user)}</p>
+                                                <p className="text-sm text-muted-foreground">{resolveUserEmail(user)}</p>
                                             </div>
                                         </div>
                                     </TableCell>
@@ -487,7 +487,7 @@ const Users = () => {
                                             {user.is_active !== false ? 'Activo' : 'Inactivo'}
                                         </Badge>
                                     </TableCell>
-                                    <TableCell className="font-medium text-slate-700">
+                                    <TableCell className="font-medium text-muted-foreground">
                                         {new Date(user.updated_at).toLocaleDateString('es-MX', {
                                             year: 'numeric',
                                             month: 'short',
@@ -499,7 +499,7 @@ const Users = () => {
                                             <DropdownMenuTrigger asChild>
                                                 <Button
                                                     variant="ghost"
-                                                    className="h-9 w-9 p-0 hover:bg-slate-100 rounded-xl"
+                                                    className="h-9 w-9 rounded-xl p-0 transition-colors hover:bg-muted/70 dark:hover:bg-muted/40"
                                                     aria-label={`Acciones para ${resolveUserLabel(user)}`}
                                                 >
                                                     <MoreHorizontal className="h-5 w-5" aria-hidden="true" />
@@ -533,7 +533,7 @@ const Users = () => {
             </PageContainer>
 
             <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-                <DialogContent className="sm:max-w-lg border border-slate-200 bg-white shadow-2xl">
+                <DialogContent className="sm:max-w-lg border border-border bg-card shadow-2xl dark:border-border dark:bg-card">
                     <DialogHeader>
                         <DialogTitle className="text-2xl font-bold">
                             {editingUser ? 'Editar Usuario' : 'Invitar Nuevo Usuario'}

@@ -22,10 +22,10 @@ const QuickAccess = memo(({ actions = [] }) => {
         <Card className="shadow-sm">
             <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-md">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 shadow-md">
                         <Zap className="h-5 w-5 text-white" aria-hidden="true" />
                     </div>
-                    <CardTitle className="text-xl font-bold text-slate-900">Acceso Rápido</CardTitle>
+                    <CardTitle className="text-xl font-bold text-foreground">Acceso Rápido</CardTitle>
                 </div>
             </CardHeader>
             <CardContent className="p-6 pt-0">
@@ -38,13 +38,13 @@ const QuickAccess = memo(({ actions = [] }) => {
                             <button
                                 key={uniqueKey}
                                 onClick={() => handleActionClick(action.path)}
-                                className="group flex items-center gap-4 p-4 rounded-xl bg-white border-2 border-slate-200 hover:border-blue-300 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
+                                className="group flex items-center gap-4 rounded-xl border-2 border-border bg-card p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md dark:border-border dark:bg-card"
                                 aria-label={action.label || 'Acción rápida'}
                             >
-                                <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 group-hover:scale-110 transition-transform duration-200">
-                                    {ActionIcon && <ActionIcon className="h-6 w-6 text-blue-600" aria-hidden="true" />}
+                                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 transition-transform duration-200 group-hover:scale-110 dark:from-primary-500/15 dark:to-primary-600/10">
+                                    {ActionIcon && <ActionIcon className="h-6 w-6 text-primary-500" aria-hidden="true" />}
                                 </div>
-                                <span className="text-sm font-semibold text-slate-700 group-hover:text-blue-600 transition-colors">
+                                <span className="text-sm font-semibold text-foreground transition-colors group-hover:text-primary-500">
                                     {action.label || 'Acción'}
                                 </span>
                             </button>

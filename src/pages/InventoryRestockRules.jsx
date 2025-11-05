@@ -45,14 +45,14 @@ const buildQueryFilters = (filters, searchTerm) => ({
 });
 
 const SummaryStat = ({ icon: Icon, title, value }) => (
-  <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
+  <div className="flex items-center justify-between rounded-2xl border border-border bg-card px-5 py-4 shadow-sm">
     <div className="flex items-center gap-3">
-      <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100">
-        <Icon className="h-5 w-5 text-slate-600" />
+      <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-muted">
+        <Icon className="h-5 w-5 text-muted-foreground" />
       </span>
       <div className="leading-tight">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">{title}</p>
-        <p className="text-2xl font-semibold text-slate-900">{value}</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/80">{title}</p>
+        <p className="text-2xl font-semibold text-foreground">{value}</p>
       </div>
     </div>
   </div>
@@ -71,34 +71,34 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
   const projectOptions = Array.isArray(projects) ? projects : [];
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 shadow-sm sm:px-5 sm:py-4">
+    <div className="rounded-2xl border border-border bg-card/95 px-4 py-3 shadow-sm sm:px-5 sm:py-4">
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(280px,2.2fr)_repeat(3,minmax(190px,1fr))] xl:gap-4">
         <div className="flex flex-col justify-end">
           <label
             htmlFor="restock-search"
-            className="block text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500"
+            className="block text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/80"
           >
             Buscar
           </label>
           <div className="relative mt-2">
-            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/70" />
             <Input
               id="restock-search"
               type="search"
               placeholder="Nombre, SKU o notas"
               value={filters.searchTerm}
               onChange={(event) => handleUpdate('searchTerm', event.target.value)}
-              className="h-11 rounded-2xl border-slate-200 bg-slate-50 pl-12 text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:border-primary focus:ring-primary/20"
+              className="h-11 rounded-2xl border-border bg-muted/70 pl-12 text-sm font-medium text-foreground/90 placeholder:text-muted-foreground/70 focus:border-primary focus:ring-primary/20"
             />
           </div>
         </div>
 
         <div className="flex flex-col justify-end">
-          <label className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+          <label className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/80">
             <Filter className="h-4 w-4" /> Estado
           </label>
           <Select value={filters.status} onValueChange={(value) => handleUpdate('status', value)}>
-            <SelectTrigger className="mt-2 h-11 rounded-2xl border-slate-200 bg-slate-50 text-sm font-medium text-slate-700">
+            <SelectTrigger className="mt-2 h-11 rounded-2xl border-border bg-muted/70 text-sm font-medium text-foreground/90">
               <SelectValue placeholder="Estado" />
             </SelectTrigger>
             <SelectContent>
@@ -112,9 +112,9 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
         </div>
 
         <div className="flex flex-col justify-end">
-          <label className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">Proyecto</label>
+          <label className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/80">Proyecto</label>
           <Select value={filters.projectId} onValueChange={(value) => handleUpdate('projectId', value)}>
-            <SelectTrigger className="mt-2 h-11 rounded-2xl border-slate-200 bg-slate-50 text-sm font-medium text-slate-700">
+            <SelectTrigger className="mt-2 h-11 rounded-2xl border-border bg-muted/70 text-sm font-medium text-foreground/90">
               <SelectValue placeholder="Proyecto" />
             </SelectTrigger>
             <SelectContent>
@@ -130,9 +130,9 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
         </div>
 
         <div className="flex flex-col justify-end">
-          <label className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">Categoría</label>
+          <label className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/80">Categoría</label>
           <Select value={filters.category} onValueChange={(value) => handleUpdate('category', value)}>
-            <SelectTrigger className="mt-2 h-11 rounded-2xl border-slate-200 bg-slate-50 text-sm font-medium text-slate-700">
+            <SelectTrigger className="mt-2 h-11 rounded-2xl border-border bg-muted/70 text-sm font-medium text-foreground/90">
               <SelectValue placeholder="Categoría" />
             </SelectTrigger>
             <SelectContent>
@@ -154,7 +154,7 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
         <Button
           variant="ghost"
           onClick={handleClear}
-          className="h-10 rounded-2xl border border-transparent text-sm font-semibold text-slate-600 hover:border-slate-200 hover:text-slate-900"
+          className="h-10 rounded-2xl border border-transparent text-sm font-semibold text-muted-foreground hover:border-border hover:text-foreground"
         >
           Limpiar filtros
         </Button>
@@ -210,10 +210,10 @@ const InventoryRestockRules = () => {
   if (!canManageRestockRules) {
     return (
       <PageContainer>
-        <div className="mx-auto flex h-[60vh] w-full max-w-3xl items-center justify-center rounded-3xl border border-slate-200 bg-white p-12 text-center shadow-sm">
+        <div className="mx-auto flex h-[60vh] w-full max-w-3xl items-center justify-center rounded-3xl border border-border bg-card p-12 text-center shadow-sm">
           <div className="space-y-3">
-            <h1 className="text-2xl font-semibold text-slate-900">Sin acceso a Reabastecimiento</h1>
-            <p className="text-sm text-slate-600">
+            <h1 className="text-2xl font-semibold text-foreground">Sin acceso a Reabastecimiento</h1>
+            <p className="text-sm text-muted-foreground">
               Esta vista está disponible para supervisores y administradores. Solicita a tu administrador acceso para
               configurar reglas automáticas.
             </p>
@@ -231,11 +231,11 @@ const InventoryRestockRules = () => {
       </Helmet>
 
       <div className="mx-auto flex w-full max-w-[92rem] flex-col gap-6 lg:gap-7">
-        <section className="rounded-3xl border border-slate-200/80 bg-white/95 px-5 py-4 shadow-sm sm:px-6 sm:py-5">
+        <section className="rounded-3xl border border-border/80 bg-card/95 px-5 py-4 shadow-sm sm:px-6 sm:py-5">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="space-y-1">
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-[2.05rem]">Reabastecimiento automático</h1>
-              <p className="max-w-2xl text-sm text-slate-600">
+              <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-[2.05rem]">Reabastecimiento automático</h1>
+              <p className="max-w-2xl text-sm text-muted-foreground">
                 Configura reglas para disparar requisiciones cuando el stock llegue a un mínimo.
               </p>
             </div>
@@ -287,7 +287,7 @@ const InventoryRestockRules = () => {
           </div>
         </section>
 
-        <section className="rounded-3xl border border-slate-200/80 bg-white/95 px-4 py-4 shadow-sm sm:px-5">
+        <section className="rounded-3xl border border-border/80 bg-card/95 px-4 py-4 shadow-sm sm:px-5">
           {isLoading ? (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {[...Array(6)].map((_, index) => (

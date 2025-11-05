@@ -34,7 +34,7 @@ export function CartIcon({ variant = 'default' }) {
       size="icon"
       className={cn(
         'relative overflow-visible rounded-full transition-colors',
-        isCompact && 'h-11 w-11 border border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50'
+        isCompact && 'h-11 w-11 border border-border bg-card text-foreground shadow-sm hover:bg-muted/70 dark:border-border dark:bg-card dark:hover:bg-muted/40'
       )}
       aria-label={totalItems > 0 ? `Abrir carrito, ${totalItems} productos` : 'Abrir carrito'}
     >

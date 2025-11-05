@@ -19,7 +19,7 @@ const MultiStepProgressBar = ({ steps, currentStep }) => {
                   className={cn(
                     'w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold text-lg transition-all duration-300',
                     isCompleted ? 'bg-secondary border-secondary text-white' : '',
-                    isActive ? 'bg-white border-primary text-primary shadow-[0_0_0_4px_rgba(0,102,255,0.2)]' : '',
+                    isActive ? 'bg-card border-primary text-primary shadow-[0_0_0_4px_rgba(0,102,255,0.2)]' : '',
                     !isCompleted && !isActive ? 'bg-neutral-10 border-neutral-30 text-neutral-70' : ''
                   )}
                   animate={isActive ? { scale: 1.15 } : { scale: 1 }}

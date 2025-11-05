@@ -126,16 +126,16 @@ const CheckoutPage = () => {
             <PageContainer>
                 <div className="mx-auto w-full max-w-6xl space-y-6 sm:space-y-8">
                     {/* Header */}
-                    <header className="border-b border-slate-200 pb-5 sm:pb-6">
+                    <header className="border-b border-border pb-5 sm:pb-6 dark:border-border">
                         <div className="flex items-center gap-3 sm:gap-4">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 shadow-sm sm:h-14 sm:w-14">
-                                <ShoppingCart className="h-6 w-6 text-blue-600 sm:h-7 sm:w-7" aria-hidden="true" />
+                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm sm:h-14 sm:w-14 dark:from-primary-500/15 dark:to-primary-600/10">
+                                <ShoppingCart className="h-6 w-6 text-primary-500 sm:h-7 sm:w-7" aria-hidden="true" />
                             </div>
                             <div>
-                                <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
+                                <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
                                     Finalizar <span className="bg-gradient-primary bg-clip-text text-transparent">Compra</span>
                                 </h1>
-                                <p className="mt-1 text-sm text-slate-600 sm:text-base">
+                                <p className="mt-1 text-sm text-muted-foreground sm:text-base">
                                     Revisa tu pedido y completa la información para generar la requisición
                                 </p>
                             </div>
@@ -146,13 +146,13 @@ const CheckoutPage = () => {
                     {/* Columna Izquierda: Detalles de Requisición */}
                     <div className="space-y-6">
                         <div>
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
-                                    <CreditCard className="h-5 w-5 text-blue-600" />
+                            <div className="mb-4 flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-500/15 dark:to-primary-600/10">
+                                    <CreditCard className="h-5 w-5 text-primary-500" />
                                 </div>
-                                <h2 className="text-2xl font-bold text-slate-900">Detalles de la Requisición</h2>
+                                <h2 className="text-2xl font-bold text-foreground">Detalles de la Requisición</h2>
                             </div>
-                            <div className="bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-md space-y-4">
+                            <div className="space-y-4 rounded-2xl border border-border bg-card p-6 shadow-md dark:border-border dark:bg-card">
                                 <div>
                                     <Label htmlFor="projectId" className={errors.projectId ? 'text-destructive' : ''}>Proyecto *</Label>
                                     <Controller
@@ -183,13 +183,13 @@ const CheckoutPage = () => {
                             </div>
                         </div>
                         <div>
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
-                                    <Save className="h-5 w-5 text-blue-600" />
+                            <div className="mb-4 flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-500/15 dark:to-primary-600/10">
+                                    <Save className="h-5 w-5 text-primary-500" />
                                 </div>
-                                <h2 className="text-2xl font-bold text-slate-900">Acciones Adicionales</h2>
+                                <h2 className="text-2xl font-bold text-foreground">Acciones Adicionales</h2>
                             </div>
-                            <div className="bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-md">
+                            <div className="rounded-2xl border border-border bg-card p-6 shadow-md dark:border-border dark:bg-card">
                                 <Button
                                     type="button"
                                     variant="outline"
@@ -206,35 +206,37 @@ const CheckoutPage = () => {
 
                     {/* Columna Derecha: Resumen de Pedido */}
                     <div className="space-y-6">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
-                                <ShoppingCart className="h-5 w-5 text-blue-600" />
+                        <div className="mb-4 flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-500/15 dark:to-primary-600/10">
+                                <ShoppingCart className="h-5 w-5 text-primary-500" />
                             </div>
-                            <h2 className="text-2xl font-bold text-slate-900">Resumen del Pedido</h2>
+                            <h2 className="text-2xl font-bold text-foreground">Resumen del Pedido</h2>
                         </div>
-                        <div className="bg-white p-5 rounded-2xl border-2 border-slate-200 shadow-md space-y-3 max-h-96 overflow-y-auto">
+                        <div className="max-h-96 space-y-3 overflow-y-auto rounded-2xl border border-border bg-card/95 p-5 shadow-md dark:border-border dark:bg-card/85">
                             {items.map(item => (
-                                <div key={item.id} className="flex items-center gap-4 p-3 rounded-xl bg-slate-50 border border-slate-200 hover:bg-slate-100 transition-colors">
-                                    <img className="w-16 h-16 rounded-lg object-cover border-2 border-white shadow-sm" alt={item.name} src={item.image_url || '/placeholder.png'} />
+                                <div key={item.id} className="flex items-center gap-4 rounded-xl border border-border bg-muted/60 p-3 transition-colors hover:bg-muted/80 dark:border-border dark:bg-card/60 dark:hover:bg-muted/40/70">
+                                    <img className="h-16 w-16 rounded-lg border-2 border-white object-cover shadow-sm dark:border-border" alt={item.name} src={item.image_url || '/placeholder.png'} />
                                     <div className="flex-grow">
-                                        <p className="font-bold text-slate-900 line-clamp-1">{item.name}</p>
-                                        <p className="text-sm text-slate-600">Cantidad: <span className="font-semibold">{item.quantity}</span></p>
+                                        <p className="line-clamp-1 font-bold text-foreground">{item.name}</p>
+                                        <p className="text-sm text-muted-foreground">
+                                            Cantidad: <span className="font-semibold text-foreground">{item.quantity}</span>
+                                        </p>
                                     </div>
-                                    <p className="font-bold text-lg text-slate-900">${(item.quantity * (item.price || 0)).toFixed(2)}</p>
+                                    <p className="text-lg font-bold text-foreground">${(item.quantity * (item.price || 0)).toFixed(2)}</p>
                                 </div>
                             ))}
                         </div>
-                        <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl border-2 border-blue-200 space-y-3">
-                            <div className="flex justify-between items-center text-base">
-                                <span className="text-slate-700 font-medium">Subtotal:</span>
-                                <span className="font-bold text-slate-900">${subtotal.toFixed(2)}</span>
+                        <div className="space-y-3 rounded-2xl border border-primary/20 bg-gradient-to-br from-primary-50 to-primary-100 p-6 dark:border-primary/30 dark:from-primary-500/15 dark:to-primary-600/15">
+                            <div className="flex items-center justify-between text-base">
+                                <span className="font-medium text-muted-foreground">Subtotal:</span>
+                                <span className="font-bold text-foreground">${subtotal.toFixed(2)}</span>
                             </div>
-                            <div className="flex justify-between items-center text-base">
-                                <span className="text-slate-700 font-medium">IVA (16%):</span>
-                                <span className="font-bold text-slate-900">${((total - subtotal) || 0).toFixed(2)}</span>
+                            <div className="flex items-center justify-between text-base">
+                                <span className="font-medium text-muted-foreground">IVA (16%):</span>
+                                <span className="font-bold text-foreground">${((total - subtotal) || 0).toFixed(2)}</span>
                             </div>
-                            <div className="flex justify-between items-center text-xl font-bold border-t-2 border-blue-300 pt-3">
-                                <span className="text-slate-900">Total:</span>
+                            <div className="flex items-center justify-between border-t border-primary-300/70 pt-3 text-xl font-bold dark:border-primary/40">
+                                <span className="text-foreground">Total:</span>
                                 <span className="text-3xl bg-gradient-primary bg-clip-text text-transparent">${total.toFixed(2)}</span>
                             </div>
                         </div>

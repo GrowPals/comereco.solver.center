@@ -30,14 +30,14 @@ const UserDashboard = ({ user }) => {
     const handleNavigateToCatalog = useMemo(() => () => navigate('/catalog'), [navigate]);
 
     return (
-        <div className="max-w-7xl mx-auto space-y-10">
+        <div className="mx-auto max-w-7xl space-y-10">
             {/* Hero Section */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-slate-200">
+            <div className="flex flex-col items-start gap-6 border-b border-border pb-8 sm:flex-row sm:items-center sm:justify-between dark:border-border">
                 <div className="flex flex-col gap-3">
-                    <h1 className="text-5xl font-bold text-slate-900 tracking-tight">
+                    <h1 className="text-5xl font-bold tracking-tight text-foreground">
                         Hola, <span className="bg-gradient-primary bg-clip-text text-transparent">{firstName}</span>
                     </h1>
-                    <p className="text-lg text-slate-600">
+                    <p className="text-lg text-muted-foreground">
                         Gestiona tus requisiciones y revisa tu actividad reciente
                     </p>
                 </div>

@@ -5,33 +5,33 @@ import { cn } from '@/lib/utils';
 import { Loader2, CheckCircle } from 'lucide-react';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap text-base font-semibold ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-200 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden active:scale-[0.98]',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap text-base font-semibold ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-200 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden active:scale-[0.98] dark:ring-offset-background',
   {
     variants: {
       variant: {
         // Primary - Professional Blue
-        default: 'bg-gradient-primary text-white shadow-button hover:shadow-glow-primary hover:-translate-y-0.5 active:translate-y-0 active:shadow-button rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/10 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity',
+        default: 'bg-gradient-primary text-white shadow-button hover:shadow-glow-primary hover:-translate-y-0.5 active:translate-y-0 active:shadow-button rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/10 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:shadow-[0_14px_35px_rgba(11,24,45,0.45)]',
 
         // Intense gradient for CTAs
-        primary: 'bg-gradient-primary-intense text-white shadow-button hover:shadow-glow-primary hover:-translate-y-0.5 active:translate-y-0 active:shadow-button rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/10 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity',
+        primary: 'bg-gradient-primary-intense text-white shadow-button hover:shadow-glow-primary hover:-translate-y-0.5 active:translate-y-0 active:shadow-button rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/10 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:shadow-[0_16px_40px_rgba(10,20,38,0.55)]',
 
         // Accent - ComerECO Green (for success/approve actions)
-        accent: 'bg-gradient-accent text-white shadow-accent hover:shadow-glow-accent hover:-translate-y-0.5 active:translate-y-0 rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/10 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity',
+        accent: 'bg-gradient-accent text-white shadow-accent hover:shadow-glow-accent hover:-translate-y-0.5 active:translate-y-0 rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/10 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:shadow-[0_14px_32px_rgba(0,140,69,0.35)]',
 
         // Success with green gradient
-        success: 'bg-gradient-success text-white shadow-accent hover:shadow-glow-success hover:-translate-y-0.5 active:translate-y-0 rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/10 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity',
+        success: 'bg-gradient-success text-white shadow-accent hover:shadow-glow-success hover:-translate-y-0.5 active:translate-y-0 rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/10 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:shadow-[0_14px_32px_rgba(0,166,81,0.35)]',
 
         // Destructive with gradient
-        destructive: 'bg-gradient-error text-white shadow-[0_4px_12px_rgba(239,68,68,0.3)] hover:shadow-glow-error hover:-translate-y-0.5 active:translate-y-0 rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/10 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity',
+        destructive: 'bg-gradient-error text-white shadow-[0_4px_12px_rgba(239,68,68,0.3)] hover:shadow-glow-error hover:-translate-y-0.5 active:translate-y-0 rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/10 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:shadow-[0_14px_32px_rgba(153,27,27,0.45)]',
 
         // Outline with border
-        outline: 'border-2 border-primary-500 bg-transparent text-primary-600 hover:bg-gradient-primary hover:text-white hover:shadow-glow-primary hover:border-transparent rounded-xl transition-all',
+        outline: 'border-2 border-primary-500 bg-transparent text-primary-600 hover:bg-gradient-primary hover:text-white hover:shadow-glow-primary hover:border-transparent rounded-xl transition-all dark:text-primary-200 dark:border-primary-400',
 
         // Secondary with subtle gradient
-        secondary: 'bg-white border-2 border-slate-200 text-slate-700 shadow-sm hover:shadow-md hover:border-slate-300 hover:-translate-y-0.5 active:translate-y-0 rounded-xl',
+        secondary: 'bg-card border-2 border-border text-foreground/80 shadow-sm hover:shadow-md hover:border-border/80 hover:-translate-y-0.5 active:translate-y-0 rounded-xl hover:bg-muted/70 dark:bg-card dark:border-border dark:text-neutral-100 dark:hover:bg-muted/40 dark:hover:border-border',
 
         // Ghost
-        ghost: 'text-slate-700 hover:bg-slate-100 hover:text-slate-900 rounded-xl active:bg-slate-200',
+        ghost: 'text-foreground/80 hover:bg-muted/70 hover:text-foreground rounded-xl active:bg-muted/80 dark:text-foreground/80 dark:hover:bg-muted/40 dark:hover:text-white dark:active:bg-muted/30',
 
         // Link
         link: 'text-primary-600 underline-offset-4 hover:underline hover:text-primary-700 active:text-primary-800',

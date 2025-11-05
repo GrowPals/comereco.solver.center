@@ -12,7 +12,7 @@ const HistoryPage = () => {
     return (
         <>
             <Helmet><title>Historial de Requisiciones - ComerECO</title></Helmet>
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 flex items-center justify-center">
+			<div className="min-h-screen bg-gradient-to-br from-background via-background/97 to-background flex items-center justify-center dark:from-[#131f33] dark:via-[#101a2e] dark:to-[#0d1729]">
                 <EmptyState
                     icon={History}
                     title="Historial en Construcción"

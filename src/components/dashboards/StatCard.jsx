@@ -20,21 +20,21 @@ const StatCard = memo(({ title, value, icon: Icon, isLoading, format = val => va
 
     return (
         <Card interactive className="group">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
-                <CardTitle className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <CardHeader className="relative z-10 flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                     {title}
                 </CardTitle>
                 {Icon && (
-                    <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 transition-all duration-300 group-hover:scale-110">
-                        <Icon className="h-6 w-6 text-blue-600" />
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 transition-all duration-300 group-hover:scale-110 dark:from-primary-500/15 dark:to-primary-600/10">
+                        <Icon className="h-6 w-6 text-primary-500" />
                     </div>
                 )}
             </CardHeader>
             <CardContent className="relative z-10">
-                <div className="text-4xl font-bold text-slate-900 mb-1 tracking-tight">
+                <div className="mb-1 text-4xl font-bold tracking-tight text-foreground">
                     {format(value)}
                 </div>
-                <div className="w-16 h-1 bg-gradient-primary rounded-full mt-3 transition-all duration-300 group-hover:w-full"></div>
+                <div className="mt-3 h-1 w-16 rounded-full bg-gradient-primary transition-all duration-300 group-hover:w-full"></div>
             </CardContent>
         </Card>
     );

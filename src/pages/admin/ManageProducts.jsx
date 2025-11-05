@@ -126,7 +126,7 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-2xl border border-slate-200 bg-white shadow-2xl p-0">
+            <DialogContent className="sm:max-w-2xl border border-border bg-card shadow-2xl p-0">
                 <form onSubmit={handleSubmit(onSubmit)} className="flex max-h-[calc(100dvh-3.5rem)] flex-col">
                     <DialogHeader className="px-6 pt-6">
                         <DialogTitle className="text-2xl font-bold">
@@ -211,7 +211,7 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
                                     <img 
                                         src={imagePreview} 
                                         alt="Preview" 
-                                        className="h-32 w-32 object-contain rounded-lg border-2 border-slate-200 bg-slate-50 p-2"
+                                        className="h-32 w-32 object-contain rounded-lg border-2 border-border bg-muted/70 p-2"
                                     />
                                     <Button
                                         type="button"
@@ -225,8 +225,8 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
                                 </div>
                             )}
                             {!imagePreview && (
-                                <div className="flex items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 rounded-lg bg-slate-50">
-                                    <ImageIcon className="h-8 w-8 text-slate-400" />
+                                <div className="flex items-center justify-center w-full h-32 border-2 border-dashed border-border/80 rounded-lg bg-muted/70">
+                                    <ImageIcon className="h-8 w-8 text-muted-foreground/70" />
                                 </div>
                             )}
                             <div className="flex gap-2">
@@ -248,7 +248,7 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
                                     className="hidden"
                                 />
                             </div>
-                            <p className="text-xs text-slate-500">Formatos permitidos: JPEG, PNG, WebP, GIF. Tamaño máximo: 5MB</p>
+                            <p className="text-xs text-muted-foreground/80">Formatos permitidos: JPEG, PNG, WebP, GIF. Tamaño máximo: 5MB</p>
                         </div>
                     </div>
                     <div>
@@ -260,7 +260,7 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
                         <Label htmlFor="is_active">{isActive ? 'Activo' : 'Inactivo'}</Label>
                     </div>
                     </div>
-                    <DialogFooter className="sticky bottom-0 flex flex-col gap-2 border-t border-slate-200 bg-white/95 px-6 py-4 backdrop-blur">
+                    <DialogFooter className="sticky bottom-0 flex flex-col gap-2 border-t border-border bg-card/95 px-6 py-4 backdrop-blur">
                         <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
                             <Button variant="outline" type="button" onClick={onClose} disabled={isSubmitting || uploadingImage} className="rounded-xl">Cancelar</Button>
                             <Button type="submit" isLoading={isSubmitting || uploadingImage} isSuccess={formStatus.status === 'success'} className="rounded-xl shadow-button hover:shadow-button-hover">
@@ -340,16 +340,16 @@ const ManageProductsPage = () => {
             <PageContainer>
                 <div className="mx-auto max-w-7xl space-y-6 sm:space-y-8">
                     {/* Header */}
-                    <header className="flex flex-col items-start gap-5 border-b border-slate-200 pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:pb-6">
+                    <header className="flex flex-col items-start gap-5 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:pb-6">
                         <div className="flex items-center gap-4 sm:gap-5">
-                            <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-md">
-                                <ShoppingBag className="h-7 w-7 text-blue-600" aria-hidden="true" />
+                            <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center shadow-md">
+                                <ShoppingBag className="h-7 w-7 text-primary-600" aria-hidden="true" />
                             </div>
                             <div>
-                                <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-1 sm:text-4xl">
+                                <h1 className="text-3xl font-bold tracking-tight text-foreground mb-1 sm:text-4xl">
                                     Gestionar <span className="bg-gradient-primary bg-clip-text text-transparent">Productos</span>
                                 </h1>
-                                <p className="text-sm text-slate-600 sm:text-base">Crea, edita y gestiona el catálogo de tu compañía</p>
+                                <p className="text-sm text-muted-foreground sm:text-base">Crea, edita y gestiona el catálogo de tu compañía</p>
                             </div>
                         </div>
                         <Button
@@ -363,7 +363,7 @@ const ManageProductsPage = () => {
                     </header>
 
                     {products?.length > 0 ? (
-                        <div className="overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-lg">
+                        <div className="overflow-hidden rounded-2xl border-2 border-border bg-card shadow-lg">
                             <div className="w-full overflow-x-auto">
                             <Table className="min-w-[720px] md:min-w-full">
                             <TableHeader>
@@ -380,9 +380,9 @@ const ManageProductsPage = () => {
                             </TableHeader>
                                 <TableBody>
                                     {products.map(p => (
-                                        <TableRow key={p.id} className="hover:bg-slate-50 transition-colors">
+                                        <TableRow key={p.id} className="hover:bg-muted/70 transition-colors">
                                             <TableCell>
-                                                <div className="w-12 h-12 rounded-lg bg-slate-100 overflow-hidden flex items-center justify-center">
+                                                <div className="w-12 h-12 rounded-lg bg-muted overflow-hidden flex items-center justify-center">
                                                     {p.image_url ? (
                                                         <OptimizedImage
                                                             src={p.image_url}
@@ -391,23 +391,23 @@ const ManageProductsPage = () => {
                                                             className="w-full h-full object-contain p-1"
                                                         />
                                                     ) : (
-                                                        <ImageIcon className="h-6 w-6 text-slate-400" />
+                                                        <ImageIcon className="h-6 w-6 text-muted-foreground/70" />
                                                     )}
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="font-mono font-semibold text-slate-900">{p.sku}</TableCell>
-                                            <TableCell className="font-semibold text-slate-900">{p.name}</TableCell>
+                                            <TableCell className="font-mono font-semibold text-foreground">{p.sku}</TableCell>
+                                            <TableCell className="font-semibold text-foreground">{p.name}</TableCell>
                                             <TableCell>
                                                 {p.category ? (
                                                     <Badge variant="outline" className="text-xs">
                                                         {p.category}
                                                     </Badge>
                                                 ) : (
-                                                    <span className="text-xs text-slate-400">Sin categoría</span>
+                                                    <span className="text-xs text-muted-foreground/70">Sin categoría</span>
                                                 )}
                                             </TableCell>
-                                            <TableCell className="font-bold text-slate-900">${p.price.toFixed(2)}</TableCell>
-                                            <TableCell className="font-medium text-slate-700">{p.stock}</TableCell>
+                                            <TableCell className="font-bold text-foreground">${p.price.toFixed(2)}</TableCell>
+                                            <TableCell className="font-medium text-foreground/90">{p.stock}</TableCell>
                                             <TableCell>
                                                 <Badge variant={p.is_active ? 'success' : 'destructive'} className="shadow-sm">
                                                     {p.is_active ? 'Activo' : 'Inactivo'}
@@ -416,7 +416,7 @@ const ManageProductsPage = () => {
                                             <TableCell>
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
-                                                        <Button variant="ghost" className="h-9 w-9 p-0 hover:bg-slate-100 rounded-xl">
+                                                        <Button variant="ghost" className="h-9 w-9 p-0 hover:bg-muted rounded-xl">
                                                             <MoreHorizontal className="h-5 w-5" />
                                                         </Button>
                                                     </DropdownMenuTrigger>

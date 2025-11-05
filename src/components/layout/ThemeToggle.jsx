@@ -17,7 +17,7 @@ const ThemeToggle = ({ className }) => {
       type="button"
       onClick={handleClick}
       className={cn(
-        'relative flex h-10 w-10 items-center justify-center rounded-xl border border-border/60 bg-secondary/70 text-foreground transition-colors duration-200 hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+        'relative flex h-10 w-10 items-center justify-center rounded-xl border border-border/60 bg-card/80 text-foreground transition-colors duration-200 hover:bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         className
       )}
       aria-pressed={isDark}
@@ -35,7 +35,7 @@ const ThemeToggle = ({ className }) => {
       <Moon
         className={cn(
           iconClassName,
-          'absolute text-slate-200 transition-opacity duration-200',
+          'absolute text-foreground/90 transition-opacity duration-200',
           isDark ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-75'
         )}
         aria-hidden={!isDark}

@@ -31,20 +31,20 @@ const Toast = ({ id, title, message, variant = 'info', onClose }) => {
   return (
     <div
       className={cn(
-        'flex items-start gap-3 w-full max-w-md sm:max-w-sm p-4 bg-white rounded-xl border border-neutral-200 shadow-2xl backdrop-blur-sm transition-all duration-200',
-        isExiting ? 'opacity-0 translate-x-full scale-95' : 'opacity-100 translate-x-0 scale-100'
+        'flex w-full max-w-md items-start gap-3 rounded-xl border border-border bg-card p-4 shadow-2xl backdrop-blur-sm transition-all duration-200 sm:max-w-sm dark:border-border dark:bg-card',
+        isExiting ? 'translate-x-full scale-95 opacity-0' : 'translate-x-0 scale-100 opacity-100'
       )}
     >
-      <div className={cn("flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center shadow-sm", className)}>
-        <Icon className="w-5 h-5" />
+      <div className={cn("flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl shadow-sm", className)}>
+        <Icon className="h-5 w-5" />
       </div>
 
-      <div className="flex-1 min-w-0 pt-0.5">
-        <h4 className="font-semibold text-sm text-neutral-900 mb-0.5">
+      <div className="min-w-0 flex-1 pt-0.5">
+        <h4 className="mb-0.5 text-sm font-semibold text-foreground">
           {title}
         </h4>
         {message && (
-          <p className="text-xs text-neutral-600 line-clamp-2">
+          <p className="text-xs text-muted-foreground line-clamp-2">
             {message}
           </p>
         )}
@@ -52,10 +52,10 @@ const Toast = ({ id, title, message, variant = 'info', onClose }) => {
 
       <button
         onClick={handleClose}
-        className="flex-shrink-0 w-8 h-8 rounded-lg hover:bg-neutral-100 flex items-center justify-center transition-colors group focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2"
+        className="group flex h-8 w-8 items-center justify-center flex-shrink-0 rounded-lg transition-colors hover:bg-muted/70 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-2 dark:hover:bg-muted/40"
         aria-label="Cerrar notificación"
       >
-        <X className="w-4 h-4 text-neutral-400 group-hover:text-neutral-900 transition-colors" />
+        <X className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-foreground" />
       </button>
     </div>
   );
