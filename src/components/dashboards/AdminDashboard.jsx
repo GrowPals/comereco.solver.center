@@ -16,7 +16,7 @@ const AdminDashboard = ({ user }) => {
     const formatCurrency = (value) => value ? `$${Number(value).toFixed(2)}` : '$0.00';
 
     const quickActions = [
-        { label: 'Gestionar Reqs', icon: FileText, path: '/requisitions' },
+        { label: 'Gestionar requisiciones', icon: FileText, path: '/requisitions' },
         { label: 'Gestionar Usuarios', icon: Users, path: '/users' },
         { label: 'Gestionar Proyectos', icon: FolderKanban, path: '/projects' },
         { label: 'Gestionar Productos', icon: ShoppingBag, path: '/products/manage' },
@@ -28,7 +28,7 @@ const AdminDashboard = ({ user }) => {
             {/* Hero Section */}
             <div className="flex flex-col gap-4 pb-8 border-b border-border">
                 <h1 className="text-5xl font-bold tracking-tight text-foreground">
-                    Dashboard <span className="bg-gradient-primary bg-clip-text text-transparent">Ejecutivo</span>
+                    Panel <span className="bg-gradient-primary bg-clip-text text-transparent">Ejecutivo</span>
                 </h1>
                 <p className="text-lg text-muted-foreground">
                     Vista general de la compañía: <span className="font-semibold text-foreground">{user.company?.name || 'Tu Empresa'}</span>

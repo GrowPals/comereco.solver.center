@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { Helmet } from 'react-helmet';
 import { User, Building, Mail, Phone, Edit, Save, X, Shield, Upload, Loader2, Trash2 } from 'lucide-react';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
+import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -16,27 +17,38 @@ import logger from '@/utils/logger';
 import RequisitionCard from '@/components/RequisitionCard';
 import PageContainer from '@/components/layout/PageContainer';
 
-const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name, editable = false, placeholder }) => (
-  <div className="flex items-center gap-4 py-4">
-    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm dark:from-primary-500/15 dark:to-primary-600/10">
-      <Icon className="h-5 w-5 text-primary-500" aria-hidden="true" />
-    </div>
-    <div className="flex-1">
-      <p className="mb-1 text-sm font-medium text-muted-foreground">{label}</p>
-      {isEditing && editable ? (
-        <Input
-          name={name}
-          value={value || ''}
-          onChange={onChange}
-          placeholder={placeholder}
-          className="mt-1 h-9 rounded-xl"
-        />
-      ) : (
-        <p className="font-bold text-foreground">{value || placeholder || 'No especificado'}</p>
+const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name, editable = false, placeholder }) => {
+  const isEditableState = isEditing && editable;
+
+  return (
+    <div
+      className={cn(
+        'flex items-center gap-4 transition-colors',
+        isEditableState
+          ? 'rounded-2xl border border-border/60 bg-muted/40 px-4 py-4 shadow-sm dark:border-border/70 dark:bg-[#0f1a2d]/80'
+          : 'py-4'
       )}
+    >
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm dark:from-primary-500/15 dark:to-primary-600/10 dark:border dark:border-primary-500/25">
+        <Icon className="h-5 w-5 text-primary-500 dark:text-primary-200" aria-hidden="true" />
+      </div>
+      <div className="flex-1">
+        <p className="mb-1 text-sm font-medium text-muted-foreground">{label}</p>
+        {isEditableState ? (
+          <Input
+            name={name}
+            value={value || ''}
+            onChange={onChange}
+            placeholder={placeholder}
+            className="mt-1 h-10 rounded-xl border border-border/60 bg-background/95 text-foreground shadow-inner transition-colors focus-visible:border-primary-400 focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:border-border/60 dark:bg-[#121c30] dark:text-foreground"
+          />
+        ) : (
+          <p className="font-bold text-foreground">{value || placeholder || 'No especificado'}</p>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const ProfilePage = () => {
   const { user, loading: authLoading, refreshUserProfile } = useSupabaseAuth();
@@ -288,8 +300,8 @@ const ProfilePage = () => {
                       </Button>
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground/80 dark:text-muted-foreground/70">
-                    Sube una imagen PNG, JPG o WebP (máximo 5&nbsp;MB) para personalizar tu perfil.
+                  <p className="text-xs text-muted-foreground/70 dark:text-muted-foreground/60">
+                    Usa tu logotipo o una foto profesional para que tu equipo te identifique fácilmente.
                   </p>
                 </div>
               </div>
@@ -375,8 +387,8 @@ const ProfilePage = () => {
               {loading ? (
                 <Skeleton className="h-16 w-full rounded-xl" />
               ) : (
-                <div className="rounded-xl border border-primary-200 bg-gradient-to-br from-primary-50 to-primary-100 p-4 dark:border-primary-500/30 dark:from-primary-500/15 dark:to-primary-600/15">
-                  <p className="mb-1 text-sm font-medium text-muted-foreground">Requisiciones Creadas</p>
+                <div className="rounded-xl border border-primary-200 bg-gradient-to-br from-primary-50 to-primary-100 p-4 shadow-inner dark:border-primary-500/40 dark:bg-[#101a2f]/85 dark:shadow-[inset_0_1px_12px_rgba(15,35,68,0.65)]">
+                  <p className="mb-1 text-sm font-medium text-muted-foreground dark:text-muted-foreground/70">Requisiciones creadas</p>
                   <p className="text-3xl font-bold text-foreground">{stats.created}</p>
                 </div>
               )}

@@ -27,7 +27,7 @@ const ConfirmationStep = ({ requisitionId, onStartNew, onViewRequisition }) => {
 
             <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
                  <Button variant="outline" onClick={() => navigate('/dashboard')}>
-                    <Home className="w-4 h-4 mr-2" /> Ir al Dashboard
+                    <Home className="w-4 h-4 mr-2" /> Ir al inicio
                 </Button>
                 <Button onClick={onViewRequisition}>
                     <Eye className="w-4 h-4 mr-2" /> Ver Requisición

@@ -15,7 +15,7 @@ const Dashboard = () => {
     const { isAdmin, isSupervisor, isLoadingPermissions } = useUserPermissions();
 
     if (isLoadingPermissions || !user) {
-        return <PageLoader message="Cargando tu dashboard..." />;
+        return <PageLoader message="Cargando tu panel..." />;
     }
 
     const renderDashboardByRole = () => {
@@ -29,9 +29,9 @@ const Dashboard = () => {
     };
 
     const getTitle = () => {
-        if (isAdmin) return 'Dashboard de Administrador';
-        if (isSupervisor) return 'Dashboard de Supervisor';
-        return 'Mi Dashboard';
+        if (isAdmin) return 'Panel del Administrador';
+        if (isSupervisor) return 'Panel del Supervisor';
+        return 'Mi Panel';
     };
 
     return (

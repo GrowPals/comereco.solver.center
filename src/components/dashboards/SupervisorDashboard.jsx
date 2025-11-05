@@ -35,7 +35,7 @@ const SupervisorDashboard = ({ user }) => {
         <div className="space-y-8">
             <div className="flex flex-col gap-2">
                 <h1 className="text-4xl font-bold text-foreground">
-                    Dashboard de <span className="bg-gradient-primary bg-clip-text text-transparent">Supervisor</span>
+                    Panel del <span className="bg-gradient-primary bg-clip-text text-transparent">Supervisor</span>
                 </h1>
         <p className="text-base text-muted-foreground">
             Bienvenido, <span className="font-semibold text-foreground">{user.full_name}</span>. Revisa las requisiciones pendientes.

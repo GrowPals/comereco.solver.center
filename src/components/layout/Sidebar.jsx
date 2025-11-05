@@ -89,7 +89,7 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
         sections.push({
             title: 'Principal',
             items: [
-                { to: '/dashboard', icon: Home, text: 'Dashboard' },
+                { to: '/dashboard', icon: Home, text: 'Inicio' },
                 { to: '/catalog', icon: ShoppingBag, text: 'Catálogo' },
                 { to: '/requisitions', icon: List, text: 'Requisiciones' },
             ]

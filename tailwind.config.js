@@ -202,34 +202,34 @@ export default {
     function({ addComponents }) {
       addComponents({
         '.heading-1': {
-          '@apply text-4xl md:text-5xl font-bold tracking-tight leading-tight text-gray-900': {},
+          '@apply text-4xl md:text-5xl font-bold tracking-tight leading-tight text-foreground': {},
         },
         '.heading-2': {
-          '@apply text-3xl md:text-4xl font-bold tracking-tight leading-tight text-gray-900': {},
+          '@apply text-3xl md:text-4xl font-bold tracking-tight leading-tight text-foreground': {},
         },
         '.heading-3': {
-          '@apply text-2xl md:text-3xl font-semibold leading-tight text-gray-900': {},
+          '@apply text-2xl md:text-3xl font-semibold leading-tight text-foreground': {},
         },
         '.heading-4': {
-          '@apply text-xl md:text-2xl font-semibold leading-normal text-gray-900': {},
+          '@apply text-xl md:text-2xl font-semibold leading-normal text-foreground': {},
         },
         '.heading-5': {
-          '@apply text-lg md:text-xl font-semibold leading-normal text-gray-900': {},
+          '@apply text-lg md:text-xl font-semibold leading-normal text-foreground': {},
         },
         '.body-large': {
-          '@apply text-lg leading-relaxed text-gray-700': {},
+          '@apply text-lg leading-relaxed text-foreground text-opacity-80': {},
         },
         '.body-base': {
-          '@apply text-base leading-normal text-gray-700': {},
+          '@apply text-base leading-normal text-foreground text-opacity-80': {},
         },
         '.body-small': {
-          '@apply text-sm leading-normal text-gray-600': {},
+          '@apply text-sm leading-normal text-muted-foreground': {},
         },
         '.caption': {
-          '@apply text-xs leading-normal text-gray-500 uppercase tracking-wide': {},
+          '@apply text-xs leading-normal uppercase tracking-wide text-muted-foreground': {},
         },
         '.label': {
-          '@apply text-sm font-medium leading-none text-gray-700': {},
+          '@apply text-sm font-medium leading-none text-foreground text-opacity-90': {},
         },
       })
     }

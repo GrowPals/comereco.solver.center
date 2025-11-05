@@ -280,7 +280,7 @@ export default defineConfig({
 		alias: {
 			'@': path.resolve(__dirname, './src'),
 			'@/context': path.resolve(__dirname, './src/context'),
-			'@/contexts': path.resolve(__dirname, './src/context'),
+			'@/contexts': path.resolve(__dirname, './src/contexts'),
 			'react': path.resolve(__dirname, './node_modules/react'),
 			'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
 		},

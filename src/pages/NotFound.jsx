@@ -54,7 +54,7 @@ const NotFoundPage = () => {
                   className="shadow-md hover:shadow-lg"
                 >
                   <Home className="mr-2 h-5 w-5" />
-                  Ir al Dashboard
+                  Ir al inicio
                 </Button>
                 <Button
                   onClick={() => navigate(-1)}
