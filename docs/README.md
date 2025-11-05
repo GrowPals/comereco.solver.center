@@ -2,7 +2,7 @@
 
 Documentación completa del sistema ComerECO - Sistema de Requisiciones del Grupo Solven.
 
-**Última actualización:** 2 de noviembre de 2025
+**Última actualización:** 5 de noviembre de 2025
 
 ---
 
@@ -34,8 +34,9 @@ docs/
 │   ├── ARQUITECTURA_ROLES_PERMISOS.md         # Sistema RBAC vigente
 │   ├── REPORTE_AUDITORIA_BACKEND_FINAL.md     # ⭐ Auditoría Backend 100% (Nov 2025)
 │   ├── CHECKLIST_PRODUCCION_AUTOMATIZACION.md # Tareas para producción
-│   ├── ESTADO_BASE_DATOS.md                   # Estado actual de la BD
-│   └── INSTRUCCIONES_FIX_RLS_RECURSION.md     # Fix bug RLS recursivo
+│   ├── MODELO_PERMISOS_IMPLEMENTADO.md        # Modelo de permisos actual
+│   ├── INFORME_FINAL_RLS.md                   # Informe final RLS
+│   └── SECURITY_FIXES_APPLIED.md              # Correcciones de seguridad aplicadas
 │
 ├── 📖 guides/                                  # Guías técnicas
 │   ├── IMPLEMENTACION_BACKEND_SUPABASE.md     # Backend con Supabase
@@ -98,7 +99,7 @@ docs/
 | [ARQUITECTURA_ROLES_PERMISOS.md](ARQUITECTURA_ROLES_PERMISOS.md) | Sistema RBAC y permisos | ✅ Vigente |
 | [REPORTE_AUDITORIA_BACKEND_FINAL.md](REPORTE_AUDITORIA_BACKEND_FINAL.md) | ⭐ Auditoría Backend 100% (Nov 2025) | ✅ Vigente |
 | [REFERENCIA_BD_SUPABASE.md](guides/REFERENCIA_BD_SUPABASE.md) | Esquema completo de base de datos | ✅ Vigente |
-| [ESTADO_BASE_DATOS.md](ESTADO_BASE_DATOS.md) | Estado actual de la BD | ✅ Vigente |
+| [MODELO_PERMISOS_IMPLEMENTADO.md](MODELO_PERMISOS_IMPLEMENTADO.md) | Modelo de permisos implementado | ✅ Vigente |
 
 ### 🚀 Deployment y Configuración
 
@@ -118,7 +119,8 @@ docs/
 | [IMPLEMENTACION_BACKEND_SUPABASE.md](guides/IMPLEMENTACION_BACKEND_SUPABASE.md) | Implementación backend | ✅ Vigente |
 | [REFERENCIA_BD_SUPABASE.md](guides/REFERENCIA_BD_SUPABASE.md) | ⭐ Referencia completa de BD | ✅ Vigente |
 | [GUIA_BEST_PRACTICES_SUPABASE.md](guides/GUIA_BEST_PRACTICES_SUPABASE.md) | Mejores prácticas | ✅ Vigente |
-| [INSTRUCCIONES_FIX_RLS_RECURSION.md](INSTRUCCIONES_FIX_RLS_RECURSION.md) | Fix bug RLS recursivo | ✅ Vigente |
+| [SECURITY_FIXES_APPLIED.md](SECURITY_FIXES_APPLIED.md) | Correcciones de seguridad | ✅ Vigente |
+| [INFORME_FINAL_RLS.md](INFORME_FINAL_RLS.md) | Informe final RLS | ✅ Vigente |
 | [api/MIGRACION_RLS_CRITICO.sql](api/MIGRACION_RLS_CRITICO.sql) | ⭐ Políticas RLS críticas | ✅ APLICADO |
 | [api/](api/) | Scripts SQL y migraciones | ✅ Vigente |
 
@@ -151,7 +153,6 @@ docs/
 | [PASOS_PARA_ARREGLAR_LOGIN.md](guides/PASOS_PARA_ARREGLAR_LOGIN.md) | Solucionar problemas login | ✅ Vigente |
 | [troubleshooting/FIX_REACT_USESTATE_ERROR.md](troubleshooting/FIX_REACT_USESTATE_ERROR.md) | Fix error useState | ✅ Vigente |
 | [troubleshooting/FIX_REACT_CREATECONTEXT_ERROR.md](troubleshooting/FIX_REACT_CREATECONTEXT_ERROR.md) | Fix error createContext | ✅ Vigente |
-| [troubleshooting/FIX_DEPRECATION_WARNINGS.md](troubleshooting/FIX_DEPRECATION_WARNINGS.md) | Fix warnings deprecados | ✅ Vigente |
 
 ### 💻 Desarrollo
 
@@ -179,7 +180,7 @@ docs/
 **Solucionar un problema:**
 1. [Troubleshooting Login](guides/PASOS_PARA_ARREGLAR_LOGIN.md)
 2. [Carpeta troubleshooting/](troubleshooting/)
-3. [Fix RLS Recursivo](INSTRUCCIONES_FIX_RLS_RECURSION.md)
+3. [Informe Final RLS](INFORME_FINAL_RLS.md)
 
 **Desplegar a producción:**
 1. [Deployment Checklist](guides/DEPLOYMENT_CHECKLIST.md)
@@ -187,9 +188,9 @@ docs/
 3. [Configuración Vercel](guides/GUIA_CONFIGURACION_VERCEL.md)
 
 **Integrar con Bind ERP:**
-1. [Guía Implementación Bind](../GUIA_IMPLEMENTACION_BIND_PASO_A_PASO.md)
+1. [Guía Implementación Bind](guides/GUIA_IMPLEMENTACION_BIND_PASO_A_PASO.md)
 2. [Documentación n8n](../integrations/n8n/)
-3. [Auditoría actual](../AUDITORIA_VISION_REALIDAD_PLAN_2025.md)
+3. [Auditoría actual](AUDITORIA_VISION_REALIDAD_PLAN_2025.md)
 
 ---
 
@@ -302,6 +303,6 @@ Ver detalles: [archive/audits/](archive/audits/)
 
 ---
 
-**Última curación:** 2 de noviembre de 2025
+**Última curación:** 5 de noviembre de 2025
 **Mantenido por:** Equipo ComerECO
 **Próxima revisión:** Diciembre 2025

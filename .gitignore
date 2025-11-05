@@ -27,11 +27,9 @@ dist/
 out/
 .next/
 .nuxt/
-.vercel/
-.idea/
 
 # Editor directories and files
-.vscode
+.vscode/
 *.sublime-project
 *.sublime-workspace
 .DS_Store
@@ -46,4 +44,29 @@ Thumbs.db
 
 # Vite-specific
 .vite/
-.vercel
+
+# Vercel
+.vercel/
+
+# Database dumps and backups
+*.sql
+!supabase/migrations/*.sql
+!supabase/seed.sql
+
+# System packages
+*.deb
+*.rpm
+*.pkg
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Claude Code
+.claude/
+
+# Playwright screenshots and testing artifacts
+.playwright-mcp/
+playwright-report/
+test-results/
