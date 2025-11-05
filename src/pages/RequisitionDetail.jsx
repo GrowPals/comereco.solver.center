@@ -26,6 +26,7 @@ import { useUserPermissions } from '@/hooks/useUserPermissions';
 import { useRequisitionDetails } from '@/hooks/useRequisitions';
 import { useRequisitionActions } from '@/hooks/useRequisitionActions';
 import logger from '@/utils/logger';
+import PageContainer from '@/components/layout/PageContainer';
 
 
 const RequisitionDetail = () => {
@@ -148,8 +149,8 @@ const RequisitionDetail = () => {
     return (
         <>
             <Helmet><title>Detalle de Requisición {internal_folio} - ComerECO</title></Helmet>
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8">
-                <div className="max-w-7xl mx-auto space-y-8">
+            <PageContainer>
+                <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
                     {/* Header with accent bar */}
                     <header className="relative bg-white rounded-2xl border-2 border-slate-200 p-6 sm:p-8 shadow-lg overflow-hidden">
                         {/* Top accent bar based on status */}
@@ -353,7 +354,7 @@ const RequisitionDetail = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </PageContainer>
         </>
     );
 };

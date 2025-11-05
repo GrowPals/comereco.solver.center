@@ -201,12 +201,32 @@ export const inviteUser = async (email, role) => {
     if (sessionError || !session) {
         throw new Error("Usuario no autenticado.");
     }
+    const { companyId, error: companyError } = await getCachedCompanyId();
+    if (companyError || !companyId) {
+        throw new Error("No se pudo determinar la empresa actual.");
+    }
+    const normalizedEmail = email.trim().toLowerCase();
+
+    // Registrar la invitación antes de llamar a la edge function
+    const { error: invitationError } = await supabase
+        .from('user_invitations')
+        .insert([{
+            email: normalizedEmail,
+            company_id: companyId,
+            role,
+            invited_by: session.user.id,
+        }]);
+
+    if (invitationError && invitationError.code !== '23505') {
+        logger.error('Error registrando invitación:', invitationError);
+        throw new Error(formatErrorMessage(invitationError));
+    }
 
     try {
         // Llamar a la Edge Function con el token del usuario
         const { data, error } = await supabase.functions.invoke('invite-user', {
             body: {
-                email: email.trim().toLowerCase(),
+                email: normalizedEmail,
                 role: role,
             },
         });

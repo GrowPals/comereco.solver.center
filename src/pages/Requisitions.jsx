@@ -12,8 +12,8 @@ import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Pagination } from '@/components/ui/pagination';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
 import { useNavigate, useLocation } from 'react-router-dom';
+import PageContainer from '@/components/layout/PageContainer';
 
 
 const RequisitionsPage = () => {
@@ -60,33 +60,33 @@ const RequisitionsPage = () => {
         <meta name="description" content="Vea y gestione sus requisiciones de compra." />
       </Helmet>
 
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto">
+      <PageContainer>
+        <div className="mx-auto w-full max-w-7xl">
           {/* Header */}
-          <header className="mb-10 pb-8 border-b border-slate-200">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <div>
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-slate-900 mb-3">
+          <header className="mb-6 border-b border-slate-200 pb-4 sm:mb-8 sm:pb-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="space-y-2">
+                <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
                   Mis Requisiciones
                 </h1>
-                <p className="text-base sm:text-lg text-slate-600">
+                <p className="text-sm text-slate-600 sm:text-base">
                   Historial y seguimiento de todas tus solicitudes
                 </p>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="grid w-full gap-3 sm:w-auto sm:grid-cols-[auto_auto] sm:items-center">
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => refetch()}
                   disabled={isFetching}
-                  className="h-12 w-12 rounded-xl hover:bg-slate-100"
+                  className="h-12 w-12 rounded-xl border border-slate-200 bg-white shadow-sm hover:bg-slate-100"
                 >
                   <RefreshCw className={`h-5 w-5 ${isFetching ? 'animate-spin text-blue-500' : 'text-slate-600'}`} />
                 </Button>
                 <Button
                   onClick={() => navigate('/requisitions/new')}
                   size="lg"
-                  className="shadow-lg"
+                  className="w-full rounded-xl shadow-lg sm:w-auto"
                 >
                   <Plus className="mr-2 h-5 w-5" />
                   Nueva Requisición
@@ -96,13 +96,13 @@ const RequisitionsPage = () => {
           </header>
 
           {/* Filters */}
-          <div className="mb-6 flex flex-wrap items-center gap-4 p-4 bg-white rounded-xl border-2 border-slate-200 shadow-sm">
-            <div className="flex items-center gap-2">
+          <div className="mb-6 flex flex-col gap-4 rounded-xl border-2 border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:flex-wrap sm:items-center">
+            <div className="flex items-center gap-2 text-sm">
               <Filter className="h-5 w-5 text-slate-600" />
               <span className="font-semibold text-slate-900">Filtros:</span>
             </div>
             <Select value={selectedProject} onValueChange={(value) => { setSelectedProject(value); setPage(1); }}>
-              <SelectTrigger className="w-[200px]">
+              <SelectTrigger className="w-full min-w-[200px] rounded-xl sm:w-[220px]">
                 <SelectValue placeholder="Todos los proyectos" />
               </SelectTrigger>
               <SelectContent>
@@ -115,7 +115,7 @@ const RequisitionsPage = () => {
               </SelectContent>
             </Select>
             <Select value={selectedStatus} onValueChange={(value) => { setSelectedStatus(value); setPage(1); }}>
-              <SelectTrigger className="w-[200px]">
+              <SelectTrigger className="w-full min-w-[200px] rounded-xl sm:w-[220px]">
                 <SelectValue placeholder="Todos los estados" />
               </SelectTrigger>
               <SelectContent>
@@ -129,7 +129,12 @@ const RequisitionsPage = () => {
               </SelectContent>
             </Select>
             {hasFilters && (
-              <Button variant="ghost" size="sm" onClick={clearFilters} className="text-slate-600 hover:text-slate-900">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearFilters}
+                className="w-full rounded-xl border border-transparent text-slate-600 hover:border-slate-200 hover:text-slate-900 sm:w-auto"
+              >
                 <X className="mr-2 h-4 w-4" />
                 Limpiar filtros
               </Button>
@@ -155,17 +160,15 @@ const RequisitionsPage = () => {
           ) : filteredRequisitions.length > 0 ? (
             <>
               {/* Requisitions Count */}
-              <div className="mb-6 flex items-center gap-3">
+              <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100">
                   <FileText className="h-5 w-5 text-blue-600" />
                 </div>
-                <p className="text-slate-600">
-                  <span className="font-bold text-2xl text-slate-900">
+                <p className="text-sm text-slate-600 sm:text-base">
+                  <span className="mr-1 text-2xl font-bold text-slate-900 sm:text-3xl">
                     {hasFilters ? filteredRequisitions.length : totalCount}
                   </span>
-                  <span className="ml-2 text-lg">
-                    {hasFilters ? 'requisiciones encontradas' : 'requisiciones en total'}
-                  </span>
+                  {hasFilters ? 'requisiciones encontradas' : 'requisiciones en total'}
                 </p>
               </div>
 
@@ -211,7 +214,7 @@ const RequisitionsPage = () => {
             </div>
           )}
         </div>
-      </div>
+      </PageContainer>
     </>
   );
 };

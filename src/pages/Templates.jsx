@@ -36,6 +36,7 @@ import { useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import TemplateItemsEditor from '@/components/TemplateItemsEditor';
+import PageContainer from '@/components/layout/PageContainer';
 
 const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
     return (
@@ -87,8 +88,8 @@ const TemplateFormModal = ({ template, isOpen, onClose, onSave }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-hidden border border-slate-200 bg-white shadow-2xl p-0">
-        <div className="flex max-h-[90vh] flex-col">
+      <DialogContent className="sm:max-w-4xl border border-slate-200 bg-white shadow-2xl p-0">
+        <div className="flex max-h-[calc(100dvh-3.5rem)] flex-col">
           <DialogHeader className="px-6 pt-6">
             <DialogTitle className="text-2xl font-bold">
               {template ? 'Editar Plantilla' : 'Crear Nueva Plantilla'}
@@ -206,8 +207,8 @@ const TemplatesPage = () => {
   return (
     <>
       <Helmet><title>Plantillas - ComerECO</title></Helmet>
-      <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-white to-slate-50 px-4 pb-28 pt-2 sm:px-6 sm:pb-12 sm:pt-4 lg:px-8">
-        <div className="mx-auto w-full max-w-7xl space-y-8">
+      <PageContainer className="pb-24 sm:pb-16">
+        <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
           <header className="flex flex-col gap-6 border-b border-slate-200 pb-6 sm:flex-row sm:items-center sm:justify-between sm:pb-8">
             <div className="flex w-full items-start gap-3 sm:items-center sm:gap-4">
               <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 shadow-md sm:h-14 sm:w-14">
@@ -256,7 +257,7 @@ const TemplatesPage = () => {
             </div>
           )}
         </div>
-      </div>
+      </PageContainer>
 
       {formModal.isOpen && <TemplateFormModal isOpen={formModal.isOpen} onClose={() => setFormModal({ isOpen: false, template: null })} template={formModal.template} onSave={handleSave} />}
       

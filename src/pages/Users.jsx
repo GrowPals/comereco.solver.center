@@ -36,6 +36,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import PageContainer from '@/components/layout/PageContainer';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { fetchUsersInCompany, inviteUser, updateUserProfile, toggleUserStatus, deleteUser, isApprovalBypassSupported, isProfileEmailSupported } from '@/services/userService';
@@ -331,19 +332,19 @@ const Users = () => {
                 variant="destructive"
                 onConfirm={confirmDelete}
             />
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8">
-                <div className="max-w-7xl mx-auto space-y-8">
+            <PageContainer>
+                <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
                     {/* Header */}
-                    <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-slate-200">
-                        <div className="flex items-center gap-4">
-                            <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-md">
-                                <UserIcon className="h-7 w-7 text-blue-600" aria-hidden="true" />
+                    <header className="flex flex-col gap-4 border-b border-slate-200 pb-5 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
+                        <div className="flex items-center gap-3 sm:gap-4">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 shadow-sm sm:h-14 sm:w-14">
+                                <UserIcon className="h-6 w-6 text-blue-600 sm:h-7 sm:w-7" aria-hidden="true" />
                             </div>
-                            <div>
-                                <h1 className="text-4xl font-bold tracking-tight text-slate-900 mb-1">
+                            <div className="space-y-1">
+                                <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
                                     Gestión de <span className="bg-gradient-primary bg-clip-text text-transparent">Usuarios</span>
                                 </h1>
-                                <p className="text-base text-slate-600">
+                                <p className="text-sm text-slate-600 sm:text-base">
                                     {users?.length || 0} {users?.length === 1 ? 'usuario' : 'usuarios'} en tu organización
                                 </p>
                             </div>
@@ -351,7 +352,7 @@ const Users = () => {
                         <Button
                             size="lg"
                             onClick={() => handleOpenForm()}
-                            className="shadow-button hover:shadow-button-hover whitespace-nowrap"
+                            className="w-full rounded-xl shadow-button hover:shadow-button-hover sm:w-auto"
                         >
                             <Plus className="mr-2 h-5 w-5" />
                             Invitar Usuario
@@ -418,11 +419,6 @@ const Users = () => {
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </div>
-                                        {user.is_active === false && (
-                                            <Badge variant="destructive" className="mt-1 text-xs">
-                                                Inactivo
-                                            </Badge>
-                                        )}
                                     </div>
                                 </div>
                                 <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-slate-600">
@@ -432,7 +428,7 @@ const Users = () => {
                                         )}
                                         {roleMapping[user.role_v2]?.label || user.role_v2}
                                     </Badge>
-                                    <Badge variant={user.is_active !== false ? 'success' : 'muted'}>
+                                    <Badge variant={user.is_active !== false ? 'success' : 'destructive'}>
                                         {user.is_active !== false ? 'Activo' : 'Inactivo'}
                                     </Badge>
                                     <span className="ml-auto text-xs text-slate-500">
@@ -473,11 +469,6 @@ const Users = () => {
                                             <div className="flex-1">
                                                 <div className="flex items-center gap-2">
                                                     <p className="font-bold text-slate-900">{user.full_name}</p>
-                                                    {user.is_active === false && (
-                                                        <Badge variant="destructive" className="text-xs">
-                                                            Inactivo
-                                                        </Badge>
-                                                    )}
                                                 </div>
                                                 <p className="text-sm text-slate-600">{resolveUserEmail(user)}</p>
                                             </div>
@@ -492,7 +483,7 @@ const Users = () => {
                                         </Badge>
                                     </TableCell>
                                     <TableCell>
-                                        <Badge variant={user.is_active !== false ? 'success' : 'muted'} className="shadow-sm">
+                                        <Badge variant={user.is_active !== false ? 'success' : 'destructive'} className="shadow-sm">
                                             {user.is_active !== false ? 'Activo' : 'Inactivo'}
                                         </Badge>
                                     </TableCell>
@@ -539,7 +530,7 @@ const Users = () => {
                     </Table>
                     </div>
                 </div>
-            </div>
+            </PageContainer>
 
             <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
                 <DialogContent className="sm:max-w-lg border border-slate-200 bg-white shadow-2xl">

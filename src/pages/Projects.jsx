@@ -39,9 +39,11 @@ import { useUserPermissions } from '@/hooks/useUserPermissions';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import PageLoader from '@/components/PageLoader';
 import EmptyState from '@/components/EmptyState';
+import PageContainer from '@/components/layout/PageContainer';
 
 const ProjectCard = ({ project, onEdit, onDelete, onManageMembers, onView }) => {
   const { canManageProjects } = useUserPermissions();
+  const isActive = project.status === 'active';
   return (
     <div className="group relative bg-white border-2 border-slate-200 rounded-2xl p-6 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
       {/* Accent bar on hover */}
@@ -81,12 +83,12 @@ const ProjectCard = ({ project, onEdit, onDelete, onManageMembers, onView }) => 
 
       <div className="mt-6 pt-4 border-t border-slate-200 flex flex-col gap-3">
         <div className="flex justify-between items-center">
-        <Badge variant={project.active ? 'success' : 'muted'} className="shadow-sm">
-          {project.active ? 'Activo' : 'Archivado'}
-        </Badge>
-        <div className="text-sm text-slate-600">
-          <span className="font-medium text-slate-900">{project.supervisor?.full_name || 'Sin asignar'}</span>
-        </div>
+          <Badge variant={isActive ? 'success' : 'muted'} className="shadow-sm">
+            {isActive ? 'Activo' : 'Archivado'}
+          </Badge>
+          <div className="text-sm text-slate-600">
+            <span className="font-medium text-slate-900">{project.supervisor?.full_name || 'Sin asignar'}</span>
+          </div>
         </div>
         <Button
           variant="outline"
@@ -110,7 +112,7 @@ const ProjectFormModal = ({ project, isOpen, onClose, onSave, supervisors, isAdm
     ? String(project.supervisor_id)
     : (isAdmin ? EMPTY_SUPERVISOR_VALUE : (currentUserId ? String(currentUserId) : EMPTY_SUPERVISOR_VALUE));
   const [supervisorId, setSupervisorId] = useState(initialSupervisor);
-  const [active, setActive] = useState(project?.active ?? true);
+  const [status, setStatus] = useState(project?.status ?? 'active');
 
   useEffect(() => {
     setName(project?.name || '');
@@ -122,7 +124,7 @@ const ProjectFormModal = ({ project, isOpen, onClose, onSave, supervisors, isAdm
     } else if (currentUserId) {
       setSupervisorId(String(currentUserId));
     }
-    setActive(project?.active ?? true);
+    setStatus(project?.status ?? 'active');
   }, [project, isOpen, isAdmin, currentUserId]);
 
   const handleSubmit = () => {
@@ -134,14 +136,14 @@ const ProjectFormModal = ({ project, isOpen, onClose, onSave, supervisors, isAdm
       name,
       description,
       supervisor_id: normalizedSupervisorId,
-      active
+      status
     });
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg overflow-hidden border border-slate-200 bg-white shadow-2xl p-0">
-        <div className="flex max-h-[85vh] flex-col">
+      <DialogContent className="sm:max-w-lg border border-slate-200 bg-white shadow-2xl p-0">
+        <div className="flex max-h-[calc(100dvh-4rem)] flex-col">
           <DialogHeader className="px-6 pt-6">
             <DialogTitle className="text-2xl font-bold">
               {project ? 'Editar Proyecto' : 'Crear Nuevo Proyecto'}
@@ -183,8 +185,8 @@ const ProjectFormModal = ({ project, isOpen, onClose, onSave, supervisors, isAdm
               <input
                 type="checkbox"
                 id="active"
-                checked={active}
-                onChange={(e) => setActive(e.target.checked)}
+                checked={status === 'active'}
+                onChange={(e) => setStatus(e.target.checked ? 'active' : 'archived')}
                 className="h-4 w-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
               />
               <Label htmlFor="active" className="text-sm font-medium text-slate-700">Activo</Label>
@@ -255,13 +257,13 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-2xl overflow-hidden border border-slate-200 bg-white shadow-2xl p-0">
-                <div className="flex max-h-[85vh] flex-col">
+            <DialogContent className="max-w-2xl border border-slate-200 bg-white shadow-2xl p-0">
+                <div className="flex max-h-[calc(100dvh-4rem)] flex-col">
                     <DialogHeader className="px-6 pt-6">
                         <DialogTitle>Gestionar Miembros de "{project?.name}"</DialogTitle>
                         <DialogDescription>Agrega usuarios y configura si requieren aprobación para enviar requisiciones.</DialogDescription>
                     </DialogHeader>
-                    <div className="space-y-4 px-6 py-4">
+                    <div className="flex-1 space-y-4 overflow-y-auto px-6 py-4">
                         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                             <Select value={selectedUser} onValueChange={setSelectedUser}>
                                 <SelectTrigger className="rounded-xl">
@@ -290,7 +292,7 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
                                 <UserPlus className="h-4 w-4"/>
                             </Button>
                         </div>
-                        <div className="max-h-96 space-y-2 overflow-y-auto pr-2">
+                        <div className="space-y-2 pr-2">
                             {isLoadingMembers ? (
                                 <p className="py-4 text-center text-slate-500">Cargando miembros...</p>
                             ) : members && members.length > 0 ? (
@@ -385,19 +387,19 @@ const ProjectsPage = () => {
   return (
     <>
       <Helmet><title>Proyectos - ComerECO</title></Helmet>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto space-y-8">
+      <PageContainer>
+        <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
           {/* Header */}
-          <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-slate-200">
-            <div className="flex items-center gap-4">
-              <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-md">
-                <FolderKanban className="h-7 w-7 text-blue-600" aria-hidden="true" />
+          <header className="flex flex-col gap-4 border-b border-slate-200 pb-5 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 shadow-sm sm:h-14 sm:w-14">
+                <FolderKanban className="h-6 w-6 text-blue-600 sm:h-7 sm:w-7" aria-hidden="true" />
               </div>
-              <div>
-                <h1 className="text-4xl font-bold tracking-tight text-slate-900 mb-1">
+              <div className="space-y-1">
+                <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
                   <span className="bg-gradient-primary bg-clip-text text-transparent">Proyectos</span>
                 </h1>
-                <p className="text-base text-slate-600">
+                <p className="text-sm text-slate-600 sm:text-base">
                   {projects?.length || 0} {projects?.length === 1 ? 'proyecto' : 'proyectos'} en gestión
                 </p>
               </div>
@@ -406,7 +408,7 @@ const ProjectsPage = () => {
               <Button
                 size="lg"
                 onClick={() => setFormModal({ isOpen: true, project: null })}
-                className="shadow-lg hover:shadow-xl whitespace-nowrap"
+                className="w-full rounded-xl shadow-lg hover:shadow-xl sm:w-auto"
               >
                 <PlusCircle className="mr-2 h-5 w-5" />
                 Crear Proyecto
@@ -441,7 +443,7 @@ const ProjectsPage = () => {
             />
           )}
         </div>
-      </div>
+      </PageContainer>
 
       {formModal.isOpen && (
         <ProjectFormModal

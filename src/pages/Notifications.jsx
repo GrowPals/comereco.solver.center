@@ -21,6 +21,7 @@ import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogD
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import PageLoader from '@/components/PageLoader';
+import PageContainer from '@/components/layout/PageContainer';
 
 const notificationIcons = {
     success: { icon: CheckCheck, color: 'bg-green-100 text-green-800' },
@@ -142,32 +143,44 @@ const NotificationsPage = () => {
     return (
         <>
             <Helmet><title>Notificaciones - ComerECO</title></Helmet>
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8">
-                <div className="max-w-7xl mx-auto space-y-8">
-                    <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-slate-200">
-                        <div className="flex items-center gap-4">
-                            <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-md">
-                                <Bell className="h-7 w-7 text-blue-600" aria-hidden="true" />
+            <PageContainer>
+                <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
+                    <header className="flex flex-col gap-4 border-b border-slate-200 pb-5 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
+                        <div className="flex items-center gap-3 sm:gap-4">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 shadow-sm sm:h-14 sm:w-14">
+                                <Bell className="h-6 w-6 text-blue-600 sm:h-7 sm:w-7" aria-hidden="true" />
                             </div>
-                            <div>
-                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-slate-900 mb-1">Notificaciones</h1>
-                                {unreadCount > 0 && <p className="text-base sm:text-lg text-slate-600">{unreadCount} notificaciones no leídas</p>}
+                            <div className="space-y-1">
+                                <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Notificaciones</h1>
+                                {unreadCount > 0 && (
+                                    <p className="text-sm text-slate-600 sm:text-base">{unreadCount} notificaciones no leídas</p>
+                                )}
                             </div>
                         </div>
-                        <Button onClick={() => confirmAction('markAllRead', allNotifications.filter(n => !n.is_read).map(n => n.id))} disabled={unreadCount === 0} size="lg" className="shadow-button hover:shadow-button-hover whitespace-nowrap">
+                        <Button
+                            onClick={() => confirmAction('markAllRead', allNotifications.filter(n => !n.is_read).map(n => n.id))}
+                            disabled={unreadCount === 0}
+                            size="lg"
+                            className="w-full rounded-xl shadow-button hover:shadow-button-hover sm:w-auto"
+                        >
                             <CheckCheck className="mr-2 h-5 w-5" /> Marcar todo como leído
                         </Button>
                     </header>
 
-                    <Card className="p-6 border-2 border-slate-200 shadow-lg rounded-2xl">
-                        <div className="flex flex-col sm:flex-row gap-4 items-center">
+                    <Card className="rounded-2xl border-2 border-slate-200 p-4 shadow-lg sm:p-6">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
                             <div className="relative w-full sm:max-w-xs">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-5 w-5" aria-hidden="true" />
-                                <Input placeholder="Buscar..." value={filters.query} onChange={e => setFilters(p => ({...p, query: e.target.value}))} className="pl-10 rounded-xl" />
+                                <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" aria-hidden="true" />
+                                <Input
+                                    placeholder="Buscar..."
+                                    value={filters.query}
+                                    onChange={e => setFilters(p => ({ ...p, query: e.target.value }))}
+                                    className="h-11 rounded-xl pl-10"
+                                />
                             </div>
-                            <Select value={filters.type} onValueChange={v => setFilters(p => ({...p, type: v}))}>
-                                <SelectTrigger className="w-full sm:w-[200px] rounded-xl">
-                                    <SelectValue />
+                            <Select value={filters.type} onValueChange={v => setFilters(p => ({ ...p, type: v }))}>
+                                <SelectTrigger className="h-11 w-full rounded-xl sm:w-[220px]">
+                                    <SelectValue placeholder="Todos los tipos" />
                                 </SelectTrigger>
                                 <SelectContent className="rounded-xl">
                                     <SelectItem value="all">Todos los tipos</SelectItem>
@@ -177,8 +190,12 @@ const NotificationsPage = () => {
                                     <SelectItem value="info">Información</SelectItem>
                                 </SelectContent>
                             </Select>
-                            <Button variant="ghost" onClick={() => setFilters({ query: '', type: 'all' })} className="w-full sm:w-auto rounded-xl">
-                                <X className="mr-2 h-4 w-4"/>Limpiar
+                            <Button
+                                variant="ghost"
+                                onClick={() => setFilters({ query: '', type: 'all' })}
+                                className="w-full rounded-xl border border-transparent hover:border-slate-200 sm:w-auto"
+                            >
+                                <X className="mr-2 h-4 w-4" />Limpiar
                             </Button>
                         </div>
                     </Card>
@@ -234,7 +251,7 @@ const NotificationsPage = () => {
                         </div>
                     )}
                 </div>
-            </div>
+            </PageContainer>
             
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogContent className="sm:max-w-md border border-slate-200 bg-white shadow-2xl">

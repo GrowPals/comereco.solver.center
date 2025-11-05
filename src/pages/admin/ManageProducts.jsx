@@ -11,6 +11,7 @@ import OptimizedImage from '@/components/OptimizedImage';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/useToast';
 import PageLoader from '@/components/PageLoader';
+import PageContainer from '@/components/layout/PageContainer';
 import EmptyState from '@/components/EmptyState';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -125,8 +126,8 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-2xl overflow-hidden border border-slate-200 bg-white shadow-2xl p-0">
-                <form onSubmit={handleSubmit(onSubmit)} className="flex max-h-[90vh] flex-col">
+            <DialogContent className="sm:max-w-2xl border border-slate-200 bg-white shadow-2xl p-0">
+                <form onSubmit={handleSubmit(onSubmit)} className="flex max-h-[calc(100dvh-3.5rem)] flex-col">
                     <DialogHeader className="px-6 pt-6">
                         <DialogTitle className="text-2xl font-bold">
                             {product ? 'Editar Producto' : 'Crear Producto'}
@@ -336,25 +337,25 @@ const ManageProductsPage = () => {
     return (
         <>
             <Helmet><title>Gestionar Productos - ComerECO</title></Helmet>
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8">
-                <div className="max-w-7xl mx-auto space-y-8">
+            <PageContainer>
+                <div className="mx-auto max-w-7xl space-y-6 sm:space-y-8">
                     {/* Header */}
-                    <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-slate-200">
-                        <div className="flex items-center gap-4">
+                    <header className="flex flex-col items-start gap-5 border-b border-slate-200 pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:pb-6">
+                        <div className="flex items-center gap-4 sm:gap-5">
                             <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-md">
                                 <ShoppingBag className="h-7 w-7 text-blue-600" aria-hidden="true" />
                             </div>
                             <div>
-                                <h1 className="text-4xl font-bold tracking-tight text-slate-900 mb-1">
+                                <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-1 sm:text-4xl">
                                     Gestionar <span className="bg-gradient-primary bg-clip-text text-transparent">Productos</span>
                                 </h1>
-                                <p className="text-base text-slate-600">Crea, edita y gestiona el catálogo de tu compañía</p>
+                                <p className="text-sm text-slate-600 sm:text-base">Crea, edita y gestiona el catálogo de tu compañía</p>
                             </div>
                         </div>
                         <Button
                             size="lg"
                             onClick={() => setFormModal({ isOpen: true, product: null })}
-                            className="shadow-button hover:shadow-button-hover whitespace-nowrap"
+                            className="w-full whitespace-nowrap shadow-button hover:shadow-button-hover sm:w-auto"
                         >
                             <PlusCircle className="mr-2 h-5 w-5" />
                             Crear Producto
@@ -362,17 +363,18 @@ const ManageProductsPage = () => {
                     </header>
 
                     {products?.length > 0 ? (
-                        <div className="bg-white border-2 border-slate-200 rounded-2xl shadow-lg overflow-hidden">
-                            <Table>
+                        <div className="overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-lg">
+                            <div className="w-full overflow-x-auto">
+                            <Table className="min-w-[720px] md:min-w-full">
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className="w-16">Imagen</TableHead>
-                                    <TableHead>SKU</TableHead>
-                                    <TableHead>Nombre</TableHead>
+                                    <TableHead className="w-16 whitespace-nowrap">Imagen</TableHead>
+                                    <TableHead className="whitespace-nowrap">SKU</TableHead>
+                                    <TableHead className="whitespace-nowrap">Nombre</TableHead>
                                     <TableHead>Categoría</TableHead>
-                                    <TableHead>Precio</TableHead>
-                                    <TableHead>Stock</TableHead>
-                                    <TableHead>Estado</TableHead>
+                                    <TableHead className="whitespace-nowrap">Precio</TableHead>
+                                    <TableHead className="whitespace-nowrap">Stock</TableHead>
+                                    <TableHead className="whitespace-nowrap">Estado</TableHead>
                                     <TableHead><span className="sr-only">Acciones</span></TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -407,7 +409,7 @@ const ManageProductsPage = () => {
                                             <TableCell className="font-bold text-slate-900">${p.price.toFixed(2)}</TableCell>
                                             <TableCell className="font-medium text-slate-700">{p.stock}</TableCell>
                                             <TableCell>
-                                                <Badge variant={p.is_active ? 'success' : 'muted'} className="shadow-sm">
+                                                <Badge variant={p.is_active ? 'success' : 'destructive'} className="shadow-sm">
                                                     {p.is_active ? 'Activo' : 'Inactivo'}
                                                 </Badge>
                                             </TableCell>
@@ -436,6 +438,7 @@ const ManageProductsPage = () => {
                                     ))}
                                 </TableBody>
                             </Table>
+                            </div>
                         </div>
                     ) : (
                         <EmptyState
@@ -451,9 +454,9 @@ const ManageProductsPage = () => {
                         />
                     )}
                 </div>
-            </div>
 
             {formModal.isOpen && <ProductFormModal isOpen={formModal.isOpen} onClose={() => setFormModal({ isOpen: false, product: null })} product={formModal.product} onSave={handleSave} />}
+        </PageContainer>
         </>
     );
 };

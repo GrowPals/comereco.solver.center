@@ -8,7 +8,10 @@
     "dev": "vite --host :: --port 3000",
     "build": "vite build && node fix-html-order.cjs",
     "build:clean": "rm -rf dist .vite node_modules/.vite && npm run build",
-    "preview": "vite preview --host :: --port 3000"
+    "preview": "vite preview --host :: --port 3000",
+    "test:rls": "vitest --run --config tests/rls/vitest.config.ts",
+    "report:indexes": "node tools/report-unused-indexes.ts",
+    "seed:platform-admins": "node tools/seed-platform-admins.mjs"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.1.2",
@@ -63,7 +66,10 @@
     "eslint-plugin-react-refresh": "^0.4.16",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.3",
-    "vite": "^4.4.5"
+    "vite": "^4.4.5",
+    "vitest": "^1.6.0",
+    "dotenv": "^16.4.5",
+    "pg": "^8.12.0"
   },
   "overrides": {
     "react": "18.3.1",

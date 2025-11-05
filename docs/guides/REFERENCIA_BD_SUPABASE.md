@@ -54,10 +54,9 @@ created_at            timestamptz DEFAULT now()
 - `audit_log.company_id`
 
 **RLS/Políticas**:
-- `Users can view their own company`: Usuario solo puede ver su empresa (`id = get_my_company_id()`)
-- `Admins manage companies`: Admins pueden ALL sobre su empresa
-- `Super Admins can do anything on companies`: Super_admin global
-- Políticas redundantes de SELECT por pertenencia
+- `companies_select_access`: cualquier usuario consulta su propia empresa (`id = get_user_company_id()`); `platform_admin` ve cualquier registro
+- `companies_update_manage`: admins actualizan su empresa; `platform_admin` puede gestionar todas
+- `companies_insert_platform` / `companies_delete_platform`: exclusivas de `platform_admin`
 
 ---
 
@@ -108,7 +107,7 @@ bind_last_synced_at   timestamptz NULL
 ```
 
 **RLS/Políticas**:
-- `Users can view products from their own company`: `company_id = get_my_company_id()`
+- `products_select_access`: usuarios ven productos activos de su empresa; admins (y `platform_admin`) acceden a todo el catálogo, incluidos inactivos
 
 **Usos relacionados**:
 - `user_favorites`, `user_cart_items` y `requisition_items` referencian `products.id`
@@ -129,7 +128,6 @@ created_by            uuid FK profiles.id
 created_at            timestamptz DEFAULT now()
 updated_at            timestamptz DEFAULT now()
 supervisor_id         uuid FK profiles.id NULL
-active                boolean DEFAULT true
 ```
 
 **RLS/Políticas**:
@@ -191,6 +189,9 @@ rejection_reason      text NULL
 - `user_update_own_draft`: UPDATE si es el creador y `business_status = 'draft'`
 - `supervisor_approve_own_projects`: UPDATE para aprobar si supervisor del proyecto o admin
 
+**Notas**:
+- La columna `items` se sincroniza automáticamente mediante `refresh_requisition_items_snapshot()` cada vez que cambian los `requisition_items`. El snapshot incluye datos esenciales del producto (`name`, `sku`, `unit`, `image_url`) para consumo rápido.
+
 ---
 
 ### `requisition_items`
@@ -208,6 +209,9 @@ subtotal              numeric
 
 **RLS/Políticas**:
 - `Users can view items of requisitions they are allowed to see`: EXISTS sobre `requisitions r` donde `r.id = requisition_items.requisition_id` (hereda reglas de visibilidad de `requisitions`)
+
+**Notas**:
+- Trigger `refresh_requisition_items_snapshot` (AFTER INSERT/UPDATE/DELETE) mantiene actualizado el snapshot en `requisitions.items`.
 
 ---
 
@@ -231,10 +235,8 @@ project_id            uuid FK projects.id NULL
 ```
 
 **RLS/Políticas**:
-- `Users can manage their own templates`: `auth.uid() = user_id AND company_id = get_my_company_id()`
-- `admin_manage_all_templates`: `is_admin()`
-- `supervisor_manage_own_templates`: Supervisor del proyecto o admin
-- `user_select_member_templates`: Miembros del proyecto pueden ver
+- `requisition_templates_select_scope`: usuarios ven sus plantillas, miembros del proyecto o admins/supervisores según corresponda; `platform_admin` hereda de `is_admin()`
+- `requisition_templates_insert_manage` / `update_manage` / `delete_manage`: admins de la company, supervisores del proyecto o el autor (`user_id = auth.uid()`); `platform_admin` tiene acceso total
 
 ---
 
@@ -273,8 +275,7 @@ timestamp             timestamptz DEFAULT now()
 ```
 
 **RLS/Políticas**:
-- `Corp Admins can view audit logs for their company`: `get_my_company_id()` y `get_my_role()='admin_corp'` (LEGACY)
-- `Super Admins can view all audit logs`: `get_my_role()='super_admin'` (LEGACY)
+- `audit_log_select_access`: admins o supervisores leen eventos de su empresa; `platform_admin` consulta el log completo
 
 ---
 
@@ -321,8 +322,45 @@ last_folio_number     int DEFAULT 0
 ```
 
 **RLS/Políticas**:
-- `Corp Admins can view counters` (LEGACY admin_corp)
-- `Super Admins can manage counters` (LEGACY)
+- `folio_counters_select`: admins ven los contadores de su empresa
+- `folio_counters_insert` / `update`: admins gestionan folios propios; `platform_admin` opera sobre cualquier tenant
+
+---
+
+### `user_invitations`
+**Propósito**: Registrar invitaciones enviadas desde la aplicación y garantizar onboarding consistente.
+
+**Campos**:
+```sql
+id           uuid PRIMARY KEY
+email        text normalizado (lower)
+company_id   uuid FK companies.id
+role         app_role_v2
+invited_by   uuid FK auth.users(id)
+status       text ('pending','completed','cancelled')
+metadata     jsonb
+invited_at   timestamptz
+completed_at timestamptz NULL
+```
+
+**RLS/Políticas**:
+- `user_invitations_select_company`: admins consultan invitaciones de su compañía; `platform_admin` puede ver todas
+- `user_invitations_insert_admin` / `update_admin`: admins crean/gestionan invitaciones propias; `platform_admin` global
+
+---
+
+### `platform_admins`
+**Propósito**: Lista blanca de usuarios con permisos globales en el tenant.
+
+**Campos**:
+```sql
+user_id    uuid PRIMARY KEY FK auth.users(id)
+granted_by uuid FK auth.users(id)
+granted_at timestamptz
+```
+
+**RLS/Políticas**:
+- `platform_admins_manage`: los `platform_admin` administran y consultan la lista (política `FOR ALL`)
 
 ---
 
@@ -345,6 +383,7 @@ last_folio_number     int DEFAULT 0
 - `business_status`: `'draft'`, `'submitted'`, `'approved'`, `'rejected'`, `'ordered'`, `'cancelled'`
 - `project_status`: `'active'`, `'archived'`
 - `notification_type`: `'success'`, `'warning'`, `'danger'`, `'info'`
+- **Rol transversal**: `platform_admin` se gestiona vía tabla `platform_admins` (no es parte del enum `role_v2` para mantener separación de duties).
 
 ---
 
@@ -353,15 +392,24 @@ last_folio_number     int DEFAULT 0
 ### Funciones Helper (asumidas por políticas)
 
 **`is_admin()`**:
-- Devuelve `true` si el perfil actual tiene `role_v2='admin'`
-- Usar como admin lógico en frontend
+- Devuelve `true` si el perfil actual tiene `role_v2='admin'` **o** está listado en `platform_admins`
+- Usar como admin lógico en frontend (admins siguen limitados a su company; `platform_admin` es global)
 
-**`get_my_company_id()`**:
+**`get_my_company_id()` / `get_user_company_id()`**:
 - Devuelve `company_id` del perfil de `auth.uid()`
+- Alias permitido (`get_my_company_id()` simplemente delega a `get_user_company_id()`)
+
+**`is_platform_admin()`**:
+- Devuelve `true` si el usuario aparece en `platform_admins`
+- Úsalo para habilitar vistas/controles globales (ej. dashboards corporativos, gestión de tenants)
 
 **`get_my_role()`**:
 - Referencia a `role` (LEGACY)
 - **No usar en frontend nuevo**
+
+**`refresh_requisition_items_snapshot(requisition_id uuid)`**:
+- Recalcula el snapshot JSON almacenado en `requisitions.items` a partir de `requisition_items` y metadatos de producto.  
+- Invocado automáticamente por triggers y disponible para procesos de backfill/manual en integraciones.
 
 ---
 
@@ -493,7 +541,7 @@ GET /rest/v1/profiles_with_company?id=eq.{auth.uid}
 ```
 
 ### `requisitions_with_items`
-**Propósito**: Unir `requisitions` con agregación de `requisition_items` (`json_agg`).
+**Propósito**: Exponer `requisitions` con el snapshot `items` ya precalculado (trigger `refresh_requisition_items_snapshot`), opcionalmente enriquecido con joins adicionales.
 
 **Consumo**:
 ```http

@@ -18,6 +18,7 @@ import { useToast } from '@/components/ui/useToast';
 import { fetchPendingApprovals, updateRequisitionStatus } from '@/services/requisitionService';
 import PageLoader from '@/components/PageLoader';
 import EmptyState from '@/components/EmptyState';
+import PageContainer from '@/components/layout/PageContainer';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import logger from '@/utils/logger';
@@ -108,20 +109,20 @@ const Approvals = () => {
             <Helmet>
                 <title>Aprobaciones Pendientes - ComerECO</title>
             </Helmet>
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 md:p-8">
+            <PageContainer>
                 {/* Header Section */}
-                <div className="max-w-7xl mx-auto mb-8">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h1 className="text-4xl font-bold text-slate-900 mb-2">
+                <div className="mx-auto mb-6 w-full max-w-7xl sm:mb-8">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="space-y-2">
+                            <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">
                                 Aprobaciones Pendientes
                             </h1>
-                            <p className="text-slate-600 text-lg">
+                            <p className="text-sm text-slate-600 sm:text-base">
                                 {requisitions?.length || 0} {requisitions?.length === 1 ? 'requisición' : 'requisiciones'} esperando tu revisión
                             </p>
                         </div>
                         {requisitions?.length > 0 && (
-                            <div className="hidden md:flex items-center gap-3 px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-200">
+                            <div className="flex w-full items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-2 shadow-sm sm:w-auto">
                                 <Clock className="h-5 w-5 text-slate-400" aria-hidden="true" />
                                 <span className="text-sm text-slate-600">Actualizado: {currentTime}</span>
                             </div>
@@ -130,7 +131,7 @@ const Approvals = () => {
                 </div>
 
                 {requisitions?.length === 0 ? (
-                    <div className="max-w-7xl mx-auto">
+                    <div className="mx-auto w-full max-w-7xl">
                         <div className="bg-white rounded-2xl shadow-lg p-16">
                             <EmptyState
                                 icon={<Check className="h-16 w-16 text-green-500" />}
@@ -140,7 +141,7 @@ const Approvals = () => {
                         </div>
                     </div>
                 ) : (
-                    <div className="max-w-7xl mx-auto">
+                    <div className="mx-auto w-full max-w-7xl">
                         {/* Grid de Cards */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             {requisitions?.map((req) => {
@@ -248,7 +249,7 @@ const Approvals = () => {
                         </div>
                     </div>
                 )}
-            </div>
+            </PageContainer>
 
             {/* Modal de Rechazo */}
             <Dialog open={rejectionModal.isOpen} onOpenChange={handleCloseRejectionModal}>

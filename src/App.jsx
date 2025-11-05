@@ -163,7 +163,7 @@ const AppLayout = () => {
         {showNav && <Header setSidebarOpen={handleToggleSidebar} />}
 
         <main
-          className="relative w-full flex-1 bg-slate-50 pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-[calc(3.8rem+env(safe-area-inset-top))] transition-all duration-300 sm:pt-[calc(4.2rem+env(safe-area-inset-top))] lg:pb-10 lg:pt-10"
+          className="relative w-full flex-1 overflow-x-hidden bg-slate-50 pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-[calc(env(safe-area-inset-top)+1rem)] transition-all duration-300 sm:pt-[calc(env(safe-area-inset-top)+1.5rem)] lg:pb-10 lg:pt-10"
           id="main-content"
           role="main"
         >

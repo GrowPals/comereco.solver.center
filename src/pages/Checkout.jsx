@@ -16,6 +16,7 @@ import { createRequisitionFromCart } from '@/services/requisitionService';
 import { getMyProjects } from '@/services/projectService';
 import EmptyState from '@/components/EmptyState';
 import PageLoader from '@/components/PageLoader';
+import PageContainer from '@/components/layout/PageContainer';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { createTemplate } from '@/services/templateService';
@@ -122,19 +123,19 @@ const CheckoutPage = () => {
     return (
         <>
             <Helmet><title>Finalizar Compra - ComerECO</title></Helmet>
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8">
-                <div className="max-w-6xl mx-auto space-y-8">
+            <PageContainer>
+                <div className="mx-auto w-full max-w-6xl space-y-6 sm:space-y-8">
                     {/* Header */}
-                    <header className="pb-8 border-b border-slate-200">
-                        <div className="flex items-center gap-4 mb-3">
-                            <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-md">
-                                <ShoppingCart className="h-7 w-7 text-blue-600" aria-hidden="true" />
+                    <header className="border-b border-slate-200 pb-5 sm:pb-6">
+                        <div className="flex items-center gap-3 sm:gap-4">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 shadow-sm sm:h-14 sm:w-14">
+                                <ShoppingCart className="h-6 w-6 text-blue-600 sm:h-7 sm:w-7" aria-hidden="true" />
                             </div>
                             <div>
-                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
+                                <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
                                     Finalizar <span className="bg-gradient-primary bg-clip-text text-transparent">Compra</span>
                                 </h1>
-                                <p className="text-base sm:text-lg text-slate-600 mt-1">
+                                <p className="mt-1 text-sm text-slate-600 sm:text-base">
                                     Revisa tu pedido y completa la información para generar la requisición
                                 </p>
                             </div>
@@ -248,7 +249,7 @@ const CheckoutPage = () => {
                     </div>
                     </form>
                 </div>
-            </div>
+            </PageContainer>
 
             <Dialog open={isTemplateModalOpen} onOpenChange={setTemplateModalOpen}>
                 <DialogContent className="sm:max-w-lg">

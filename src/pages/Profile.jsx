@@ -13,6 +13,7 @@ import { supabase } from '@/lib/customSupabaseClient';
 import { updateUserProfile } from '@/services/userService';
 import logger from '@/utils/logger';
 import RequisitionCard from '@/components/RequisitionCard';
+import PageContainer from '@/components/layout/PageContainer';
 
 const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name, editable = false, placeholder }) => (
   <div className="flex items-center gap-4 py-4">
@@ -158,7 +159,8 @@ const ProfilePage = () => {
     <>
       <Helmet><title>Mi Perfil - ComerECO</title></Helmet>
 
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8 space-y-8">
+      <PageContainer>
+      <div className="mx-auto w-full max-w-5xl space-y-8">
         <Card className="overflow-hidden border-2 border-slate-200 shadow-lg rounded-2xl">
           <div className="bg-gradient-to-br from-blue-50 via-blue-100 to-blue-50 h-32" />
           <CardContent className="p-8 pt-0">
@@ -287,6 +289,7 @@ const ProfilePage = () => {
           </Card>
         </div>
       </div>
+      </PageContainer>
     </>
   );
 };

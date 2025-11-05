@@ -15,6 +15,12 @@ Documentación completa del sistema ComerECO - Sistema de Requisiciones del Grup
 3. 🔑 **[Variables de Entorno](guides/INSTRUCCIONES_VARIABLES_ENTORNO.md)** - Configuración `.env`
 4. 🏗️ **[Arquitectura de Roles](ARQUITECTURA_ROLES_PERMISOS.md)** - Sistema de permisos
 
+### Para DevOps/Backend
+
+5. 🚀 **[Aplicar Migraciones](guides/GUIA_APLICAR_MIGRACIONES.md)** - Migraciones y tests RLS (staging/prod)
+6. 📊 **[Roadmap DB](ROADMAP_MEJORAS_DB.md)** - Plan de mejoras de base de datos
+7. ✅ **[Auditoría Backend](REPORTE_AUDITORIA_BACKEND_FINAL.md)** - Estado actual del backend
+
 ---
 
 ## 📁 Estructura de Documentación
@@ -34,13 +40,15 @@ docs/
 ├── 📖 guides/                                  # Guías técnicas
 │   ├── IMPLEMENTACION_BACKEND_SUPABASE.md     # Backend con Supabase
 │   ├── REFERENCIA_BD_SUPABASE.md              # ⭐ Esquema completo de BD
+│   ├── GUIA_APLICAR_MIGRACIONES.md            # ⭐ Aplicar migraciones y tests RLS
 │   ├── GUIA_BEST_PRACTICES_SUPABASE.md        # Mejores prácticas
 │   ├── GUIA_DESPLIEGUE.md                     # Despliegue local/producción
+│   ├── GUIA_IMPLEMENTACION_BIND_PASO_A_PASO.md # Integración BIND ERP
+│   ├── GUIA_PRUEBAS_END_TO_END.md             # Pruebas E2E
 │   ├── DEPLOYMENT_CHECKLIST.md                # Checklist deployment
 │   ├── GUIA_CONFIGURACION_VERCEL.md           # Configuración Vercel
 │   ├── GUIA_CONFIGURACION_DOMINIOS.md         # Configuración dominios
 │   ├── GUIA_PRUEBAS_LOCALES.md                # Testing manual
-│   ├── PASOS_PARA_ARREGLAR_LOGIN.md           # Troubleshooting login
 │   ├── INSTRUCCIONES_VARIABLES_ENTORNO.md     # Variables de entorno
 │   └── INDICE_SERVICIOS_WEBAPP.md             # Índice de servicios
 │
@@ -51,6 +59,11 @@ docs/
 │   ├── PLAN_EJECUCION_CORE_EVOLUTIVO.md       # Plan de ejecución
 │   ├── PROMPT_SIMPLE_AGENTES.md               # Prompts simples
 │   └── PROMPT_SIMPLE_COPIAR_PEGAR.md          # Prompts copy-paste
+│
+├── 🧭 playbooks/                               # Procedimientos operativos
+│   ├── ONBOARDING_PLATFORM_ADMINS.md          # Alta inicial de platform admins
+│   ├── PRUEBAS_RLS.md                         # Suite automatizada RLS
+│   └── REVISION_INDICES.md                    # Revisión mensual de índices
 │
 ├── 🔧 troubleshooting/                         # Solución de problemas
 │   ├── FIX_REACT_USESTATE_ERROR.md            # Fix error useState
@@ -108,6 +121,14 @@ docs/
 | [INSTRUCCIONES_FIX_RLS_RECURSION.md](INSTRUCCIONES_FIX_RLS_RECURSION.md) | Fix bug RLS recursivo | ✅ Vigente |
 | [api/MIGRACION_RLS_CRITICO.sql](api/MIGRACION_RLS_CRITICO.sql) | ⭐ Políticas RLS críticas | ✅ APLICADO |
 | [api/](api/) | Scripts SQL y migraciones | ✅ Vigente |
+
+### 🧭 Playbooks operativos
+
+| Documento | Descripción | Estado |
+|-----------|-------------|--------|
+| [ONBOARDING_PLATFORM_ADMINS.md](playbooks/ONBOARDING_PLATFORM_ADMINS.md) | Alta inicial de platform admins | ✅ Vigente |
+| [PRUEBAS_RLS.md](playbooks/PRUEBAS_RLS.md) | Ejecución de suite automatizada de RLS | ✅ Vigente |
+| [REVISION_INDICES.md](playbooks/REVISION_INDICES.md) | Revisión mensual de índices sin uso | ✅ Vigente |
 
 ### 🔌 Integraciones
 

@@ -5,6 +5,35 @@ import { getUserAccessContext, invalidateAccessContext } from '@/lib/accessContr
 import logger from '@/utils/logger';
 import { formatErrorMessage } from '@/utils/errorHandler';
 
+const PROFILE_BASE_FIELDS = ['id', 'full_name', 'avatar_url', 'role_v2'];
+let canSelectProfileEmail = true;
+
+const buildProfileSelect = () => {
+  const fields = [...PROFILE_BASE_FIELDS];
+  if (canSelectProfileEmail) {
+    fields.push('email');
+  }
+  return fields.join(', ');
+};
+
+const executeProfileSelect = async (configure, { single = false } = {}) => {
+  const run = async () => {
+    let query = supabase.from('profiles').select(buildProfileSelect());
+    query = configure(query);
+    if (single) {
+      return await query.single();
+    }
+    return await query;
+  };
+
+  let result = await run();
+  if (result?.error?.code === '42703' && canSelectProfileEmail) {
+    canSelectProfileEmail = false;
+    result = await run();
+  }
+  return result;
+};
+
 /**
  * CORREGIDO: Valida sesión antes de hacer queries
  * Obtiene todos los proyectos. La RLS se encarga de filtrar según el rol.
@@ -16,7 +45,7 @@ export const getAllProjects = async () => {
 
   let query = supabase
     .from('projects')
-    .select('id, company_id, name, description, status, supervisor_id, created_by, created_at, updated_at, active')
+    .select('id, company_id, name, description, status, supervisor_id, created_by, created_at, updated_at')
     .eq('company_id', access.companyId);
 
   if (!access.allProjects) {
@@ -72,7 +101,7 @@ export const getMyProjects = async () => {
 
   const { data: projects, error } = await supabase
     .from('projects')
-    .select('id, company_id, name, description, status, supervisor_id, created_by, created_at, updated_at, active')
+    .select('id, company_id, name, description, status, supervisor_id, created_by, created_at, updated_at')
     .in('id', projectIds)
     .eq('company_id', access.companyId);
 
@@ -119,10 +148,15 @@ export const createProject = async (projectData) => {
     ...projectData,
     name: projectData.name.trim(),
     description: projectData.description?.trim() || '',
-    status: projectData.status || 'active',
+    status: (projectData.status || 'active').toLowerCase(),
     company_id: companyId,
     created_by: session.user.id
   };
+
+  const allowedStatuses = ['active', 'archived'];
+  if (!allowedStatuses.includes(cleanedData.status)) {
+    cleanedData.status = 'active';
+  }
 
   if (!access.isAdmin) {
     if (!access.userId) {
@@ -135,10 +169,6 @@ export const createProject = async (projectData) => {
     cleanedData.supervisor_id = null;
   }
 
-  if (cleanedData.active === undefined) {
-    cleanedData.active = true;
-  }
-  
   const { data, error } = await supabase
     .from('projects')
     .insert([cleanedData])
@@ -207,6 +237,13 @@ export const updateProject = async (projectData) => {
   }
   if (cleanedData.supervisor_id !== undefined) {
     cleanedData.supervisor_id = cleanedData.supervisor_id ? String(cleanedData.supervisor_id) : null;
+  }
+
+  if (cleanedData.status !== undefined && typeof cleanedData.status === 'string') {
+    const allowedStatuses = ['active', 'archived'];
+    cleanedData.status = allowedStatuses.includes(cleanedData.status.toLowerCase())
+      ? cleanedData.status.toLowerCase()
+      : 'active';
   }
   
   const { data, error } = await supabase
@@ -487,7 +524,7 @@ export const getProjectDetails = async (projectId) => {
   // Obtener proyecto
   const { data: project, error: projectError } = await supabase
     .from('projects')
-    .select('id, company_id, name, description, status, supervisor_id, created_by, created_at, updated_at, active')
+    .select('id, company_id, name, description, status, supervisor_id, created_by, created_at, updated_at')
     .eq('id', projectId)
     .eq('company_id', access.companyId)
     .single();
@@ -504,18 +541,21 @@ export const getProjectDetails = async (projectId) => {
   // Obtener supervisor
   let supervisor = null;
   if (project.supervisor_id) {
-    const { data: supervisorData } = await supabase
-      .from('profiles')
-      .select('id, full_name, email, avatar_url')
-      .eq('id', project.supervisor_id)
-      .single();
-    supervisor = supervisorData;
+    const { data: supervisorData, error: supervisorError } = await executeProfileSelect(
+      (query) => query.eq('id', project.supervisor_id),
+      { single: true }
+    );
+    if (supervisorError) {
+      logger.error('Error fetching supervisor profile:', supervisorError);
+      throw new Error(formatErrorMessage(supervisorError));
+    }
+    supervisor = supervisorData ?? null;
   }
 
   // Obtener miembros del proyecto
   const { data: memberships, error: membersError } = await supabase
     .from('project_members')
-    .select('id, user_id, role_in_project, requires_approval, added_at')
+    .select('project_id, user_id, role_in_project, requires_approval, added_at')
     .eq('project_id', projectId);
 
   if (membersError) {
@@ -525,19 +565,33 @@ export const getProjectDetails = async (projectId) => {
   // Obtener detalles de los miembros
   let members = [];
   if (memberships && memberships.length > 0) {
-    const memberIds = memberships.map(m => m.user_id);
-    const { data: memberProfiles } = await supabase
-      .from('profiles')
-      .select('id, full_name, email, avatar_url, role_v2')
-      .in('id', memberIds);
+    const memberIds = [...new Set(memberships.map(m => m.user_id).filter(Boolean))];
+    let profilesMap = new Map();
 
-    if (memberProfiles) {
-      const profilesMap = new Map(memberProfiles.map(p => [p.id, p]));
-      members = memberships.map(m => ({
-        ...m,
-        profile: profilesMap.get(m.user_id) || null
-      }));
+    if (memberIds.length > 0) {
+      const { data: memberProfiles, error: memberProfilesError } = await executeProfileSelect(
+        (query) => query.in('id', memberIds)
+      );
+
+      if (memberProfilesError) {
+        logger.error('Error fetching member profiles:', memberProfilesError);
+        throw new Error(formatErrorMessage(memberProfilesError));
+      }
+
+      if (memberProfiles) {
+        profilesMap = new Map(memberProfiles.map(p => [p.id, p]));
+      }
     }
+
+    members = memberships.map(m => {
+      const profile = profilesMap.get(m.user_id) || null;
+      return {
+        ...m,
+        membership_id: `${projectId}:${m.user_id}`,
+        user: profile,
+        profile,
+      };
+    });
   }
 
   // Obtener requisiciones del proyecto

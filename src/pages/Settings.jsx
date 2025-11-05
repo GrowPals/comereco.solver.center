@@ -12,6 +12,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToastNotification } from '@/components/ui/toast-notification';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import PageContainer from '@/components/layout/PageContainer';
 
 const TABS = [
     { id: 'general', name: 'General', icon: Settings },
@@ -68,8 +69,8 @@ const SettingsPage = () => {
     return (
         <>
             <Helmet><title>Configuración - ComerECO</title></Helmet>
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
-                <div className="mx-auto flex w-full max-w-7xl flex-col-reverse gap-6 px-4 pb-16 pt-8 lg:grid lg:grid-cols-[22rem,minmax(0,1fr)] lg:items-start lg:gap-10 lg:px-8">
+            <PageContainer>
+                <div className="mx-auto flex w-full max-w-7xl flex-col-reverse gap-6 pb-6 pt-2 lg:grid lg:grid-cols-[22rem,minmax(0,1fr)] lg:items-start lg:gap-10">
                     <aside className="order-2 w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg lg:order-1 lg:sticky lg:top-24 lg:h-fit">
                     <div className="hidden border-b border-slate-200 p-6 lg:block">
                         <div className="flex items-center gap-3">
@@ -120,7 +121,7 @@ const SettingsPage = () => {
                         {renderContent()}
                     </main>
                 </div>
-            </div>
+            </PageContainer>
         </>
     );
 };

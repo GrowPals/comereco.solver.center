@@ -8,6 +8,7 @@ import PageLoader from '@/components/PageLoader';
 import AdminDashboard from '@/components/dashboards/AdminDashboard';
 import SupervisorDashboard from '@/components/dashboards/SupervisorDashboard';
 import UserDashboard from '@/components/dashboards/UserDashboard';
+import PageContainer from '@/components/layout/PageContainer';
 
 const Dashboard = () => {
     const { user } = useSupabaseAuth();
@@ -36,9 +37,11 @@ const Dashboard = () => {
     return (
         <>
             <Helmet><title>{getTitle()} - ComerECO</title></Helmet>
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8">
-                {renderDashboardByRole()}
-            </div>
+            <PageContainer>
+                <div className="mx-auto w-full max-w-7xl">
+                    {renderDashboardByRole()}
+                </div>
+            </PageContainer>
         </>
     );
 };

@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet';
 import { HelpCircle, Mail, MessageCircle, ExternalLink, User, UserCheck, UserCog, ShoppingCart, CheckCircle, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import PageContainer from '@/components/layout/PageContainer';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const faqData = [
@@ -62,8 +63,8 @@ const HelpPage = () => {
     return (
         <>
             <Helmet><title>Centro de Ayuda - ComerECO</title></Helmet>
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8">
-                <div className="max-w-5xl mx-auto space-y-8">
+            <PageContainer>
+                <div className="mx-auto max-w-5xl space-y-6 sm:space-y-8">
                     {/* Header */}
                     <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-slate-200">
                         <div className="flex items-center gap-4">
@@ -178,10 +179,9 @@ const HelpPage = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </PageContainer>
         </>
     );
 };
 
 export default HelpPage;
-

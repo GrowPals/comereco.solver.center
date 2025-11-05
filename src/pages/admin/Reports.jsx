@@ -24,6 +24,7 @@ import {
     getRequisitionsByUser
 } from '@/services/reportsService';
 import PageLoader from '@/components/PageLoader';
+import PageContainer from '@/components/layout/PageContainer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -388,11 +389,11 @@ const ReportsPage = () => {
     return (
         <>
             <Helmet><title>Reportes y Analíticas - ComerECO</title></Helmet>
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8">
-                <div className="max-w-7xl mx-auto space-y-8">
+            <PageContainer>
+                <div className="mx-auto max-w-7xl space-y-6 sm:space-y-8">
                     {/* Header */}
-                    <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-slate-200">
-                        <div className="flex items-center gap-4">
+                    <header className="flex flex-col items-start gap-5 border-b border-slate-200 pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:pb-6">
+                        <div className="flex items-center gap-4 sm:gap-5">
                             <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-md">
                                 <BarChart2 className="h-7 w-7 text-blue-600" aria-hidden="true" />
                             </div>
@@ -400,15 +401,15 @@ const ReportsPage = () => {
                                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-slate-900 mb-1">
                                     Reportes y <span className="bg-gradient-primary bg-clip-text text-transparent">Analíticas</span>
                                 </h1>
-                                <p className="text-base sm:text-lg text-slate-600">
+                                <p className="text-sm text-slate-600 sm:text-base">
                                     Visualiza el desempeño y tendencias de tu organización
                                 </p>
                             </div>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
                             <Button
                                 onClick={exportToExcel}
-                                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-md"
+                                className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md hover:from-green-600 hover:to-green-700 sm:w-auto"
                             >
                                 <FileSpreadsheet className="h-4 w-4 mr-2" />
                                 Exportar Excel
@@ -416,7 +417,7 @@ const ReportsPage = () => {
                             <Button
                                 onClick={exportToPDF}
                                 variant="outline"
-                                className="border-2 hover:bg-slate-50"
+                                className="w-full border-2 hover:bg-slate-50 sm:w-auto"
                             >
                                 <Download className="h-4 w-4 mr-2" />
                                 Exportar PDF
@@ -499,7 +500,7 @@ const ReportsPage = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </PageContainer>
         </>
     );
 };

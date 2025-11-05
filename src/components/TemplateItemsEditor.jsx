@@ -265,13 +265,13 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
 
       {/* Modal para agregar producto */}
       <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-        <DialogContent className="sm:max-w-2xl overflow-hidden border border-slate-200 bg-white shadow-2xl p-0">
-          <div className="flex max-h-[80vh] flex-col">
+        <DialogContent className="sm:max-w-2xl border border-slate-200 bg-white shadow-2xl p-0">
+          <div className="flex max-h-[calc(100dvh-4rem)] flex-col">
             <DialogHeader className="px-6 pt-6">
               <DialogTitle className="text-2xl font-bold">Agregar Producto a la Plantilla</DialogTitle>
             </DialogHeader>
 
-            <div className="space-y-4 px-6 py-4 overflow-y-auto">
+            <div className="flex-1 space-y-4 overflow-y-auto px-6 py-4">
               {/* Buscador */}
               <div>
                 <Label htmlFor="search">Buscar Producto</Label>

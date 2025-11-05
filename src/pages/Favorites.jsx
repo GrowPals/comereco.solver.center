@@ -10,6 +10,7 @@ import { supabase } from '@/lib/customSupabaseClient';
 import ProductCard from '@/components/ProductCard';
 import ProductCardSkeleton from '@/components/skeletons/ProductCardSkeleton';
 import EmptyState from '@/components/EmptyState';
+import PageContainer from '@/components/layout/PageContainer';
 import logger from '@/utils/logger';
 
 // Función para obtener productos favoritos por IDs
@@ -56,7 +57,7 @@ const FavoritesPage = () => {
         return (
             <>
                 <Helmet><title>{`Mis Favoritos - ComerECO`}</title></Helmet>
-                <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 px-4 pb-8 pt-4 sm:px-6 sm:pt-6 lg:px-8">
+                <PageContainer>
                     <div className="mx-auto max-w-7xl space-y-6 sm:space-y-8">
                         {/* Header Skeleton */}
                         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-slate-200">
@@ -83,7 +84,7 @@ const FavoritesPage = () => {
                             ))}
                         </div>
                     </div>
-                </div>
+                </PageContainer>
             </>
         );
     }
@@ -93,7 +94,7 @@ const FavoritesPage = () => {
         return (
             <>
                 <Helmet><title>{`Mis Favoritos - ComerECO`}</title></Helmet>
-                <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 flex items-center justify-center p-4">
+                <PageContainer className="flex items-center justify-center">
                     <div className="bg-white rounded-2xl shadow-lg p-12 max-w-md border-2 border-red-100">
                         <EmptyState
                             icon={AlertCircle}
@@ -106,7 +107,7 @@ const FavoritesPage = () => {
                             }
                         />
                     </div>
-                </div>
+                </PageContainer>
             </>
         );
     }
@@ -116,7 +117,7 @@ const FavoritesPage = () => {
         return (
             <>
                 <Helmet><title>Mis Favoritos - ComerECO</title></Helmet>
-                <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 flex items-center justify-center p-4">
+                <PageContainer className="flex items-center justify-center">
                     <div className="bg-white rounded-2xl shadow-lg p-12 max-w-md border-2 border-slate-200">
                         <EmptyState
                             icon={Star}
@@ -130,7 +131,7 @@ const FavoritesPage = () => {
                             }
                         />
                     </div>
-                </div>
+                </PageContainer>
             </>
         );
     }
@@ -139,7 +140,7 @@ const FavoritesPage = () => {
     return (
         <>
             <Helmet><title>{`Mis Favoritos (${favoriteCount}) - ComerECO`}</title></Helmet>
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 px-4 pb-10 pt-4 sm:px-6 sm:pt-6 lg:px-8">
+            <PageContainer className="pb-12">
                 <div className="mx-auto max-w-7xl space-y-6 sm:space-y-8">
                     {/* Header */}
                     <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-slate-200">
@@ -168,7 +169,7 @@ const FavoritesPage = () => {
                     </header>
 
                     {/* Info Card */}
-                    <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-2xl p-6">
+                    <div className="hidden bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-2xl p-6 md:block">
                         <div className="flex items-start gap-4">
                             <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
                                 <Star className="h-5 w-5 text-amber-600 fill-amber-600" />
@@ -190,11 +191,11 @@ const FavoritesPage = () => {
                     </div>
 
                     {/* Footer CTA */}
-                    <div className="bg-white rounded-2xl shadow-lg p-8 border-2 border-slate-200 text-center">
+                    <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-md sm:p-8">
                         <h3 className="text-xl font-bold text-slate-900 mb-2">
                             ¿Buscas más productos?
                         </h3>
-                        <p className="text-slate-600 mb-6 max-w-md mx-auto">
+                        <p className="mx-auto mb-5 max-w-md text-sm text-slate-600 sm:mb-6 sm:text-base">
                             Explora nuestro catálogo completo y encuentra exactamente lo que necesitas para tu proyecto.
                         </p>
                         <Button
@@ -207,7 +208,7 @@ const FavoritesPage = () => {
                         </Button>
                     </div>
                 </div>
-            </div>
+            </PageContainer>
         </>
     );
 };

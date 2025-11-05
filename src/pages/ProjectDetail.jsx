@@ -14,6 +14,7 @@ import { es } from 'date-fns/locale';
 import { getProjectDetails } from '@/services/projectService';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
 import PageLoader from '@/components/PageLoader';
+import PageContainer from '@/components/layout/PageContainer';
 import EmptyState from '@/components/EmptyState';
 
 const ProjectDetail = () => {
@@ -54,11 +55,8 @@ const ProjectDetail = () => {
   }
 
   const statusConfig = {
-    draft: { text: 'Borrador', variant: 'muted', accent: 'bg-slate-400' },
     active: { text: 'Activo', variant: 'success', accent: 'bg-green-500' },
-    on_hold: { text: 'En Pausa', variant: 'warning', accent: 'bg-amber-500' },
-    completed: { text: 'Completado', variant: 'info', accent: 'bg-blue-500' },
-    cancelled: { text: 'Cancelado', variant: 'danger', accent: 'bg-red-500' },
+    archived: { text: 'Archivado', variant: 'muted', accent: 'bg-slate-400' },
   };
 
   const requisitionStatusConfig = {
@@ -71,6 +69,7 @@ const ProjectDetail = () => {
   };
 
   const currentStatus = statusConfig[project.status] || statusConfig.active;
+  const isActive = project.status === 'active';
 
   // Calcular estadísticas
   const totalRequisitions = project.requisitions?.length || 0;
@@ -83,33 +82,33 @@ const ProjectDetail = () => {
       <Helmet>
         <title>{project.name} - ComerECO</title>
       </Helmet>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-4 sm:p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto space-y-8">
+      <PageContainer>
+        <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
           {/* Header */}
-          <header className="relative bg-white rounded-2xl border-2 border-slate-200 p-6 sm:p-8 shadow-lg overflow-hidden">
+          <header className="relative overflow-hidden rounded-2xl border-2 border-slate-200 bg-white p-5 shadow-lg sm:p-8">
             <div className={`absolute top-0 left-0 right-0 h-1.5 ${currentStatus.accent}`} />
             
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-              <div className="flex items-start gap-4 w-full sm:w-auto">
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex w-full items-start gap-3 sm:gap-4 sm:w-auto">
                 <Button
                   variant="outline"
                   size="icon"
                   onClick={handleNavigateBack}
                   aria-label="Volver"
-                  className="rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105"
+                  className="rounded-xl border-slate-200 bg-white shadow-sm transition-all hover:border-blue-200 hover:bg-blue-50"
                 >
                   <ArrowLeft className="h-5 w-5" />
                 </Button>
                 <div className="flex-1">
-                  <h1 className="text-4xl font-bold tracking-tight text-slate-900 mb-2">
+                  <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
                     {project.name}
                   </h1>
                   {project.description && (
-                    <p className="text-base text-slate-600 mb-2">{project.description}</p>
+                    <p className="mt-2 text-sm text-slate-600 sm:text-base">{project.description}</p>
                   )}
-                  <div className="flex flex-wrap items-center gap-4 mt-4">
-                    <Badge variant={project.active ? 'success' : 'muted'} className="shadow-sm">
-                      {project.active ? 'Activo' : 'Archivado'}
+                  <div className="mt-4 flex flex-wrap items-center gap-3">
+                    <Badge variant={isActive ? 'success' : 'muted'} className="shadow-sm">
+                      {isActive ? 'Activo' : 'Archivado'}
                     </Badge>
                     <Badge variant={currentStatus.variant} className="shadow-sm">
                       {currentStatus.text}
@@ -193,23 +192,25 @@ const ProjectDetail = () => {
               <CardContent className="space-y-4">
                 {project.members && project.members.length > 0 ? (
                   <div className="space-y-3">
-                    {project.members.map((member) => (
-                      <div
-                        key={member.id}
-                        className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border-2 border-slate-200 hover:border-blue-300 transition-colors"
-                      >
+                    {project.members.map((member) => {
+                      const memberProfile = member.user ?? member.profile;
+                      return (
+                        <div
+                          key={member.membership_id || member.user_id}
+                          className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border-2 border-slate-200 hover:border-blue-300 transition-colors"
+                        >
                         <div className="flex items-center gap-3">
                           <Avatar className="h-10 w-10">
-                            <AvatarImage src={member.profile?.avatar_url} />
+                            <AvatarImage src={memberProfile?.avatar_url} />
                             <AvatarFallback>
-                              {member.profile?.full_name?.charAt(0)?.toUpperCase() || 'U'}
+                              {memberProfile?.full_name?.charAt(0)?.toUpperCase() || 'U'}
                             </AvatarFallback>
                           </Avatar>
                           <div>
                             <p className="font-semibold text-slate-900">
-                              {member.profile?.full_name || 'Usuario Desconocido'}
+                              {memberProfile?.full_name || 'Usuario Desconocido'}
                             </p>
-                            <p className="text-sm text-slate-600">{member.profile?.email}</p>
+                            <p className="text-sm text-slate-600">{memberProfile?.email}</p>
                           </div>
                         </div>
                         <div className="flex flex-col items-end gap-1">
@@ -222,8 +223,9 @@ const ProjectDetail = () => {
                             </Badge>
                           )}
                         </div>
-                      </div>
-                    ))}
+                        </div>
+                      );
+                    })}
                   </div>
                 ) : (
                   <EmptyState
@@ -302,10 +304,9 @@ const ProjectDetail = () => {
             </Card>
           </div>
         </div>
-      </div>
+      </PageContainer>
     </>
   );
 };
 
 export default ProjectDetail;
-

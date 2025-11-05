@@ -13,6 +13,7 @@ import {
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import PageContainer from '@/components/layout/PageContainer';
 import { useToast } from '@/components/ui/useToast';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { createTemplate } from '@/services/templateService';
@@ -168,15 +169,15 @@ const SaveTemplateModal = ({ isOpen, onOpenChange, cartItems }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md overflow-hidden border border-slate-200 bg-white shadow-2xl p-0">
-        <div className="flex flex-col">
+      <DialogContent className="sm:max-w-md border border-slate-200 bg-white shadow-2xl p-0">
+        <div className="flex max-h-[calc(100dvh-4rem)] flex-col">
           <DialogHeader className="px-6 pt-6">
             <DialogTitle className="flex items-center gap-2 text-xl">
               <BookmarkPlus className="h-5 w-5 text-blue-600" />
               Guardar como Plantilla
             </DialogTitle>
           </DialogHeader>
-          <div className="grid gap-4 px-6 py-4">
+          <div className="flex-1 space-y-4 overflow-y-auto px-6 py-4">
             <div className="grid gap-2">
               <Label htmlFor="template-name" className="text-sm font-semibold">
                 Nombre de la Plantilla
@@ -306,8 +307,8 @@ const CartPage = () => {
         }}
       />
 
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
-        <div className="mx-auto w-full max-w-6xl px-4 pb-24 pt-4 sm:px-6 lg:px-8 sm:pt-6">
+      <PageContainer className="pb-28 sm:pb-24">
+        <div className="mx-auto w-full max-w-6xl pt-2 sm:pt-4">
           <div className="flex flex-col gap-6">
             <header className="flex items-start justify-between gap-4 border-b border-slate-200 pb-5">
               <div className="flex flex-1 items-start gap-3">
@@ -420,10 +421,10 @@ const CartPage = () => {
             )}
           </div>
         </div>
-      </div>
+      </PageContainer>
 
       {items.length > 0 && (
-        <div className="fixed inset-x-0 bottom-[72px] z-40 border-t border-slate-200 bg-white/95 px-4 py-4 shadow-[0_-10px_30px_rgba(15,23,42,0.08)] backdrop-blur lg:hidden">
+        <div className="fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+5.5rem)] z-40 border-t border-slate-200 bg-white/95 px-4 py-4 shadow-[0_-10px_30px_rgba(15,23,42,0.08)] backdrop-blur lg:hidden">
           <div className="mx-auto flex w-full max-w-3xl flex-col gap-3">
             <div className="flex items-center justify-between text-sm font-semibold text-slate-900">
               <span>Total</span>
