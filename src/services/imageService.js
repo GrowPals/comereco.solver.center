@@ -65,6 +65,53 @@ export const uploadProductImage = async (file, productId = null) => {
     }
 };
 
+export const uploadProfileAvatar = async (file, userId) => {
+    if (!file) {
+        throw new Error('No se proporcionó ningún archivo.');
+    }
+
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+        throw new Error('Tipo de archivo no válido. Usa imágenes JPG, PNG o WebP.');
+    }
+
+    const MAX_SIZE = 5 * 1024 * 1024;
+    if (file.size > MAX_SIZE) {
+        throw new Error('El archivo es demasiado grande. Máximo 5MB.');
+    }
+
+    try {
+        const { companyId } = await getCachedCompanyId();
+        const timestamp = Date.now();
+        const randomString = Math.random().toString(36).slice(2, 8);
+        const extension = file.name.split('.').pop() || 'jpg';
+        const safeCompanySegment = companyId ? `${companyId}/profiles` : 'profiles';
+        const fileName = `${safeCompanySegment}/${userId || 'user'}-${timestamp}-${randomString}.${extension}`;
+
+        const { error } = await supabase.storage
+            .from('product-images')
+            .upload(fileName, file, {
+                cacheControl: '3600',
+                upsert: true,
+            });
+
+        if (error) {
+            logger.error('Error uploading avatar:', error);
+            throw new Error(`Error al subir la imagen: ${error.message}`);
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+            .from('product-images')
+            .getPublicUrl(fileName);
+
+        const url = `${publicUrl}?v=${timestamp}`;
+        return url;
+    } catch (error) {
+        logger.error('Exception in uploadProfileAvatar:', error);
+        throw error;
+    }
+};
+
 /**
  * Elimina una imagen de Supabase Storage
  * @param {string} imageUrl - La URL de la imagen a eliminar
@@ -95,4 +142,3 @@ export const deleteProductImage = async (imageUrl) => {
         // No lanzar error, solo loguear
     }
 };
-

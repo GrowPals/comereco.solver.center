@@ -173,13 +173,22 @@ export const SupabaseAuthProvider = ({ children }) => {
   }, []);
 
 
+  const refreshUserProfile = useCallback(async () => {
+    const authUser = session?.user || user;
+    if (!authUser) {
+      return null;
+    }
+    return fetchUserProfile(authUser);
+  }, [fetchUserProfile, session?.user, user]);
+
   const value = useMemo(() => ({
     session,
     user,
     loading,
     signIn,
     signOut,
-  }), [session, user, loading, signIn, signOut]);
+    refreshUserProfile,
+  }), [session, user, loading, signIn, signOut, refreshUserProfile]);
 
   return (
     <AuthContext.Provider value={value}>

@@ -1,7 +1,7 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Helmet } from 'react-helmet';
-import { User, Building, Mail, Phone, Edit, Save, X, Shield } from 'lucide-react';
+import { User, Building, Mail, Phone, Edit, Save, X, Shield, Upload, Loader2, Trash2 } from 'lucide-react';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -11,6 +11,7 @@ import { useToastNotification } from '@/components/ui/toast-notification';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/lib/customSupabaseClient';
 import { updateUserProfile } from '@/services/userService';
+import { uploadProfileAvatar } from '@/services/imageService';
 import logger from '@/utils/logger';
 import RequisitionCard from '@/components/RequisitionCard';
 import PageContainer from '@/components/layout/PageContainer';
@@ -38,7 +39,7 @@ const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name, e
 );
 
 const ProfilePage = () => {
-  const { user, loading: authLoading } = useSupabaseAuth();
+  const { user, loading: authLoading, refreshUserProfile } = useSupabaseAuth();
   const toast = useToastNotification();
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({ full_name: '', phone: '' });
@@ -46,6 +47,19 @@ const ProfilePage = () => {
   const [recentRequisitions, setRecentRequisitions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const fileInputRef = useRef(null);
+
+  const initials = useMemo(() => {
+    const source = profileData.full_name || user?.full_name || '';
+    if (!source.trim()) return 'U';
+    const nameParts = source.trim().split(/\s+/);
+    const first = nameParts[0]?.[0] || '';
+    const second = nameParts.length > 1 ? nameParts[nameParts.length - 1]?.[0] || '' : '';
+    const value = `${first}${second}`.toUpperCase();
+    return value || 'U';
+  }, [profileData.full_name, user?.full_name]);
 
   useEffect(() => {
     if (user) {
@@ -53,6 +67,7 @@ const ProfilePage = () => {
         full_name: user.full_name || '',
         phone: user.phone || ''
       });
+      setAvatarUrl(user.avatar_url || '');
     }
   }, [user]);
 
@@ -108,6 +123,46 @@ const ProfilePage = () => {
     setProfileData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleAvatarChange = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file || !user?.id) {
+      return;
+    }
+
+    setIsUploadingAvatar(true);
+    try {
+      const newAvatarUrl = await uploadProfileAvatar(file, user.id);
+      await updateUserProfile(user.id, { avatar_url: newAvatarUrl });
+      setAvatarUrl(newAvatarUrl);
+      await refreshUserProfile?.();
+      toast.success('Éxito', 'Tu foto de perfil se actualizó correctamente.');
+    } catch (error) {
+      logger.error('Error uploading avatar:', error);
+      toast.error('Error', error.message || 'No se pudo actualizar tu foto de perfil.');
+    } finally {
+      setIsUploadingAvatar(false);
+      if (event.target) {
+        event.target.value = '';
+      }
+    }
+  };
+
+  const handleRemoveAvatar = async () => {
+    if (!user?.id || !avatarUrl) return;
+    setIsUploadingAvatar(true);
+    try {
+      await updateUserProfile(user.id, { avatar_url: null });
+      setAvatarUrl('');
+      await refreshUserProfile?.();
+      toast.success('Éxito', 'Se eliminó tu foto de perfil.');
+    } catch (error) {
+      logger.error('Error removing avatar:', error);
+      toast.error('Error', error.message || 'No se pudo eliminar tu foto de perfil.');
+    } finally {
+      setIsUploadingAvatar(false);
+    }
+  };
+
   const handleSave = async () => {
     if (!user?.id) return;
 
@@ -153,7 +208,6 @@ const ProfilePage = () => {
   }
 
   const { full_name, email, company, role_v2 } = user;
-  const fallback = full_name ? full_name.charAt(0).toUpperCase() : 'U';
 
   return (
     <>
