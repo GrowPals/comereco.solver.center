@@ -42,6 +42,7 @@ const ResetPasswordPage = lazy(() => import('@/pages/ResetPassword'));
 const HelpPage = lazy(() => import('@/pages/Help'));
 const NotFoundPage = lazy(() => import('@/pages/NotFound'));
 const ProductDetail = lazy(() => import('@/pages/ProductDetail'));
+const InventoryRestockRulesPage = lazy(() => import('@/pages/InventoryRestockRules'));
 
 
 // Componente para rutas privadas
@@ -197,9 +198,14 @@ const AppLayout = () => {
                             <ProjectDetail />
                           </PrivateRoute>
                         } />
-                         <Route path="/products/manage" element={
+                        <Route path="/products/manage" element={
                           <PrivateRoute permissionCheck={(p) => p.isAdmin}>
                             <ManageProductsPage />
+                          </PrivateRoute>
+                        } />
+                        <Route path="/inventory/restock-rules" element={
+                          <PrivateRoute permissionCheck={(p) => p.canManageRestockRules}>
+                            <InventoryRestockRulesPage />
                           </PrivateRoute>
                         } />
                         <Route path="/reports" element={

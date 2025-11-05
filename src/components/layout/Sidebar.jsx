@@ -1,7 +1,7 @@
 
 import React, { useMemo, useCallback, memo } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, List, FolderKanban, Users, ShoppingBag, BarChart, CheckSquare, Settings, LogOut, Star, LayoutTemplate, HelpCircle, Bell, ChevronRight, X } from 'lucide-react';
+import { Home, List, FolderKanban, Users, ShoppingBag, BarChart, CheckSquare, Settings, LogOut, Star, LayoutTemplate, HelpCircle, Bell, ChevronRight, X, RefreshCw } from 'lucide-react';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -109,6 +109,7 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
                 adminItems.push(
                     { to: '/approvals', icon: CheckSquare, text: 'Aprobaciones', badge: null },
                     { to: '/projects', icon: FolderKanban, text: 'Proyectos' },
+                    { to: '/inventory/restock-rules', icon: RefreshCw, text: 'Reabastecimiento' },
                 );
             }
 

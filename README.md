@@ -153,6 +153,7 @@ La documentación completa está organizada en [`docs/`](docs/README.md). Docume
 - **[Arquitectura de Roles y Permisos](docs/ARQUITECTURA_ROLES_PERMISOS.md)** - Sistema completo de roles
 - **[Documentación Técnica BD](docs/guides/DOCUMENTACION_TECNICA_BD_SUPABASE.md)** - Estructura de la BD
 - **[Implementación Backend](docs/guides/IMPLEMENTACION_BACKEND_SUPABASE.md)** - Guía de implementación
+- **[Reglas de Reabastecimiento Automático](docs/RESTOCK_RULES.md)** - Modelo, UI y conexión con n8n
 
 ### ⚡ Optimizaciones
 - **[Mejores Prácticas Supabase](docs/guides/GUIA_BEST_PRACTICES_SUPABASE.md)** - Reglas vigentes para sesiones, RLS y consultas

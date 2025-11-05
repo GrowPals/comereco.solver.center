@@ -36,6 +36,7 @@ export const useUserPermissions = () => {
     const canManageUsers = isAdmin;
     const canManageProjects = isAdmin || isSupervisor;
     const canApproveRequisitions = isAdmin || isSupervisor;
+    const canManageRestockRules = isAdmin || isSupervisor;
     // Todos los usuarios autenticados pueden crear requisiciones
     const canCreateRequisitions = !!user;
 
@@ -47,6 +48,7 @@ export const useUserPermissions = () => {
         canManageUsers,
         canManageProjects,
         canApproveRequisitions,
+        canManageRestockRules,
         canCreateRequisitions,
         isLoadingPermissions: loading,
     };

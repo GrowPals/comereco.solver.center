@@ -11,7 +11,8 @@
     "preview": "vite preview --host :: --port 3000",
     "test:rls": "vitest --run --config tests/rls/vitest.config.ts",
     "report:indexes": "node tools/report-unused-indexes.ts",
-    "seed:platform-admins": "node tools/seed-platform-admins.mjs"
+    "seed:platform-admins": "node tools/seed-platform-admins.mjs",
+    "verify:supabase": "bash scripts/scripts/verify-supabase.sh"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.1.2",

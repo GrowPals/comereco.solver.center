@@ -1,0 +1,1 @@
+@auditor ejecuta revisión Supabase y WebApp completa

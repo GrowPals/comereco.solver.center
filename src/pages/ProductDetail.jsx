@@ -26,6 +26,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ProductRestockRuleSection } from '@/components/inventory/ProductRestockRuleSection';
 import { cn } from '@/lib/utils';
 
 // Función para obtener producto por ID
@@ -642,6 +643,8 @@ export default function ProductDetail() {
                 )}
               </div>
             </div>
+
+            <ProductRestockRuleSection product={product} stock={stock} />
 
             {/* Controles de cantidad y carrito */}
             <div className="space-y-4 p-5 bg-white border-2 border-slate-200 rounded-xl">
