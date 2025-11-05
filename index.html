@@ -29,6 +29,38 @@
   
   <!-- Theme Color -->
   <meta name="theme-color" content="#ffffff" />
+  <script>
+    (function () {
+      const STORAGE_KEY = 'theme';
+      const root = document.documentElement;
+
+      try {
+        const storedTheme = localStorage.getItem(STORAGE_KEY);
+        const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const resolvedTheme = storedTheme === 'dark' || storedTheme === 'light'
+          ? storedTheme
+          : (systemPrefersDark ? 'dark' : 'light');
+
+        if (resolvedTheme === 'dark') {
+          root.classList.add('dark');
+        } else {
+          root.classList.remove('dark');
+        }
+
+        root.setAttribute('data-theme', resolvedTheme);
+        root.style.colorScheme = resolvedTheme === 'dark' ? 'dark' : 'light';
+      } catch (error) {
+        // Si localStorage no está disponible, usar preferencia del sistema
+        const fallbackPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        if (fallbackPrefersDark) {
+          root.classList.add('dark');
+          root.setAttribute('data-theme', 'dark');
+          root.style.colorScheme = 'dark';
+        }
+      }
+    })();
+  </script>
   
   <title>ComerECO - Sistema de Requisiciones</title>
 </head>

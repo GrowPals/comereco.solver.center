@@ -1,7 +1,7 @@
 
 import React, { useMemo, useCallback, memo, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronDown, LogOut, Search, User } from 'lucide-react';
+import { ChevronDown, LogOut, User } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
@@ -9,6 +9,7 @@ import NotificationCenter from '@/components/layout/NotificationCenter';
 import { CartIcon } from '@/components/CartIcon';
 import GlobalSearch from '@/components/layout/GlobalSearch';
 import { cn } from '@/lib/utils';
+import ThemeToggle from '@/components/layout/ThemeToggle';
 
 const MOBILE_BREAKPOINT = 1024;
 
@@ -107,6 +108,7 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
+                        <ThemeToggle className="ml-1" />
                     </div>
                 </div>
             ) : (
@@ -116,6 +118,7 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
                     </div>
                     <NotificationCenter variant="icon" />
                     <CartIcon variant="compact" />
+                    <ThemeToggle />
                 </div>
             )}
         </header>

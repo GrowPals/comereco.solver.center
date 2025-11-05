@@ -36,7 +36,8 @@ docs/
 │   ├── CHECKLIST_PRODUCCION_AUTOMATIZACION.md # Tareas para producción
 │   ├── MODELO_PERMISOS_IMPLEMENTADO.md        # Modelo de permisos actual
 │   ├── INFORME_FINAL_RLS.md                   # Informe final RLS
-│   └── SECURITY_FIXES_APPLIED.md              # Correcciones de seguridad aplicadas
+│   ├── SECURITY_FIXES_APPLIED.md              # Correcciones de seguridad aplicadas
+│   └── SECURITY_AUDIT_COMPLETED.md            # ⭐ Auditoría de seguridad completada (Nov 2025)
 │
 ├── 📖 guides/                                  # Guías técnicas
 │   ├── IMPLEMENTACION_BACKEND_SUPABASE.md     # Backend con Supabase
@@ -116,6 +117,7 @@ docs/
 | Documento | Descripción | Estado |
 |-----------|-------------|--------|
 | [REPORTE_AUDITORIA_BACKEND_FINAL.md](REPORTE_AUDITORIA_BACKEND_FINAL.md) | ⭐ Auditoría Backend 100% | ✅ Vigente |
+| [SECURITY_AUDIT_COMPLETED.md](SECURITY_AUDIT_COMPLETED.md) | ⭐ Auditoría de seguridad completada | ✅ Vigente |
 | [IMPLEMENTACION_BACKEND_SUPABASE.md](guides/IMPLEMENTACION_BACKEND_SUPABASE.md) | Implementación backend | ✅ Vigente |
 | [REFERENCIA_BD_SUPABASE.md](guides/REFERENCIA_BD_SUPABASE.md) | ⭐ Referencia completa de BD | ✅ Vigente |
 | [GUIA_BEST_PRACTICES_SUPABASE.md](guides/GUIA_BEST_PRACTICES_SUPABASE.md) | Mejores prácticas | ✅ Vigente |
