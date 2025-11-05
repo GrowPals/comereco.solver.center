@@ -279,6 +279,8 @@ export default defineConfig({
 		extensions: ['.jsx', '.js', '.tsx', '.ts', '.json', ],
 		alias: {
 			'@': path.resolve(__dirname, './src'),
+			'@/context': path.resolve(__dirname, './src/context'),
+			'@/contexts': path.resolve(__dirname, './src/context'),
 			'react': path.resolve(__dirname, './node_modules/react'),
 			'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
 		},

@@ -48,7 +48,7 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
-  const [avatarUrl, setAvatarUrl] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState(null);
   const fileInputRef = useRef(null);
 
   const initials = useMemo(() => {
@@ -67,7 +67,7 @@ const ProfilePage = () => {
         full_name: user.full_name || '',
         phone: user.phone || ''
       });
-      setAvatarUrl(user.avatar_url || '');
+      setAvatarUrl(user.avatar_url || null);
     }
   }, [user]);
 
@@ -134,7 +134,9 @@ const ProfilePage = () => {
       const newAvatarUrl = await uploadProfileAvatar(file, user.id);
       await updateUserProfile(user.id, { avatar_url: newAvatarUrl });
       setAvatarUrl(newAvatarUrl);
-      await refreshUserProfile?.();
+      if (typeof refreshUserProfile === 'function') {
+        await refreshUserProfile();
+      }
       toast.success('Éxito', 'Tu foto de perfil se actualizó correctamente.');
     } catch (error) {
       logger.error('Error uploading avatar:', error);
@@ -152,8 +154,10 @@ const ProfilePage = () => {
     setIsUploadingAvatar(true);
     try {
       await updateUserProfile(user.id, { avatar_url: null });
-      setAvatarUrl('');
-      await refreshUserProfile?.();
+      setAvatarUrl(null);
+      if (typeof refreshUserProfile === 'function') {
+        await refreshUserProfile();
+      }
       toast.success('Éxito', 'Se eliminó tu foto de perfil.');
     } catch (error) {
       logger.error('Error removing avatar:', error);
@@ -215,26 +219,88 @@ const ProfilePage = () => {
 
       <PageContainer>
       <div className="mx-auto w-full max-w-5xl space-y-8">
-        <Card className="overflow-hidden rounded-2xl border border-border shadow-lg dark:border-border">
-          <div className="h-32 bg-gradient-to-br from-primary-50 via-primary-100 to-primary-50 dark:from-primary-500/15 dark:via-primary-600/15 dark:to-primary-500/15" />
+        <Card className="overflow-hidden rounded-2xl border border-border bg-card/95 shadow-xl dark:border-border/80 dark:bg-[linear-gradient(135deg,rgba(18,25,41,0.92)_0%,rgba(13,18,32,0.94)_60%,rgba(10,14,26,0.95)_100%)] dark:shadow-[0_28px_60px_rgba(4,10,24,0.45)]">
+          <div className="h-32 bg-gradient-to-br from-primary-50 via-primary-100 to-primary-50 dark:from-[#1b2640] dark:via-[#151f34] dark:to-[#101827] dark:border-b dark:border-border/70" />
           <CardContent className="p-8 pt-0">
-            <div className="flex -mt-16 flex-col items-start gap-6 sm:flex-row sm:items-end">
-              <Avatar className="h-32 w-32 border-4 border-white shadow-lg dark:border-border">
-                <AvatarImage src={user.avatar_url} alt={full_name} />
-                <AvatarFallback className="text-4xl font-bold text-white">{fallback}</AvatarFallback>
-              </Avatar>
-              <div className="flex-1 pb-2">
-                <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-2xl md:text-3xl">{profileData.full_name}</h2>
-                <p className="mt-1 text-base text-muted-foreground sm:text-lg">{company?.name || 'Compañía no asignada'}</p>
+            <div className="flex -mt-16 flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+              <div className="flex items-start gap-4">
+                <div className="relative">
+                  <Avatar className="h-32 w-32 border-4 border-white shadow-lg ring-4 ring-primary/10 dark:border-[#1f2b43] dark:ring-primary/35 dark:shadow-[0_16px_34px_rgba(12,22,41,0.45)]">
+                    <AvatarImage src={avatarUrl ?? undefined} alt={profileData.full_name || full_name} />
+                    <AvatarFallback className="text-4xl font-bold text-white">
+                      {initials}
+                    </AvatarFallback>
+                  </Avatar>
+                  {isUploadingAvatar && (
+                    <div className="absolute inset-0 flex items-center justify-center rounded-full bg-background/80 backdrop-blur-sm dark:bg-[#0f172a]/80">
+                      <Loader2 className="h-7 w-7 animate-spin text-primary-500 dark:text-primary-300" />
+                    </div>
+                  )}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleAvatarChange}
+                  />
+                </div>
+                <div className="flex flex-col gap-3">
+                  <div>
+                    <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-2xl md:text-3xl">
+                      {profileData.full_name || full_name}
+                    </h2>
+                    <p className="mt-1 text-base text-muted-foreground sm:text-lg">
+                      {company?.name || 'Compañía no asignada'}
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploadingAvatar}
+                      className="rounded-xl border border-primary-200 bg-white/90 text-primary-600 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:border-primary-500/40 dark:bg-primary-500/12 dark:text-primary-100 dark:hover:bg-primary-500/20"
+                    >
+                      {isUploadingAvatar ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Subiendo...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="mr-2 h-4 w-4" />
+                          Cambiar foto
+                        </>
+                      )}
+                    </Button>
+                    {avatarUrl && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleRemoveAvatar}
+                        disabled={isUploadingAvatar}
+                        className="rounded-xl text-muted-foreground hover:text-error dark:text-muted-foreground/80 dark:hover:text-error"
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Quitar
+                      </Button>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground/80 dark:text-muted-foreground/70">
+                    Sube una imagen PNG, JPG o WebP (máximo 5&nbsp;MB) para personalizar tu perfil.
+                  </p>
+                </div>
               </div>
               {isEditing ? (
-                <div className="flex gap-2">
+                <div className="flex gap-2 self-start">
                   <Button
                     size="icon"
                     variant="outline"
                     onClick={() => setIsEditing(false)}
                     disabled={isSaving}
-                    className="rounded-xl h-11 w-11 shadow-sm hover:shadow-md"
+                    className="h-11 w-11 rounded-xl shadow-sm hover:shadow-md"
                   >
                     <X className="h-5 w-5" />
                   </Button>
@@ -242,13 +308,20 @@ const ProfilePage = () => {
                     size="icon"
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="rounded-xl h-11 w-11 shadow-lg hover:shadow-xl"
+                    className="h-11 w-11 rounded-xl shadow-lg hover:shadow-xl"
                   >
                     <Save className={`h-5 w-5 ${isSaving ? 'animate-pulse' : ''}`} />
                   </Button>
                 </div>
               ) : (
-                <Button size="icon" variant="outline" onClick={() => setIsEditing(true)} className="rounded-xl h-11 w-11 shadow-sm hover:shadow-md"><Edit className="h-5 w-5" /></Button>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  onClick={() => setIsEditing(true)}
+                  className="h-11 w-11 self-start rounded-xl shadow-sm hover:shadow-md"
+                >
+                  <Edit className="h-5 w-5" />
+                </Button>
               )}
             </div>
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">

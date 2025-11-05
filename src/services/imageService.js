@@ -81,7 +81,10 @@ export const uploadProfileAvatar = async (file, userId) => {
     }
 
     try {
-        const { companyId } = await getCachedCompanyId();
+        const { companyId, error: companyError } = await getCachedCompanyId();
+        if (companyError) {
+            logger.warn('uploadProfileAvatar: company id not available, storing in shared directory', companyError);
+        }
         const timestamp = Date.now();
         const randomString = Math.random().toString(36).slice(2, 8);
         const extension = file.name.split('.').pop() || 'jpg';
