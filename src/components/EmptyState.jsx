@@ -1,13 +1,23 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+const baseIconClasses = 'h-16 w-16 text-muted-foreground';
 
 const EmptyState = ({ icon, title, description, buttonText, onButtonClick, actionButton, message }) => {
-  // Instanciar el componente del icono si es un componente
-  const IconComponent = icon;
-  const iconElement = IconComponent && typeof IconComponent !== 'string' ? (
-    <IconComponent className="h-16 w-16 text-muted-foreground" aria-hidden="true" />
-  ) : null;
+  const IconComponent = typeof icon === 'string' ? null : icon;
+
+  let iconElement = null;
+
+  if (React.isValidElement(icon)) {
+    iconElement = React.cloneElement(icon, {
+      className: cn(baseIconClasses, icon.props.className),
+      'aria-hidden': true,
+    });
+  } else if (IconComponent) {
+    iconElement = <IconComponent className={baseIconClasses} aria-hidden="true" />;
+  }
 
   // Usar message si description no está disponible (para compatibilidad)
   const displayDescription = description || message;
