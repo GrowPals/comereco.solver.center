@@ -96,7 +96,7 @@ const RequisitionsPage = () => {
           </header>
 
           {/* Filters */}
-          <div className="mb-6 flex flex-col gap-4 rounded-xl border-2 border-border bg-card p-4 shadow-sm sm:flex-row sm:flex-wrap sm:items-center">
+          <div className="mb-6 flex flex-col gap-4 surface-card p-4 sm:flex-row sm:flex-wrap sm:items-center">
             <div className="flex items-center gap-2 text-sm">
               <Filter className="h-5 w-5 text-muted-foreground" />
               <span className="font-semibold text-foreground">Filtros:</span>
@@ -161,8 +161,8 @@ const RequisitionsPage = () => {
             <>
               {/* Requisitions Count */}
               <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-primary-50 to-primary-100">
-                  <FileText className="h-5 w-5 text-primary-600" />
+                <div className="icon-badge flex h-10 w-10 items-center justify-center">
+                  <FileText className="h-5 w-5 text-primary-600 dark:text-primary-100" />
                 </div>
                 <p className="text-sm text-muted-foreground sm:text-base">
                   <span className="mr-1 text-2xl font-bold text-foreground sm:text-3xl">
@@ -192,7 +192,7 @@ const RequisitionsPage = () => {
             </>
           ) : (
             <div className="flex items-center justify-center min-h-[500px]">
-              <div className="bg-card rounded-2xl shadow-xl p-16 max-w-lg mx-auto">
+              <div className="surface-card mx-auto max-w-lg p-16 shadow-xl">
                 <EmptyState
                   icon={FileText}
                   title={hasFilters ? "No se encontraron requisiciones" : "No tienes requisiciones"}

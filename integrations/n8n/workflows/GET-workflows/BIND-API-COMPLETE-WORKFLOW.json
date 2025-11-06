@@ -1,0 +1,3071 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "content": "GET",
+        "height": 9280,
+        "width": 336
+      },
+      "id": "e0e50fa4-a0c2-4fb8-a978-cc0c5d26272a",
+      "name": "📥 GET ENDPOINTS - LECTURA",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2576,
+        2096
+      ],
+      "notes": "🔍 Endpoints de consulta\n\n✅ Solo lectura - seguros\n✅ Idempotentes\n✅ Cacheable\n✅ Sin efectos secundarios\n\n📝 Soporta OData: $top, $skip, $filter, $orderby\n\n🔐 Requiere: Authorization Bearer"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Clients/{client_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "0a25e443-8cb3-49a0-8ace-bf61a4ec6c89",
+      "name": "GET Clients client_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        3904
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Cliente específico por ID\n\n🔗 URL: /api/Clients/{client_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Expenses/Payment/{expense_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "00a00c19-14e7-4169-b125-a5d7d4aa84bc",
+      "name": "GET Expenses Payment expense_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        4624
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Pago de un gasto específico\n\n🔗 URL: /api/Expenses/Payment/{expense_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Expenses/{expense_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "69519cb1-35f9-469f-b43d-ded5f1ae372d",
+      "name": "GET Expenses expense_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        4800
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Gasto específico por ID\n\n🔗 URL: /api/Expenses/{expense_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Formulas/{formula_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "fe85658a-e6d9-4541-8a2b-33370892a9af",
+      "name": "GET Formulas formula_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        5168
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Fórmula específica por ID\n\n🔗 URL: /api/Formulas/{formula_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Inventory/GetMerchandiseReceptions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "b0a84f23-0b9d-438d-bffa-73ee823ad0e5",
+      "name": "GET Inventory GetMerchandiseReceptions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        5520
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Recepciones de mercancía\n\n🔗 URL: /api/Inventory/GetMerchandiseReceptions"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Invoices/Payment/{invoice_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "f170d950-ff36-490f-ba67-2604a9e6d5dc",
+      "name": "GET Invoices Payment invoice_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        5888
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Pago de factura específica\n\n🔗 URL: /api/Invoices/Payment/{invoice_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Invoices/{invoice_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "0b80ab26-9757-44ff-ab85-6cb0acb4ac45",
+      "name": "GET Invoices invoice_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        6064
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Factura específica completa\n\n🔗 URL: /api/Invoices/{invoice_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Invoices/{invoice_id}/pdf",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "aa515ed0-7b66-4067-951c-e2308f54f555",
+      "name": "GET Invoices invoice_id pdf",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        6240
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 PDF de factura (descarga)\n\n🔗 URL: /api/Invoices/{invoice_id}/pdf\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Invoices/{invoice_id}/xml",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "b1e06554-a101-460e-88e9-60fb950ce52c",
+      "name": "GET Invoices invoice_id xml",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        6432
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 XML de factura (descarga)\n\n🔗 URL: /api/Invoices/{invoice_id}/xml\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Orders/{order_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "17df33a2-0e60-401f-b7c9-0a1ddc678169",
+      "name": "GET Orders order_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        6960
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Orden específica por ID\n\n🔗 URL: /api/Orders/{order_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Products/{product_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "cbab9b46-ec9c-4450-906d-506d9c4c3a60",
+      "name": "GET Products product_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        7504
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Producto específico por ID\n\n🔗 URL: /api/Products/{product_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Products/{product_id}/image",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "0a569b4f-8c9f-457b-9bc1-60ea0cd0636f",
+      "name": "GET Products product_id image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        7680
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Imagen del producto\n\n🔗 URL: /api/Products/{product_id}/image\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/ProductsPriceAndInventory",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "806d6b95-f99b-4430-bef0-41b2aeae82de",
+      "name": "GET ProductsPriceAndInventory",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        7872
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Productos con precio e inventario\n\n🔗 URL: /api/ProductsPriceAndInventory"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Prospects/{prospect_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "f194a104-ff2f-4905-89d5-9f90d9b4f2e6",
+      "name": "GET Prospects prospect_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        8224
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Prospecto específico por ID\n\n🔗 URL: /api/Prospects/{prospect_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Purchases/GetPurchaseOrders",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "dfffa5c7-b42e-41ef-93f8-5575ce6f6638",
+      "name": "GET Purchases GetPurchaseOrders",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        8592
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Órdenes de compra a proveedores\n\n🔗 URL: /api/Purchases/GetPurchaseOrders"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Purchases/{purchase_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "fd58dc9e-b2a2-4d2a-ab47-cc8fd3d69ac2",
+      "name": "GET Purchases purchase_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        8768
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Compra específica por ID\n\n🔗 URL: /api/Purchases/{purchase_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Quotes/{quote_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "7cd5d0a0-c50c-4e03-b4fc-5b5a75459dff",
+      "name": "GET Quotes quote_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        9120
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Cotización específica por ID\n\n🔗 URL: /api/Quotes/{quote_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Services/{service_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "4b826a2a-0011-4e6b-8c7e-c71c461a12d9",
+      "name": "GET Services service_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        9664
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Servicio específico por ID\n\n🔗 URL: /api/Services/{service_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/TransferMerchandise",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "b760d4e7-f28c-4e77-894c-d9ccee02e1f4",
+      "name": "GET TransferMerchandise",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        10032
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Transferencias entre almacenes\n\n🔗 URL: /api/TransferMerchandise"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/WebHookSubscriptions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "abc5b341-d17d-4700-9a92-da9c68bcf247",
+      "name": "GET WebHookSubscriptions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        10752
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Suscripciones a webhooks\n\n🔗 URL: /api/WebHookSubscriptions"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/WebHooks/{event_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "3042e7a6-8b94-46ec-96a3-cfad70eab42f",
+      "name": "GET WebHooks event_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        11104
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Webhook específico por ID de evento\n\n🔗 URL: /api/WebHooks/{event_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "content": "POST",
+        "height": 4752,
+        "width": 368,
+        "color": 4
+      },
+      "id": "fe213871-4d37-4c8c-bf64-794533564edc",
+      "name": "📤 POST ENDPOINTS - CREACIÓN",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3152,
+        2096
+      ],
+      "notes": "➕ Endpoints de creación\n\n⚠️ Modifican datos\n⚠️ NO idempotentes\n⚠️ Requieren body JSON\n\n📝 Retornan ID del recurso creado\n\n🔐 Requiere: Authorization Bearer"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/Activities/zapier",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "dc26326f-0036-4065-99b6-fbc04f67d3a2",
+      "name": "POST Activities zapier",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        2816
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Crear actividad vía Zapier\n\n📋 Formato especial Zapier\n\n🔗 URL: /api/Activities/zapier"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/Inventory/AddMerchandiseReception",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "8b619ece-6006-43b8-8e88-e0980b8cb975",
+      "name": "POST Inventory AddMerchandiseReception",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        4256
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Agregar recepción mercancía\n\n📋 Requiere: PurchaseOrderID, Items\n\n🔗 URL: /api/Inventory/AddMerchandiseReception"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/Invoices/Payment",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "041a0deb-6f55-4ec5-85e7-0e6e4de6bebc",
+      "name": "POST Invoices Payment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        4608
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Registrar pago de factura\n\n📋 Requiere: InvoiceID, Amount, Date\n\n🔗 URL: /api/Invoices/Payment"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/NewTransferMerchandise",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "958910a4-3cfe-4ce3-894e-35f77dd25075",
+      "name": "POST NewTransferMerchandise",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        4784
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Nueva transferencia mercancía\n\n📋 Requiere: FromWarehouse, ToWarehouse, Items\n\n🔗 URL: /api/NewTransferMerchandise"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/Prospects/zapier",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "7c79c098-c5e2-4ea1-8e62-9c33afec565a",
+      "name": "POST Prospects zapier",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        5504
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Crear prospecto vía Zapier\n\n📋 Formato especial Zapier\n\n🔗 URL: /api/Prospects/zapier"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/WebHookSubscriptions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "b4fb17e9-8a82-4c09-ab8f-4aa3c78d5955",
+      "name": "POST WebHookSubscriptions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        6416
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Crear suscripción webhook\n\n📋 Requiere: URL, Event\n\n🔗 URL: /api/WebHookSubscriptions"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/WebHookSubscriptions/zapier",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "04633268-24c3-4fe4-84f2-62b4fca56ca0",
+      "name": "POST WebHookSubscriptions zapier",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        6592
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Suscripción webhook Zapier\n\n📋 Formato especial Zapier\n\n🔗 URL: /api/WebHookSubscriptions/zapier"
+    },
+    {
+      "parameters": {
+        "content": "PUT",
+        "height": 2032,
+        "width": 336,
+        "color": 5
+      },
+      "id": "bd192db0-feb6-4709-ac15-1f86678e9fa8",
+      "name": "📝 PUT ENDPOINTS - ACTUALIZACIÓN COMPLETA",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3712,
+        2112
+      ],
+      "notes": "🔄 Actualización completa\n\n⚠️ Reemplaza TODOS los campos\n⚠️ Campos omitidos = null\n⚠️ Idempotente\n\n📝 Requiere objeto completo\n\n🔐 Requiere: Authorization Bearer"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "http://api.bind.com.mx/api/WebHookSubscriptions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "c1339af4-b0ca-49c8-8b2d-4322026c8733",
+      "name": "PUT WebHookSubscriptions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3808,
+        3904
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "🔄 Actualizar suscripción webhook\n\n⚠️ Cambia URL o eventos\n\n🔗 URL: /api/WebHookSubscriptions"
+    },
+    {
+      "parameters": {
+        "content": "PATCH",
+        "height": 976,
+        "color": 6
+      },
+      "id": "31f7223e-32bf-4547-88db-497ebc3ed626",
+      "name": "✏️ PATCH ENDPOINTS - ACTUALIZACIÓN PARCIAL",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4192,
+        2128
+      ],
+      "notes": "🎯 Actualización parcial\n\n✅ Solo campos enviados\n✅ Campos omitidos = sin cambios\n✅ Más eficiente que PUT\n✅ Idempotente\n\n📝 Objeto parcial válido\n\n🔐 Requiere: Authorization Bearer"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "http://api.bind.com.mx/api/Clients/{client_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "f558a166-ebc5-41eb-94a7-3a911c031f09",
+      "name": "PATCH Clients client_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4256,
+        2320
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "✏️ Actualización parcial cliente\n\n💡 Solo campos enviados\n\n🔗 URL: /api/Clients/{client_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "http://api.bind.com.mx/api/Products/{product_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "6ca1b067-140b-46d9-b9bb-3219d01e99c2",
+      "name": "PATCH Products product_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4256,
+        2496
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "✏️ Actualización parcial producto\n\n💡 Ej: solo precio o stock\n\n🔗 URL: /api/Products/{product_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "http://api.bind.com.mx/api/Prospects/{prospect_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "c64f5561-bc20-4226-a209-da8cd0e9246a",
+      "name": "PATCH Prospects prospect_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4256,
+        2672
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "✏️ Actualización parcial prospecto\n\n💡 Ej: cambiar stage\n\n🔗 URL: /api/Prospects/{prospect_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "http://api.bind.com.mx/api/Services/{service_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "683286f4-2920-44b2-b92a-35acab9f7c31",
+      "name": "PATCH Services service_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4256,
+        2864
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "✏️ Actualización parcial servicio\n\n💡 Solo campos específicos\n\n🔗 URL: /api/Services/{service_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "content": "DELATE",
+        "height": 2480,
+        "color": 3
+      },
+      "id": "49a6c87d-5089-4d44-9d9a-c36421fd328c",
+      "name": "🗑️ DELETE ENDPOINTS - ELIMINACIÓN",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4576,
+        2128
+      ],
+      "notes": "❌ Endpoints de eliminación\n\n⚠️⚠️ DESTRUCTIVOS ⚠️⚠️\n⚠️ Algunos son Soft Delete\n⚠️ Otros son IRREVERSIBLES\n\n📝 Verificar permisos\n📝 Verificar dependencias\n\n🔐 Requiere: Authorization Bearer"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "http://api.bind.com.mx/api/Accounts/{account_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "807e6ddf-3a73-4e29-b03e-c71fe61188ff",
+      "name": "DELETE Accounts account_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4640,
+        2576
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "🗑️ Eliminar cuenta contable\n\n⚠️ Solo si no tiene movimientos\n\n🔗 URL: /api/Accounts/{account_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "http://api.bind.com.mx/api/Clients/{client_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "236ddd2c-f681-4766-bfa1-2494969028e6",
+      "name": "DELETE Clients client_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4640,
+        2752
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "🗑️ Eliminar cliente\n\n⚠️ Soft delete - mantiene histórico\n\n🔗 URL: /api/Clients/{client_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "http://api.bind.com.mx/api/Formulas/{formula_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "c3919e83-5f75-4484-9ced-7770afc2e7bd",
+      "name": "DELETE Formulas formula_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4640,
+        2944
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "🗑️ Eliminar fórmula\n\n⚠️ Irreversible\n\n🔗 URL: /api/Formulas/{formula_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "http://api.bind.com.mx/api/Invoices/{invoice_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "5092d406-ff99-4b46-a7fd-dc6e8797aa61",
+      "name": "DELETE Invoices invoice_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4640,
+        3120
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "🗑️ Cancelar factura (SAT)\n\n⚠️ Requiere motivo cancelación\n\n🔗 URL: /api/Invoices/{invoice_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "http://api.bind.com.mx/api/Orders/{order_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "b36137aa-2961-4419-8ccf-fea45eca5cfe",
+      "name": "DELETE Orders order_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4640,
+        3296
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "🗑️ Cancelar orden\n\n⚠️ Cambia StatusCode a 2 (Cancelado)\n\n🔗 URL: /api/Orders/{order_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "http://api.bind.com.mx/api/Products/{product_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "ca742821-0a88-4a0c-b3b2-de6487fe7ef1",
+      "name": "DELETE Products product_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4640,
+        3472
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "🗑️ Eliminar producto\n\n⚠️ Solo si stock = 0\n\n🔗 URL: /api/Products/{product_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "http://api.bind.com.mx/api/Prospects/{prospect_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "0077f0e8-3c30-45c7-9835-61daf9143556",
+      "name": "DELETE Prospects prospect_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4640,
+        3664
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "🗑️ Eliminar prospecto\n\n⚠️ Irreversible\n\n🔗 URL: /api/Prospects/{prospect_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "http://api.bind.com.mx/api/Providers/{provider_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "04b69a77-0fed-4711-a9e0-8cf9f024dfdf",
+      "name": "DELETE Providers provider_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4640,
+        3840
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "🗑️ Eliminar proveedor\n\n⚠️ Solo si no tiene facturas\n\n🔗 URL: /api/Providers/{provider_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "http://api.bind.com.mx/api/Quotes/{quote_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "d708e219-f0ce-430d-8bd9-f528c209026e",
+      "name": "DELETE Quotes quote_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4640,
+        4016
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "🗑️ Eliminar cotización\n\n⚠️ Solo si no convertida\n\n🔗 URL: /api/Quotes/{quote_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "http://api.bind.com.mx/api/Services/{service_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "31d546be-65cd-4942-8aa0-ed77f89aae74",
+      "name": "DELETE Services service_id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4640,
+        4192
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "🗑️ Eliminar servicio\n\n⚠️ Irreversible\n\n🔗 URL: /api/Services/{service_id}\n\n⚠️ Reemplazar ID dinámico antes de ejecutar"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "http://api.bind.com.mx/api/WebHookSubscriptions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "a319184c-ae07-4712-8770-8f4eee78da67",
+      "name": "DELETE WebHookSubscriptions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4640,
+        4384
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "🗑️ Eliminar suscripción webhook\n\n⚠️ Detiene notificaciones\n\n🔗 URL: /api/WebHookSubscriptions"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/AccountCategories",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "94150c20-4605-4884-b7af-692e817e3884",
+      "name": "GET AccountCategories1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        2288
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Categorías de cuentas contables\n\n🔗 URL: /api/AccountCategories"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/AccountingJournals",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "5263fdc0-96f8-45f9-887a-ecf56c486162",
+      "name": "GET AccountingJournals1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        2464
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Pólizas contables\n\n🔗 URL: /api/AccountingJournals"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Accounts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "20ec96f9-70dd-4f2a-a4e7-0febc1763f5f",
+      "name": "GET Accounts1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        2640
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Cuentas contables\n\n🔗 URL: /api/Accounts"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Activities",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "328a90ee-f224-4c66-9ff2-2b2effe80273",
+      "name": "GET Activities1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        2832
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Actividades y tareas del CRM\n\n🔗 URL: /api/Activities"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/BankAccounts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "a5855ab9-b590-4ea8-8dd4-e424d207a4b9",
+      "name": "GET BankAccounts1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        3008
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Cuentas bancarias registradas\n\n🔗 URL: /api/BankAccounts"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Banks",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "ad3a3367-e7f7-45b6-9be2-4684cfade347",
+      "name": "GET Banks1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        3184
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Catálogo de bancos mexicanos\n\n🔗 URL: /api/Banks"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Categories",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "e3bf7a1a-4e0f-4fcc-bf34-3ffcc7bae92a",
+      "name": "GET Categories1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        3360
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Categorías de productos\n\n🔗 URL: /api/Categories"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Cities",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "6235c8a6-a9d4-403d-a935-bcb799a2ba64",
+      "name": "GET Cities1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        3552
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Catálogo de ciudades\n\n🔗 URL: /api/Cities"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Clients",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "e1499667-08d7-4cba-9de9-5a87cfdf8368",
+      "name": "GET Clients1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        3728
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Todos los clientes\n\n🔗 URL: /api/Clients"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Comments",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "fe9c1fba-e557-4ad1-ab72-f96dd3fb644a",
+      "name": "GET Comments1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        4080
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Comentarios del sistema\n\n🔗 URL: /api/Comments"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/CompanyProfile",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "a92af114-f8c5-4ff2-ae64-55a5867d65cd",
+      "name": "GET CompanyProfile1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        4272
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Perfil de la empresa actual\n\n🔗 URL: /api/CompanyProfile"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Currencies",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "c1d5fedf-d821-4e94-996f-53975abcfbd8",
+      "name": "GET Currencies1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        4448
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Monedas disponibles (MXN, USD, etc)\n\n🔗 URL: /api/Currencies"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Formulas",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "5640daf5-0df0-4c9f-a14f-7b61ef8e2945",
+      "name": "GET Formulas1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        4992
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Fórmulas de manufactura\n\n🔗 URL: /api/Formulas"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Inventory",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "52454ef7-811a-4f3d-8cf1-c1b043c6f145",
+      "name": "GET Inventory1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        5344
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Inventario general (requiere warehouseId)\n\n🔗 URL: /api/Inventory"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Invoices",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "021cd14e-4998-46f2-94fd-1ba1fb5e2d07",
+      "name": "GET Invoices1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        5712
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Todas las facturas\n\n🔗 URL: /api/Invoices"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Locations",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "3f1fd6d5-bccf-400f-be7d-b839e1243f02",
+      "name": "GET Locations1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        6608
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Ubicaciones/sucursales\n\n🔗 URL: /api/Locations"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Orders",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "da5283f3-e577-4eeb-818f-4d3e3ff8b0ab",
+      "name": "GET Orders1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        6784
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Órdenes de compra (ventas)\n\n🔗 URL: /api/Orders"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/PriceLists",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "025694d4-dfe3-4b65-b3ca-deb04387a2d0",
+      "name": "GET PriceLists1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        7152
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Listas de precios\n\n🔗 URL: /api/PriceLists"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Products",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "29ee995d-d288-4a6b-bcc0-76736e2c9b28",
+      "name": "GET Products1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        7328
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Productos (soporta OData $top, $skip)\n\n🔗 URL: /api/Products"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Prospects",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "87a0f18e-3494-4cc3-a03c-dd26c157479e",
+      "name": "GET Prospects1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        8048
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Prospectos del CRM\n\n🔗 URL: /api/Prospects"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Providers",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "7fb17c27-06a1-4ecf-a31b-a84218dcda34",
+      "name": "GET Providers1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        8400
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Proveedores\n\n🔗 URL: /api/Providers"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Quotes",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "ee92268f-a9c5-46b6-a460-87e598e3c915",
+      "name": "GET Quotes1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        8944
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Cotizaciones\n\n🔗 URL: /api/Quotes"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Series",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "4ba7a5ea-c12f-4d14-8c1a-1d37976d039f",
+      "name": "GET Series1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        9312
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Series de folios fiscales\n\n🔗 URL: /api/Series"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Services",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "a93773b4-cfce-41cd-88a7-60c9c320fb23",
+      "name": "GET Services1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        9488
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Servicios vendibles\n\n🔗 URL: /api/Services"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/States",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "12da2eb2-dc2b-486b-95c2-9fd45fc277f8",
+      "name": "GET States1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        9840
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Estados de la República Mexicana\n\n🔗 URL: /api/States"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/UserProfile",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "d609c775-a630-4835-b27c-3292097d8055",
+      "name": "GET UserProfile1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        10208
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Perfil del usuario autenticado\n\n🔗 URL: /api/UserProfile"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Users",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "d5269338-3f48-4131-8666-351542bb41d4",
+      "name": "GET Users1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        10384
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Usuarios del sistema\n\n🔗 URL: /api/Users"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/Warehouses",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "ecf6c531-db83-40a2-92da-93b6256621ac",
+      "name": "GET Warehouses1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        10560
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Almacenes disponibles\n\n🔗 URL: /api/Warehouses"
+    },
+    {
+      "parameters": {
+        "url": "http://api.bind.com.mx/api/WebHooks",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "e810b7a8-6823-4787-9516-e0c32a3545f0",
+      "name": "GET WebHooks1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        10928
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "📖 Webhooks disponibles\n\n🔗 URL: /api/WebHooks"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/AccountingJournals",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "bcc64e47-b6c0-4df7-925b-49f13c9b2aa1",
+      "name": "POST AccountingJournals1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        2272
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Crear póliza contable\n\n📋 Requiere: Fecha, Cuenta, Monto\n\n🔗 URL: /api/AccountingJournals"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/Accounts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "7c6e4fa9-b61d-4de4-8ac1-19b26431adc5",
+      "name": "POST Accounts1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        2448
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Crear cuenta contable\n\n📋 Requiere: Número, Nombre, Tipo\n\n🔗 URL: /api/Accounts"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/Activities",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "78071077-9fac-4b6e-8c53-66fb189ebe5c",
+      "name": "POST Activities1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        2624
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Crear actividad CRM\n\n📋 Requiere: Título, Fecha, ClientID/ProspectID\n\n🔗 URL: /api/Activities"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/BankAccounts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "399fdae7-46eb-4daf-a220-617c9f3c5bd2",
+      "name": "POST BankAccounts1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        2992
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Crear cuenta bancaria\n\n📋 Requiere: Banco, Número, Nombre\n\n🔗 URL: /api/BankAccounts"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/Clients",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "5e3470ec-f71b-4174-9b3c-6d333f3274d5",
+      "name": "POST Clients1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        3168
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Crear cliente\n\n📋 Requiere: Nombre, RFC, Email\n\n🔗 URL: /api/Clients"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/Comments",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "c811d2dc-f5db-4f28-9b88-1ea2f548172d",
+      "name": "POST Comments1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        3344
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Crear comentario\n\n📋 Requiere: EntityID, Texto\n\n🔗 URL: /api/Comments"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/CompleteTransfer",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "673c33d5-60cd-44db-b2e6-f9d38d98cec2",
+      "name": "POST CompleteTransfer1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        3536
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Completar transferencia\n\n📋 Requiere: TransferID\n\n🔗 URL: /api/CompleteTransfer"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/CreditNotes",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "7ffcd5fb-80e3-4bb6-aaf9-7d926af54b28",
+      "name": "POST CreditNotes1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        3712
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Crear nota de crédito\n\n📋 Requiere: InvoiceID, Items, Razón\n\n🔗 URL: /api/CreditNotes"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/Formulas",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "5071de87-f480-4f07-84e2-bfb0daaefebd",
+      "name": "POST Formulas1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        3888
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Crear fórmula manufactura\n\n📋 Requiere: ProductID, Components\n\n🔗 URL: /api/Formulas"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/Inventory",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "520b14c1-e960-4766-a11e-e4c6827ab2f8",
+      "name": "POST Inventory1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        4064
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Ajuste de inventario\n\n📋 Requiere: ProductID, Qty, WarehouseID\n\n🔗 URL: /api/Inventory"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/Invoices",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "d91c1b6b-0580-4269-95fb-43669ee655ce",
+      "name": "POST Invoices1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        4432
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Crear factura (timbrado)\n\n📋 Requiere: ClientID, Items, Payment\n\n🔗 URL: /api/Invoices"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/Orders",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "6e371434-7afd-4a2f-a83b-95be9238b0e2",
+      "name": "POST Orders1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        4976
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Crear orden de compra\n\n📋 ⚠️ Endpoint crítico: ClientID, Products[], etc\n\n🔗 URL: /api/Orders"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/Products",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "974666bc-10a4-4add-bec1-a3f19ef7cdbb",
+      "name": "POST Products1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        5152
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Crear producto\n\n📋 Requiere: Code, Title, Price\n\n🔗 URL: /api/Products"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/Prospects",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "fcda9c69-2390-42a0-b461-d0957772081a",
+      "name": "POST Prospects1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        5328
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Crear prospecto CRM\n\n📋 Requiere: Nombre, Email, Teléfono\n\n🔗 URL: /api/Prospects"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/Providers",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "f22a5033-cbf4-499f-8198-8e4fc2b11f19",
+      "name": "POST Providers1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        5696
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Crear proveedor\n\n📋 Requiere: Nombre, RFC, Email\n\n🔗 URL: /api/Providers"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/Purchases",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "4c079394-9f91-4a2c-ac27-e2a1fc5eed5f",
+      "name": "POST Purchases1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        5872
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Crear orden compra proveedor\n\n📋 Requiere: ProviderID, Items\n\n🔗 URL: /api/Purchases"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/Quotes",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "a3d7ab38-90b8-412e-9df1-34a8000eb44c",
+      "name": "POST Quotes1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        6048
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Crear cotización\n\n📋 Requiere: ClientID, Items, Validity\n\n🔗 URL: /api/Quotes"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.bind.com.mx/api/Services",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "01577af8-c581-48fd-b83e-bff4274ebb1f",
+      "name": "POST Services1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        6224
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "➕ Crear servicio\n\n📋 Requiere: Code, Title, Price\n\n🔗 URL: /api/Services"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "http://api.bind.com.mx/api/AccountingJournals",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "ba764433-e6c7-4a48-a88a-17745c620d86",
+      "name": "PUT AccountingJournals1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3808,
+        2288
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "🔄 Actualizar póliza contable\n\n⚠️ Solo permitido antes de cierre\n\n🔗 URL: /api/AccountingJournals"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "http://api.bind.com.mx/api/Clients",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "2b9f3a11-2abc-45f6-a3c6-830df07e7706",
+      "name": "PUT Clients1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3808,
+        2464
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "🔄 Actualizar cliente completo\n\n⚠️ Reemplaza todos los campos\n\n🔗 URL: /api/Clients"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "http://api.bind.com.mx/api/Formulas",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "793e48c9-02b8-4001-86af-d0570b0007b3",
+      "name": "PUT Formulas1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3808,
+        2640
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "🔄 Actualizar fórmula completa\n\n⚠️ Reemplaza componentes\n\n🔗 URL: /api/Formulas"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "http://api.bind.com.mx/api/Orders",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "980bd274-5b7d-4474-897c-bd408781f88c",
+      "name": "PUT Orders1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3808,
+        2832
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "🔄 Actualizar orden completa\n\n⚠️ Solo si status = Pendiente\n\n🔗 URL: /api/Orders"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "http://api.bind.com.mx/api/Products",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "87666867-f717-4453-86d4-8f20d384285b",
+      "name": "PUT Products1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3808,
+        3008
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "🔄 Actualizar producto completo\n\n⚠️ Reemplaza todos los campos\n\n🔗 URL: /api/Products"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "http://api.bind.com.mx/api/Prospects",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "5630e087-4019-413c-bced-21e8ddabe488",
+      "name": "PUT Prospects1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3808,
+        3184
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "🔄 Actualizar prospecto completo\n\n⚠️ Reemplaza todos los campos\n\n🔗 URL: /api/Prospects"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "http://api.bind.com.mx/api/Providers",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "023caaa4-588f-4ab7-9af3-70a1f65b533d",
+      "name": "PUT Providers1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3808,
+        3360
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "🔄 Actualizar proveedor completo\n\n⚠️ Reemplaza todos los campos\n\n🔗 URL: /api/Providers"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "http://api.bind.com.mx/api/Quotes",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "c8a63fd8-932a-44fc-ab6d-74a91eb441ad",
+      "name": "PUT Quotes1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3808,
+        3552
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "🔄 Actualizar cotización completa\n\n⚠️ Solo si no está convertida\n\n🔗 URL: /api/Quotes"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "http://api.bind.com.mx/api/Services",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "4886e9fd-dd3f-4b82-a33e-4223bd8e8162",
+      "name": "PUT Services1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3808,
+        3728
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "🔄 Actualizar servicio completo\n\n⚠️ Reemplaza todos los campos\n\n🔗 URL: /api/Services"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "http://api.bind.com.mx/api/AccountingJournals",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "7138dab6-236e-4f04-aed0-5e7b252284ed",
+      "name": "DELETE AccountingJournals1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4640,
+        2400
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetween": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wC8wf9gLBqy3nulN",
+          "name": "Bind API Authorization"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "🗑️ Eliminar póliza contable\n\n⚠️ ⚠️ Requiere permisos admin\n\n🔗 URL: /api/AccountingJournals"
+    }
+  ],
+  "connections": {},
+  "pinData": {},
+  "meta": {
+    "instanceId": "9d36606a75bfddef070f4a9a11c5c66b4616ce3f69cbe6026c99d5941f703c67"
+  }
+}

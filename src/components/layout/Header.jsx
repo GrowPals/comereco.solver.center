@@ -48,9 +48,10 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
     return (
         <header
             className={cn(
-                'sticky top-0 z-40 w-full border-b border-border bg-background shadow-sm transition-shadow',
+                'nav-shell sticky top-0 z-40 w-full transition-shadow duration-200',
+                'supports-[backdrop-filter]:backdrop-blur-sm supports-[backdrop-filter]:backdrop-saturate-150',
                 'px-4 pb-2 pt-[calc(env(safe-area-inset-top)+0.55rem)] sm:px-6 sm:py-3 lg:px-10',
-                'transition-colors duration-200 dark:bg-[#121929] dark:shadow-[0_18px_44px_rgba(5,10,24,0.35)]'
+                'transition-colors duration-200'
             )}
             role="banner"
         >
@@ -79,7 +80,7 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <button
-                                    className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200 hover:bg-muted/70 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-background dark:hover:bg-muted/30"
+                                    className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200 hover:bg-[var(--surface-muted)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-background dark:hover:bg-[rgba(26,48,86,0.65)]"
                                     aria-label={`Menú de usuario: ${userName}`}
                                     aria-haspopup="true"
                                 >

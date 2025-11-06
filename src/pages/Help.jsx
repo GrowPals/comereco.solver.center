@@ -68,8 +68,8 @@ const HelpPage = () => {
                     {/* Header */}
                     <header className="flex flex-col items-start gap-6 border-b border-border pb-8 sm:flex-row sm:items-center sm:justify-between dark:border-border">
                         <div className="flex items-center gap-4">
-                            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-md dark:from-primary-500/15 dark:to-primary-600/10">
-                                <HelpCircle className="h-7 w-7 text-primary-500" aria-hidden="true" />
+                            <div className="icon-badge flex h-14 w-14 items-center justify-center">
+                                <HelpCircle className="h-7 w-7 text-primary-600 dark:text-primary-100" aria-hidden="true" />
                             </div>
                             <div>
                                 <h1 className="mb-1 text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">

@@ -24,11 +24,11 @@ import PageLoader from '@/components/PageLoader';
 import PageContainer from '@/components/layout/PageContainer';
 
 const notificationIcons = {
-    success: { icon: CheckCheck, color: 'bg-emerald-100/80 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-200' },
-    warning: { icon: Bell, color: 'bg-amber-100/80 text-amber-700 dark:bg-amber-500/20 dark:text-amber-200' },
-    danger: { icon: X, color: 'bg-red-100/80 text-red-700 dark:bg-red-500/20 dark:text-red-200' },
-    info: { icon: Bell, color: 'bg-info-light/80 text-info-dark dark:bg-info/20 dark:text-info-light' },
-    default: { icon: Bell, color: 'bg-muted text-muted-foreground dark:bg-card/70 dark:text-foreground/80' },
+    success: { icon: CheckCheck, badgeClass: 'text-emerald-600 dark:text-emerald-200 ring-1 ring-emerald-300/45 dark:ring-emerald-500/40' },
+    warning: { icon: Bell, badgeClass: 'text-amber-500 dark:text-amber-200 ring-1 ring-amber-300/45 dark:ring-amber-500/35' },
+    danger: { icon: X, badgeClass: 'text-red-500 dark:text-red-200 ring-1 ring-red-300/50 dark:ring-red-500/40' },
+    info: { icon: Bell, badgeClass: 'text-primary-600 dark:text-primary-100 ring-1 ring-primary-300/45 dark:ring-primary-400/35' },
+    default: { icon: Bell, badgeClass: 'text-muted-foreground ring-1 ring-border/70 dark:text-primary-200/70 dark:ring-[#31537f]/50' },
 };
 
 const groupNotificationsByDate = (notifications) => {
@@ -104,17 +104,31 @@ const NotificationsPage = () => {
     if (isLoading) return <PageLoader />;
     
     const NotificationCard = ({ notification }) => {
-        const { icon: Icon, color } = notificationIcons[notification.type] || notificationIcons.default;
+        const { icon: Icon, badgeClass } = notificationIcons[notification.type] || notificationIcons.default;
+        const isSelected = selectedIds.includes(notification.id);
+        const isUnread = !notification.is_read;
+
         return (
-            <Card className={cn(
-                "flex items-start gap-4 p-5 transition-all duration-200 hover:shadow-lg cursor-pointer border-2 rounded-2xl",
-                !notification.is_read && "bg-primary-50/60 border-primary-200",
-                notification.is_read && "border-border",
-                selectedIds.includes(notification.id) && "ring-2 ring-primary-500 border-primary-500"
-            )} onClick={() => notification.link && navigate(notification.link)}>
-                <Checkbox checked={selectedIds.includes(notification.id)} onCheckedChange={(checked) => setSelectedIds(prev => checked ? [...prev, notification.id] : prev.filter(id => id !== notification.id))} className="mt-1" onClick={(e) => e.stopPropagation()} />
-                <div className={cn("flex items-center justify-center w-12 h-12 rounded-xl shrink-0 shadow-sm", color)}>
-                    <Icon className="w-6 h-6" aria-hidden="true" />
+            <Card
+                className={cn(
+                    "surface-card flex items-start gap-4 p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-xl cursor-pointer",
+                    isUnread && "ring-1 ring-primary-300/45 dark:ring-primary-400/40",
+                    isSelected && "ring-2 ring-primary-500 border-primary-400/80 dark:ring-primary-300 dark:border-primary-400/50"
+                )}
+                onClick={() => notification.link && navigate(notification.link)}
+            >
+                <Checkbox
+                    checked={isSelected}
+                    onCheckedChange={(checked) =>
+                        setSelectedIds(prev =>
+                            checked ? [...prev, notification.id] : prev.filter(id => id !== notification.id)
+                        )
+                    }
+                    className="mt-1"
+                    onClick={(e) => e.stopPropagation()}
+                />
+                <div className={cn("icon-badge flex h-12 w-12 shrink-0 items-center justify-center", badgeClass)}>
+                    <Icon className="h-6 w-6" aria-hidden="true" />
                 </div>
                 <div className="flex-1">
                     <p className={cn("text-base", notification.is_read ? "font-semibold text-foreground" : "font-bold text-foreground")}>{notification.title}</p>
@@ -127,7 +141,7 @@ const NotificationsPage = () => {
                             <MoreVertical className="h-5 w-5" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="rounded-xl border-border bg-card dark:border-border dark:bg-card">
+                    <DropdownMenuContent className="rounded-xl surface-card p-2">
                         <DropdownMenuItem onClick={() => notification.is_read ? handleMarkAsUnread([notification.id]) : handleMarkAsRead([notification.id])}>
                             Marcar como {notification.is_read ? 'no leída' : 'leída'}
                         </DropdownMenuItem>
@@ -147,8 +161,8 @@ const NotificationsPage = () => {
                 <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
                     <header className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:pb-6 dark:border-border">
                         <div className="flex items-center gap-3 sm:gap-4">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm sm:h-14 sm:w-14 dark:from-primary-500/20 dark:to-primary-600/10">
-                                <Bell className="h-6 w-6 text-primary-500 sm:h-7 sm:w-7" aria-hidden="true" />
+                            <div className="icon-badge flex h-12 w-12 items-center justify-center sm:h-14 sm:w-14">
+                                <Bell className="h-6 w-6 text-primary-600 dark:text-primary-100 sm:h-7 sm:w-7" aria-hidden="true" />
                             </div>
                             <div className="space-y-1">
                                 <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Notificaciones</h1>
@@ -167,7 +181,7 @@ const NotificationsPage = () => {
                         </Button>
                     </header>
 
-                    <Card className="rounded-2xl border border-border p-4 shadow-lg dark:border-border sm:p-6">
+                    <Card className="surface-card p-4 shadow-lg sm:p-6">
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
                             <div className="relative w-full sm:max-w-xs">
                                 <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
@@ -215,7 +229,7 @@ const NotificationsPage = () => {
                                 initial={{ y: -50, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
                                 exit={{ y: -50, opacity: 0 }}
-                                className="sticky top-2 z-10 flex items-center justify-between rounded-2xl border border-primary/30 bg-card/95 p-4 shadow-xl dark:border-primary/40 dark:bg-card/85"
+                                className="sticky top-2 z-10 flex items-center justify-between surface-card border border-primary/30 p-4 shadow-xl ring-1 ring-primary-300/35 backdrop-blur dark:border-primary/40 dark:ring-primary-400/30"
                             >
                                 <p className="font-bold text-foreground">{selectedIds.length} seleccionada(s)</p>
                                 <div className="flex gap-2">
@@ -228,7 +242,7 @@ const NotificationsPage = () => {
                 
                     {filteredNotifications.length > 0 ? (
                         <div className="space-y-6">
-                            <div className="flex items-center rounded-xl border border-border bg-card p-4 dark:border-border dark:bg-card">
+                            <div className="surface-card flex items-center p-4">
                                 <Checkbox id="select-all" onCheckedChange={handleSelectAllOnPage} checked={selectedIds.length === filteredNotifications.length && filteredNotifications.length > 0} />
                                 <label htmlFor="select-all" className="ml-3 text-sm font-semibold text-foreground">Seleccionar todo en esta página</label>
                             </div>
@@ -242,9 +256,9 @@ const NotificationsPage = () => {
                             ))}
                         </div>
                     ) : (
-                        <div className="rounded-2xl border border-border bg-card p-20 text-center shadow-lg dark:border-border dark:bg-card">
-                            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-muted to-muted/70 dark:from-card dark:to-card/80">
-                                <Search className="h-10 w-10 text-muted-foreground" aria-hidden="true" />
+                        <div className="surface-card p-20 text-center shadow-lg">
+                            <div className="icon-badge mx-auto mb-6 flex h-20 w-20 items-center justify-center text-muted-foreground">
+                                <Search className="h-10 w-10" aria-hidden="true" />
                             </div>
                             <h3 className="mb-2 text-2xl font-bold text-foreground">No se encontraron notificaciones</h3>
                             <p className="text-base text-muted-foreground">Intenta ajustar tus filtros de búsqueda.</p>

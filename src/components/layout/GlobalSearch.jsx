@@ -86,8 +86,9 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
       <PopoverTrigger asChild>
         <div className="relative flex-1">
           <Search className={cn(
-            'pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground',
-            isMobileVariant && 'text-muted-foreground'
+            'pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground/80 transition-colors',
+            isMobileVariant && 'dark:text-primary-200/60',
+            !isMobileVariant && 'dark:text-primary-200/75'
           )} />
           <input
             ref={inputRef}
@@ -101,10 +102,10 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
               setTimeout(() => setIsInteracting(false), 200);
             }}
             className={cn(
-              'w-full border focus:outline-none focus:ring-2 focus:ring-primary-300 transition-all',
+              'w-full border focus:outline-none transition-all duration-200',
               isMobileVariant
-                ? 'h-12 rounded-2xl border-border bg-muted/70 pl-12 pr-4 text-base font-medium text-foreground focus:bg-background shadow-sm dark:border-border dark:bg-card dark:focus:bg-neutral-900'
-                : 'h-11 rounded-xl border-border bg-muted/60 pl-12 pr-4 text-foreground dark:border-border dark:bg-card'
+                ? 'h-12 rounded-2xl border-border/80 bg-[var(--surface-contrast)] pl-12 pr-4 text-base font-medium text-foreground shadow-sm focus:border-primary-500 focus:shadow-[var(--focus-glow)] dark:border-border dark:bg-[rgba(14,28,52,0.9)] dark:text-primary-50 dark:focus:border-[rgba(124,188,255,0.55)] dark:focus:shadow-[var(--focus-glow)]'
+                : 'h-11 rounded-xl border-border/80 bg-[var(--surface-contrast)] pl-12 pr-4 text-foreground shadow-sm focus:border-primary-500 focus:shadow-[var(--focus-glow)] dark:border-[#183257] dark:bg-[#0b1a34] dark:text-primary-50 dark:placeholder:text-primary-200/40 dark:focus:border-[rgba(124,188,255,0.55)] dark:focus:shadow-[var(--focus-glow)] dark:hover:bg-[#122647]'
             )}
             aria-label="Buscar en la aplicación"
           />
@@ -160,7 +161,7 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
                       key={product.id}
                       onMouseDown={(e) => e.preventDefault()} // Prevenir pérdida de foco
                       onClick={() => handleSelect('product', product.id)}
-                      className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-muted/70 dark:hover:bg-muted/40"
+                      className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-muted/70 dark:hover:bg-[#13294a]"
                     >
                       <Package className="h-4 w-4 flex-shrink-0 text-primary-500" />
                       <div className="min-w-0 flex-1">
@@ -179,7 +180,7 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
                       key={req.id}
                       onMouseDown={(e) => e.preventDefault()} // Prevenir pérdida de foco
                       onClick={() => handleSelect('requisition', req.id)}
-                      className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-muted/70 dark:hover:bg-muted/40"
+                      className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-muted/70 dark:hover:bg-[#13294a]"
                     >
                       <FileText className="h-4 w-4 flex-shrink-0 text-emerald-500" />
                       <div className="min-w-0 flex-1">
@@ -198,7 +199,7 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
                       key={user.id}
                       onMouseDown={(e) => e.preventDefault()} // Prevenir pérdida de foco
                       onClick={() => handleSelect('user', user.id)}
-                      className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-muted/70 dark:hover:bg-muted/40"
+                      className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-muted/70 dark:hover:bg-[#13294a]"
                     >
                       <User className="h-4 w-4 flex-shrink-0 text-purple-500" />
                       <div className="min-w-0 flex-1">

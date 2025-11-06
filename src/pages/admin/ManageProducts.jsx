@@ -342,8 +342,8 @@ const ManageProductsPage = () => {
                     {/* Header */}
                     <header className="flex flex-col items-start gap-5 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:pb-6">
                         <div className="flex items-center gap-4 sm:gap-5">
-                            <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center shadow-md">
-                                <ShoppingBag className="h-7 w-7 text-primary-600" aria-hidden="true" />
+                            <div className="icon-badge flex h-14 w-14 items-center justify-center">
+                                <ShoppingBag className="h-7 w-7 text-primary-600 dark:text-primary-100" aria-hidden="true" />
                             </div>
                             <div>
                                 <h1 className="text-3xl font-bold tracking-tight text-foreground mb-1 sm:text-4xl">

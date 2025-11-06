@@ -62,8 +62,8 @@ const FavoritesPage = () => {
                         {/* Header Skeleton */}
                         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-border">
                             <div className="flex items-center gap-4">
-                                <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-warning/12 to-warning/5 flex items-center justify-center shadow-md dark:from-warning/30 dark:to-warning/10">
-                                    <Star className="h-7 w-7 text-amber-600" aria-hidden="true" />
+                                <div className="icon-badge flex h-14 w-14 items-center justify-center">
+                                    <Star className="h-7 w-7 text-primary-600 dark:text-primary-100" aria-hidden="true" />
                                 </div>
                                 <div>
                                     <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-1">
@@ -145,8 +145,8 @@ const FavoritesPage = () => {
                     {/* Header */}
                     <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-border">
                         <div className="flex items-center gap-4">
-                            <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-warning/12 to-warning/5 flex items-center justify-center shadow-md dark:from-warning/30 dark:to-warning/10">
-                                <Star className="h-7 w-7 text-amber-600 fill-amber-600" aria-hidden="true" />
+                            <div className="icon-badge flex h-14 w-14 items-center justify-center">
+                                <Star className="h-7 w-7 text-primary-600 dark:text-primary-100" aria-hidden="true" />
                             </div>
                             <div>
                                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-1">
@@ -171,8 +171,8 @@ const FavoritesPage = () => {
                     {/* Info Card */}
                     <div className="hidden rounded-2xl border-2 border-warning/30 bg-gradient-to-r from-warning/10 to-warning/5 p-6 md:block">
                         <div className="flex items-start gap-4">
-                            <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
-                                <Star className="h-5 w-5 text-amber-600 fill-amber-600" />
+                            <div className="icon-badge flex h-10 w-10 flex-shrink-0 items-center justify-center">
+                                <Star className="h-5 w-5 text-primary-600 dark:text-primary-100" />
                             </div>
                             <div>
                                 <h3 className="font-bold text-foreground mb-1">Tus productos favoritos</h3>

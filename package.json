@@ -12,7 +12,12 @@
     "test:rls": "vitest --run --config tests/rls/vitest.config.ts",
     "report:indexes": "node tools/report-unused-indexes.ts",
     "seed:platform-admins": "node tools/seed-platform-admins.mjs",
-    "verify:supabase": "bash scripts/scripts/verify-supabase.sh"
+    "verify:supabase": "bash scripts/scripts/verify-supabase.sh",
+    "cleanup:logs": "bash scripts/cleanup-logs.sh",
+    "maintenance": "bash scripts/maintenance.sh",
+    "deploy": "bash scripts/deploy.sh",
+    "backup:db": "bash scripts/backup-db.sh",
+    "health": "bash scripts/check-health.sh"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.1.2",

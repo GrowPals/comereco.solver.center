@@ -1,0 +1,25 @@
+{
+  "name": "bind-to-supabase-migration",
+  "version": "1.0.0",
+  "description": "Sistema ETL para migrar datos de Bind ERP a Supabase",
+  "main": "migrate.js",
+  "scripts": {
+    "migrate": "node migrate.js",
+    "migrate:verbose": "node migrate.js --verbose",
+    "migrate:dry-run": "node migrate.js --dry-run",
+    "migrate:products": "node migrate.js --only=products",
+    "migrate:clients": "node migrate.js --only=clients",
+    "migrate:warehouses": "node migrate.js --only=warehouses",
+    "migrate:locations": "node migrate.js --only=locations",
+    "migrate:pricelists": "node migrate.js --only=pricelists"
+  },
+  "keywords": ["bind", "supabase", "migration", "etl"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "JSONStream": "^1.3.5"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

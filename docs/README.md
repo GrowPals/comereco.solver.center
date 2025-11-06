@@ -33,11 +33,9 @@ docs/
 │   ├── ARQUITECTURA_COMPLETA.md               # Arquitectura objetivo (blueprint)
 │   ├── ARQUITECTURA_ROLES_PERMISOS.md         # Sistema RBAC vigente
 │   ├── REPORTE_AUDITORIA_BACKEND_FINAL.md     # ⭐ Auditoría Backend 100% (Nov 2025)
+│   ├── SECURITY_COMPREHENSIVE.md              # ⭐ Informe integral de seguridad (consolidado)
 │   ├── CHECKLIST_PRODUCCION_AUTOMATIZACION.md # Tareas para producción
-│   ├── MODELO_PERMISOS_IMPLEMENTADO.md        # Modelo de permisos actual
-│   ├── INFORME_FINAL_RLS.md                   # Informe final RLS
-│   ├── SECURITY_FIXES_APPLIED.md              # Correcciones de seguridad aplicadas
-│   └── SECURITY_AUDIT_COMPLETED.md            # ⭐ Auditoría de seguridad completada (Nov 2025)
+│   └── MODELO_PERMISOS_IMPLEMENTADO.md        # Modelo de permisos actual
 │
 ├── 📖 guides/                                  # Guías técnicas
 │   ├── IMPLEMENTACION_BACKEND_SUPABASE.md     # Backend con Supabase
@@ -117,12 +115,10 @@ docs/
 | Documento | Descripción | Estado |
 |-----------|-------------|--------|
 | [REPORTE_AUDITORIA_BACKEND_FINAL.md](REPORTE_AUDITORIA_BACKEND_FINAL.md) | ⭐ Auditoría Backend 100% | ✅ Vigente |
-| [SECURITY_AUDIT_COMPLETED.md](SECURITY_AUDIT_COMPLETED.md) | ⭐ Auditoría de seguridad completada | ✅ Vigente |
+| [SECURITY_COMPREHENSIVE.md](SECURITY_COMPREHENSIVE.md) | ⭐ Informe integral de seguridad | ✅ Vigente |
 | [IMPLEMENTACION_BACKEND_SUPABASE.md](guides/IMPLEMENTACION_BACKEND_SUPABASE.md) | Implementación backend | ✅ Vigente |
 | [REFERENCIA_BD_SUPABASE.md](guides/REFERENCIA_BD_SUPABASE.md) | ⭐ Referencia completa de BD | ✅ Vigente |
 | [GUIA_BEST_PRACTICES_SUPABASE.md](guides/GUIA_BEST_PRACTICES_SUPABASE.md) | Mejores prácticas | ✅ Vigente |
-| [SECURITY_FIXES_APPLIED.md](SECURITY_FIXES_APPLIED.md) | Correcciones de seguridad | ✅ Vigente |
-| [INFORME_FINAL_RLS.md](INFORME_FINAL_RLS.md) | Informe final RLS | ✅ Vigente |
 | [api/MIGRACION_RLS_CRITICO.sql](api/MIGRACION_RLS_CRITICO.sql) | ⭐ Políticas RLS críticas | ✅ APLICADO |
 | [api/](api/) | Scripts SQL y migraciones | ✅ Vigente |
 
@@ -182,7 +178,7 @@ docs/
 **Solucionar un problema:**
 1. [Troubleshooting Login](guides/PASOS_PARA_ARREGLAR_LOGIN.md)
 2. [Carpeta troubleshooting/](troubleshooting/)
-3. [Informe Final RLS](INFORME_FINAL_RLS.md)
+3. [Informe Integral de Seguridad](SECURITY_COMPREHENSIVE.md)
 
 **Desplegar a producción:**
 1. [Deployment Checklist](guides/DEPLOYMENT_CHECKLIST.md)
@@ -293,18 +289,20 @@ docs/
 
 ### Noviembre 2025 - Limpieza y Reorganización
 
-- ✅ **Eliminados** 18 archivos duplicados/obsoletos
-- ✅ **Combinados** documentos redundantes de BD
+- ✅ **Consolidada** documentación de seguridad en [SECURITY_COMPREHENSIVE.md](SECURITY_COMPREHENSIVE.md)
+- ✅ **Archivados** 3 documentos redundantes de seguridad
+- ✅ **Expandido** suite de tests RLS (4 test suites completas)
+- ✅ **Creados** scripts de automatización y mantenimiento
 - ✅ **Reorganizada** carpeta `archive/` con subcarpetas lógicas
 - ✅ **Creada** carpeta `troubleshooting/` para fixes
 - ✅ **Actualizado** índice maestro con nueva estructura
 
-**Reducción:** 37% menos archivos, 0% duplicación
+**Reducción:** 3 documentos de seguridad consolidados en 1
 
 Ver detalles: [archive/audits/](archive/audits/)
 
 ---
 
-**Última curación:** 5 de noviembre de 2025
+**Última curación:** 6 de noviembre de 2025
 **Mantenido por:** Equipo ComerECO
 **Próxima revisión:** Diciembre 2025

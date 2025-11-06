@@ -202,8 +202,8 @@ const RequisitionDetail = () => {
                             <Card className="shadow-md border-2">
                                 <CardHeader className="pb-4">
                                     <div className="flex items-center gap-3">
-                                        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center shadow-sm">
-                                            <FileText className="h-6 w-6 text-primary-600" aria-hidden="true" />
+                                        <div className="icon-badge flex h-12 w-12 items-center justify-center">
+                                            <FileText className="h-6 w-6 text-primary-600 dark:text-primary-100" aria-hidden="true" />
                                         </div>
                                         <CardTitle className="text-2xl font-bold text-foreground">Ítems de la Requisición</CardTitle>
                                     </div>
@@ -258,8 +258,8 @@ const RequisitionDetail = () => {
                                 <Card className="shadow-md border-2">
                                     <CardHeader className="pb-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center shadow-sm">
-                                                <MessageSquare className="h-6 w-6 text-primary-600" aria-hidden="true" />
+                                            <div className="icon-badge flex h-12 w-12 items-center justify-center">
+                                                <MessageSquare className="h-6 w-6 text-primary-600 dark:text-primary-100" aria-hidden="true" />
                                             </div>
                                             <CardTitle className="text-2xl font-bold text-foreground">Comentarios</CardTitle>
                                         </div>

@@ -28,8 +28,8 @@ const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name, e
           : 'py-4'
       )}
     >
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm dark:from-primary-500/15 dark:to-primary-600/10 dark:border dark:border-primary-500/25">
-        <Icon className="h-5 w-5 text-primary-500 dark:text-primary-500" aria-hidden="true" />
+      <div className="icon-badge flex h-10 w-10 items-center justify-center">
+        <Icon className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
       </div>
       <div className="flex-1">
         <p className="mb-1 text-sm font-medium text-muted-foreground">{label}</p>
@@ -54,8 +54,8 @@ const MobileProfileInfoRow = ({ icon: Icon, label, value, placeholder, editable 
 
   return (
     <div className="flex items-start gap-4 rounded-2xl border border-border/50 bg-card/80 p-4 shadow-sm dark:border-border/60 dark:bg-[#122039]/80">
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-50 via-primary-100 to-primary-50 shadow-inner dark:from-primary-500/20 dark:via-primary-500/15 dark:to-primary-600/15">
-        <Icon className="h-5 w-5 text-primary-600 dark:text-primary-500" aria-hidden="true" />
+      <div className="icon-badge flex h-11 w-11 shrink-0 items-center justify-center">
+        <Icon className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
       </div>
       <div className="flex-1">
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/80">{label}</p>
@@ -345,7 +345,7 @@ const ProfilePage = () => {
             </div>
           </section>
 
-          <section className="rounded-3xl border border-border/70 bg-card/95 p-5 shadow-lg dark:border-border/60 dark:bg-[#111c2f]">
+          <section className="surface-panel p-5 shadow-lg">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-lg font-semibold text-foreground">Información personal</h2>
@@ -433,7 +433,7 @@ const ProfilePage = () => {
             </div>
           </section>
 
-          <section className="rounded-3xl border border-border/60 bg-card/95 p-5 shadow-lg dark:border-border/60 dark:bg-[#101a2b]">
+          <section className="surface-panel p-5 shadow-lg">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-foreground">Actividad reciente</h2>
               <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Últimas 3</span>
@@ -463,7 +463,7 @@ const ProfilePage = () => {
 
         <div className="hidden lg:block">
           <div className="mx-auto w-full max-w-5xl space-y-8">
-            <Card className="overflow-hidden rounded-2xl border border-border bg-card/95 shadow-xl dark:border-border/80 dark:bg-[linear-gradient(135deg,rgba(18,25,41,0.92)_0%,rgba(13,18,32,0.94)_60%,rgba(10,14,26,0.95)_100%)] dark:shadow-[0_28px_60px_rgba(4,10,24,0.45)]">
+            <Card className="overflow-hidden surface-card shadow-xl dark:shadow-[0_28px_60px_rgba(4,10,24,0.45)]">
               <div className="h-32 bg-gradient-to-br from-primary-50 via-primary-100 to-primary-50 dark:from-[#1b2640] dark:via-[#151f34] dark:to-[#101827] dark:border-b dark:border-border/70" />
               <CardContent className="p-8 pt-0">
                 <div className="flex -mt-16 flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
@@ -599,8 +599,8 @@ const ProfilePage = () => {
               <Card className="rounded-2xl border border-border shadow-lg dark:border-border">
                 <CardHeader className="pb-4">
                   <div className="mb-2 flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm dark:from-primary-500/15 dark:to-primary-600/10">
-                      <User className="h-5 w-5 text-primary-500" aria-hidden="true" />
+                    <div className="icon-badge flex h-10 w-10 items-center justify-center">
+                      <User className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
                     </div>
                     <CardTitle className="text-2xl font-bold text-foreground">Estadísticas</CardTitle>
                   </div>
@@ -627,8 +627,8 @@ const ProfilePage = () => {
               <Card className="rounded-2xl border border-border shadow-lg lg:col-span-2 dark:border-border">
                 <CardHeader className="pb-4">
                   <div className="mb-2 flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm dark:from-primary-500/15 dark:to-primary-600/10">
-                      <User className="h-5 w-5 text-primary-500" aria-hidden="true" />
+                    <div className="icon-badge flex h-10 w-10 items-center justify-center">
+                      <User className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
                     </div>
                     <CardTitle className="text-2xl font-bold text-foreground">Actividad Reciente</CardTitle>
                   </div>
@@ -640,8 +640,8 @@ const ProfilePage = () => {
                     recentRequisitions.map(req => <RequisitionCard key={req.id} requisition={req} />)
                   ) : (
                     <div className="py-12 text-center">
-                      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-muted to-muted/70 dark:from-card dark:to-card/80">
-                        <User className="h-8 w-8 text-muted-foreground" aria-hidden="true" />
+                      <div className="icon-badge mx-auto mb-4 flex h-16 w-16 items-center justify-center text-muted-foreground">
+                        <User className="h-8 w-8" aria-hidden="true" />
                       </div>
                       <p className="font-medium text-muted-foreground">No tienes actividad reciente</p>
                     </div>

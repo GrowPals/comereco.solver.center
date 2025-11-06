@@ -128,8 +128,8 @@ const CheckoutPage = () => {
                     {/* Header */}
                     <header className="border-b border-border pb-5 sm:pb-6 dark:border-border">
                         <div className="flex items-center gap-3 sm:gap-4">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm sm:h-14 sm:w-14 dark:from-primary-500/15 dark:to-primary-600/10">
-                                <ShoppingCart className="h-6 w-6 text-primary-500 sm:h-7 sm:w-7" aria-hidden="true" />
+                            <div className="icon-badge flex h-12 w-12 items-center justify-center sm:h-14 sm:w-14">
+                                <ShoppingCart className="h-6 w-6 text-primary-600 dark:text-primary-100 sm:h-7 sm:w-7" aria-hidden="true" />
                             </div>
                             <div>
                                 <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
@@ -147,8 +147,8 @@ const CheckoutPage = () => {
                     <div className="space-y-6">
                         <div>
                             <div className="mb-4 flex items-center gap-3">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-500/15 dark:to-primary-600/10">
-                                    <CreditCard className="h-5 w-5 text-primary-500" />
+                                <div className="icon-badge flex h-10 w-10 items-center justify-center">
+                                    <CreditCard className="h-5 w-5 text-primary-600 dark:text-primary-100" />
                                 </div>
                                 <h2 className="text-2xl font-bold text-foreground">Detalles de la Requisición</h2>
                             </div>
@@ -184,8 +184,8 @@ const CheckoutPage = () => {
                         </div>
                         <div>
                             <div className="mb-4 flex items-center gap-3">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-500/15 dark:to-primary-600/10">
-                                    <Save className="h-5 w-5 text-primary-500" />
+                                <div className="icon-badge flex h-10 w-10 items-center justify-center">
+                                    <Save className="h-5 w-5 text-primary-600 dark:text-primary-100" />
                                 </div>
                                 <h2 className="text-2xl font-bold text-foreground">Acciones Adicionales</h2>
                             </div>
@@ -207,8 +207,8 @@ const CheckoutPage = () => {
                     {/* Columna Derecha: Resumen de Pedido */}
                     <div className="space-y-6">
                         <div className="mb-4 flex items-center gap-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-500/15 dark:to-primary-600/10">
-                                <ShoppingCart className="h-5 w-5 text-primary-500" />
+                            <div className="icon-badge flex h-10 w-10 items-center justify-center">
+                                <ShoppingCart className="h-5 w-5 text-primary-600 dark:text-primary-100" />
                             </div>
                             <h2 className="text-2xl font-bold text-foreground">Resumen del Pedido</h2>
                         </div>

@@ -29,18 +29,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/useToast';
+import { cn } from '@/lib/utils';
 
 // Componente de tarjeta de estadística
 const StatCard = ({ icon: Icon, title, value, subtitle, color = 'blue', trend }) => {
     const colorClasses = {
-        blue: 'from-primary-50 to-primary-100 text-primary-600',
-        green: 'from-green-50 to-green-100 text-green-600',
-        amber: 'from-amber-50 to-amber-100 text-amber-600',
-        purple: 'from-purple-50 to-purple-100 text-purple-600',
+        blue: 'text-primary-600 dark:text-primary-100',
+        green: 'text-emerald-600 dark:text-emerald-200',
+        amber: 'text-amber-600 dark:text-amber-200',
+        purple: 'text-purple-600 dark:text-purple-200',
     };
 
     return (
-        <Card className="overflow-hidden border-2 hover:shadow-lg transition-shadow duration-300">
+        <Card className="overflow-hidden surface-card transition-shadow duration-300">
             <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -50,7 +51,7 @@ const StatCard = ({ icon: Icon, title, value, subtitle, color = 'blue', trend })
                             <p className="text-xs text-muted-foreground/80">{subtitle}</p>
                         )}
                     </div>
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${colorClasses[color]} flex items-center justify-center shadow-md`}>
+                    <div className={cn('icon-badge flex h-12 w-12 items-center justify-center', colorClasses[color])}>
                         <Icon className="h-6 w-6" aria-hidden="true" />
                     </div>
                 </div>
@@ -67,7 +68,7 @@ const BAR_GRADIENT = 'linear-gradient(90deg, #6c7bd0 0%, #3f4f99 100%)';
 const SimpleBarChart = ({ data, title, subtitle, dataKey, nameKey }) => {
     if (!data || data.length === 0) {
         return (
-            <Card className="border-2">
+            <Card className="surface-card">
                 <CardHeader>
                     <CardTitle>{title}</CardTitle>
                     {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
@@ -82,7 +83,7 @@ const SimpleBarChart = ({ data, title, subtitle, dataKey, nameKey }) => {
     const maxValue = Math.max(...data.map(d => d[dataKey] || 0));
 
     return (
-        <Card className="border-2">
+        <Card className="surface-card">
             <CardHeader>
                 <CardTitle>{title}</CardTitle>
                 {subtitle && <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>}
@@ -118,7 +119,7 @@ const SimpleBarChart = ({ data, title, subtitle, dataKey, nameKey }) => {
 const MonthlyTrendChart = ({ data }) => {
     if (!data || data.length === 0) {
         return (
-            <Card className="border-2">
+            <Card className="surface-card">
                 <CardHeader>
                     <CardTitle>Tendencia Mensual</CardTitle>
                 </CardHeader>
@@ -134,7 +135,7 @@ const MonthlyTrendChart = ({ data }) => {
     );
 
     return (
-        <Card className="border-2">
+        <Card className="surface-card">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <TrendingUp className="h-5 w-5 text-primary-600" />
@@ -211,7 +212,7 @@ const MonthlyTrendChart = ({ data }) => {
 const SimplePieChart = ({ data }) => {
     if (!data || data.length === 0) {
         return (
-            <Card className="border-2">
+            <Card className="surface-card">
                 <CardHeader>
                     <CardTitle>Requisiciones por Estado</CardTitle>
                 </CardHeader>
@@ -225,7 +226,7 @@ const SimplePieChart = ({ data }) => {
     const total = data.reduce((sum, item) => sum + item.value, 0);
 
     return (
-        <Card className="border-2">
+        <Card className="surface-card">
             <CardHeader>
                 <CardTitle>Distribución de Requisiciones</CardTitle>
                 <p className="text-sm text-muted-foreground mt-1">Total: {total} requisiciones</p>
@@ -394,8 +395,8 @@ const ReportsPage = () => {
                     {/* Header */}
                     <header className="flex flex-col items-start gap-5 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:pb-6">
                         <div className="flex items-center gap-4 sm:gap-5">
-                            <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center shadow-md">
-                                <BarChart2 className="h-7 w-7 text-primary-600" aria-hidden="true" />
+                            <div className="icon-badge flex h-14 w-14 items-center justify-center">
+                                <BarChart2 className="h-7 w-7 text-primary-600 dark:text-primary-100" aria-hidden="true" />
                             </div>
                             <div>
                                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-1">

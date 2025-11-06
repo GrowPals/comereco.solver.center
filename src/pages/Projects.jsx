@@ -52,8 +52,8 @@ const ProjectCard = ({ project, onEdit, onDelete, onManageMembers, onView }) => 
       <div>
         <div className="mb-3 flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm dark:from-primary-500/15 dark:to-primary-600/10">
-              <FolderKanban className="h-6 w-6 text-primary-500" />
+            <div className="icon-badge flex h-12 w-12 items-center justify-center">
+              <FolderKanban className="h-6 w-6 text-primary-600 dark:text-primary-100" />
             </div>
             <h3 className="text-xl font-bold text-foreground">{project.name}</h3>
           </div>
@@ -392,8 +392,8 @@ const ProjectsPage = () => {
           {/* Header */}
           <header className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
             <div className="flex items-center gap-3 sm:gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm sm:h-14 sm:w-14">
-                <FolderKanban className="h-6 w-6 text-primary-500 sm:h-7 sm:w-7" aria-hidden="true" />
+              <div className="icon-badge flex h-12 w-12 items-center justify-center sm:h-14 sm:w-14">
+                <FolderKanban className="h-6 w-6 text-primary-600 dark:text-primary-100 sm:h-7 sm:w-7" aria-hidden="true" />
               </div>
               <div className="space-y-1">
                 <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">

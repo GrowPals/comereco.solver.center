@@ -34,7 +34,7 @@ export function CartIcon({ variant = 'default' }) {
       size="icon"
       className={cn(
         'relative overflow-visible rounded-full transition-colors',
-        isCompact && 'h-11 w-11 border border-border bg-card text-foreground shadow-sm hover:bg-muted/70 dark:border-border dark:bg-card dark:hover:bg-muted/40'
+        isCompact && 'h-11 w-11 border border-border bg-[var(--surface-contrast)] text-foreground shadow-sm hover:bg-[var(--surface-muted)] dark:border-[#1a2f4f] dark:bg-[rgba(12,26,52,0.72)] dark:text-primary-50 dark:hover:bg-[rgba(16,32,62,0.85)] dark:hover:border-[#4678d4]'
       )}
       aria-label={totalItems > 0 ? `Abrir carrito, ${totalItems} productos` : 'Abrir carrito'}
     >

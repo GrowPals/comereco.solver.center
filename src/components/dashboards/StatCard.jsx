@@ -6,8 +6,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 const StatCard = memo(({ title, value, icon: Icon, isLoading, format = val => val }) => {
     if (isLoading) {
         return (
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+        <Card className="dashboard-panel surface-card">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
                     <CardTitle className="text-sm font-medium"><Skeleton className="h-4 w-24" /></CardTitle>
                     <Skeleton className="h-12 w-12 rounded-xl" />
                 </CardHeader>
@@ -19,14 +19,14 @@ const StatCard = memo(({ title, value, icon: Icon, isLoading, format = val => va
     }
 
     return (
-        <Card interactive className="group">
+        <Card interactive className="group stat-card surface-card">
             <CardHeader className="relative z-10 flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                     {title}
                 </CardTitle>
                 {Icon && (
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 transition-all duration-300 group-hover:scale-110 dark:from-primary-500/15 dark:to-primary-600/10">
-                        <Icon className="h-6 w-6 text-primary-500" />
+                    <div className="stat-icon flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-300 group-hover:scale-110">
+                        <Icon className="h-6 w-6 text-primary-500 dark:text-primary-200" />
                     </div>
                 )}
             </CardHeader>

@@ -80,7 +80,7 @@ const ProductCard = memo(({ product }) => {
   return (
     <article
       className={cn(
-        'group relative flex w-[88vw] max-w-[22rem] flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-primary-200 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 sm:w-full sm:max-w-none'
+        'group relative flex w-[88vw] max-w-[22rem] flex-col overflow-hidden rounded-3xl surface-card transition-all duration-300 hover:-translate-y-1 focus-visible:outline-none focus-visible:shadow-[var(--focus-glow)] sm:w-full sm:max-w-none'
       )}
       role="article"
       aria-label={`Producto ${productName}, precio ${productPrice} pesos`}
@@ -96,13 +96,13 @@ const ProductCard = memo(({ product }) => {
             alt={`Imagen de ${productName}`}
             fallback="/placeholder.svg"
             loading="lazy"
-            className="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-105 bg-[rgba(228,235,255,0.75)] dark:bg-[#0e1f3c]"
           />
         </button>
 
         <div className="absolute left-4 top-3 flex flex-wrap gap-2">
           {product.category && (
-            <span className="rounded-full bg-card/90 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-foreground/90 shadow-sm backdrop-blur">
+            <span className="surface-chip px-3 py-1 text-xs font-semibold uppercase tracking-wide">
               {product.category}
             </span>
           )}
@@ -110,7 +110,7 @@ const ProductCard = memo(({ product }) => {
         <button
           type="button"
           onClick={handleToggleFavorite}
-          className="absolute right-4 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-card/95 text-muted-foreground/80 shadow-lg transition-colors duration-200 hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+          className="absolute right-4 top-3 flex h-9 w-9 items-center justify-center rounded-full surface-chip text-muted-foreground/80 shadow-lg transition-colors duration-200 hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
           aria-label={
             isFavorite
               ? `Quitar ${productName} de favoritos`
@@ -182,11 +182,11 @@ const ProductCard = memo(({ product }) => {
               )}
             </button>
           ) : (
-            <div className="flex w-full items-center justify-between gap-3 rounded-2xl border border-border bg-muted/70 p-2">
+            <div className="flex w-full items-center justify-between gap-3 rounded-2xl surface-card p-2">
               <button
                 type="button"
                 onClick={handleDecrease}
-                className="flex h-11 w-11 items-center justify-center rounded-xl border border-transparent bg-card text-muted-foreground transition-colors hover:border-error/40 hover:bg-error/10 hover:text-error active:scale-95"
+                className="flex h-11 w-11 items-center justify-center rounded-xl border border-transparent bg-[var(--surface-contrast)] text-muted-foreground transition-colors hover:border-error/40 hover:bg-error/10 hover:text-error active:scale-95 dark:bg-[rgba(16,32,60,0.85)]"
                 aria-label={
                   currentQuantity === 1
                     ? `Quitar ${productName} del carrito`

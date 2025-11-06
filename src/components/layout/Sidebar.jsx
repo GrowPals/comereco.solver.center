@@ -19,20 +19,20 @@ const MenuItem = memo(({ to, icon: Icon, children, onClick, badge }) => {
                     'group flex items-center justify-between rounded-xl p-3.5 transition-all duration-200',
                     isActive
                         ? 'text-primary-600 shadow-sm dark:text-primary-200 dark:shadow-[0_12px_30px_rgba(18,41,70,0.45)]'
-                        : 'text-muted-foreground hover:bg-muted/70 active:bg-muted/80 dark:text-muted-foreground dark:hover:bg-muted/40 dark:active:bg-muted/50'
+                        : 'text-foreground/75 hover:bg-[var(--surface-muted)] active:bg-primary/10 dark:text-muted-foreground dark:hover:bg-[rgba(26,50,88,0.65)] dark:active:bg-[rgba(34,72,130,0.65)]'
                 )}
             >
                 <div className="flex flex-1 items-center gap-3">
-                    <div
-                        className={cn(
-                            'flex h-10 w-10 items-center justify-center rounded-lg transition-colors',
-                            isActive
-                                ? 'bg-gradient-to-b from-[rgba(66,165,255,0.25)] to-[rgba(66,165,255,0.05)] text-primary-600 ring-2 ring-primary/30 dark:text-primary-100'
-                                : 'bg-muted text-muted-foreground group-hover:bg-muted/90 group-hover:text-foreground dark:bg-muted/25 dark:text-muted-foreground dark:group-hover:bg-muted/50 dark:group-hover:text-foreground'
-                        )}
-                    >
-                        <Icon className="h-5 w-5" />
-                    </div>
+                <div
+                    className={cn(
+                        'flex h-10 w-10 items-center justify-center rounded-lg transition-all',
+                        isActive
+                                ? 'bg-gradient-to-b from-[rgba(66,165,255,0.25)] to-[rgba(66,165,255,0.05)] text-primary-600 ring-2 ring-primary/30 dark:bg-[rgba(80,150,255,0.18)] dark:text-primary-50 dark:ring-[rgba(110,190,255,0.28)]'
+                                : 'bg-[var(--surface-contrast)] text-foreground/65 shadow-sm ring-1 ring-border/70 group-hover:text-foreground group-hover:ring-primary-200/50 dark:bg-[rgba(20,38,68,0.55)] dark:text-muted-foreground dark:ring-[rgba(32,64,110,0.65)] dark:group-hover:bg-[rgba(26,50,88,0.75)] dark:group-hover:text-primary-50 dark:group-hover:ring-[rgba(110,190,255,0.35)]'
+                    )}
+                >
+                    <Icon className="h-5 w-5" />
+                </div>
                     <span className="text-[15px] font-medium text-foreground">{children}</span>
                 </div>
                 {badge && (
@@ -136,18 +136,28 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
     }, [isAdmin, isSupervisor]);
 
     return (
-        <aside
-            className={cn(
-                'fixed inset-y-0 right-0 z-50 flex h-full w-full flex-col overflow-y-auto bg-card transition-transform duration-300 ease-out lg:left-0 lg:right-auto lg:overflow-visible lg:border-r lg:border-border lg:shadow-lg',
-                'transition-colors duration-200 dark:bg-[#1c1f2b]/96 dark:lg:border-[#232a3a]',
-                isMobileNavOpen ? 'translate-x-0 shadow-[0_20px_60px_rgba(15,23,42,0.25)]' : 'translate-x-full shadow-none',
-                isSidebarOpen ? 'lg:w-72' : 'lg:w-20',
-                'lg:translate-x-0'
-            )}
-            role="complementary"
-            aria-label="Menú de navegación"
-            id="navigation"
-        >
+        <>
+            <button
+                type="button"
+                className="mobile-nav-overlay lg:hidden"
+                data-open={isMobileNavOpen}
+                aria-hidden={!isMobileNavOpen}
+                aria-label="Cerrar menú de navegación"
+                tabIndex={isMobileNavOpen ? 0 : -1}
+                onClick={() => setMobileNavOpen(false)}
+            />
+            <aside
+                className={cn(
+                    'sidebar-shell fixed inset-y-0 right-0 z-50 flex h-full w-full flex-col overflow-y-auto transition-transform duration-300 ease-out lg:left-0 lg:right-auto lg:overflow-visible lg:shadow-none',
+                    'transition-colors duration-200',
+                    isMobileNavOpen ? 'translate-x-0' : 'translate-x-full',
+                    isSidebarOpen ? 'lg:w-72' : 'lg:w-20',
+                    'lg:translate-x-0'
+                )}
+                role="complementary"
+                aria-label="Menú de navegación"
+                id="navigation"
+            >
             <div className="flex items-center justify-between border-b border-border px-6 pb-4 pt-[calc(env(safe-area-inset-top)+1rem)] transition-colors lg:hidden dark:border-border">
                 <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Menú principal</p>
                 <button
@@ -162,7 +172,7 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
             {/* Header del Sidebar - Perfil del Usuario */}
             <div className="border-b border-border p-6 transition-colors dark:border-border">
                 <NavLink to="/profile" onClick={handleNavClick}>
-                    <div className="-m-2 flex items-center gap-4 rounded-xl p-2 transition-colors hover:bg-muted/70 dark:hover:bg-muted/40">
+                    <div className="-m-2 flex items-center gap-4 rounded-xl p-2 transition-colors hover:bg-[var(--surface-muted)] dark:hover:bg-muted/40">
                         <Avatar className="h-16 w-16 ring-2 ring-primary/30 dark:ring-primary/40">
                             <AvatarImage alt={`Avatar de ${userName}`} src={user?.avatar_url} />
                             <AvatarFallback className="text-lg font-bold text-white">
@@ -239,7 +249,8 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
                     </div>
                 </button>
             </div>
-        </aside>
+            </aside>
+        </>
     );
 });
 

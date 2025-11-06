@@ -1,0 +1,231 @@
+[
+    {
+      "ID": "47dbf049-93c2-4cc7-8d21-00c616324cc0",
+      "Name": "UNIFORMES",
+      "SubCategories": [
+        {
+          "ID": "66baa891-7815-4dec-9b8c-cd617961ded0",
+          "Name": "",
+          "SubCategories": [
+            {
+              "ID": "18f977a3-c7ce-4799-8a24-58b22c66fdba",
+              "Name": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ID": "88b73191-2890-4f16-9ab9-17252a5eb716",
+      "Name": "MATERIA PRIMA",
+      "SubCategories": [
+        {
+          "ID": "2091daa1-b128-46d3-919e-1c5003b61f8c",
+          "Name": "",
+          "SubCategories": [
+            {
+              "ID": "f1b396e6-157e-4bd3-99b3-07e24c197264",
+              "Name": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ID": "5c8407aa-18ad-4592-8201-39cf6f2dd047",
+      "Name": "FERRETERIA",
+      "SubCategories": [
+        {
+          "ID": "9c2195a4-9db7-47c0-9389-986bb72be33c",
+          "Name": "",
+          "SubCategories": [
+            {
+              "ID": "5a5dd8d7-1f91-452c-a88f-269bef9da031",
+              "Name": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ID": "5442fdbc-d5b3-428e-ad11-4ced7f7451fe",
+      "Name": "BOLSA",
+      "SubCategories": [
+        {
+          "ID": "e0ddf7a5-28f7-4237-b7e5-2dc2485e7185",
+          "Name": "",
+          "SubCategories": [
+            {
+              "ID": "969f6504-ce2a-4d9c-baef-ba5d47d91fa0",
+              "Name": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ID": "0f45848b-7c5d-45ff-b5ef-549e5200c87c",
+      "Name": "EQUIPO",
+      "SubCategories": [
+        {
+          "ID": "cd9167bc-a295-42c8-b22a-42ab9f9e1769",
+          "Name": "",
+          "SubCategories": [
+            {
+              "ID": "9691a67d-0b34-48ff-b903-584608a71d17",
+              "Name": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ID": "7d567242-9b7c-475e-b9ff-56a3e3a49617",
+      "Name": "REFACCIONES",
+      "SubCategories": []
+    },
+    {
+      "ID": "6458d2d0-2917-4d32-8702-5a26f5c5d893",
+      "Name": "JARCIERIA",
+      "SubCategories": [
+        {
+          "ID": "5a3143a1-7563-4b93-8521-f55acf33f037",
+          "Name": "",
+          "SubCategories": [
+            {
+              "ID": "4a61a46d-9a6b-48d1-8d32-9d407dbc6136",
+              "Name": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ID": "11871a5f-d041-4942-9928-61b205abb494",
+      "Name": "REACTIVO",
+      "SubCategories": [
+        {
+          "ID": "8dcb9e21-c436-4959-b339-c5668c0221d6",
+          "Name": "",
+          "SubCategories": [
+            {
+              "ID": "d74ccea2-0453-4267-b333-e760dc0d29ce",
+              "Name": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ID": "0c25a562-a379-446a-b6b5-67751ea63bd6",
+      "Name": "CURACION",
+      "SubCategories": [
+        {
+          "ID": "52e042f6-cf89-4fc5-8eda-0b6f7d956c24",
+          "Name": "",
+          "SubCategories": [
+            {
+              "ID": "e2938127-cce1-4762-b2eb-582dc25e6f65",
+              "Name": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ID": "ac40c07a-2281-4ddc-848a-71cb481b8169",
+      "Name": "CLINICOS",
+      "SubCategories": [
+        {
+          "ID": "ae094dd3-9133-4663-b7e3-cf4a11e73b01",
+          "Name": "",
+          "SubCategories": [
+            {
+              "ID": "8a9d908a-6979-463f-ae70-03b929aea3c8",
+              "Name": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ID": "c3f3b084-63ab-4407-b0a3-87997ec33b1e",
+      "Name": "ENVASE",
+      "SubCategories": [
+        {
+          "ID": "a5e91068-d9bf-4b3c-a57b-ee586739db19",
+          "Name": "",
+          "SubCategories": [
+            {
+              "ID": "6939ba68-469b-46e6-a694-562d17a11e86",
+              "Name": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ID": "a8a0ed3b-0dc3-4911-94a1-88141b598a92",
+      "Name": "EPP",
+      "SubCategories": [
+        {
+          "ID": "32a00846-5514-4858-b5d0-9a452c459ecc",
+          "Name": "",
+          "SubCategories": [
+            {
+              "ID": "5160b90c-0fb1-47cc-a198-c07c474c42ec",
+              "Name": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ID": "28c9fa21-05c1-45f1-97d2-94e2c82c2934",
+      "Name": "QUIMICOS",
+      "SubCategories": [
+        {
+          "ID": "a97fa073-1855-469a-8573-331b7fab585a",
+          "Name": "",
+          "SubCategories": [
+            {
+              "ID": "62817b5f-c1a2-464e-a1c5-c820245d5074",
+              "Name": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ID": "e1354f0d-d1ad-4380-8d24-d57c10ee7e5d",
+      "Name": "MEDICAMENTO",
+      "SubCategories": [
+        {
+          "ID": "88f3f66e-2ff6-4fec-af92-c7599b3f0ca0",
+          "Name": "",
+          "SubCategories": [
+            {
+              "ID": "f8805176-45fe-4555-8e94-2622b2de4398",
+              "Name": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ID": "7069a6bf-0cbb-4ef8-bfc3-f47575ddba75",
+      "Name": "HIGIENICOS",
+      "SubCategories": [
+        {
+          "ID": "ac5d144e-b933-4bb0-b4c4-3d74d10c180a",
+          "Name": "",
+          "SubCategories": [
+            {
+              "ID": "9433c263-22cc-4ef1-805c-11b95f252736",
+              "Name": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]

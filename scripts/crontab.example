@@ -1,0 +1,58 @@
+# ═══════════════════════════════════════════════════════════════
+# 🤖 CRONTAB - COMERECO WEBAPP
+# ═══════════════════════════════════════════════════════════════
+# Automatización de tareas periódicas
+#
+# Para instalar:
+#   crontab -e
+#   Copiar las líneas de abajo
+#
+# Para ver cron activo:
+#   crontab -l
+# ═══════════════════════════════════════════════════════════════
+
+# Variables
+PROJECT_DIR=/home/bigez/COMERECO-WEBAPP
+SHELL=/bin/bash
+PATH=/usr/local/bin:/usr/bin:/bin
+
+# ═══════════════════════════════════════════════════════════════
+# DIARIO
+# ═══════════════════════════════════════════════════════════════
+
+# Backup de Base de Datos (1:00 AM)
+0 1 * * * cd $PROJECT_DIR && npm run backup:db >> maintenance-data/logs/backup_cron.log 2>&1
+
+# Health Check (cada 6 horas)
+0 */6 * * * cd $PROJECT_DIR && npm run health >> maintenance-data/logs/health_cron.log 2>&1
+
+# ═══════════════════════════════════════════════════════════════
+# SEMANAL
+# ═══════════════════════════════════════════════════════════════
+
+# Limpieza de Logs (Domingos 2:00 AM)
+0 2 * * 0 cd $PROJECT_DIR && npm run cleanup:logs >> maintenance-data/logs/cleanup_cron.log 2>&1
+
+# Mantenimiento Completo (Lunes 3:00 AM)
+0 3 * * 1 cd $PROJECT_DIR && npm run maintenance >> maintenance-data/logs/maintenance_cron.log 2>&1
+
+# ═══════════════════════════════════════════════════════════════
+# MENSUAL
+# ═══════════════════════════════════════════════════════════════
+
+# Optimización de Índices BD (1er día del mes a las 4:00 AM)
+# NOTA: Ejecutar manualmente en Supabase SQL Editor
+# 0 4 1 * * echo "Recordatorio: Ejecutar scripts/sql/optimize-indexes.sql en Supabase" | mail -s "Optimización BD Mensual" admin@tu-dominio.com
+
+# Limpieza de Datos Antiguos (1er día del mes a las 5:00 AM)
+# NOTA: Ejecutar manualmente en Supabase SQL Editor
+# 0 5 1 * * echo "Recordatorio: Ejecutar scripts/sql/cleanup-data.sql en Supabase" | mail -s "Limpieza BD Mensual" admin@tu-dominio.com
+
+# ═══════════════════════════════════════════════════════════════
+# NOTAS:
+# ═══════════════════════════════════════════════════════════════
+# 1. Ajusta PROJECT_DIR a tu ruta real
+# 2. Los scripts SQL deben ejecutarse manualmente en Supabase
+# 3. Configura email para notificaciones
+# 4. Monitorea logs en maintenance-data/logs/
+# ═══════════════════════════════════════════════════════════════

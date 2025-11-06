@@ -107,7 +107,7 @@ export const RestockRuleCard = ({ rule, projects }) => {
   );
 
   return (
-    <div className="group flex h-full flex-col rounded-3xl border border-border bg-card/95 p-4 shadow-sm transition-shadow hover:shadow-md dark:border-border dark:bg-card/85 sm:p-5">
+    <div className="surface-card group flex h-full flex-col rounded-3xl p-4 transition-shadow hover:shadow-md sm:p-5">
       <div className="flex flex-1 flex-col gap-3">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1 space-y-1">
@@ -119,17 +119,15 @@ export const RestockRuleCard = ({ rule, projects }) => {
             </p>
           </div>
           <Badge
-            className="border px-3 py-1 text-xs font-semibold uppercase tracking-wide"
-            style={rule.status === 'active'
-              ? { background: 'rgba(0, 200, 83, 0.16)', borderColor: 'rgba(0, 200, 83, 0.45)', color: '#66ffb2' }
-              : { background: 'rgba(255, 192, 70, 0.18)', borderColor: 'rgba(255, 192, 70, 0.45)', color: '#ffd480' }}
+            className={cn('surface-chip px-3 py-1 text-xs font-semibold uppercase tracking-wide text-foreground dark:text-foreground',
+              rule.status === 'active' ? 'border-green-400/60 text-emerald-600 dark:text-emerald-200' : 'border-amber-400/60 text-amber-500 dark:text-amber-200')}
           >
             {rule.status === 'active' ? 'Activa' : 'Pausada'}
           </Badge>
         </div>
 
         {!!rule.notes && (
-          <p className="line-clamp-2 rounded-2xl border border-border bg-muted/60 p-3 text-xs text-muted-foreground dark:border-border dark:bg-card/50">
+          <p className="surface-card line-clamp-2 rounded-2xl p-3 text-xs text-muted-foreground/90 dark:text-primary-100">{/* using surface-card ensures same palette */}
             {rule.notes}
           </p>
         )}
@@ -184,7 +182,7 @@ export const RestockRuleCard = ({ rule, projects }) => {
       </div>
 
       <Dialog open={controller.isDialogOpen} onOpenChange={controller.setDialogOpen}>
-        <DialogContent className="sm:max-w-2xl">
+        <DialogContent className="sm:max-w-2xl surface-panel">
           <DialogHeader>
             <DialogTitle>Editar regla de reabastecimiento</DialogTitle>
             <DialogDescription>

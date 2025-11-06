@@ -46,11 +46,11 @@ const RecentRequisitions = () => {
     };
 
     return (
-        <Card className="shadow-sm">
+        <Card className="dashboard-panel surface-panel">
             <CardHeader className="pb-6">
                 <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-md">
-                        <Clock className="h-5 w-5 text-white" />
+                    <div className="metric-icon flex h-10 w-10 items-center justify-center rounded-xl shadow-md">
+                        <Clock className="h-5 w-5" />
                     </div>
                     <CardTitle className="text-xl font-bold text-foreground">Actividad Reciente</CardTitle>
                 </div>

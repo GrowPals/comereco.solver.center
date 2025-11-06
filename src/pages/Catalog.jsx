@@ -14,6 +14,7 @@ import { ProductCardSkeletonList } from '@/components/skeletons/ProductCardSkele
 import ErrorState from '@/components/ErrorState';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import PageContainer from '@/components/layout/PageContainer';
 import {
   Select,
   SelectContent,
@@ -21,6 +22,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import EmptyState from '@/components/EmptyState';
 
 const MOBILE_BREAKPOINT = 1024;
@@ -39,6 +42,7 @@ const computePageSize = (width) => {
 const CatalogPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [category, setCategory] = useState('all');
+  const [includeOutOfStock, setIncludeOutOfStock] = useState(false);
   const [viewportWidth, setViewportWidth] = useState(() =>
     typeof window === 'undefined' ? 1440 : window.innerWidth
   );
@@ -58,9 +62,10 @@ const CatalogPage = () => {
     () => ({
       searchTerm: debouncedSearchTerm,
       category: category === 'all' ? '' : category,
+      availability: includeOutOfStock ? 'all' : 'in_stock',
       pageSize,
     }),
-    [debouncedSearchTerm, category, pageSize]
+    [debouncedSearchTerm, category, includeOutOfStock, pageSize]
   );
 
   const {
@@ -81,6 +86,7 @@ const CatalogPage = () => {
         pageParam,
         searchTerm: filtersKey.searchTerm,
         category: filtersKey.category,
+        availability: filtersKey.availability,
         pageSize: filtersKey.pageSize,
       }),
     getNextPageParam: (lastPage) =>
@@ -121,10 +127,14 @@ const CatalogPage = () => {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [filtersKey.searchTerm, filtersKey.category]);
+  }, [filtersKey.searchTerm, filtersKey.category, filtersKey.availability]);
 
   const handleCategoryChange = (newCategory) => {
     setCategory(newCategory);
+  };
+
+  const handleAvailabilityChange = (checked) => {
+    setIncludeOutOfStock(Boolean(checked));
   };
 
   const handleSearchChange = (event) => {
@@ -134,9 +144,10 @@ const CatalogPage = () => {
   const clearFilters = useCallback(() => {
     setSearchTerm('');
     setCategory('all');
+    setIncludeOutOfStock(false);
   }, []);
 
-  const hasActiveFilters = Boolean(debouncedSearchTerm) || category !== 'all';
+  const hasActiveFilters = Boolean(debouncedSearchTerm) || category !== 'all' || includeOutOfStock;
 
   const showInitialLoading = isLoading && products.length === 0;
   const showEmptyState = !showInitialLoading && !isError && products.length === 0;
@@ -151,11 +162,11 @@ const CatalogPage = () => {
         />
       </Helmet>
 
-      <div className={cn('min-h-screen bg-muted/70', isDesktop ? 'pb-16' : 'pb-28')}>
-        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+      <PageContainer className={cn(isDesktop ? 'pb-16' : 'pb-28')}>
+        <div className="mx-auto w-full max-w-7xl">
           <div className={cn(isDesktop ? 'pt-6' : 'pt-2')}>
             {isDesktop ? (
-              <div className="grid grid-cols-[1.6fr,2fr,1.2fr] items-end gap-10 rounded-3xl border border-border bg-card/95 px-10 py-8 shadow-sm">
+              <div className="grid grid-cols-[1.6fr,2fr,1.2fr] items-end gap-10 surface-panel px-10 py-8">
                 <div className="space-y-2">
                   <h1 className="text-3xl font-semibold text-foreground">Catálogo de productos</h1>
                   <p className="text-sm text-muted-foreground">
@@ -165,17 +176,17 @@ const CatalogPage = () => {
 
                 <div className="space-y-4">
                   <div className="relative">
-                    <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground/70" />
+                    <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-foreground/60 transition-colors dark:text-muted-foreground/70" />
                     <Input
                       value={searchTerm}
                       onChange={handleSearchChange}
                       placeholder="Buscar productos por nombre o SKU"
-                      className="h-12 rounded-2xl border-border bg-muted/70 pl-12 pr-12 text-base focus:border-primary-500 focus:bg-card"
+                      className="h-12 rounded-2xl border border-border/80 bg-[var(--surface-contrast)] pl-12 pr-12 text-base shadow-sm transition-all focus:border-primary-500 focus:bg-[var(--surface-contrast)] focus:shadow-[var(--focus-glow)] dark:border-border dark:bg-muted/70 dark:shadow-none dark:focus:bg-card"
                     />
                     {searchTerm && (
                       <button
                         onClick={() => setSearchTerm('')}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/70 transition-colors hover:text-muted-foreground"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/70 transition-colors hover:text-foreground/80 dark:hover:text-foreground"
                         aria-label="Limpiar búsqueda"
                       >
                         <X className="h-5 w-5" />
@@ -191,14 +202,32 @@ const CatalogPage = () => {
                       {category !== 'all' && (
                         <span className="ml-2 text-muted-foreground/80">· {category}</span>
                       )}
+                      {includeOutOfStock && (
+                        <span className="ml-2 text-muted-foreground/80">· Incluye sin stock</span>
+                      )}
                     </p>
                     {isFetching && <span className="text-xs text-muted-foreground/70">Actualizando…</span>}
                   </div>
                 </div>
 
                 <div className="flex flex-col items-end gap-3">
+                  <div className="flex w-full items-center justify-between rounded-2xl border border-border/80 bg-white/95 px-4 py-3 text-sm shadow-sm transition-colors dark:border-border dark:bg-card">
+                    <Label
+                      htmlFor="availability-toggle-desktop"
+                      className="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+                    >
+                      Incluir productos sin stock
+                    </Label>
+                    <Switch
+                      id="availability-toggle-desktop"
+                      checked={includeOutOfStock}
+                      onCheckedChange={handleAvailabilityChange}
+                      aria-label="Incluir productos sin stock"
+                    />
+                  </div>
+
                   <Select value={category} onValueChange={handleCategoryChange}>
-                    <SelectTrigger className="h-12 w-full rounded-2xl border-border bg-card text-left font-medium">
+                    <SelectTrigger className="h-12 w-full rounded-2xl border border-border/80 bg-[var(--surface-contrast)] text-left font-medium shadow-sm transition-colors hover:border-primary-200 focus:outline-none focus:ring-2 focus:ring-primary-200/50 dark:border-border dark:bg-card dark:shadow-none">
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Filter className="h-4 w-4" />
                         <SelectValue placeholder="Filtrar por categoría" />
@@ -234,7 +263,7 @@ const CatalogPage = () => {
               </div>
             ) : (
               <div className="flex flex-col gap-3 pb-5">
-                <div className="rounded-2xl border border-border bg-card/95 px-4 py-3 shadow-sm">
+                <div className="surface-panel px-4 py-3">
                   <div className="flex items-center justify-between">
                     <h1 className="text-lg font-semibold text-foreground">Catálogo</h1>
                     {hasActiveFilters && (
@@ -252,7 +281,7 @@ const CatalogPage = () => {
                   </p>
                   <div className="mt-3">
                     <Select value={category} onValueChange={handleCategoryChange}>
-                      <SelectTrigger className="h-11 w-full rounded-xl border-border bg-muted/70 text-left text-sm font-medium">
+                      <SelectTrigger className="h-11 w-full rounded-xl border border-border/80 bg-[var(--surface-contrast)] text-left text-sm font-medium shadow-sm transition-colors hover:border-primary-200 focus:outline-none focus:ring-2 focus:ring-primary-200/50 dark:border-border dark:bg-muted/70 dark:shadow-none">
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <Filter className="h-4 w-4" />
                           <SelectValue placeholder="Todas las categorías" />
@@ -274,11 +303,27 @@ const CatalogPage = () => {
                       </SelectContent>
                     </Select>
                   </div>
+
+                  <div className="mt-3 flex items-center justify-between rounded-xl border border-border/80 bg-white/95 px-3 py-3 text-[11px] shadow-sm transition-colors dark:border-border dark:bg-muted/70">
+                    <Label
+                      htmlFor="availability-toggle-mobile"
+                      className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"
+                    >
+                      Incluir sin stock
+                    </Label>
+                    <Switch
+                      id="availability-toggle-mobile"
+                      checked={includeOutOfStock}
+                      onCheckedChange={handleAvailabilityChange}
+                      aria-label="Incluir productos sin stock"
+                    />
+                  </div>
                 </div>
 
                 <div className="flex items-center justify-between text-[11px] uppercase tracking-wide text-muted-foreground/80">
                   <span>
                     <span className="text-base font-semibold text-foreground">{totalCount}</span> productos
+                    {includeOutOfStock && <span className="ml-1 text-muted-foreground/70">· Incluye sin stock</span>}
                   </span>
                   {isFetching && <span className="text-[11px] text-muted-foreground/70">Actualizando…</span>}
                 </div>
@@ -289,7 +334,7 @@ const CatalogPage = () => {
               {showInitialLoading && <ProductCardSkeletonList count={pageSize} />}
 
               {isError && !showInitialLoading && (
-                <div className="flex min-h-[360px] items-center justify-center rounded-2xl bg-card/80 p-8">
+                <div className="flex min-h-[360px] items-center justify-center surface-card p-8">
                   <ErrorState
                     error={error}
                     onRetry={() => refetch()}
@@ -300,7 +345,7 @@ const CatalogPage = () => {
 
               {showEmptyState && (
                 <div className="flex min-h-[360px] items-center justify-center">
-                  <div className="w-full max-w-xl rounded-3xl border border-dashed border-border bg-card/95 p-10 text-center shadow-sm">
+                  <div className="w-full max-w-xl surface-card border border-dashed border-border p-10 text-center">
                     <EmptyState
                       title={hasActiveFilters ? 'No se encontraron resultados' : 'Aún no hay productos disponibles'}
                       message={
@@ -340,7 +385,7 @@ const CatalogPage = () => {
             </section>
           </div>
         </div>
-      </div>
+      </PageContainer>
     </>
   );
 };

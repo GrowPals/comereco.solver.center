@@ -40,15 +40,15 @@ import PageContainer from '@/components/layout/PageContainer';
 
 const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
   return (
-    <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card/95 p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-border dark:bg-card/85">
+    <div className="surface-card group relative flex flex-col justify-between overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
       {/* Accent bar on hover */}
       <div className="absolute inset-x-0 top-0 h-1 scale-x-0 bg-gradient-primary transition-transform duration-300 group-hover:scale-x-100" />
 
       <div>
         <div className="mb-3 flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-sm dark:from-primary-500/15 dark:to-primary-600/10">
-              <LayoutTemplate className="h-6 w-6 text-primary-500" aria-hidden="true" />
+            <div className="icon-badge flex h-12 w-12 items-center justify-center">
+              <LayoutTemplate className="h-6 w-6" aria-hidden="true" />
             </div>
             <h3 className="text-xl font-bold text-foreground">{template.name}</h3>
           </div>
@@ -58,7 +58,7 @@ const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
                 <MoreHorizontal className="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="rounded-xl border-border bg-card dark:border-border dark:bg-card">
+            <DropdownMenuContent align="end" className="rounded-xl surface-card p-2">
               <DropdownMenuItem onClick={() => onUse(template.id)}>
                 <Zap className="mr-2 h-4 w-4" /> Usar Plantilla
               </DropdownMenuItem>
@@ -102,7 +102,7 @@ const TemplateFormModal = ({ template, isOpen, onClose, onSave }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-4xl border border-border bg-card shadow-2xl p-0 dark:border-border dark:bg-card">
+      <DialogContent className="sm:max-w-4xl surface-panel p-0">
         <div className="flex max-h-[calc(100dvh-3.5rem)] flex-col">
           <DialogHeader className="px-6 pt-6">
             <DialogTitle className="text-2xl font-bold">
@@ -225,8 +225,8 @@ const TemplatesPage = () => {
         <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
           <header className="flex flex-col gap-6 border-b border-border pb-6 sm:flex-row sm:items-center sm:justify-between sm:pb-8 dark:border-border">
             <div className="flex w-full items-start gap-3 sm:items-center sm:gap-4">
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 shadow-md sm:h-14 sm:w-14 dark:from-primary-500/15 dark:to-primary-600/10">
-                <LayoutTemplate className="h-6 w-6 text-primary-500 sm:h-7 sm:w-7" aria-hidden="true" />
+            <div className="icon-badge flex h-12 w-12 flex-shrink-0 items-center justify-center sm:h-14 sm:w-14">
+                <LayoutTemplate className="h-6 w-6 sm:h-7 sm:w-7" aria-hidden="true" />
               </div>
               <div className="min-w-0">
                 <h1 className="mb-1 text-xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">

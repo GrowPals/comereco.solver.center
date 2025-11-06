@@ -150,7 +150,7 @@ const AppLayout = () => {
             aria-label="Cerrar menú de navegación"
             onClick={() => setMobileNavOpen(false)}
             className={cn(
-              'fixed inset-0 z-40 bg-neutral-900/40 backdrop-blur-sm transition-opacity lg:hidden dark:bg-[#0f1726]/70',
+              'fixed inset-0 z-40 bg-[var(--overlay-backdrop)] backdrop-blur-sm transition-opacity supports-[backdrop-filter]:backdrop-saturate-125 lg:hidden',
               isMobileNavOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
             )}
           />
@@ -164,7 +164,7 @@ const AppLayout = () => {
         {showNav && <Header setSidebarOpen={handleToggleSidebar} />}
 
         <main
-          className="relative w-full flex-1 overflow-x-hidden bg-gradient-to-b from-background via-background to-background pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-[calc(env(safe-area-inset-top)+1rem)] transition-all duration-300 sm:pt-[calc(env(safe-area-inset-top)+1.5rem)] lg:pb-10 lg:pt-10 dark:from-[#0d1117] dark:via-[#111a24] dark:to-[#090f1a]"
+          className="app-main-shell relative w-full flex-1 overflow-x-hidden pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-[calc(env(safe-area-inset-top)+1rem)] transition-all duration-300 sm:pt-[calc(env(safe-area-inset-top)+1.5rem)] lg:pb-10 lg:pt-10"
           id="main-content"
           role="main"
         >

@@ -45,10 +45,10 @@ const buildQueryFilters = (filters, searchTerm) => ({
 });
 
 const SummaryStat = ({ icon: Icon, title, value }) => (
-  <div className="flex items-center justify-between rounded-2xl border border-border bg-card px-5 py-4 shadow-sm">
+  <div className="surface-card flex items-center justify-between rounded-2xl px-5 py-4">
     <div className="flex items-center gap-3">
-      <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-muted">
-        <Icon className="h-5 w-5 text-muted-foreground" />
+      <span className="icon-badge flex h-11 w-11 items-center justify-center">
+        <Icon className="h-5 w-5" />
       </span>
       <div className="leading-tight">
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/80">{title}</p>
@@ -71,7 +71,7 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
   const projectOptions = Array.isArray(projects) ? projects : [];
 
   return (
-    <div className="rounded-2xl border border-border bg-card/95 px-4 py-3 shadow-sm sm:px-5 sm:py-4">
+    <div className="surface-panel rounded-2xl px-4 py-3 sm:px-5 sm:py-4">
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(280px,2.2fr)_repeat(3,minmax(190px,1fr))] xl:gap-4">
         <div className="flex flex-col justify-end">
           <label
@@ -81,14 +81,14 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
             Buscar
           </label>
           <div className="relative mt-2">
-            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/70" />
+            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/70 dark:text-primary-100/70" />
             <Input
               id="restock-search"
               type="search"
               placeholder="Nombre, SKU o notas"
               value={filters.searchTerm}
               onChange={(event) => handleUpdate('searchTerm', event.target.value)}
-              className="h-11 rounded-2xl border-border bg-muted/70 pl-12 text-sm font-medium text-foreground/90 placeholder:text-muted-foreground/70 focus:border-primary focus:ring-primary/20"
+              className="h-11 rounded-2xl border border-border bg-white/80 pl-12 text-sm font-medium text-foreground/90 placeholder:text-muted-foreground/70 focus:border-primary focus:ring-primary/20 dark:border-[rgba(120,190,255,0.28)] dark:bg-[rgba(16,32,60,0.72)] dark:text-primary-50 dark:placeholder:text-primary-200/60"
             />
           </div>
         </div>
@@ -98,7 +98,7 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
             <Filter className="h-4 w-4" /> Estado
           </label>
           <Select value={filters.status} onValueChange={(value) => handleUpdate('status', value)}>
-            <SelectTrigger className="mt-2 h-11 rounded-2xl border-border bg-muted/70 text-sm font-medium text-foreground/90">
+            <SelectTrigger className="mt-2 h-11 rounded-2xl border-border bg-white/80 text-sm font-medium text-foreground/90 dark:border-[rgba(120,190,255,0.28)] dark:bg-[rgba(16,32,60,0.72)] dark:text-primary-50">
               <SelectValue placeholder="Estado" />
             </SelectTrigger>
             <SelectContent>
@@ -114,7 +114,7 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
         <div className="flex flex-col justify-end">
           <label className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/80">Proyecto</label>
           <Select value={filters.projectId} onValueChange={(value) => handleUpdate('projectId', value)}>
-            <SelectTrigger className="mt-2 h-11 rounded-2xl border-border bg-muted/70 text-sm font-medium text-foreground/90">
+            <SelectTrigger className="mt-2 h-11 rounded-2xl border-border bg-white/80 text-sm font-medium text-foreground/90 dark:border-[rgba(120,190,255,0.28)] dark:bg-[rgba(16,32,60,0.72)] dark:text-primary-50">
               <SelectValue placeholder="Proyecto" />
             </SelectTrigger>
             <SelectContent>
@@ -132,7 +132,7 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
         <div className="flex flex-col justify-end">
           <label className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/80">Categoría</label>
           <Select value={filters.category} onValueChange={(value) => handleUpdate('category', value)}>
-            <SelectTrigger className="mt-2 h-11 rounded-2xl border-border bg-muted/70 text-sm font-medium text-foreground/90">
+            <SelectTrigger className="mt-2 h-11 rounded-2xl border-border bg-white/80 text-sm font-medium text-foreground/90 dark:border-[rgba(120,190,255,0.28)] dark:bg-[rgba(16,32,60,0.72)] dark:text-primary-50">
               <SelectValue placeholder="Categoría" />
             </SelectTrigger>
             <SelectContent>
@@ -154,7 +154,7 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
         <Button
           variant="ghost"
           onClick={handleClear}
-          className="h-10 rounded-2xl border border-transparent text-sm font-semibold text-muted-foreground hover:border-border hover:text-foreground"
+          className="h-10 rounded-2xl border border-transparent text-sm font-semibold text-muted-foreground hover:border-border hover:text-foreground dark:border-[rgba(120,190,255,0.28)] dark:text-primary-100"
         >
           Limpiar filtros
         </Button>
@@ -231,7 +231,7 @@ const InventoryRestockRules = () => {
       </Helmet>
 
       <div className="mx-auto flex w-full max-w-[92rem] flex-col gap-6 lg:gap-7">
-        <section className="rounded-3xl border border-border/80 bg-card/95 px-5 py-4 shadow-sm sm:px-6 sm:py-5">
+        <section className="surface-panel px-5 py-4 sm:px-6 sm:py-5">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="space-y-1">
               <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-[2.05rem]">Reabastecimiento automático</h1>
@@ -287,7 +287,7 @@ const InventoryRestockRules = () => {
           </div>
         </section>
 
-        <section className="rounded-3xl border border-border/80 bg-card/95 px-4 py-4 shadow-sm sm:px-5">
+        <section className="surface-panel px-4 py-4 sm:px-5">
           {isLoading ? (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {[...Array(6)].map((_, index) => (
