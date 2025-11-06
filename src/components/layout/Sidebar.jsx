@@ -163,7 +163,7 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
                 <button
                     type="button"
                     onClick={() => setMobileNavOpen(false)}
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground shadow-sm transition-colors hover:bg-muted/60 dark:border-border dark:text-muted-foreground dark:hover:bg-muted/40"
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted/60 shadow-none hover:shadow-none active:shadow-none dark:border-border dark:text-muted-foreground dark:hover:bg-muted/40 dark:shadow-[0_20px_46px_rgba(5,12,28,0.5)]"
                     aria-label="Cerrar menú"
                 >
                     <X className="h-4 w-4" />

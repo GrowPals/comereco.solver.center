@@ -96,7 +96,7 @@ const ProductCard = memo(({ product }) => {
             alt={`Imagen de ${productName}`}
             fallback="/placeholder.svg"
             loading="lazy"
-            className="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-105 bg-[rgba(228,235,255,0.75)] dark:bg-[#0e1f3c]"
+            className="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-105 bg-neutral-100 dark:bg-[#0e1f3c]"
           />
         </button>
 
@@ -110,7 +110,7 @@ const ProductCard = memo(({ product }) => {
         <button
           type="button"
           onClick={handleToggleFavorite}
-          className="absolute right-4 top-3 flex h-9 w-9 items-center justify-center rounded-full surface-chip text-muted-foreground/80 shadow-lg transition-colors duration-200 hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+          className="absolute right-4 top-3 flex h-9 w-9 items-center justify-center rounded-full surface-chip text-muted-foreground/80 transition-colors duration-200 hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
           aria-label={
             isFavorite
               ? `Quitar ${productName} de favoritos`

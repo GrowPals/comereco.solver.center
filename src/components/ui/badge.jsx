@@ -8,14 +8,14 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: 'border-primary-200 bg-gradient-to-r from-primary-100 to-primary-50 text-primary-700 shadow-sm dark:border-primary-500/40 dark:from-primary-500/20 dark:to-primary-500/5 dark:text-primary-200',
-        secondary: 'border-border bg-muted text-foreground/90 shadow-sm dark:border-border dark:bg-card/80 dark:text-foreground/80',
+        default: 'border-primary-200 bg-gradient-to-r from-primary-100 to-primary-50 text-primary-700 dark:border-primary-500/40 dark:from-primary-500/20 dark:to-primary-500/5 dark:text-primary-200 dark:shadow-[0_16px_40px_rgba(6,16,36,0.4)]',
+        secondary: 'border-border bg-muted text-foreground/90 dark:border-border dark:bg-card/80 dark:text-foreground/80 dark:shadow-[0_14px_36px_rgba(6,14,30,0.42)]',
 
-        success: 'bg-gradient-to-r from-emerald-100 to-emerald-50 text-emerald-700 border-emerald-200 shadow-sm dark:border-emerald-500/40 dark:from-emerald-500/20 dark:to-emerald-500/5 dark:text-emerald-200',
-        warning: 'bg-gradient-to-r from-amber-100 to-amber-50 text-amber-700 border-amber-200 shadow-sm dark:border-amber-500/45 dark:from-amber-500/25 dark:to-amber-500/5 dark:text-amber-200',
-        danger: 'bg-gradient-to-r from-red-100 to-red-50 text-red-700 border-red-200 shadow-sm dark:border-red-500/45 dark:from-red-500/20 dark:to-red-500/5 dark:text-red-200',
-        destructive: 'bg-gradient-to-r from-red-100 to-red-50 text-red-700 border-red-200 shadow-sm dark:border-red-500/45 dark:from-red-500/20 dark:to-red-500/5 dark:text-red-200',
-        info: 'bg-gradient-to-r from-info-light to-info-light/70 text-info-dark border-info-light/70 shadow-sm dark:border-info/40 dark:from-info/25 dark:to-info/10 dark:text-info-light',
+        success: 'bg-gradient-to-r from-emerald-100 to-emerald-50 text-emerald-700 border-emerald-200 dark:border-emerald-500/40 dark:from-emerald-500/20 dark:to-emerald-500/5 dark:text-emerald-200 dark:shadow-[0_16px_40px_rgba(6,18,34,0.42)]',
+        warning: 'bg-gradient-to-r from-amber-100 to-amber-50 text-amber-700 border-amber-200 dark:border-amber-500/45 dark:from-amber-500/25 dark:to-amber-500/5 dark:text-amber-200 dark:shadow-[0_16px_40px_rgba(16,20,8,0.42)]',
+        danger: 'bg-gradient-to-r from-red-100 to-red-50 text-red-700 border-red-200 dark:border-red-500/45 dark:from-red-500/20 dark:to-red-500/5 dark:text-red-200 dark:shadow-[0_16px_40px_rgba(26,10,20,0.45)]',
+        destructive: 'bg-gradient-to-r from-red-100 to-red-50 text-red-700 border-red-200 dark:border-red-500/45 dark:from-red-500/20 dark:to-red-500/5 dark:text-red-200 dark:shadow-[0_16px_40px_rgba(26,10,20,0.45)]',
+        info: 'bg-gradient-to-r from-info-light to-info-light/70 text-info-dark border-info-light/70 dark:border-info/40 dark:from-info/25 dark:to-info/10 dark:text-info-light dark:shadow-[0_16px_40px_rgba(8,18,42,0.45)]',
 
         muted: 'bg-muted text-muted-foreground border-border dark:border-border dark:bg-card/70 dark:text-muted-foreground',
         outline: 'text-foreground/90 border-border/80 bg-background hover:bg-muted/60 dark:text-foreground/80 dark:border-border dark:bg-card dark:hover:bg-muted/40/80',

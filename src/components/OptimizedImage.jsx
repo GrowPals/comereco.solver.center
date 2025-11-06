@@ -123,10 +123,10 @@ const OptimizedImage = memo(({
         >
           <div
             className={cn(
-              'flex h-14 w-14 items-center justify-center rounded-full shadow-sm',
+              'flex h-14 w-14 items-center justify-center rounded-full shadow-none',
               theme?.isDark
                 ? 'bg-[rgba(24,46,86,0.9)] text-primary-100 shadow-[0_0_18px_rgba(88,166,255,0.35)]'
-                : 'bg-white/95 text-primary-500 shadow-[0_10px_20px_rgba(59,130,246,0.14)]'
+                : 'bg-white/95 text-primary-500'
             )}
           >
             <ImageOff className="h-6 w-6" aria-hidden="true" />

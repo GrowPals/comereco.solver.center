@@ -168,13 +168,13 @@ const NotificationCenter = ({ variant = 'popover' }) => {
             <Button
                 variant="ghost"
                 size="icon"
-                className="relative h-11 w-11 overflow-visible rounded-full border border-border bg-[var(--surface-contrast)] text-foreground shadow-sm transition-colors hover:bg-[var(--surface-muted)] dark:border-[#1a2f4f] dark:bg-[rgba(12,26,52,0.72)] dark:text-primary-50 dark:hover:bg-[rgba(16,32,62,0.85)] dark:hover:border-[#4678d4]"
+                className="relative h-11 w-11 overflow-visible rounded-full border border-border bg-[var(--surface-contrast)] text-foreground shadow-none transition-colors hover:bg-[var(--surface-muted)] hover:shadow-none active:shadow-none dark:border-[#1a2f4f] dark:bg-[rgba(12,26,52,0.72)] dark:text-primary-50 dark:hover:bg-[rgba(16,32,62,0.85)] dark:hover:border-[#4678d4] dark:shadow-[0_22px_48px_rgba(5,12,28,0.52)] dark:hover:shadow-[0_28px_60px_rgba(6,14,30,0.6)]"
                 aria-label={`Ver notificaciones${unreadCount > 0 ? `, ${unreadCount} sin leer` : ''}`}
                 onClick={() => navigate('/notifications')}
             >
                 <Bell className="h-5 w-5" />
                 {unreadCount > 0 && (
-                    <div className="absolute -top-1.5 -right-1.5 z-20 flex h-5 min-w-[1.75rem] items-center justify-center rounded-full bg-gradient-error px-1.5 text-[10px] font-bold text-white leading-[20px] shadow-md">
+                    <div className="absolute -top-1.5 -right-1.5 z-20 flex h-5 min-w-[1.75rem] items-center justify-center rounded-full bg-gradient-error px-1.5 text-[10px] font-bold text-white leading-[20px] shadow-none dark:shadow-[0_20px_48px_rgba(4,12,28,0.55)]">
                         {unreadCount > 99 ? '99+' : unreadCount}
                     </div>
                 )}
@@ -188,12 +188,12 @@ const NotificationCenter = ({ variant = 'popover' }) => {
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="relative overflow-visible rounded-full border border-border bg-[var(--surface-contrast)] text-foreground shadow-sm transition-colors hover:bg-[var(--surface-muted)] dark:border-[#1a2f4f] dark:bg-[rgba(12,26,52,0.72)] dark:text-primary-50 dark:hover:bg-[rgba(16,32,62,0.85)] dark:hover:border-[#4678d4]"
+                    className="relative overflow-visible rounded-full border border-border bg-[var(--surface-contrast)] text-foreground shadow-none transition-colors hover:bg-[var(--surface-muted)] hover:shadow-none active:shadow-none dark:border-[#1a2f4f] dark:bg-[rgba(12,26,52,0.72)] dark:text-primary-50 dark:hover:bg-[rgba(16,32,62,0.85)] dark:hover:border-[#4678d4] dark:shadow-[0_22px_48px_rgba(5,12,28,0.52)] dark:hover:shadow-[0_28px_60px_rgba(6,14,30,0.6)]"
                     aria-label={`Ver notificaciones, ${unreadCount} no leídas`}
                 >
                     <Bell className="h-5 w-5" />
                     {unreadCount > 0 && (
-                        <div className="absolute -top-1.5 -right-1.5 z-20 flex h-5 min-w-[1.75rem] items-center justify-center rounded-full bg-gradient-error px-1.5 text-[10px] font-bold text-white leading-[20px] shadow-md animate-pulse">
+                        <div className="absolute -top-1.5 -right-1.5 z-20 flex h-5 min-w-[1.75rem] items-center justify-center rounded-full bg-gradient-error px-1.5 text-[10px] font-bold text-white leading-[20px] shadow-none dark:shadow-[0_20px_48px_rgba(4,12,28,0.55)] animate-pulse">
                             {unreadCount > 99 ? '99+' : unreadCount}
                         </div>
                     )}

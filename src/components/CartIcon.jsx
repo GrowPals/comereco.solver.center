@@ -33,8 +33,8 @@ export function CartIcon({ variant = 'default' }) {
       variant="ghost"
       size="icon"
       className={cn(
-        'relative overflow-visible rounded-full transition-colors',
-        isCompact && 'h-11 w-11 border border-border bg-[var(--surface-contrast)] text-foreground shadow-sm hover:bg-[var(--surface-muted)] dark:border-[#1a2f4f] dark:bg-[rgba(12,26,52,0.72)] dark:text-primary-50 dark:hover:bg-[rgba(16,32,62,0.85)] dark:hover:border-[#4678d4]'
+        'relative overflow-visible rounded-full transition-colors shadow-none hover:shadow-none active:shadow-none',
+        isCompact && 'h-11 w-11 border border-border bg-[var(--surface-contrast)] text-foreground hover:bg-[var(--surface-muted)] dark:border-[#1a2f4f] dark:bg-[rgba(12,26,52,0.72)] dark:text-primary-50 dark:hover:bg-[rgba(16,32,62,0.85)] dark:hover:border-[#4678d4] dark:shadow-[0_22px_48px_rgba(5,12,28,0.52)] dark:hover:shadow-[0_28px_60px_rgba(6,14,30,0.6)]'
       )}
       aria-label={totalItems > 0 ? `Abrir carrito, ${totalItems} productos` : 'Abrir carrito'}
     >
@@ -42,7 +42,8 @@ export function CartIcon({ variant = 'default' }) {
       {totalItems > 0 && (
         <span
           className={cn(
-            'absolute -top-1.5 -right-1.5 z-20 flex h-5 min-w-[1.75rem] items-center justify-center rounded-full bg-destructive px-1.5 text-[10px] font-bold text-destructive-foreground leading-[20px] shadow-md',
+            'absolute -top-1.5 -right-1.5 z-20 flex h-5 min-w-[1.75rem] items-center justify-center rounded-full bg-destructive px-1.5 text-[10px] font-bold text-destructive-foreground leading-[20px]',
+            'shadow-none dark:shadow-[0_20px_48px_rgba(4,12,28,0.55)]',
             totalItems > 99 && 'px-2'
           )}
         >
