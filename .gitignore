@@ -63,8 +63,9 @@ Thumbs.db
 *.temp
 *~
 
-# Claude Code
+# Claude Code CLI local settings (ignore)
 .claude/
+# NOTA: .claude.md NO se ignora - debe estar en el repo para Claude Code Web
 
 # Playwright screenshots and testing artifacts
 .playwright-mcp/

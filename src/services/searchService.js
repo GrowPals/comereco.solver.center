@@ -1,6 +1,6 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
-import { getCachedSession, getCachedCompanyId } from '@/lib/supabaseHelpers';
+import { getCachedSession, getScopedCompanyId } from '@/lib/supabaseHelpers';
 import logger from '@/utils/logger';
 
 /**
@@ -26,16 +26,26 @@ export const performGlobalSearch = async (query) => {
     }
 
     // CRÍTICO: Obtener company_id de la sesión del usuario (no del cliente)
-    const { companyId, error: companyError } = await getCachedCompanyId();
-    if (companyError || !companyId) {
-      logger.error('Search failed: Could not get company_id');
-      throw new Error('No se pudo obtener la información de la empresa.');
+    const { companyId, error: companyError, isGlobal } = await getScopedCompanyId({ allowGlobal: true });
+    if (companyError) {
+      logger.error('Search failed: Could not get scoped company', companyError);
+      throw new Error(companyError?.message || 'No se pudo obtener la información de la empresa.');
     }
 
     const searchTerm = `%${sanitizedQuery}%`;
 
     // Realizar búsquedas en paralelo
     // RLS filtra automáticamente por company_id en products y requisitions
+    let profilesQuery = supabase
+      .from('profiles')
+      .select('id, full_name, role_v2, avatar_url')
+      .ilike('full_name', searchTerm)
+      .limit(5);
+
+    if (!isGlobal && companyId) {
+      profilesQuery = profilesQuery.eq('company_id', companyId);
+    }
+
     const [productosRes, requisicionesRes, usuariosRes] = await Promise.all([
       supabase
         .from('products')
@@ -48,12 +58,7 @@ export const performGlobalSearch = async (query) => {
         .select('id, internal_folio, comments, business_status, created_at')
         .or(`internal_folio.ilike.${searchTerm},comments.ilike.${searchTerm}`)
         .limit(5),
-      supabase
-        .from('profiles')
-        .select('id, full_name, role_v2, avatar_url')
-        .eq('company_id', companyId)
-        .ilike('full_name', searchTerm)
-        .limit(5),
+      profilesQuery,
     ]);
 
     // Manejar errores individuales sin romper la búsqueda completa

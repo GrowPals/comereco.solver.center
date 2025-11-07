@@ -1,7 +1,8 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
-import { getCachedSession, getCachedCompanyId } from '@/lib/supabaseHelpers';
+import { getCachedSession } from '@/lib/supabaseHelpers';
 import { getUserAccessContext } from '@/lib/accessControl';
+import { scopeToCompany } from '@/lib/companyScope';
 import logger from '@/utils/logger';
 import { formatErrorMessage } from '@/utils/errorHandler';
 
@@ -17,6 +18,7 @@ const PROFILE_BASE_FIELDS = [
 const UNDEFINED_COLUMN_CODE = '42703';
 let supportsApprovalBypassFlag = true;
 let supportsProfileEmail = true;
+const APP_ROLE_V2_VALUES = ['admin', 'supervisor', 'user', 'dev'];
 
 export const isApprovalBypassSupported = () => supportsApprovalBypassFlag;
 export const isProfileEmailSupported = () => supportsProfileEmail;
@@ -119,14 +121,13 @@ export const fetchUsersInCompany = async () => {
   const access = await getUserAccessContext();
 
   if (access.isAdmin) {
-    const { companyId, error: companyError } = await getCachedCompanyId();
-    if (companyError || !companyId) {
-      logger.error("Error fetching current user's company", companyError);
+    if (!access.isDev && !access.companyId) {
+      logger.error("Error fetching current user's company", 'company_id_missing');
       return [];
     }
 
     const { data, error } = await executeProfileQuery(
-      (query) => query.eq('company_id', companyId),
+      (query) => scopeToCompany(query, access),
       { includePhone: true }
     );
 
@@ -144,9 +145,7 @@ export const fetchUsersInCompany = async () => {
     }
 
     const { data, error } = await executeProfileQuery(
-      (query) => query
-        .in('id', manageableIds)
-        .eq('company_id', access.companyId)
+      (query) => scopeToCompany(query.in('id', manageableIds), access)
     );
 
     if (error) {
@@ -175,7 +174,7 @@ export const fetchUsersInCompany = async () => {
  * Invita a un nuevo usuario a la compañía mediante una Edge Function.
  * La Edge Function maneja la invitación con permisos de service_role.
  * @param {string} email - El email del usuario a invitar.
- * @param {string} role - El rol a asignar al nuevo usuario (usará role_v2). Valores: 'admin' | 'supervisor' | 'user'
+ * @param {string} role - El rol a asignar al nuevo usuario (usará role_v2). Valores: 'admin' | 'supervisor' | 'user' | 'dev'
  * @returns {Promise<Object>} El resultado de la invitación.
  */
 export const inviteUser = async (email, role) => {
@@ -190,19 +189,25 @@ export const inviteUser = async (email, role) => {
         throw new Error("El rol es requerido.");
     }
 
-    // Validar que el rol sea válido según REFERENCIA_TECNICA_BD_SUPABASE.md
-    const validRoles = ['admin', 'supervisor', 'user'];
-    if (!validRoles.includes(role)) {
-        throw new Error(`Rol inválido. Debe ser uno de: ${validRoles.join(', ')}`);
-    }
+    const normalizedRole = role.trim();
 
     // Optimizado: Usar helpers cacheados para validar sesión
     const { session, error: sessionError } = await getCachedSession();
     if (sessionError || !session) {
         throw new Error("Usuario no autenticado.");
     }
-    const { companyId, error: companyError } = await getCachedCompanyId();
-    if (companyError || !companyId) {
+    const access = await getUserAccessContext();
+    if (!access.isAdmin) {
+        throw new Error('No tienes permisos para invitar usuarios.');
+    }
+
+    const assignableRoles = access.isDev ? APP_ROLE_V2_VALUES : APP_ROLE_V2_VALUES.filter((roleName) => roleName !== 'dev');
+    if (!assignableRoles.includes(normalizedRole)) {
+        throw new Error(`Rol inválido. Debe ser uno de: ${assignableRoles.join(', ')}`);
+    }
+
+    const companyId = access.companyId;
+    if (!companyId) {
         throw new Error("No se pudo determinar la empresa actual.");
     }
     const normalizedEmail = email.trim().toLowerCase();
@@ -213,7 +218,7 @@ export const inviteUser = async (email, role) => {
         .insert([{
             email: normalizedEmail,
             company_id: companyId,
-            role,
+            role: normalizedRole,
             invited_by: session.user.id,
         }]);
 
@@ -227,7 +232,7 @@ export const inviteUser = async (email, role) => {
         const { data, error } = await supabase.functions.invoke('invite-user', {
             body: {
                 email: normalizedEmail,
-                role: role,
+                role: normalizedRole,
             },
         });
 
@@ -287,7 +292,7 @@ export const updateUserProfile = async (userId, updateData) => {
 
   // Validar que role_v2 sea válido si se está actualizando
   if (updateData.role_v2) {
-    const validRoles = ['admin', 'supervisor', 'user'];
+    const validRoles = access.isDev ? APP_ROLE_V2_VALUES : APP_ROLE_V2_VALUES.filter((value) => value !== 'dev');
     if (!validRoles.includes(updateData.role_v2)) {
       throw new Error(`Rol inválido. Debe ser uno de: ${validRoles.join(', ')}`);
     }

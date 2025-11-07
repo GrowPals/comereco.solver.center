@@ -8,7 +8,8 @@ import React from 'react';
 export const ROLES = {
   ADMIN: 'admin',
   SUPERVISOR: 'supervisor',
-  USER: 'user'
+  USER: 'user',
+  DEV: 'dev',
 };
 
 /**

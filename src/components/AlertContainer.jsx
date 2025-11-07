@@ -3,7 +3,8 @@ import { AlertBanner } from '@/components/AlertBanner';
 
 /**
  * AlertContainer - Contenedor para mostrar alertas globales
- * Renderiza todas las alertas activas en la zona superior de la aplicación
+ * Renderiza todas las alertas activas debajo del header
+ * No usa positioning sticky para evitar sobreposición con el header sticky
  */
 export function AlertContainer() {
   const { alerts, removeAlert } = useAlerts();
@@ -13,7 +14,7 @@ export function AlertContainer() {
   }
 
   return (
-    <div className="sticky top-0 z-50 px-4 pt-4 sm:px-6 lg:px-8">
+    <div className="relative z-30 px-4 pb-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl space-y-3">
         {alerts.map((alert) => (
           <AlertBanner

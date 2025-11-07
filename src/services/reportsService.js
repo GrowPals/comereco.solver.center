@@ -1,6 +1,7 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
 import { getUserAccessContext } from '@/lib/accessControl';
+import { scopeToCompany } from '@/lib/companyScope';
 import { formatErrorMessage } from '@/utils/errorHandler';
 import logger from '@/utils/logger';
 import { startOfMonth, endOfMonth, subMonths, format } from 'date-fns';
@@ -23,7 +24,7 @@ const mapStatusCounts = (counts) =>
 const buildEmptyStatus = () => mapStatusCounts({});
 
 const applyRequisitionAccessFilter = (builder, access, { requireProjects = true } = {}) => {
-    let query = builder.eq('company_id', access.companyId);
+    let query = scopeToCompany(builder, access);
 
     if (access.isAdmin) {
         return { query, empty: false };

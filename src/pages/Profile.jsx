@@ -245,7 +245,13 @@ const ProfilePage = () => {
   }
 
   const { full_name, email, company, role_v2 } = user;
-  const roleLabel = role_v2 === 'admin' ? 'Administrador' : role_v2 === 'supervisor' ? 'Supervisor' : 'Usuario';
+  const roleLabelMap = {
+    dev: 'Developer',
+    admin: 'Administrador',
+    supervisor: 'Supervisor',
+    user: 'Usuario'
+  };
+  const roleLabel = roleLabelMap[role_v2] || 'Usuario';
   const companyName = company?.name || 'Compañía no asignada';
 
   return (

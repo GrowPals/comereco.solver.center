@@ -14,46 +14,38 @@ const MenuItem = memo(({ to, icon: Icon, children, onClick, badge, iconVariant =
 
     const isFavoriteVariant = iconVariant === 'favorite';
 
-    const activeIconClasses = isFavoriteVariant
-        ? 'favorite-icon-badge ring-2 ring-[rgba(255,193,120,0.45)] shadow-lg dark:ring-[rgba(255,214,150,0.5)]'
-        : 'bg-gradient-to-b from-[rgba(66,165,255,0.25)] to-[rgba(66,165,255,0.05)] text-primary-600 ring-2 ring-primary/30 dark:bg-[rgba(80,150,255,0.18)] dark:text-primary-50 dark:ring-[rgba(110,190,255,0.28)]';
-
-    const inactiveIconClasses = isFavoriteVariant
-        ? 'favorite-icon-badge ring-1 ring-[rgba(255,193,120,0.25)] dark:ring-[rgba(255,214,150,0.35)] opacity-95'
-        : 'bg-[var(--surface-contrast)] text-foreground/65 shadow-sm ring-1 ring-border/70 group-hover:text-foreground group-hover:ring-primary-200/50 dark:bg-[rgba(20,38,68,0.55)] dark:text-muted-foreground dark:ring-[rgba(32,64,110,0.65)] dark:group-hover:bg-[rgba(26,50,88,0.75)] dark:group-hover:text-primary-50 dark:group-hover:ring-[rgba(110,190,255,0.35)]';
-
     return (
         <NavLink to={to} onClick={onClick}>
             <div
                 className={cn(
-                    'group flex items-center justify-between rounded-xl p-3.5 transition-all duration-200',
+                    'group flex items-center gap-3 rounded-lg px-4 py-3 transition-all duration-200',
+                    'font-medium text-sm',
+                    'border-l-4',
                     isActive
-                        ? 'text-primary-600 shadow-sm dark:text-primary-200 dark:shadow-[0_12px_30px_rgba(18,41,70,0.45)]'
-                        : 'text-foreground/75 hover:bg-[var(--surface-muted)] active:bg-primary/10 dark:text-muted-foreground dark:hover:bg-[rgba(26,50,88,0.65)] dark:active:bg-[rgba(34,72,130,0.65)]'
+                        ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-200 border-primary-600 dark:border-primary-400'
+                        : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 border-transparent'
                 )}
             >
-                <div className="flex flex-1 items-center gap-3">
-                <div
+                {/* Icon */}
+                <Icon
                     className={cn(
-                        'flex h-10 w-10 items-center justify-center rounded-lg transition-all',
-                        isActive ? activeIconClasses : inactiveIconClasses
+                        'w-5 h-5 flex-shrink-0 transition-colors',
+                        isActive
+                            ? 'text-primary-700 dark:text-primary-200'
+                            : 'text-neutral-500 dark:text-neutral-400',
+                        isFavoriteVariant && 'favorite-icon'
                     )}
-                >
-                    <Icon className={cn('h-5 w-5', isFavoriteVariant && 'favorite-icon')} />
-                </div>
-                    <span className="text-[15px] font-medium text-foreground">{children}</span>
-                </div>
+                />
+
+                {/* Label */}
+                <span className="flex-1">{children}</span>
+
+                {/* Badge */}
                 {badge && (
                     <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-destructive px-1.5 text-xs font-bold text-destructive-foreground">
                         {badge}
                     </span>
                 )}
-                <ChevronRight
-                    className={cn(
-                        'h-4 w-4 transition-transform',
-                        isActive ? 'text-primary-500 dark:text-primary-200' : 'text-muted-foreground group-hover:text-foreground'
-                    )}
-                />
             </div>
         </NavLink>
     );
@@ -247,15 +239,11 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
             <div className="border-t border-border p-4 transition-colors dark:border-border">
                 <button
                     onClick={handleLogout}
-                    className="group flex w-full items-center justify-between rounded-xl p-3.5 text-destructive transition-colors duration-150 hover:bg-destructive/10 active:bg-destructive/20"
+                    className="group flex w-full items-center gap-3 px-4 py-3 rounded-lg font-medium text-sm text-neutral-700 dark:text-neutral-300 hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-600 dark:hover:text-red-400 transition-all duration-200"
                     aria-label="Cerrar sesión"
                 >
-                    <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-destructive/10 transition-colors group-hover:bg-destructive/20">
-                            <LogOut className="h-5 w-5 text-destructive" />
-                        </div>
-                        <span className="font-medium text-[15px]">Cerrar Sesión</span>
-                    </div>
+                    <LogOut className="w-5 h-5 flex-shrink-0" />
+                    <span>Cerrar Sesión</span>
                 </button>
             </div>
             </aside>

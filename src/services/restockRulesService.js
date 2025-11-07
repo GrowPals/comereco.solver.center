@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/customSupabaseClient';
-import { getCachedSession, getCachedCompanyId } from '@/lib/supabaseHelpers';
+import { getCachedSession, ensureScopedCompanyId } from '@/lib/supabaseHelpers';
 import { formatErrorMessage } from '@/utils/errorHandler';
 import logger from '@/utils/logger';
 
@@ -42,9 +42,9 @@ const ensureSession = async () => {
 };
 
 const getCompanyId = async () => {
-    const { companyId, error } = await getCachedCompanyId();
+    const { companyId, error } = await ensureScopedCompanyId();
     if (error || !companyId) {
-        throw new Error('No se pudo determinar la empresa del usuario.');
+        throw new Error(error?.message || 'Selecciona una empresa para continuar.');
     }
     return companyId;
 };

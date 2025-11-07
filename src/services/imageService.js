@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/customSupabaseClient';
-import { getCachedCompanyId } from '@/lib/supabaseHelpers';
+import { ensureScopedCompanyId, getScopedCompanyId } from '@/lib/supabaseHelpers';
 import logger from '@/utils/logger';
 
 /**
@@ -27,9 +27,9 @@ export const uploadProductImage = async (file, productId = null) => {
 
     try {
         // Obtener company_id para organizar archivos
-        const { companyId, error: companyError } = await getCachedCompanyId();
+        const { companyId, error: companyError } = await ensureScopedCompanyId();
         if (companyError || !companyId) {
-            throw new Error("No se pudo obtener la información de la empresa.");
+            throw new Error(companyError?.message || "Selecciona una empresa antes de subir productos.");
         }
 
         // Generar nombre único para el archivo
@@ -81,10 +81,7 @@ export const uploadProfileAvatar = async (file, userId) => {
     }
 
     try {
-        const { companyId, error: companyError } = await getCachedCompanyId();
-        if (companyError) {
-            logger.warn('uploadProfileAvatar: company id not available, storing in shared directory', companyError);
-        }
+        const { companyId } = await getScopedCompanyId({ allowGlobal: true });
         const timestamp = Date.now();
         const randomString = Math.random().toString(36).slice(2, 8);
         const extension = file.name.split('.').pop() || 'jpg';

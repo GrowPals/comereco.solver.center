@@ -42,7 +42,7 @@ const SupervisorDashboard = ({ user }) => {
                 </p>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 <StatCard title="Pendientes de Aprobación" value={stats?.pending_approvals_count || 0} icon={Hourglass} isLoading={isLoadingStats} />
                 <StatCard title="Aprobadas (mes)" value={stats?.approved_count || 0} icon={CheckCircle} isLoading={isLoadingStats} />
                 <StatCard title="Rechazadas (mes)" value={stats?.rejected_count || 0} icon={XCircle} isLoading={isLoadingStats} />

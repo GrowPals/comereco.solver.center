@@ -169,7 +169,7 @@ const ProjectFormModal = ({ project, isOpen, onClose, onSave, supervisors, isAdm
                     <SelectItem value={EMPTY_SUPERVISOR_VALUE}>Sin supervisor</SelectItem>
                     {supervisors?.filter(Boolean)?.map((s) => (
                       <SelectItem key={s.id} value={String(s.id)}>
-                        {s.full_name || 'Sin nombre'} ({s.role_v2 === 'admin' ? 'Admin' : 'Supervisor'})
+                        {s.full_name || 'Sin nombre'} ({s.role_v2 === 'dev' ? 'Developer' : s.role_v2 === 'admin' ? 'Admin' : 'Supervisor'})
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -361,7 +361,7 @@ const ProjectsPage = () => {
 
   const { data: projects, isLoading, isError } = useQuery({ queryKey: ['projects'], queryFn: getAllProjects });
   const { data: users } = useQuery({ queryKey: ['companyUsers'], queryFn: fetchUsersInCompany });
-  const supervisors = users?.filter(u => u.role_v2 === 'supervisor' || u.role_v2 === 'admin');
+  const supervisors = users?.filter(u => ['supervisor', 'admin', 'dev'].includes(u.role_v2));
 
   const mutationOptions = {
     onSuccess: () => {
@@ -433,13 +433,7 @@ const ProjectsPage = () => {
             <EmptyState
               icon={FolderKanban}
               title="No hay proyectos"
-              description={canManageProjects ? "Crea tu primer proyecto para empezar." : "No estás asignado a ningún proyecto."}
-              actionButton={canManageProjects && (
-                <Button size="lg" onClick={() => setFormModal({ isOpen: true, project: null })}>
-                  <PlusCircle className="mr-2 h-5 w-5" />
-                  Crear Proyecto
-                </Button>
-              )}
+              description={canManageProjects ? "Los proyectos te ayudan a organizar tus requisiciones por departamento, cliente o categoría. Crea uno desde el botón superior." : "No estás asignado a ningún proyecto."}
             />
           )}
         </div>
