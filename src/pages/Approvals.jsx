@@ -12,8 +12,10 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useToast } from '@/components/ui/useToast';
 import { fetchPendingApprovals, updateRequisitionStatus } from '@/services/requisitionService';
 import PageLoader from '@/components/PageLoader';
@@ -31,6 +33,7 @@ const Approvals = () => {
 
     const [rejectionModal, setRejectionModal] = useState({ isOpen: false, requisitionId: null });
     const [rejectionReason, setRejectionReason] = useState('');
+    const [approvalModal, setApprovalModal] = useState({ isOpen: false, requisitionId: null, folio: '', amount: 0 });
     const [dismissingIds, setDismissingIds] = useState([]);
 
     const { data: requisitions, isLoading } = useQuery({
@@ -73,9 +76,19 @@ const Approvals = () => {
         },
     });
 
-    const handleApprove = (requisitionId) => {
+    const handleOpenApprovalModal = (requisitionId, folio, amount) => {
+        setApprovalModal({ isOpen: true, requisitionId, folio, amount });
+    };
+
+    const handleCloseApprovalModal = () => {
+        setApprovalModal({ isOpen: false, requisitionId: null, folio: '', amount: 0 });
+    };
+
+    const handleApprove = () => {
+        const requisitionId = approvalModal.requisitionId;
         startDismiss(requisitionId);
         mutation.mutate({ requisitionId, status: 'approved' });
+        handleCloseApprovalModal();
     };
 
     const handleOpenRejectionModal = (requisitionId) => {
@@ -226,32 +239,49 @@ const Approvals = () => {
 
                                         {/* Action Buttons */}
                                         <div className="flex gap-3">
-                                            <Button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleApprove(req.id);
-                                                }}
-                                                disabled={mutation.isPending}
-                                                variant="success"
-                                                size="lg"
-                                                className="flex-1 rounded-xl shadow-button hover:shadow-button-hover"
-                                                isLoading={mutation.isPending}
-                                            >
-                                                <Check className="h-5 w-5" />
-                                                <span>Aprobar</span>
-                                            </Button>
-                                            <Button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleOpenRejectionModal(req.id);
-                                                }}
-                                                disabled={mutation.isPending}
-                                                variant="destructive"
-                                                size="icon"
-                                                className="rounded-xl shadow-xs hover:shadow-sm"
-                                            >
-                                                <X className="h-5 w-5" />
-                                            </Button>
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleOpenApprovalModal(req.id, req.internal_folio, req.total_amount);
+                                                            }}
+                                                            disabled={mutation.isPending}
+                                                            variant="success"
+                                                            size="lg"
+                                                            className="flex-1 rounded-xl shadow-button hover:shadow-button-hover"
+                                                        >
+                                                            <Check className="h-5 w-5" />
+                                                            <span>Aprobar</span>
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p>Aprobar requisición #{req.internal_folio}</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleOpenRejectionModal(req.id);
+                                                            }}
+                                                            disabled={mutation.isPending}
+                                                            variant="destructive"
+                                                            size="icon"
+                                                            className="rounded-xl shadow-xs hover:shadow-sm"
+                                                        >
+                                                            <X className="h-5 w-5" />
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p>Rechazar requisición</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
                                         </div>
                                     </div>
                                 </div>
@@ -261,6 +291,54 @@ const Approvals = () => {
                     </div>
                 )}
             </PageContainer>
+
+            {/* Modal de Aprobación */}
+            <Dialog open={approvalModal.isOpen} onOpenChange={handleCloseApprovalModal}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle className="text-2xl flex items-center gap-2">
+                            <CheckCircle className="h-6 w-6 text-emerald-600" />
+                            Confirmar Aprobación
+                        </DialogTitle>
+                        <DialogDescription className="text-base">
+                            ¿Estás seguro de que deseas aprobar esta requisición?
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4 space-y-3">
+                        <div className="rounded-xl bg-muted/80 p-4 border-2 border-border">
+                            <div className="flex justify-between items-center mb-2">
+                                <span className="text-sm font-medium text-muted-foreground">Folio</span>
+                                <span className="text-lg font-bold text-foreground">#{approvalModal.folio}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm font-medium text-muted-foreground">Monto Total</span>
+                                <span className="text-2xl font-bold text-emerald-600">${formatNumber(approvalModal.amount)}</span>
+                            </div>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                            Esta acción aprobará la requisición y permitirá que se procese para su orden de compra.
+                        </p>
+                    </div>
+                    <DialogFooter className="gap-3">
+                        <Button
+                            variant="ghost"
+                            onClick={handleCloseApprovalModal}
+                            className="rounded-xl"
+                        >
+                            Cancelar
+                        </Button>
+                        <Button
+                            variant="success"
+                            onClick={handleApprove}
+                            isLoading={mutation.isPending}
+                            className="rounded-xl"
+                        >
+                            <Check className="h-5 w-5 mr-2" />
+                            Confirmar Aprobación
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
             {/* Modal de Rechazo */}
             <Dialog open={rejectionModal.isOpen} onOpenChange={handleCloseRejectionModal}>

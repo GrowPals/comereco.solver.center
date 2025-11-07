@@ -1,0 +1,383 @@
+# Auditoría: Requisiciones, Aprobaciones y Reportes
+
+**Fecha**: 2025-11-07
+**Alcance**: Análisis UX/UI de tablas, listas, interacciones, responsive design y temas claro/oscuro
+
+---
+
+## 📋 Resumen Ejecutivo
+
+Se realizó una auditoría exhaustiva de los componentes de Requisiciones, Aprobaciones y Reportes, enfocada en:
+- Ordenación de tablas y listas
+- Badges, tooltips, estados hover/focus
+- Jerarquía de botones primarios/secundarios
+- Integridad del layout en móvil
+- Mensajes de "sin datos", confirmaciones, loaders
+- Componentes sticky (filtros, acciones masivas)
+- Consistencia de colores en modo claro/oscuro
+
+---
+
+## ✅ Fortalezas Identificadas
+
+### 1. **Sistema de Badges Robusto**
+- **Ubicación**: `src/components/ui/badge.jsx`
+- ✅ Excelente soporte para dark mode con clases `dark:`
+- ✅ Variantes claras (success, warning, danger, destructive, info, muted)
+- ✅ Configuración de estados predefinidos (approved, pending, rejected, borrador)
+- ✅ Gradientes visuales atractivos
+
+### 2. **Jerarquía de Botones Clara**
+- **Ubicación**: `src/components/ui/button.jsx`
+- ✅ 8 variantes bien definidas (default, primary, accent, success, destructive, outline, secondary, ghost)
+- ✅ Soporte completo para `isLoading` y `isSuccess` con iconos animados
+- ✅ Focus ring visible con `focus-visible:ring-4`
+- ✅ Excelente soporte dark mode con gradientes personalizados
+
+### 3. **Estados Vacíos (Empty States)**
+- **Ubicaciones**:
+  - `src/pages/Requisitions.jsx` (líneas 194-210)
+  - `src/pages/Approvals.jsx` (líneas 133-153)
+- ✅ Mensajes contextuales según filtros aplicados
+- ✅ Iconos ilustrativos con diseño circular consistente
+- ✅ Acciones sugeridas (ej: "Limpiar filtros")
+
+### 4. **Loaders y Skeletons**
+- ✅ `PageLoader` para páginas completas
+- ✅ `Skeleton` para tablas (RecentRequisitions líneas 86-93)
+- ✅ Animaciones de carga en botones con spinner de Lucide
+- ✅ Estados de loading deshabilian acciones correctamente
+
+### 5. **Responsive Design**
+- ✅ Uso extensivo de clases Tailwind (`sm:`, `md:`, `lg:`)
+- ✅ Grid adaptativo (1 columna → 2 en lg para Approvals)
+- ✅ Ocultación inteligente de columnas en tablas (`hidden sm:table-cell`)
+- ✅ Sidebar sticky en RequisitionDetail (línea 280)
+
+### 6. **Dark Mode Consistency**
+- ✅ Todas las páginas principales tienen soporte dark mode
+- ✅ Uso consistente de clases `dark:` en gradientes, borders, backgrounds
+- ✅ Shadows ajustados para dark mode (ej: `dark:shadow-[0_16px_40px_rgba(6,18,34,0.42)]`)
+
+### 7. **Confirmaciones de Acciones Destructivas**
+- ✅ Modal de rechazo con razón requerida (Approvals.jsx líneas 266-300)
+- ✅ Validación del campo antes de enviar
+- ✅ Feedback con toast después de aprobar/rechazar
+
+---
+
+## ⚠️ Áreas de Mejora Identificadas
+
+### 1. **❌ Falta de Ordenación en Tablas**
+**Prioridad**: Media
+**Ubicación**:
+- `src/components/dashboards/RecentRequisitions.jsx`
+- `src/pages/Requisitions.jsx`
+
+**Problema**:
+- Las tablas no permiten ordenar por columnas (Folio, Fecha, Monto, Estado)
+- Dificulta encontrar requisiciones específicas
+
+**Recomendación**:
+```jsx
+// Implementar ordenación con biblioteca como @tanstack/react-table
+// o manual con useState para columna/dirección de ordenación
+const [sortConfig, setSortConfig] = useState({ key: 'created_at', direction: 'desc' });
+```
+
+---
+
+### 2. **❌ Tooltips No Implementados**
+**Prioridad**: Alta
+**Ubicación**: Todas las páginas principales
+
+**Problema**:
+- El componente Tooltip existe (`src/components/ui/tooltip.jsx`) pero NO se usa
+- Iconos sin explicación (ej: botón de refresh en Requisitions.jsx línea 77)
+- Badges de estado sin tooltips explicativos
+
+**Recomendación**:
+Agregar tooltips en:
+- ✏️ Botones de acción (refresh, filtros, aprobar, rechazar)
+- ✏️ Badges de estado (explicar "Enviada", "Aprobada", etc.)
+- ✏️ Iconos en tarjetas (User, Calendar, DollarSign)
+- ✏️ Texto truncado (nombres de productos largos)
+
+**Ejemplo de implementación**:
+```jsx
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <Button variant="ghost" size="icon">
+        <RefreshCw className="h-4 w-4" />
+      </Button>
+    </TooltipTrigger>
+    <TooltipContent>
+      <p>Actualizar lista de requisiciones</p>
+    </TooltipContent>
+  </Tooltip>
+</TooltipProvider>
+```
+
+---
+
+### 3. **❌ Barra de Filtros NO es Sticky**
+**Prioridad**: Media
+**Ubicación**: `src/pages/Requisitions.jsx` (líneas 99-142)
+
+**Problema**:
+- Al hacer scroll, los filtros desaparecen
+- Usuario debe volver al inicio para cambiar filtros
+
+**Recomendación**:
+```jsx
+<div className="sticky top-0 z-10 mb-6 flex flex-col gap-4 surface-card p-4 sm:flex-row sm:flex-wrap sm:items-center backdrop-blur-sm">
+  {/* Filtros */}
+</div>
+```
+
+---
+
+### 4. **❌ Scroll Horizontal en Tabla (Móvil)**
+**Prioridad**: Media
+**Ubicación**: `src/components/dashboards/RecentRequisitions.jsx` (línea 73)
+
+**Problema**:
+- Wrapper con `overflow-x-auto` puede causar scroll horizontal incómodo
+- Algunas columnas ocultas pero no hay indicador visual
+
+**Recomendación**:
+```jsx
+<div className="overflow-x-auto rounded-lg border border-border">
+  <Table>
+    {/* Agregar sombra visual en bordes para indicar scroll */}
+  </Table>
+</div>
+```
+
+Agregar componente `ScrollShadow` para indicar contenido scrolleable.
+
+---
+
+### 5. **❌ Falta Confirmación de Aprobación**
+**Prioridad**: Baja-Media
+**Ubicación**:
+- `src/pages/Approvals.jsx` (línea 232)
+- `src/pages/RequisitionDetail.jsx` (línea 299)
+
+**Problema**:
+- Aprobar es una acción importante pero NO requiere confirmación
+- Riesgo de aprobaciones accidentales
+
+**Recomendación**:
+Agregar Dialog de confirmación simple:
+```jsx
+<Dialog>
+  <DialogTrigger asChild>
+    <Button variant="success">Aprobar</Button>
+  </DialogTrigger>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>¿Aprobar requisición?</DialogTitle>
+      <DialogDescription>
+        Esta acción aprobará la requisición #{internal_folio} por ${total_amount}.
+      </DialogDescription>
+    </DialogHeader>
+    <DialogFooter>
+      <Button variant="ghost">Cancelar</Button>
+      <Button variant="success" onClick={handleApprove}>
+        Confirmar Aprobación
+      </Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+```
+
+---
+
+### 6. **❌ Inconsistencia en Variante de Botón Refresh**
+**Prioridad**: Baja
+**Ubicación**: `src/pages/Requisitions.jsx` (líneas 77-84)
+
+**Problema**:
+```jsx
+<Button variant="ghost" size="icon" className="...border border-border...">
+```
+- Usa `ghost` con borde personalizado en lugar de `outline` o `secondary`
+
+**Recomendación**:
+```jsx
+<Button variant="secondary" size="icon">
+```
+
+---
+
+### 7. **❌ Colores Hardcodeados en Reportes**
+**Prioridad**: Baja
+**Ubicación**: `src/pages/admin/Reports.jsx` (líneas 66-68)
+
+**Problema**:
+```javascript
+const APPROVED_GRADIENT = 'linear-gradient(90deg, #4f8b72 0%, #2f6650 100%)';
+const PENDING_GRADIENT = 'linear-gradient(90deg, #f1b567 0%, #d58a2a 100%)';
+```
+- Colores hardcodeados no respetan dark mode automáticamente
+
+**Recomendación**:
+Migrar a CSS variables o clases Tailwind:
+```jsx
+// En tailwind.config.js
+theme: {
+  extend: {
+    backgroundImage: {
+      'gradient-approved': 'linear-gradient(90deg, var(--color-emerald-600), var(--color-emerald-700))',
+    }
+  }
+}
+```
+
+---
+
+### 8. **❌ Sin Indicador de Estado de Sincronización**
+**Prioridad**: Baja
+**Ubicación**: `src/pages/Requisitions.jsx`, `src/pages/Approvals.jsx`
+
+**Problema**:
+- No hay indicador visual cuando los datos se están actualizando en tiempo real
+- Suscripción a cambios existe (RequisitionDetail líneas 62-85) pero sin feedback visual
+
+**Recomendación**:
+Agregar badge de "Actualizando..." cuando `isFetching`:
+```jsx
+{isFetching && (
+  <Badge variant="outline" className="animate-pulse">
+    <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
+    Sincronizando...
+  </Badge>
+)}
+```
+
+---
+
+## 🎨 Validación de Dark Mode
+
+### Componentes Auditados:
+
+| Componente | Light Mode | Dark Mode | Gradientes | Notas |
+|------------|------------|-----------|------------|-------|
+| Badge | ✅ | ✅ | ✅ | Excelente soporte |
+| Button | ✅ | ✅ | ✅ | Shadows personalizados para dark |
+| RequisitionCard | ✅ | ✅ | ✅ | Accent bar adaptativo |
+| RecentRequisitions | ✅ | ✅ | ⚠️ | Hover podría ser más visible en dark |
+| Approvals | ✅ | ✅ | ✅ | Badges y gradientes consistentes |
+| Reports | ✅ | ⚠️ | ⚠️ | Gradientes hardcodeados (ver punto 7) |
+| RequisitionDetail | ✅ | ✅ | ✅ | Sticky sidebar con buen contraste |
+
+**Leyenda**: ✅ Perfecto | ⚠️ Necesita ajustes | ❌ No funciona
+
+---
+
+## 📱 Validación Mobile
+
+### Puntos de Quiebre Testeados:
+- **Mobile S** (320px): ⚠️ Tabla RecentRequisitions con scroll horizontal
+- **Mobile M** (375px): ✅ Cards de requisiciones se adaptan bien
+- **Mobile L** (425px): ✅ Filtros apilados correctamente
+- **Tablet** (768px): ✅ Grid 1→2 columnas funciona
+- **Desktop** (1024px+): ✅ Layout completo sin problemas
+
+### Hallazgos Mobile:
+1. ✅ Bottom navigation en mobile (`src/components/layout/BottomNav.jsx`)
+2. ✅ Columnas ocultas con `hidden sm:table-cell`
+3. ⚠️ Filtros podrían ser un drawer en mobile (<640px)
+4. ✅ Modales responsive con `sm:max-w-md`
+
+---
+
+## 🔧 Recomendaciones de Implementación
+
+### Prioridad Alta
+1. ✅ **Agregar Tooltips** en todos los iconos y badges
+   - Archivos: Requisitions.jsx, Approvals.jsx, RequisitionDetail.jsx, Reports.jsx
+   - Esfuerzo: 2-3 horas
+
+### Prioridad Media
+2. ⚠️ **Implementar Ordenación de Tablas**
+   - Archivo: RecentRequisitions.jsx
+   - Esfuerzo: 3-4 horas
+   - Considerar usar `@tanstack/react-table` v8
+
+3. ⚠️ **Hacer Sticky la Barra de Filtros**
+   - Archivo: Requisitions.jsx
+   - Esfuerzo: 30 minutos
+
+4. ⚠️ **Agregar Confirmación de Aprobación**
+   - Archivos: Approvals.jsx, RequisitionDetail.jsx
+   - Esfuerzo: 1 hora
+
+### Prioridad Baja
+5. 🔹 **Migrar Gradientes Hardcodeados a CSS Variables**
+   - Archivo: Reports.jsx
+   - Esfuerzo: 1 hora
+
+6. 🔹 **Mejorar Indicadores de Scroll Horizontal**
+   - Archivo: RecentRequisitions.jsx
+   - Esfuerzo: 1-2 horas
+
+---
+
+## 📊 Métricas de Calidad
+
+| Categoría | Puntuación | Notas |
+|-----------|------------|-------|
+| **Accesibilidad** | 7/10 | Falta ARIA labels en algunos botones icon |
+| **Responsive Design** | 8/10 | Excelente, mejoras menores en tablas |
+| **Dark Mode** | 9/10 | Muy completo, solo gradientes hardcodeados |
+| **UX Interacciones** | 7/10 | Falta tooltips y confirmaciones |
+| **Componentes Reutilizables** | 9/10 | Arquitectura sólida |
+| **Performance** | 8/10 | Memoización presente, paginación implementada |
+
+**Puntuación General**: **8.0/10** 🎯
+
+---
+
+## 🚀 Plan de Acción Sugerido
+
+### Fase 1 (Sprint Actual)
+- [ ] Agregar tooltips en Requisitions, Approvals, Reports
+- [ ] Hacer sticky la barra de filtros
+- [ ] Agregar confirmación de aprobación
+
+### Fase 2 (Próximo Sprint)
+- [ ] Implementar ordenación en tablas
+- [ ] Mejorar scroll horizontal en mobile
+- [ ] Migrar gradientes hardcodeados
+
+### Fase 3 (Backlog)
+- [ ] Agregar componente ScrollShadow reutilizable
+- [ ] Implementar animaciones de entrada/salida en listas
+- [ ] Tests E2E para flujos de aprobación
+
+---
+
+## 📝 Notas Adicionales
+
+### Buenas Prácticas Observadas:
+- ✅ Uso de React.memo para optimización (RequisitionCard, RecentRequisitions)
+- ✅ Hooks personalizados reutilizables (useRequisitions, useRequisitionActions)
+- ✅ Separación de lógica de negocio en services
+- ✅ React Query para cache y sincronización
+- ✅ Real-time con Supabase subscriptions
+
+### Deuda Técnica:
+- Algunos componentes tienen lógica de estado compleja (Approvals.jsx líneas 32-52)
+- Falta documentación JSDoc en componentes de UI
+- Tests unitarios limitados para componentes complejos
+
+---
+
+**Auditor**: Claude Code Agent
+**Revisión**: Completa
+**Próxima Revisión**: Después de implementar mejoras de Fase 1
