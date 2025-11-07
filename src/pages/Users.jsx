@@ -46,14 +46,31 @@ import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
 import { useCompanyScope } from '@/context/CompanyScopeContext';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 
 // Mapeo de roles según app_role_v2 enum (admin | supervisor | user | dev)
 const roleMapping = {
-    user: { label: 'Usuario', icon: UserIcon },
-    supervisor: { label: 'Supervisor', icon: Briefcase },
-    admin: { label: 'Admin', icon: Shield },
-    dev: { label: 'Developer', icon: Code },
+    user: {
+        label: 'Usuario',
+        icon: UserIcon,
+        description: 'Puede crear requisiciones y ver catálogo de productos'
+    },
+    supervisor: {
+        label: 'Supervisor',
+        icon: Briefcase,
+        description: 'Puede aprobar requisiciones y gestionar proyectos de su equipo'
+    },
+    admin: {
+        label: 'Admin',
+        icon: Shield,
+        description: 'Acceso completo: gestión de usuarios, productos y toda la plataforma'
+    },
+    dev: {
+        label: 'Developer',
+        icon: Code,
+        description: 'Acceso de desarrollador con permisos especiales de plataforma'
+    },
 };
 const UserForm = ({ user, onSave, onCancel, isLoading, approvalBypassSupported, roleOptions }) => {
     const { register, handleSubmit, watch, setValue, control, formState: { errors } } = useForm({
@@ -175,6 +192,8 @@ const Users = () => {
     const [editingUser, setEditingUser] = useState(null);
     const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
+    const [isToggleStatusDialogOpen, setToggleStatusDialogOpen] = useState(false);
+    const [userToToggle, setUserToToggle] = useState(null);
     const { toast } = useToast();
     const queryClient = useQueryClient();
 
@@ -289,18 +308,19 @@ const Users = () => {
     };
 
     const handleToggleUserStatus = (user) => {
-        // El usuario está activo por defecto, si is_active no está definido
-        const currentStatus = user.is_active !== false;
-        const action = currentStatus ? 'desactivar' : 'activar';
-        const actionCap = currentStatus ? 'Desactivar' : 'Activar';
+        setUserToToggle(user);
+        setToggleStatusDialogOpen(true);
+    };
 
-        const confirmMessage = `¿Estás seguro de ${action} a ${resolveUserLabel(user)}?`;
-
-        if (window.confirm(confirmMessage)) {
+    const confirmToggleStatus = () => {
+        if (userToToggle) {
+            const currentStatus = userToToggle.is_active !== false;
             toggleStatusMutation.mutate({
-                userId: user.id,
+                userId: userToToggle.id,
                 isActive: !currentStatus
             });
+            setToggleStatusDialogOpen(false);
+            setUserToToggle(null);
         }
     };
 
@@ -333,11 +353,36 @@ const Users = () => {
 
     const roleOptions = Object.entries(roleMapping).filter(([key]) => (key === 'dev' ? isDev : true));
 
+    const getToggleStatusDialogProps = () => {
+        if (!userToToggle) return null;
+        const currentStatus = userToToggle.is_active !== false;
+        const action = currentStatus ? 'desactivar' : 'activar';
+        const actionCap = currentStatus ? 'Desactivar' : 'Activar';
+        return {
+            title: `¿${actionCap} usuario?`,
+            description: `¿Estás seguro de ${action} a ${resolveUserLabel(userToToggle)}? ${currentStatus ? 'El usuario no podrá acceder al sistema hasta que se reactive.' : 'El usuario recuperará el acceso al sistema.'}`,
+            confirmText: `${actionCap} usuario`,
+            variant: currentStatus ? 'warning' : 'default',
+        };
+    };
+
+    const toggleDialogProps = getToggleStatusDialogProps();
+
     return (
         <>
             <Helmet>
                 <title>Gestión de Usuarios - ComerECO</title>
             </Helmet>
+            <ConfirmDialog
+                open={isToggleStatusDialogOpen}
+                onOpenChange={setToggleStatusDialogOpen}
+                title={toggleDialogProps?.title || ''}
+                description={toggleDialogProps?.description || ''}
+                confirmText={toggleDialogProps?.confirmText || 'Confirmar'}
+                cancelText="Cancelar"
+                variant={toggleDialogProps?.variant || 'default'}
+                onConfirm={confirmToggleStatus}
+            />
             <ConfirmDialog
                 open={isDeleteDialogOpen}
                 onOpenChange={setDeleteDialogOpen}
@@ -438,12 +483,21 @@ const Users = () => {
                                     </div>
                                 </div>
                                 <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-                                    <Badge variant="outline" className="font-semibold">
-                                        {roleMapping[user.role_v2]?.icon && (
-                                            React.createElement(roleMapping[user.role_v2].icon, { className: 'mr-1 h-4 w-4' })
-                                        )}
-                                        {roleMapping[user.role_v2]?.label || user.role_v2}
-                                    </Badge>
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Badge variant="outline" className="font-semibold cursor-help">
+                                                    {roleMapping[user.role_v2]?.icon && (
+                                                        React.createElement(roleMapping[user.role_v2].icon, { className: 'mr-1 h-4 w-4' })
+                                                    )}
+                                                    {roleMapping[user.role_v2]?.label || user.role_v2}
+                                                </Badge>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>{roleMapping[user.role_v2]?.description || 'Rol de usuario'}</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
                                     <Badge variant={user.is_active !== false ? 'success' : 'destructive'}>
                                         {user.is_active !== false ? 'Activo' : 'Inactivo'}
                                     </Badge>
@@ -491,12 +545,21 @@ const Users = () => {
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <Badge variant="outline" className="font-semibold shadow-sm">
-                                            {roleMapping[user.role_v2]?.icon && (
-                                                React.createElement(roleMapping[user.role_v2].icon, { className: "w-4 h-4 mr-2" })
-                                            )}
-                                            {roleMapping[user.role_v2]?.label || user.role_v2}
-                                        </Badge>
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Badge variant="outline" className="font-semibold shadow-sm cursor-help">
+                                                        {roleMapping[user.role_v2]?.icon && (
+                                                            React.createElement(roleMapping[user.role_v2].icon, { className: "w-4 h-4 mr-2" })
+                                                        )}
+                                                        {roleMapping[user.role_v2]?.label || user.role_v2}
+                                                    </Badge>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>{roleMapping[user.role_v2]?.description || 'Rol de usuario'}</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant={user.is_active !== false ? 'success' : 'destructive'} className="shadow-sm">
