@@ -4,18 +4,44 @@ import { cn } from "@/lib/utils"
 const FloatingInput = React.forwardRef(({ className, type, label, icon, error, ...props }, ref) => {
   const [isFocused, setIsFocused] = React.useState(false);
   const [hasValue, setHasValue] = React.useState(false);
+  const [isAutofilled, setIsAutofilled] = React.useState(false);
   const inputRef = React.useRef(null);
 
   // Detect if input has value on mount and when props change
   React.useEffect(() => {
     const input = inputRef.current;
     setHasValue(Boolean(input?.value));
-  }, [props.value, props.defaultValue]);
+
+    // Check for autofill on mount and periodically
+    const checkAutofill = () => {
+      if (input) {
+        try {
+          const autofilled = input.matches(':-webkit-autofill') || input.matches(':autofill');
+          setIsAutofilled(autofilled);
+        } catch (e) {
+          // Fallback: check if input has value but user hasn't interacted
+          setIsAutofilled(Boolean(input.value) && !hasValue);
+        }
+      }
+    };
+
+    checkAutofill();
+    const intervalId = setInterval(checkAutofill, 500);
+
+    return () => clearInterval(intervalId);
+  }, [props.value, props.defaultValue, hasValue]);
 
   const handleFocus = () => setIsFocused(true);
   const handleBlur = (e) => {
     setIsFocused(false);
     setHasValue(e.target.value !== '');
+  };
+
+  const handleAnimationStart = (e) => {
+    // Detect webkit autofill animation
+    if (e.animationName === 'onAutoFillStart') {
+      setIsAutofilled(true);
+    }
   };
 
   // Combine refs to handle both internal and forwarded refs
@@ -28,15 +54,15 @@ const FloatingInput = React.forwardRef(({ className, type, label, icon, error, .
     }
   }, [ref]);
 
-  const isFloating = isFocused || hasValue || props.value || props.defaultValue;
+  const isFloating = isFocused || hasValue || props.value || props.defaultValue || isAutofilled;
 
   return (
     <div className="relative w-full group">
       {icon && (
         <div
           className={cn(
-            "pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-neutral-500 transition-colors duration-200 dark:text-neutral-400",
-            isFloating && "text-primary-500 dark:text-primary-400",
+            "pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-400",
+            isFloating && "text-primary-500 scale-105 dark:text-primary-400",
             error && "text-red-500 dark:text-red-400"
           )}
         >
@@ -51,6 +77,7 @@ const FloatingInput = React.forwardRef(({ className, type, label, icon, error, .
           "focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-200/30",
           "overflow-hidden text-ellipsis ring-offset-background dark:border-border dark:bg-card dark:text-neutral-50",
           "disabled:cursor-not-allowed disabled:bg-neutral-50 disabled:opacity-60 dark:disabled:bg-card",
+          "autofill:pt-6 autofill:pb-2",
           icon ? "pl-12 pr-4" : "px-4",
           error && "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-200/30 dark:border-red-600 dark:focus-visible:ring-red-500/25",
           className
@@ -58,6 +85,7 @@ const FloatingInput = React.forwardRef(({ className, type, label, icon, error, .
         ref={setRefs}
         onFocus={handleFocus}
         onBlur={handleBlur}
+        onAnimationStart={handleAnimationStart}
         placeholder={label}
         {...props}
       />
@@ -65,7 +93,7 @@ const FloatingInput = React.forwardRef(({ className, type, label, icon, error, .
       {label && (
         <label
           className={cn(
-            "pointer-events-none absolute left-4 font-medium text-neutral-600 transition-all duration-200 dark:text-neutral-300",
+            "pointer-events-none absolute left-4 font-medium text-neutral-600 transition-all duration-200 ease-out dark:text-neutral-300",
             icon && "left-12",
             isFloating
               ? "top-2 text-xs text-primary-600 dark:text-primary-300"

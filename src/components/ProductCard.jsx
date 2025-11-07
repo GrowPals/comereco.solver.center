@@ -80,7 +80,8 @@ const ProductCard = memo(({ product }) => {
   return (
     <article
       className={cn(
-        'group relative flex w-full flex-col overflow-hidden rounded-3xl surface-card transition-all duration-300 hover:-translate-y-1 focus-visible:outline-none focus-visible:shadow-[var(--focus-glow)]'
+        'group relative flex w-full flex-col overflow-hidden rounded-3xl surface-card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
+        'dark:hover:shadow-elevated'
       )}
       role="article"
       aria-label={`Producto ${productName}, precio ${productPrice} pesos`}
@@ -110,7 +111,12 @@ const ProductCard = memo(({ product }) => {
         <button
           type="button"
           onClick={handleToggleFavorite}
-          className="absolute right-4 top-3 flex h-9 w-9 items-center justify-center rounded-full surface-chip text-muted-foreground/80 transition-colors duration-200 hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+          className={cn(
+            "absolute right-4 top-3 flex h-9 w-9 items-center justify-center rounded-full surface-chip transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500",
+            isFavorite
+              ? "text-red-500 shadow-[0_0_16px_rgba(239,68,68,0.4)] hover:shadow-[0_0_20px_rgba(239,68,68,0.5)] dark:shadow-[0_0_20px_rgba(239,68,68,0.5)]"
+              : "text-muted-foreground/80 hover:text-red-500 hover:shadow-md"
+          )}
           aria-label={
             isFavorite
               ? `Quitar ${productName} de favoritos`
@@ -121,7 +127,7 @@ const ProductCard = memo(({ product }) => {
           <Heart
             className={cn(
               'h-4 w-4 transition-transform duration-200',
-              isFavorite && 'scale-110 fill-red-500 text-red-500'
+              isFavorite && 'scale-110 fill-red-500'
             )}
             aria-hidden="true"
           />
@@ -148,18 +154,18 @@ const ProductCard = memo(({ product }) => {
         </p>
 
         <div className="flex flex-1 flex-col justify-between gap-4">
-          <div className="flex items-baseline justify-between gap-4">
-            <div>
-              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/70">
-                Precio
-              </span>
-              <p className="mt-1 text-2xl font-bold tabular-nums text-foreground">
+          <div className="rounded-xl bg-muted/40 p-3 dark:bg-muted/20">
+            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/70">
+              Precio
+            </span>
+            <div className="mt-1 flex items-baseline justify-between gap-2">
+              <p className="text-2xl font-bold tabular-nums text-emerald-600 dark:text-emerald-400">
                 ${productPrice}
               </p>
+              {unitLabel && (
+                <span className="text-sm font-semibold text-muted-foreground/70">/ {unitLabel}</span>
+              )}
             </div>
-            {unitLabel && (
-              <span className="text-sm font-semibold text-muted-foreground/70">{unitLabel}</span>
-            )}
           </div>
 
           {currentQuantity === 0 ? (
