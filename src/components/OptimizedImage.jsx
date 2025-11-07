@@ -21,12 +21,7 @@ const OptimizedImage = memo(({
   loading = 'lazy',
   ...props
 }) => {
-  let theme = null;
-  try {
-    theme = useTheme();
-  } catch (error) {
-    theme = null;
-  }
+  const theme = useTheme();
 
   const themedFallback = useMemo(() => {
     if (fallback !== '/placeholder.svg') {

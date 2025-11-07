@@ -260,7 +260,7 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
             <DialogContent className="max-w-2xl p-0 shadow-2xl">
                 <div className="flex max-h-[calc(100dvh-4rem)] flex-col">
                     <DialogHeader className="px-6 pt-6">
-                        <DialogTitle>Gestionar Miembros de "{project?.name}"</DialogTitle>
+                        <DialogTitle>Gestionar Miembros de &quot;{project?.name}&quot;</DialogTitle>
                         <DialogDescription>Agrega usuarios y configura si requieren aprobación para enviar requisiciones.</DialogDescription>
                     </DialogHeader>
                     <div className="flex-1 space-y-4 overflow-y-auto px-6 py-4">
@@ -461,7 +461,7 @@ const ProjectsPage = () => {
       <Dialog open={deleteModal.isOpen} onOpenChange={() => setDeleteModal({ isOpen: false, project: null })}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold">¿Eliminar "{deleteModal.project?.name}"?</DialogTitle>
+            <DialogTitle className="text-2xl font-bold">¿Eliminar &quot;{deleteModal.project?.name}&quot;?</DialogTitle>
             <DialogDescription className="text-base">
               Esta acción es irreversible y eliminará permanentemente el proyecto.
             </DialogDescription>

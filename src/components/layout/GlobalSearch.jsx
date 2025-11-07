@@ -149,7 +149,7 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
             </div>
           ) : totalResults === 0 ? (
             <div className="p-8 text-center text-muted-foreground">
-              <p className="text-sm">No se encontraron resultados para "{searchTerm}"</p>
+              <p className="text-sm">No se encontraron resultados para &quot;{searchTerm}&quot;</p>
             </div>
           ) : (
             <div className="p-2">

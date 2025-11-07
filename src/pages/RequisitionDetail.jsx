@@ -104,6 +104,14 @@ const RequisitionDetail = () => {
     const isOwner = useMemo(() => user && requisition && user.id === requisition.created_by, [user, requisition]);
     const actionLoading = isSubmitting || isApproving || isRejecting;
 
+    const projectIdRef = requisition?.project_id;
+
+    const handleNavigateToProject = useCallback(() => {
+        if (projectIdRef) {
+            navigate(`/projects/${projectIdRef}`);
+        }
+    }, [navigate, projectIdRef]);
+
     // Memoizar formateo de fecha
     const formattedDate = useMemo(() => {
         if (!requisition?.created_at) return '';
@@ -127,7 +135,7 @@ const RequisitionDetail = () => {
     }
 
     // CORREGIDO: Usar creator en lugar de requester según documentación
-    const { internal_folio, created_at, business_status, created_by, creator, items, total_amount, comments, project, project_id } = requisition;
+    const { internal_folio, created_at, business_status, creator, items, total_amount, comments, project } = requisition;
 
     const statusConfig = {
         draft: { text: 'Borrador', variant: 'muted', accent: 'bg-muted' },
@@ -139,12 +147,6 @@ const RequisitionDetail = () => {
     };
 
     const currentStatus = statusConfig[business_status] || { text: business_status, variant: 'muted', accent: 'bg-muted' };
-
-    const handleNavigateToProject = useCallback(() => {
-        if (project_id) {
-            navigate(`/projects/${project_id}`);
-        }
-    }, [navigate, project_id]);
 
     return (
         <>

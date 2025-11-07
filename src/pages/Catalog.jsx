@@ -338,7 +338,7 @@ const CatalogPage = () => {
                   <ErrorState
                     error={error}
                     onRetry={() => refetch()}
-                    showDetails={process.env.NODE_ENV === 'development'}
+                    showDetails={import.meta.env.DEV}
                   />
                 </div>
               )}

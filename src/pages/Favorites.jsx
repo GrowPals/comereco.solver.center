@@ -62,8 +62,8 @@ const FavoritesPage = () => {
                         {/* Header Skeleton */}
                         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-border">
                             <div className="flex items-center gap-4">
-                                <div className="icon-badge flex h-14 w-14 items-center justify-center">
-                                    <Star className="h-7 w-7 text-primary-600 dark:text-primary-100" aria-hidden="true" />
+                                <div className="icon-badge favorite-icon-badge flex h-14 w-14 items-center justify-center">
+                                    <Star className="favorite-icon h-7 w-7" aria-hidden="true" />
                                 </div>
                                 <div>
                                     <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-1">
@@ -120,7 +120,7 @@ const FavoritesPage = () => {
                 <PageContainer className="flex items-center justify-center">
                     <div className="bg-card rounded-2xl shadow-lg p-12 max-w-md border-2 border-border">
                         <EmptyState
-                            icon={Star}
+                            icon={<Star className="favorite-icon" />}
                             title="Aún no tienes favoritos"
                             description="Explora el catálogo y marca los productos que más te gustan para encontrarlos aquí fácilmente."
                             actionButton={
@@ -145,8 +145,8 @@ const FavoritesPage = () => {
                     {/* Header */}
                     <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-border">
                         <div className="flex items-center gap-4">
-                            <div className="icon-badge flex h-14 w-14 items-center justify-center">
-                                <Star className="h-7 w-7 text-primary-600 dark:text-primary-100" aria-hidden="true" />
+                            <div className="icon-badge favorite-icon-badge flex h-14 w-14 items-center justify-center">
+                                <Star className="favorite-icon h-7 w-7" aria-hidden="true" />
                             </div>
                             <div>
                                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-1">
@@ -169,10 +169,10 @@ const FavoritesPage = () => {
                     </header>
 
                     {/* Info Card */}
-                    <div className="hidden rounded-2xl border-2 border-warning/30 bg-gradient-to-r from-warning/10 to-warning/5 p-6 md:block">
+                    <div className="favorite-spotlight hidden rounded-2xl p-6 md:block">
                         <div className="flex items-start gap-4">
-                            <div className="icon-badge flex h-10 w-10 flex-shrink-0 items-center justify-center">
-                                <Star className="h-5 w-5 text-primary-600 dark:text-primary-100" />
+                            <div className="icon-badge favorite-icon-badge flex h-10 w-10 flex-shrink-0 items-center justify-center">
+                                <Star className="favorite-icon h-5 w-5" />
                             </div>
                             <div>
                                 <h3 className="font-bold text-foreground mb-1">Tus productos favoritos</h3>

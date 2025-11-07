@@ -98,7 +98,7 @@ const SearchDialog = memo(({ open, onOpenChange }) => {
               ) : totalResults === 0 ? (
                 <div className="text-center py-12 text-muted-foreground" role="status">
                   <Search className="h-12 w-12 mx-auto mb-4 opacity-50" aria-hidden="true" />
-                  <p>No se encontraron resultados para "{debouncedQuery}"</p>
+                  <p>No se encontraron resultados para &quot;{debouncedQuery}&quot;</p>
                 </div>
               ) : (
                 <div className="space-y-6" role="list" aria-label={`${totalResults} resultados encontrados`}>

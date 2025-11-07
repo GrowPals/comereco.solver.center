@@ -78,7 +78,7 @@ export const getRequisitionsByStatus = async () => {
 
     data.forEach((req) => {
         const status = req.business_status || 'draft';
-        if (statusCount.hasOwnProperty(status)) {
+        if (Object.prototype.hasOwnProperty.call(statusCount, status)) {
             statusCount[status]++;
         }
     });

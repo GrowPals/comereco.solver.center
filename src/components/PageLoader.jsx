@@ -4,12 +4,7 @@ import { useTheme } from '@/context/ThemeContext';
 import { cn } from '@/lib/utils';
 
 const PageLoader = ({ message }) => {
-  let theme = null;
-  try {
-    theme = useTheme();
-  } catch (error) {
-    theme = { isDark: false };
-  }
+  const theme = useTheme();
 
   const { wrapperClasses, haloClasses, iconClasses } = useMemo(() => {
     if (theme?.isDark) {

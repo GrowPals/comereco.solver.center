@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useQuery } from '@tanstack/react-query';
 import { Search, Filter, RefreshCw, Layers, ShieldCheck, PauseCircle } from 'lucide-react';

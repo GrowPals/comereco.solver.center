@@ -166,7 +166,7 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
             <p className="font-medium text-muted-foreground">No hay productos en esta plantilla</p>
             {!readOnly && (
               <p className="mt-1 text-sm text-muted-foreground/80">
-                Haz clic en "Agregar Producto" para comenzar
+                Haz clic en &quot;Agregar Producto&quot; para comenzar
               </p>
             )}
           </div>

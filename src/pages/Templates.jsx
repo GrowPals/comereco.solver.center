@@ -278,7 +278,7 @@ const TemplatesPage = () => {
       <Dialog open={deleteModal.isOpen} onOpenChange={() => setDeleteModal({ isOpen: false, template: null })}>
         <DialogContent className="sm:max-w-md border border-border bg-card shadow-2xl dark:border-border dark:bg-card">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold">¿Eliminar plantilla "{deleteModal.template?.name}"?</DialogTitle>
+            <DialogTitle className="text-2xl font-bold">¿Eliminar plantilla &quot;{deleteModal.template?.name}&quot;?</DialogTitle>
             <DialogDescription className="text-base">Esta acción no se puede deshacer.</DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2">

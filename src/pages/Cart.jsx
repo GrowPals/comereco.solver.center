@@ -359,7 +359,7 @@ const CartPage = () => {
               </div>
             ) : (
               <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
-                <div className="space-y-4">
+                <div className="space-y-4 w-full max-w-[520px] mx-auto lg:max-w-none">
                   {items.map((item) => (
                     <CartItemRow
                       key={item.id}

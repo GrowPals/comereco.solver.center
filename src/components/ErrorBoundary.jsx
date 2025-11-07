@@ -127,7 +127,7 @@ class ErrorBoundary extends React.Component {
             error={this.state.error}
             onRetry={this.handleReset}
             title="Error de la Aplicación"
-            showDetails={process.env.NODE_ENV === 'development'}
+            showDetails={import.meta.env.DEV}
           />
         </div>
       );
