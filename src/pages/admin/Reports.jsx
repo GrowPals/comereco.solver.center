@@ -14,7 +14,8 @@ import {
     Loader2,
     AlertCircle,
     Download,
-    FileSpreadsheet
+    FileSpreadsheet,
+    RefreshCw
 } from 'lucide-react';
 import {
     getGeneralStats,
@@ -302,16 +303,46 @@ const ReportsPage = () => {
         staleTime: 1000 * 60 * 10,
     });
 
-    const { data: topUsers, isLoading: loadingUsers } = useQuery({
+    const { data: topUsers, isLoading: loadingUsers, isError: errorUsers } = useQuery({
         queryKey: ['topUsers'],
         queryFn: getRequisitionsByUser,
         staleTime: 1000 * 60 * 10,
     });
 
     const isLoading = loadingStats || loadingStatus || loadingMonthly || loadingProducts || loadingUsers;
+    const isError = errorUsers; // Podemos expandir esto para incluir otros errores si es necesario
 
     if (isLoading) {
         return <PageLoader message="Cargando reportes y analíticas..." />;
+    }
+
+    if (isError) {
+        return (
+            <PageContainer>
+                <div className="mx-auto max-w-2xl p-8 text-center">
+                    <div className="rounded-2xl border-2 border-red-200 bg-red-50 p-8 dark:border-red-400/60 dark:bg-red-500/10">
+                        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-500/20">
+                            <AlertCircle className="h-8 w-8 text-red-600 dark:text-red-300" />
+                        </div>
+                        <h2 className="mb-2 text-2xl font-bold text-red-900 dark:text-red-100">
+                            Error al cargar reportes
+                        </h2>
+                        <p className="mb-6 text-red-700 dark:text-red-200">
+                            No se pudieron cargar los datos de analíticas. Por favor, intenta nuevamente.
+                        </p>
+                        <Button
+                            onClick={() => window.location.reload()}
+                            variant="destructive"
+                            size="lg"
+                            className="rounded-xl"
+                        >
+                            <RefreshCw className="mr-2 h-5 w-5" />
+                            Reintentar
+                        </Button>
+                    </div>
+                </div>
+            </PageContainer>
+        );
     }
 
     // Función para exportar a CSV/Excel

@@ -16,6 +16,7 @@ import { useUserPermissions } from '@/hooks/useUserPermissions';
 import PageLoader from '@/components/PageLoader';
 import PageContainer from '@/components/layout/PageContainer';
 import EmptyState from '@/components/EmptyState';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const ProjectDetail = () => {
   const { id: projectId } = useParams();
@@ -37,7 +38,65 @@ const ProjectDetail = () => {
     navigate(`/requisitions/${requisitionId}`);
   };
 
-  if (isLoading) return <PageLoader />;
+  if (isLoading) {
+    return (
+      <PageContainer>
+        <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
+          {/* Header Skeleton */}
+          <div className="rounded-2xl border-2 border-border bg-card p-5 shadow-lg sm:p-8">
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex w-full items-start gap-3 sm:gap-4 sm:w-auto">
+                <Skeleton className="h-11 w-11 rounded-xl" />
+                <div className="flex-1 space-y-3">
+                  <Skeleton className="h-10 w-64" />
+                  <Skeleton className="h-5 w-96" />
+                  <div className="flex flex-wrap gap-3">
+                    <Skeleton className="h-6 w-20" />
+                    <Skeleton className="h-6 w-24" />
+                    <Skeleton className="h-6 w-32" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Statistics Cards Skeleton */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="rounded-2xl border-2 border-border bg-card p-6 shadow-lg">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-9 w-16" />
+                  </div>
+                  <Skeleton className="h-8 w-8 rounded-lg" />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Content Grid Skeleton */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {[...Array(2)].map((_, i) => (
+              <div key={i} className="rounded-2xl border-2 border-border bg-card shadow-lg">
+                <div className="p-6 border-b border-border">
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="h-12 w-12 rounded-xl" />
+                    <Skeleton className="h-7 w-48" />
+                  </div>
+                </div>
+                <div className="p-6 space-y-3">
+                  {[...Array(3)].map((_, j) => (
+                    <Skeleton key={j} className="h-20 w-full rounded-xl" />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </PageContainer>
+    );
+  }
 
   if (isError || !project) {
     return (
@@ -85,7 +144,7 @@ const ProjectDetail = () => {
       <PageContainer>
         <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
           {/* Header */}
-          <header className="relative overflow-hidden rounded-2xl border-2 border-border bg-card p-5 shadow-lg sm:p-8">
+          <header className="relative overflow-hidden rounded-2xl border-2 border-border bg-card p-5 shadow-lg transition-shadow duration-300 hover:shadow-xl sm:p-8">
             <div className={`absolute top-0 left-0 right-0 h-1.5 ${currentStatus.accent}`} />
             
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
@@ -132,7 +191,7 @@ const ProjectDetail = () => {
 
           {/* Statistics Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="shadow-md border-2">
+            <Card className="shadow-lg border-2 transition-shadow duration-300 hover:shadow-xl">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -143,7 +202,7 @@ const ProjectDetail = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card className="shadow-md border-2">
+            <Card className="shadow-lg border-2 transition-shadow duration-300 hover:shadow-xl">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -154,7 +213,7 @@ const ProjectDetail = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card className="shadow-md border-2">
+            <Card className="shadow-lg border-2 transition-shadow duration-300 hover:shadow-xl">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -165,7 +224,7 @@ const ProjectDetail = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card className="shadow-md border-2">
+            <Card className="shadow-lg border-2 transition-shadow duration-300 hover:shadow-xl">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -180,7 +239,7 @@ const ProjectDetail = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Members Card */}
-            <Card className="shadow-md border-2">
+            <Card className="shadow-lg border-2 transition-shadow duration-300 hover:shadow-xl">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">
                   <div className="icon-badge flex h-12 w-12 items-center justify-center">
@@ -238,7 +297,7 @@ const ProjectDetail = () => {
             </Card>
 
             {/* Requisitions Card */}
-            <Card className="shadow-md border-2">
+            <Card className="shadow-lg border-2 transition-shadow duration-300 hover:shadow-xl">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">
                   <div className="icon-badge flex h-12 w-12 items-center justify-center">

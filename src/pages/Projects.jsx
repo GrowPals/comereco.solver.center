@@ -45,7 +45,7 @@ const ProjectCard = ({ project, onEdit, onDelete, onManageMembers, onView }) => 
   const { canManageProjects } = useUserPermissions();
   const isActive = project.status === 'active';
   return (
-    <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-border dark:bg-card">
+    <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border-2 border-border bg-card p-6 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-border dark:bg-card">
       {/* Accent bar on hover */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
 
@@ -60,7 +60,11 @@ const ProjectCard = ({ project, onEdit, onDelete, onManageMembers, onView }) => 
           {canManageProjects && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-9 w-9 rounded-xl p-0 transition-colors hover:bg-muted/70 dark:hover:bg-muted/40">
+                <Button
+                  variant="ghost"
+                  className="h-9 w-9 rounded-xl p-0 transition-colors hover:bg-muted/70 dark:hover:bg-muted/40"
+                  aria-label="Opciones del proyecto"
+                >
                   <MoreHorizontal className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>

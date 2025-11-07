@@ -167,14 +167,14 @@ const Approvals = () => {
                 ) : (
                     <div className="mx-auto w-full max-w-7xl">
                         {/* Grid de Cards */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {requisitions?.map((req) => {
                                 const isDismissing = dismissingIds.includes(req.id);
                                 return (
                                 <div
                                     key={req.id}
                                     className={cn(
-                                        'group relative cursor-pointer overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-border dark:bg-card',
+                                        'group relative cursor-pointer overflow-hidden rounded-2xl border-2 border-border bg-card shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-border dark:bg-card',
                                         isDismissing && 'pointer-events-none opacity-0 translate-y-3 scale-[0.98]'
                                     )}
                                     style={isDismissing ? { maxHeight: 0, marginTop: 0, marginBottom: 0, paddingTop: 0, paddingBottom: 0 } : undefined}
@@ -305,7 +305,7 @@ const Approvals = () => {
                         </DialogDescription>
                     </DialogHeader>
                     <div className="py-4 space-y-3">
-                        <div className="rounded-xl bg-muted/80 p-4 border-2 border-border">
+                        <div className="rounded-xl bg-muted/80 p-4 border-2 border-border shadow-md">
                             <div className="flex justify-between items-center mb-2">
                                 <span className="text-sm font-medium text-muted-foreground">Folio</span>
                                 <span className="text-lg font-bold text-foreground">#{approvalModal.folio}</span>
