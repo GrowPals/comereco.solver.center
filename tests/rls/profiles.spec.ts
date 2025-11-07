@@ -21,14 +21,17 @@ if (!url || !anonKey || !serviceKey) {
   describe('RLS: profiles_select_unified', () => {
     const resources: {
       companyId?: string;
+      platformCompanyId?: string;
       user?: { id: string; email: string; password: string };
       admin?: { id: string; email: string; password: string };
       supervisor?: { id: string; email: string; password: string };
       otherUser?: { id: string; email: string; password: string };
+      platformAdmin?: { id: string; email: string; password: string };
       userClient?: ReturnType<typeof createClient>;
       adminClient?: ReturnType<typeof createClient>;
       supervisorClient?: ReturnType<typeof createClient>;
       otherUserClient?: ReturnType<typeof createClient>;
+      platformAdminClient?: ReturnType<typeof createClient>;
       seededAdminId?: string;
     } = {};
 
@@ -101,6 +104,46 @@ if (!url || !anonKey || !serviceKey) {
       const otherUserId = await createAuthUser(otherUserEmail, otherUserPassword);
       resources.otherUser = { id: otherUserId, email: otherUserEmail, password: otherUserPassword };
 
+      const { data: platformCompany, error: platformCompanyError } = await serviceClient
+        .from('companies')
+        .insert({ name: `QA Platform Company ${suffix}` })
+        .select('id')
+        .single();
+      if (platformCompanyError) throw platformCompanyError;
+      resources.platformCompanyId = platformCompany.id;
+
+      const platformAdminEmail = mkEmail('platform');
+      const { error: platformInvitationError } = await serviceClient
+        .from('user_invitations')
+        .insert({
+          email: platformAdminEmail,
+          company_id: platformCompany.id,
+          role: 'dev',
+          invited_by: invitedById,
+        });
+      if (platformInvitationError && platformInvitationError.code !== '23505') throw platformInvitationError;
+
+      const platformAdminPassword = mkPassword();
+      const platformAdminId = await createAuthUser(platformAdminEmail, platformAdminPassword);
+      resources.platformAdmin = {
+        id: platformAdminId,
+        email: platformAdminEmail,
+        password: platformAdminPassword,
+      };
+
+      const { error: platformFlagError } = await serviceClient
+        .from('platform_admins')
+        .insert({ user_id: platformAdminId, granted_by: invitedById });
+      if (platformFlagError) throw platformFlagError;
+
+      const { error: platformProfileError } = await serviceClient.rpc('admin_upsert_profile', {
+        p_user_id: platformAdminId,
+        p_company_id: platformCompany.id,
+        p_full_name: 'Platform Admin QA',
+        p_role: 'dev',
+      });
+      if (platformProfileError) throw platformProfileError;
+
       const bootstrapClient = async (email: string, password: string) => {
         const client = createClient(url, anonKey, { auth: { persistSession: false, autoRefreshToken: false } });
         const { error } = await client.auth.signInWithPassword({ email, password });
@@ -112,6 +155,7 @@ if (!url || !anonKey || !serviceKey) {
       resources.adminClient = await bootstrapClient(adminEmail, adminPassword);
       resources.supervisorClient = await bootstrapClient(supervisorEmail, supervisorPassword);
       resources.otherUserClient = await bootstrapClient(otherUserEmail, otherUserPassword);
+      resources.platformAdminClient = await bootstrapClient(platformAdminEmail, platformAdminPassword);
     }, 20000);
 
     afterAll(async () => {
@@ -127,6 +171,13 @@ if (!url || !anonKey || !serviceKey) {
         }
         if (resources.otherUser?.id) {
           await serviceClient.auth.admin.deleteUser(resources.otherUser.id);
+        }
+        if (resources.platformAdmin?.id) {
+          await serviceClient.from('platform_admins').delete().eq('user_id', resources.platformAdmin.id);
+          await serviceClient.auth.admin.deleteUser(resources.platformAdmin.id);
+        }
+        if (resources.platformCompanyId) {
+          await serviceClient.from('companies').delete().eq('id', resources.platformCompanyId);
         }
         if (resources.companyId) {
           await serviceClient.from('user_invitations').delete().eq('company_id', resources.companyId);
@@ -199,9 +250,30 @@ if (!url || !anonKey || !serviceKey) {
       expect(profileIds).toContain(resources.otherUser?.id);
     });
 
+    test('platform admin puede ver perfiles de cualquier compañía', async () => {
+      const client = resources.platformAdminClient;
+      expect(client).toBeDefined();
+
+      const { data, error } = await client!
+        .from('profiles')
+        .select('id, company_id');
+      expect(error).toBeNull();
+      expect(data).toBeDefined();
+      const includesForeignCompany = data?.some((profile) => profile.company_id === resources.companyId) ?? false;
+      expect(includesForeignCompany).toBe(true);
+    });
+
     test('usuario puede actualizar solo su propio perfil', async () => {
       const client = resources.userClient;
       expect(client).toBeDefined();
+
+      const { data: baselineProfile, error: baselineError } = await serviceClient
+        .from('profiles')
+        .select('full_name')
+        .eq('id', resources.otherUser!.id)
+        .single();
+      expect(baselineError).toBeNull();
+      const originalFullName = baselineProfile?.full_name;
 
       // Debe poder actualizar su propio perfil
       const { error: updateOwnError } = await client!
@@ -210,12 +282,22 @@ if (!url || !anonKey || !serviceKey) {
         .eq('id', resources.user!.id);
       expect(updateOwnError).toBeNull();
 
-      // NO debe poder actualizar el perfil de otro usuario
+      // Intentar actualizar el perfil de otro usuario no debe modificarlo
       const { error: updateOtherError } = await client!
         .from('profiles')
         .update({ full_name: 'Intentando actualizar' })
         .eq('id', resources.otherUser!.id);
-      expect(updateOtherError).not.toBeNull();
+      if (updateOtherError) {
+        expect(updateOtherError.code).toBe('42501');
+      }
+
+      const { data: afterProfile, error: verifyError } = await serviceClient
+        .from('profiles')
+        .select('full_name')
+        .eq('id', resources.otherUser!.id)
+        .single();
+      expect(verifyError).toBeNull();
+      expect(afterProfile?.full_name).toBe(originalFullName);
     });
 
     test('admin puede actualizar perfiles de su compañía', async () => {
