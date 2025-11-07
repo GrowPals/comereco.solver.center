@@ -71,3 +71,11 @@ Thumbs.db
 .playwright-mcp/
 playwright-report/
 test-results/
+
+# Operational/local-only assets (not needed for Vercel deploy)
+supabase/
+backups/
+integrations/
+docs/
+maintenance-data/
+migration-data/
