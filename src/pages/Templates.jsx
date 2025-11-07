@@ -56,16 +56,16 @@ const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
 
       <div>
         <div className="mb-3 flex items-start justify-between">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 min-w-0 flex-1">
             <div className="flex items-center gap-3">
               <div className={cn(
-                "icon-badge flex h-12 w-12 items-center justify-center",
+                "icon-badge flex h-12 w-12 flex-shrink-0 items-center justify-center",
                 isFrequentlyUsed && "ring-2 ring-primary-500/50 dark:ring-primary-400/60"
               )}>
                 <LayoutTemplate className="h-6 w-6" aria-hidden="true" />
               </div>
-              <div>
-                <h3 className="text-xl font-bold text-foreground">{template.name}</h3>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-xl font-bold text-foreground break-words">{template.name}</h3>
                 {isFrequentlyUsed && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-primary-100 px-2 py-0.5 text-xs font-semibold text-primary-700 dark:bg-primary-500/20 dark:text-primary-300">
                     <Zap className="h-3 w-3" />
@@ -247,12 +247,12 @@ const TemplatesPage = () => {
       <PageContainer className="pb-24 sm:pb-16">
         <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
           <header className="flex flex-col gap-6 border-b border-border pb-6 sm:flex-row sm:items-center sm:justify-between sm:pb-8 dark:border-border">
-            <div className="flex w-full items-start gap-3 sm:items-center sm:gap-4">
+            <div className="flex w-full items-start gap-3 sm:items-center sm:gap-4 min-w-0">
             <div className="icon-badge flex h-12 w-12 flex-shrink-0 items-center justify-center sm:h-14 sm:w-14">
                 <LayoutTemplate className="h-6 w-6 sm:h-7 sm:w-7" aria-hidden="true" />
               </div>
-              <div className="min-w-0">
-                <h1 className="mb-1 text-xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
+              <div className="min-w-0 flex-1">
+                <h1 className="mb-1 text-xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl break-words">
                   Plantillas de <span className="bg-gradient-primary bg-clip-text text-transparent">Requisición</span>
                 </h1>
                 <p className="text-sm text-muted-foreground sm:text-lg">Reutiliza tus pedidos frecuentes con un solo clic.</p>

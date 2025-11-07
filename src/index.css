@@ -667,16 +667,16 @@
   /* Utility surfaces */
   .surface-card {
     background: var(--surface-contrast);
-    border: 1px solid rgba(15, 23, 42, 0.1);
-    box-shadow: var(--shadow-card);
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.04);
     border-radius: 24px;
     transition: box-shadow 200ms ease;
   }
 
   .surface-panel {
-    background: var(--surface-subtle);
-    border: 1px solid rgba(15, 23, 42, 0.09);
-    box-shadow: var(--shadow-soft-lg);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(249, 250, 251, 0.95) 100%);
+    border: 1px solid rgba(15, 23, 42, 0.04);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.03);
     border-radius: 28px;
     transition: box-shadow 220ms ease;
   }
@@ -684,8 +684,8 @@
   .surface-overlay {
     background: var(--surface-overlay);
     border-radius: 24px;
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    box-shadow: var(--shadow-floating);
+    border: 1px solid rgba(15, 23, 42, 0.05);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.04);
   }
 
   .dark .surface-overlay {
@@ -745,9 +745,9 @@
   .icon-badge,
   .metric-icon,
   .stat-icon {
-    background: var(--primary-50);
-    border: 1px solid var(--primary-200);
-    box-shadow: var(--shadow-xs);
+    background: linear-gradient(135deg, rgba(239, 246, 255, 0.9) 0%, rgba(219, 234, 254, 0.7) 100%);
+    border: 1px solid rgba(59, 130, 246, 0.08);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
     color: var(--primary-600);
     border-radius: 999px;
   }
@@ -862,9 +862,9 @@
 
   .stat-icon,
   .metric-icon {
-    background: var(--primary-50);
-    border: 1px solid rgba(200, 215, 255, 0.6);
-    box-shadow: var(--shadow-xs);
+    background: linear-gradient(135deg, rgba(239, 246, 255, 0.9) 0%, rgba(219, 234, 254, 0.7) 100%);
+    border: 1px solid rgba(59, 130, 246, 0.08);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
     color: var(--primary-600);
   }
 
