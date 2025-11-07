@@ -133,7 +133,7 @@ const UserForm = ({ user, onSave, onCancel, isLoading, approvalBypassSupported, 
                 </Select>
             </div>
             {showApprovalToggle && (
-              <div className="flex items-center justify-between rounded-xl border border-border bg-muted/60 px-4 py-3 dark:border-border dark:bg-card/60">
+              <div className="flex items-center justify-between rounded-xl border border-border bg-muted/85 px-4 py-3 dark:border-border dark:bg-card/85">
                 <div className="pr-4">
                   <Label className="text-sm font-medium text-foreground">Envío directo de requisiciones</Label>
                   <p className="text-xs text-muted-foreground">Permite que este usuario envíe requisiciones sin aprobación previa del supervisor.</p>
@@ -405,7 +405,7 @@ const Users = () => {
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="h-9 w-9 rounded-xl border border-border text-muted-foreground transition-colors hover:bg-muted/70 dark:border-border dark:hover:bg-muted/40"
+                                                        className="h-9 w-9 rounded-xl border border-border text-muted-foreground transition-colors hover:bg-muted/85 dark:border-border dark:hover:bg-muted/70"
                                                         aria-label={`Acciones para ${resolveUserLabel(user)}`}
                                                     >
                                                         <MoreHorizontal className="h-4 w-4" />
@@ -468,7 +468,7 @@ const Users = () => {
                         </TableHeader>
                         <TableBody>
                             {users?.map((user) => (
-                                <TableRow key={user.id} className="transition-colors hover:bg-muted/70 dark:hover:bg-muted/40/60">
+                                <TableRow key={user.id} className="transition-colors hover:bg-muted/85 dark:hover:bg-muted/70">
                                     <TableCell>
                                         <div className="flex items-center space-x-3">
                                             <Avatar className="h-11 w-11 border-2 border-border dark:border-border">
@@ -510,7 +510,7 @@ const Users = () => {
                                             <DropdownMenuTrigger asChild>
                                                 <Button
                                                     variant="ghost"
-                                                    className="h-9 w-9 rounded-xl p-0 transition-colors hover:bg-muted/70 dark:hover:bg-muted/40"
+                                                    className="h-9 w-9 rounded-xl p-0 transition-colors hover:bg-muted/85 dark:hover:bg-muted/70"
                                                     aria-label={`Acciones para ${resolveUserLabel(user)}`}
                                                 >
                                                     <MoreHorizontal className="h-5 w-5" aria-hidden="true" />

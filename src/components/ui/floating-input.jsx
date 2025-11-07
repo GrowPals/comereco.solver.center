@@ -4,12 +4,31 @@ import { cn } from "@/lib/utils"
 const FloatingInput = React.forwardRef(({ className, type, label, icon, error, ...props }, ref) => {
   const [isFocused, setIsFocused] = React.useState(false);
   const [hasValue, setHasValue] = React.useState(false);
+  const inputRef = React.useRef(null);
+
+  // Detect if input has value on mount and when props change
+  React.useEffect(() => {
+    const input = inputRef.current;
+    if (input && input.value) {
+      setHasValue(true);
+    }
+  }, [props.value, props.defaultValue]);
 
   const handleFocus = () => setIsFocused(true);
   const handleBlur = (e) => {
     setIsFocused(false);
     setHasValue(e.target.value !== '');
   };
+
+  // Combine refs to handle both internal and forwarded refs
+  const setRefs = React.useCallback((element) => {
+    inputRef.current = element;
+    if (typeof ref === 'function') {
+      ref(element);
+    } else if (ref) {
+      ref.current = element;
+    }
+  }, [ref]);
 
   const isFloating = isFocused || hasValue || props.value || props.defaultValue;
 
@@ -38,7 +57,7 @@ const FloatingInput = React.forwardRef(({ className, type, label, icon, error, .
           error && "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-200/30 dark:border-red-600 dark:focus-visible:ring-red-500/25",
           className
         )}
-        ref={ref}
+        ref={setRefs}
         onFocus={handleFocus}
         onBlur={handleBlur}
         placeholder={label}
