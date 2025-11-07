@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { ArrowLeft, Check, X, Send, FileText, MessageSquare, FolderOpen } from 'lucide-react';
+import { ArrowLeft, Check, X, Send, FileText, MessageSquare, FolderOpen, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { supabase } from '@/lib/customSupabaseClient';
@@ -40,6 +41,7 @@ const RequisitionDetail = () => {
     const { submit, isSubmitting, approve, isApproving, reject, isRejecting } = useRequisitionActions();
 
     const [rejectionReason, setRejectionReason] = useState('');
+    const [approvalDialogOpen, setApprovalDialogOpen] = useState(false);
 
     const handleNavigateBack = useCallback(() => {
         navigate(-1);
@@ -96,8 +98,9 @@ const RequisitionDetail = () => {
         submit(requisitionId);
     }, [submit, requisitionId]);
 
-    const handleApprove = useCallback(() => {
+    const handleApproveConfirm = useCallback(() => {
         approve(requisitionId);
+        setApprovalDialogOpen(false);
     }, [approve, requisitionId]);
 
     // CORREGIDO: Según documentación técnica oficial, el campo es created_by
@@ -295,28 +298,93 @@ const RequisitionDetail = () => {
                                     )}
                                     {canApproveRequisitions && business_status === 'submitted' && (
                                         <>
-                                            <Button
-                                                className="w-full shadow-md hover:shadow-lg"
-                                                variant="accent"
-                                                size="lg"
-                                                onClick={handleApprove}
-                                                disabled={actionLoading}
-                                            >
-                                                <Check className="mr-2 h-5 w-5" aria-hidden="true" />
-                                                Aprobar
-                                            </Button>
+                                            <Dialog open={approvalDialogOpen} onOpenChange={setApprovalDialogOpen}>
+                                                <TooltipProvider>
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <DialogTrigger asChild>
+                                                                <Button
+                                                                    className="w-full shadow-md hover:shadow-lg"
+                                                                    variant="accent"
+                                                                    size="lg"
+                                                                    disabled={actionLoading}
+                                                                >
+                                                                    <Check className="mr-2 h-5 w-5" aria-hidden="true" />
+                                                                    Aprobar
+                                                                </Button>
+                                                            </DialogTrigger>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>
+                                                            <p>Aprobar requisición #{internal_folio}</p>
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                </TooltipProvider>
+                                                <DialogContent className="sm:max-w-md">
+                                                    <DialogHeader>
+                                                        <DialogTitle className="text-2xl flex items-center gap-2">
+                                                            <CheckCircle className="h-6 w-6 text-emerald-600" />
+                                                            Confirmar Aprobación
+                                                        </DialogTitle>
+                                                        <DialogDescription className="text-base">
+                                                            ¿Estás seguro de que deseas aprobar esta requisición?
+                                                        </DialogDescription>
+                                                    </DialogHeader>
+                                                    <div className="py-4 space-y-3">
+                                                        <div className="rounded-xl bg-muted/80 p-4 border-2 border-border">
+                                                            <div className="flex justify-between items-center mb-2">
+                                                                <span className="text-sm font-medium text-muted-foreground">Folio</span>
+                                                                <span className="text-lg font-bold text-foreground">#{internal_folio}</span>
+                                                            </div>
+                                                            <div className="flex justify-between items-center">
+                                                                <span className="text-sm font-medium text-muted-foreground">Monto Total</span>
+                                                                <span className="text-2xl font-bold text-emerald-600">${(Number(total_amount) || 0).toFixed(2)}</span>
+                                                            </div>
+                                                        </div>
+                                                        <p className="text-sm text-muted-foreground">
+                                                            Esta acción aprobará la requisición y permitirá que se procese para su orden de compra.
+                                                        </p>
+                                                    </div>
+                                                    <DialogFooter className="gap-3">
+                                                        <Button
+                                                            variant="ghost"
+                                                            onClick={() => setApprovalDialogOpen(false)}
+                                                            className="rounded-xl"
+                                                        >
+                                                            Cancelar
+                                                        </Button>
+                                                        <Button
+                                                            variant="success"
+                                                            onClick={handleApproveConfirm}
+                                                            isLoading={isApproving}
+                                                            className="rounded-xl"
+                                                        >
+                                                            <Check className="h-5 w-5 mr-2" />
+                                                            Confirmar Aprobación
+                                                        </Button>
+                                                    </DialogFooter>
+                                                </DialogContent>
+                                            </Dialog>
                                             <Dialog>
-                                                <DialogTrigger asChild>
-                                                    <Button
-                                                        className="w-full shadow-md hover:shadow-lg"
-                                                        variant="destructive"
-                                                        size="lg"
-                                                        disabled={actionLoading}
-                                                    >
-                                                        <X className="mr-2 h-5 w-5" aria-hidden="true" />
-                                                        Rechazar
-                                                    </Button>
-                                                </DialogTrigger>
+                                                <TooltipProvider>
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <DialogTrigger asChild>
+                                                                <Button
+                                                                    className="w-full shadow-md hover:shadow-lg"
+                                                                    variant="destructive"
+                                                                    size="lg"
+                                                                    disabled={actionLoading}
+                                                                >
+                                                                    <X className="mr-2 h-5 w-5" aria-hidden="true" />
+                                                                    Rechazar
+                                                                </Button>
+                                                            </DialogTrigger>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>
+                                                            <p>Rechazar requisición con motivo</p>
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                </TooltipProvider>
                                                 <DialogContent className="sm:max-w-md">
                                                     <DialogHeader>
                                                         <DialogTitle className="text-2xl font-bold">Rechazar Requisición</DialogTitle>
