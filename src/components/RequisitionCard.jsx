@@ -171,7 +171,7 @@ const RequisitionCard = memo(({ requisition }) => {
                   handleCardClick();
                 }}
                 className="rounded-xl text-primary-600 transition-transform duration-200 hover:bg-primary/10 hover:text-primary-700 group-hover:translate-x-1 dark:hover:bg-primary/20"
-                aria-label={`Ver detalles de requisición ${requisition.internal_folio}`}
+                aria-label={`Ver detalles completos de la requisición ${requisition.internal_folio}`}
               >
                 Ver Detalle <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
               </Button>

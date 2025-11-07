@@ -64,10 +64,7 @@ const StatCard = ({ icon: Icon, title, value, subtitle, color = 'blue', trend })
 };
 
 // Componente de gráfico de barras simple (sin dependencias externas)
-const APPROVED_GRADIENT = 'linear-gradient(90deg, #4f8b72 0%, #2f6650 100%)';
-const PENDING_GRADIENT = 'linear-gradient(90deg, #f1b567 0%, #d58a2a 100%)';
-const BAR_GRADIENT = 'linear-gradient(90deg, #6c7bd0 0%, #3f4f99 100%)';
-
+// Usando variables CSS theme-aware para gradientes
 const SimpleBarChart = ({ data, title, subtitle, dataKey, nameKey }) => {
     if (!data || data.length === 0) {
         return (
@@ -106,7 +103,7 @@ const SimpleBarChart = ({ data, title, subtitle, dataKey, nameKey }) => {
                                 <div className="w-full h-3.5 rounded-full bg-muted/80">
                                     <div
                                         className="h-full rounded-full transition-all duration-500"
-                                        style={{ width: `${percentage}%`, background: BAR_GRADIENT }}
+                                        style={{ width: `${percentage}%`, background: 'var(--gradient-chart-bar)' }}
                                     />
                                 </div>
                             </div>
@@ -150,11 +147,11 @@ const MonthlyTrendChart = ({ data }) => {
                 <div className="space-y-6">
                     <div className="flex justify-end gap-4">
                         <div className="flex items-center gap-2">
-                            <div className="h-3 w-3 rounded-full" style={{ background: APPROVED_GRADIENT }} />
+                            <div className="h-3 w-3 rounded-full" style={{ background: 'var(--gradient-chart-approved)' }} />
                             <span className="text-xs font-medium text-muted-foreground">Aprobadas</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <div className="h-3 w-3 rounded-full" style={{ background: PENDING_GRADIENT }} />
+                            <div className="h-3 w-3 rounded-full" style={{ background: 'var(--gradient-chart-pending)' }} />
                             <span className="text-xs font-medium text-muted-foreground">Pendientes</span>
                         </div>
                     </div>
@@ -182,7 +179,7 @@ const MonthlyTrendChart = ({ data }) => {
                                     <div className="flex h-8 gap-1">
                                         <div
                                             className="flex items-center justify-center rounded-lg px-2 text-xs font-semibold text-white transition-all duration-500"
-                                            style={{ width: `${approvedPercentage}%`, background: APPROVED_GRADIENT }}
+                                            style={{ width: `${approvedPercentage}%`, background: 'var(--gradient-chart-approved)' }}
                                         >
                                             {approvedPercentage > 15 && (
                                                 <span>
@@ -192,7 +189,7 @@ const MonthlyTrendChart = ({ data }) => {
                                         </div>
                                         <div
                                             className="flex items-center justify-center rounded-lg px-2 text-xs font-semibold text-white transition-all duration-500"
-                                            style={{ width: `${pendingPercentage}%`, background: PENDING_GRADIENT }}
+                                            style={{ width: `${pendingPercentage}%`, background: 'var(--gradient-chart-pending)' }}
                                         >
                                             {pendingPercentage > 15 && (
                                                 <span>
