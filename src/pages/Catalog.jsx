@@ -176,7 +176,7 @@ const CatalogPage = () => {
 
                 <div className="space-y-4">
                   <div className="relative">
-                    <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-foreground/60 transition-colors dark:text-muted-foreground/70" />
+                    <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-foreground/70 transition-colors dark:text-muted-foreground" />
                     <Input
                       value={searchTerm}
                       onChange={handleSearchChange}
@@ -186,7 +186,7 @@ const CatalogPage = () => {
                     {searchTerm && (
                       <button
                         onClick={() => setSearchTerm('')}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/70 transition-colors hover:text-foreground/80 dark:hover:text-foreground"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground dark:hover:text-foreground"
                         aria-label="Limpiar búsqueda"
                       >
                         <X className="h-5 w-5" />
@@ -197,16 +197,16 @@ const CatalogPage = () => {
                     <p>
                       <span className="font-semibold text-foreground">{totalCount}</span> productos disponibles
                       {debouncedSearchTerm && (
-                        <span className="ml-2 text-muted-foreground/80">“{debouncedSearchTerm}”</span>
+                        <span className="ml-2 text-muted-foreground">"{debouncedSearchTerm}"</span>
                       )}
                       {category !== 'all' && (
-                        <span className="ml-2 text-muted-foreground/80">· {category}</span>
+                        <span className="ml-2 text-muted-foreground">· {category}</span>
                       )}
                       {includeOutOfStock && (
-                        <span className="ml-2 text-muted-foreground/80">· Incluye sin stock</span>
+                        <span className="ml-2 text-muted-foreground">· Incluye sin stock</span>
                       )}
                     </p>
-                    {isFetching && <span className="text-xs text-muted-foreground/70">Actualizando…</span>}
+                    {isFetching && <span className="text-xs text-muted-foreground">Actualizando…</span>}
                   </div>
                 </div>
 
@@ -214,7 +214,7 @@ const CatalogPage = () => {
                   <div className="flex w-full items-center justify-between rounded-2xl border border-border/80 bg-white/95 px-4 py-3 text-sm shadow-sm transition-colors dark:border-border dark:bg-card">
                     <Label
                       htmlFor="availability-toggle-desktop"
-                      className="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+                      className="cursor-pointer text-xs font-semibold uppercase tracking-wide text-foreground/80"
                     >
                       Incluir productos sin stock
                     </Label>
@@ -304,10 +304,10 @@ const CatalogPage = () => {
                     </Select>
                   </div>
 
-                  <div className="mt-3 flex items-center justify-between rounded-2xl border border-border/80 bg-[var(--surface-overlay-strong)] px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground shadow-sm transition-colors dark:border-border/70 dark:bg-[var(--surface-overlay)] dark:text-muted-foreground">
+                  <div className="mt-3 flex items-center justify-between rounded-2xl border border-border/80 bg-[var(--surface-overlay-strong)] px-4 py-3 text-xs font-semibold uppercase tracking-wide shadow-sm transition-colors dark:border-border/70 dark:bg-[var(--surface-overlay)]">
                     <Label
                       htmlFor="availability-toggle-mobile"
-                      className="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+                      className="cursor-pointer text-xs font-semibold uppercase tracking-wide text-foreground/80"
                     >
                       Incluir sin stock
                     </Label>
@@ -320,12 +320,12 @@ const CatalogPage = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between text-[11px] uppercase tracking-wide text-muted-foreground/80">
+                <div className="flex items-center justify-between text-[11px] uppercase tracking-wide text-muted-foreground">
                   <span>
                     <span className="text-base font-semibold text-foreground">{totalCount}</span> productos
-                    {includeOutOfStock && <span className="ml-1 text-muted-foreground/70">· Incluye sin stock</span>}
+                    {includeOutOfStock && <span className="ml-1 text-muted-foreground">· Incluye sin stock</span>}
                   </span>
-                  {isFetching && <span className="text-[11px] text-muted-foreground/70">Actualizando…</span>}
+                  {isFetching && <span className="text-[11px] text-muted-foreground">Actualizando…</span>}
                 </div>
               </div>
             )}
