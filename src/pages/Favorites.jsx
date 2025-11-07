@@ -124,7 +124,7 @@ const FavoritesPage = () => {
                             title="Aún no tienes favoritos"
                             description="Explora el catálogo y marca los productos que más te gustan para encontrarlos aquí fácilmente."
                             actionButton={
-                                <Button onClick={() => navigate('/catalog')} size="lg" className="shadow-lg hover:shadow-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
+                                <Button onClick={() => navigate('/catalog')} size="lg" className="shadow-lg hover:shadow-xl bg-gradient-to-r from-primary-500 to-primary-700 hover:from-primary-600 hover:to-primary-800">
                                     <ShoppingBag className="mr-2 h-5 w-5" />
                                     Explorar Catálogo
                                 </Button>
