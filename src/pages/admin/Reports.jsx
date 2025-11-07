@@ -28,6 +28,7 @@ import PageContainer from '@/components/layout/PageContainer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import logger from '@/utils/logger';
 import { useToast } from '@/components/ui/useToast';
 import { cn } from '@/lib/utils';
 
@@ -369,7 +370,7 @@ const ReportsPage = () => {
                 variant: 'success'
             });
         } catch (error) {
-            console.error('Error exportando a Excel:', error);
+            logger.error('Error exporting to Excel:', error);
             toast({
                 title: 'Error al exportar',
                 description: 'No se pudo generar el archivo de exportación.',

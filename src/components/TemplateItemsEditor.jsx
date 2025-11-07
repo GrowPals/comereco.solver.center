@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Plus, Trash2, Package, Search, Loader2, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -78,17 +78,23 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
     enabled: productIds.length > 0,
   });
 
-  // Crear map de productos para lookup rápido
-  const itemProductsMap = itemProducts.reduce((acc, p) => ({ ...acc, [p.id]: p }), {});
+  // Crear map de productos para lookup rápido (memoizado para evitar recalculo en cada render)
+  const itemProductsMap = useMemo(
+    () => itemProducts.reduce((acc, p) => ({ ...acc, [p.id]: p }), {}),
+    [itemProducts]
+  );
 
-  // Filtrar productos disponibles para agregar
-  const availableProducts = products.filter(p => {
-    const alreadyAdded = localItems.some(item => item.product_id === p.id);
-    const matchesSearch = !searchQuery ||
-      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.sku?.toLowerCase().includes(searchQuery.toLowerCase());
-    return !alreadyAdded && matchesSearch;
-  });
+  // Filtrar productos disponibles para agregar (memoizado para evitar filtrado costoso en cada render)
+  const availableProducts = useMemo(
+    () => products.filter(p => {
+      const alreadyAdded = localItems.some(item => item.product_id === p.id);
+      const matchesSearch = !searchQuery ||
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.sku?.toLowerCase().includes(searchQuery.toLowerCase());
+      return !alreadyAdded && matchesSearch;
+    }),
+    [products, localItems, searchQuery]
+  );
 
   const handleAddItem = () => {
     if (!selectedProductId || quantity <= 0) return;
