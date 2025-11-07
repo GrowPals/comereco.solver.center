@@ -34,10 +34,10 @@ const MenuItem = memo(({ to, icon: Icon, children, onClick, badge }) => {
                 {/* Icon */}
                 <Icon
                     className={cn(
-                        'w-5 h-5 flex-shrink-0 transition-colors',
+                        'icon-md flex-shrink-0 transition-colors duration-200',
                         isActive
-                            ? 'text-primary-700 dark:text-primary-200'
-                            : 'text-neutral-500 dark:text-neutral-400'
+                            ? 'text-primary-700 dark:text-primary-300'
+                            : 'text-neutral-600 dark:text-neutral-300 group-hover:text-primary-600 dark:group-hover:text-primary-400'
                     )}
                 />
 
@@ -170,7 +170,7 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
                     className="flex h-11 w-11 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted/60 shadow-none hover:shadow-none active:shadow-none dark:border-border dark:text-muted-foreground dark:hover:bg-muted/40 dark:shadow-[0_20px_46px_rgba(5,12,28,0.5)]"
                     aria-label="Cerrar menú"
                 >
-                    <X className="h-5 w-5" />
+                    <X className="icon-md" />
                 </button>
             </div>
             {/* Header del Sidebar - Perfil del Usuario */}
@@ -190,7 +190,7 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
                                 {isAdmin ? 'Administrador' : isSupervisor ? 'Supervisor' : 'Usuario'}
                             </span>
                         </div>
-                        <ChevronRight className="h-5 w-5 flex-shrink-0 text-muted-foreground" />
+                        <ChevronRight className="icon-md flex-shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1" />
                     </div>
                 </NavLink>
             </div>
@@ -245,7 +245,7 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
                     className="group flex w-full items-center gap-3 px-4 py-3 rounded-lg font-medium text-sm text-neutral-700 dark:text-neutral-300 hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-600 dark:hover:text-red-400 transition-all duration-200"
                     aria-label="Cerrar sesión"
                 >
-                    <LogOut className="w-5 h-5 flex-shrink-0" />
+                    <LogOut className="icon-md flex-shrink-0 transition-colors" />
                     <span>Cerrar Sesión</span>
                 </button>
             </div>

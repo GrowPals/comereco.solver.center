@@ -47,7 +47,7 @@ const BottomNav = memo(({ onMenuClick, isMenuOpen = false }) => {
                             >
                                 <ItemIcon
                                     className={cn(
-                                        'nav-icon h-6 w-6',
+                                        'nav-icon icon-lg transition-colors duration-200',
                                         isItemActive ? 'nav-icon-active' : 'group-hover:text-[var(--nav-label-active)]'
                                     )}
                                     aria-hidden="true"
@@ -72,7 +72,7 @@ const BottomNav = memo(({ onMenuClick, isMenuOpen = false }) => {
                     aria-label="Ir al catálogo de productos"
                 >
                     <div className="relative -mt-2 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary-500 to-primary-600 shadow-button transition-all duration-300 hover:shadow-button-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-2 focus-visible:ring-offset-background group-active:scale-95">
-                        <Plus className="h-7 w-7 text-white transition-transform duration-200 group-hover:scale-110 drop-shadow-[0_0_12px_rgba(255,255,255,0.45)]" aria-hidden="true" />
+                        <Plus className="h-7 w-7 text-white transition-transform duration-200 group-hover:scale-110 drop-shadow-[0_2px_12px_rgba(255,255,255,0.4)]" aria-hidden="true" />
                     </div>
                     <span className="nav-label nav-label-active mt-1 font-semibold">
                         Agregar
@@ -100,7 +100,7 @@ const BottomNav = memo(({ onMenuClick, isMenuOpen = false }) => {
                             >
                                 <ItemIcon
                                     className={cn(
-                                        'nav-icon h-6 w-6',
+                                        'nav-icon icon-lg transition-colors duration-200',
                                         isItemActive ? 'nav-icon-active' : 'group-hover:text-[var(--nav-label-active)]'
                                     )}
                                     aria-hidden="true"
@@ -134,7 +134,7 @@ const BottomNav = memo(({ onMenuClick, isMenuOpen = false }) => {
                     >
                         <Menu
                             className={cn(
-                                'nav-icon h-6 w-6',
+                                'nav-icon icon-lg transition-colors duration-200',
                                 isMenuOpen ? 'nav-icon-active' : 'group-hover:text-[var(--nav-label-active)]'
                             )}
                             aria-hidden="true"

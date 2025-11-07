@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Building, Globe } from 'lucide-react';
+import { Building2, Globe2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useCompanyScope } from '@/context/CompanyScopeContext';
 import { useToast } from '@/components/ui/useToast';
@@ -36,9 +35,9 @@ const CompanySwitcher = ({ variant = 'default' }) => {
     if (variant === 'icon') return null;
 
     return (
-      <div className="flex items-center gap-3 rounded-full border border-primary-200/50 bg-white/80 px-4 py-2.5 text-sm text-primary-600 shadow-sm dark:border-primary-500/30 dark:bg-[rgba(20,33,61,0.85)]">
-        <div className="company-badge-icon">
-          <Building className="h-4 w-4 animate-pulse" />
+      <div className="flex items-center gap-3 rounded-full border border-border bg-card/60 px-5 py-2.5 text-sm text-muted-foreground shadow-sm backdrop-blur-sm">
+        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10">
+          <Building2 className="icon-sm animate-pulse text-primary-600 dark:text-primary-400" />
         </div>
         <span className="font-medium">Cargando...</span>
       </div>
@@ -53,13 +52,13 @@ const CompanySwitcher = ({ variant = 'default' }) => {
     // En variante default, mostrar la empresa asignada (solo lectura)
     const companyName = companies[0]?.name || 'Empresa no asignada';
     return (
-      <div className="flex min-w-[260px] max-w-[300px] items-center gap-3 rounded-full border border-primary-200/50 bg-white/80 px-4 py-2.5 shadow-sm dark:border-primary-500/30 dark:bg-[rgba(20,33,61,0.85)]">
-        <div className="company-badge-icon">
-          <Building className="h-4 w-4" />
+      <div className="flex min-w-[240px] max-w-[280px] items-center gap-3 rounded-2xl border border-border bg-card px-5 py-3 shadow-sm backdrop-blur-sm">
+        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-sm">
+          <Building2 className="icon-sm text-white" />
         </div>
         <div className="flex flex-col overflow-hidden">
-          <span className="text-[0.625rem] font-semibold uppercase tracking-wider text-primary-600/70 dark:text-primary-300/70">
-            Empresa activa
+          <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Empresa
           </span>
           <span className="truncate text-sm font-bold text-foreground">
             {companyName}
@@ -104,7 +103,7 @@ const CompanySwitcher = ({ variant = 'default' }) => {
     ? 'Todas las empresas'
     : companies.find(c => c.id === activeCompanyId)?.name || 'Selecciona una empresa';
 
-  // Variante de ícono para móvil - Solo mostrar el badge icon (más legible que un punto)
+  // Variante de ícono para móvil - Badge visual mejorado
   if (variant === 'icon') {
     return (
       <>
@@ -114,20 +113,28 @@ const CompanySwitcher = ({ variant = 'default' }) => {
               <button
                 onClick={() => setIsDialogOpen(true)}
                 className={cn(
-                  'company-badge-icon',
-                  'h-11 w-11 cursor-pointer transition-all duration-300',
-                  isChanging && 'ring-2 ring-primary-400/50 ring-offset-2 ring-offset-background dark:ring-cyan-400/60'
+                  'relative flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-card shadow-sm transition-all duration-300',
+                  'hover:shadow-md hover:scale-105 active:scale-95',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
+                  isChanging && 'ring-2 ring-primary-500/50 ring-offset-2 ring-offset-background'
                 )}
                 aria-label="Selector de empresa"
               >
-                {isGlobalView ? (
-                  <Globe className={cn('h-5 w-5 transition-transform duration-300', isChanging && 'scale-110')} />
-                ) : (
-                  <Building className={cn('h-5 w-5 transition-transform duration-300', isChanging && 'scale-110')} />
-                )}
+                <div className={cn(
+                  'flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-300',
+                  isGlobalView
+                    ? 'bg-gradient-to-br from-blue-500 to-indigo-600'
+                    : 'bg-gradient-to-br from-primary-500 to-primary-600'
+                )}>
+                  {isGlobalView ? (
+                    <Globe2 className={cn('icon-sm text-white transition-transform duration-300', isChanging && 'scale-110')} />
+                  ) : (
+                    <Building2 className={cn('icon-sm text-white transition-transform duration-300', isChanging && 'scale-110')} />
+                  )}
+                </div>
               </button>
             </TooltipTrigger>
-            <TooltipContent>
+            <TooltipContent side="bottom">
               <p className="text-xs font-medium">
                 {isGlobalView ? 'Vista global' : activeCompanyName}
               </p>
@@ -137,29 +144,58 @@ const CompanySwitcher = ({ variant = 'default' }) => {
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="text-lg font-bold">Seleccionar Empresa</DialogTitle>
+            <DialogHeader className="space-y-3">
+              <DialogTitle className="text-xl font-bold">Cambiar Empresa</DialogTitle>
               <DialogDescription className="text-sm">
-                Vista actual: <span className="font-semibold text-foreground">{activeCompanyName}</span>
+                Selecciona la empresa que deseas gestionar
               </DialogDescription>
             </DialogHeader>
-            <div className="flex flex-col gap-3 py-4">
+            <div className="flex flex-col gap-4 py-4">
+              {/* Vista actual */}
+              <div className="flex items-center gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3">
+                <div className={cn(
+                  'flex h-10 w-10 items-center justify-center rounded-lg',
+                  isGlobalView
+                    ? 'bg-gradient-to-br from-blue-500 to-indigo-600'
+                    : 'bg-gradient-to-br from-primary-500 to-primary-600'
+                )}>
+                  {isGlobalView ? (
+                    <Globe2 className="icon-md text-white" />
+                  ) : (
+                    <Building2 className="icon-md text-white" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    Vista actual
+                  </p>
+                  <p className="text-sm font-bold text-foreground">
+                    {activeCompanyName}
+                  </p>
+                </div>
+              </div>
+
+              {/* Selector */}
               <Select value={selectValue} onValueChange={handleChange}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="h-12">
                   <SelectValue placeholder="Selecciona una empresa" />
                 </SelectTrigger>
                 <SelectContent className="max-h-64">
                   <SelectItem value="all">
-                    <div className="flex items-center gap-2">
-                      <Globe className="h-4 w-4" />
-                      <span>Todas las empresas</span>
+                    <div className="flex items-center gap-3 py-1">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600">
+                        <Globe2 className="icon-sm text-white" />
+                      </div>
+                      <span className="font-medium">Todas las empresas</span>
                     </div>
                   </SelectItem>
                   {companies.map((company) => (
                     <SelectItem key={company.id} value={company.id}>
-                      <div className="flex items-center gap-2">
-                        <Building className="h-4 w-4" />
-                        <span>{company.name}</span>
+                      <div className="flex items-center gap-3 py-1">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary-500 to-primary-600">
+                          <Building2 className="icon-sm text-white" />
+                        </div>
+                        <span className="font-medium">{company.name}</span>
                       </div>
                     </SelectItem>
                   ))}
@@ -172,45 +208,58 @@ const CompanySwitcher = ({ variant = 'default' }) => {
     );
   }
 
-  // Variante default para desktop - Pill design con gradient badge
+  // Variante default para desktop - Diseño limpio y elegante
   return (
     <div
       className={cn(
-        'flex min-w-[260px] max-w-[300px] items-center gap-3 rounded-full border border-primary-200/50 bg-white/80 px-4 py-2.5 shadow-sm backdrop-blur-sm transition-all duration-300',
-        'dark:border-primary-500/30 dark:bg-[rgba(20,33,61,0.85)]',
-        isChanging && 'ring-2 ring-primary-400/50 ring-offset-2 ring-offset-background dark:ring-cyan-400/60'
+        'group relative flex min-w-[220px] max-w-[280px] items-center gap-3 rounded-2xl border border-border bg-card px-5 py-3 shadow-sm backdrop-blur-sm transition-all duration-300',
+        'hover:shadow-md hover:border-primary-300/50 dark:hover:border-primary-500/50',
+        isChanging && 'ring-2 ring-primary-500/50 ring-offset-2 ring-offset-background'
       )}
     >
-      <div className={cn('company-badge-icon', isChanging && 'scale-110')}>
+      {/* Badge visual */}
+      <div className={cn(
+        'flex h-9 w-9 items-center justify-center rounded-xl shadow-sm transition-all duration-300',
+        isGlobalView
+          ? 'bg-gradient-to-br from-blue-500 to-indigo-600 group-hover:shadow-md'
+          : 'bg-gradient-to-br from-primary-500 to-primary-600 group-hover:shadow-md',
+        isChanging && 'scale-110'
+      )}>
         {isGlobalView ? (
-          <Globe className="h-4 w-4 transition-transform duration-300" />
+          <Globe2 className="icon-sm text-white transition-transform duration-300" />
         ) : (
-          <Building className="h-4 w-4 transition-transform duration-300" />
+          <Building2 className="icon-sm text-white transition-transform duration-300" />
         )}
       </div>
+
+      {/* Selector y label */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        <span className="text-[0.625rem] font-semibold uppercase tracking-wider text-primary-600/70 dark:text-primary-300/70">
-          {isGlobalView ? 'Vista global' : 'Empresa activa'}
+        <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          {isGlobalView ? 'Vista global' : 'Empresa'}
         </span>
         <Select value={selectValue} onValueChange={handleChange}>
-          <SelectTrigger className="h-auto border-0 bg-transparent p-0 shadow-none focus:ring-0 focus:ring-offset-0">
+          <SelectTrigger className="h-auto border-0 bg-transparent p-0 text-sm font-bold text-foreground shadow-none hover:text-primary-600 focus:ring-0 focus:ring-offset-0 dark:hover:text-primary-400">
             <SelectValue
               placeholder="Selecciona una empresa"
-              className="truncate text-sm font-bold text-foreground"
+              className="truncate"
             />
           </SelectTrigger>
-          <SelectContent className="max-h-64">
+          <SelectContent className="max-h-64 min-w-[280px]">
             <SelectItem value="all">
-              <div className="flex items-center gap-2">
-                <Globe className="h-4 w-4" />
-                <span>Todas las empresas</span>
+              <div className="flex items-center gap-3 py-1">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600">
+                  <Globe2 className="icon-sm text-white" />
+                </div>
+                <span className="font-medium">Todas las empresas</span>
               </div>
             </SelectItem>
             {companies.map((company) => (
               <SelectItem key={company.id} value={company.id}>
-                <div className="flex items-center gap-2">
-                  <Building className="h-4 w-4" />
-                  <span>{company.name}</span>
+                <div className="flex items-center gap-3 py-1">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary-500 to-primary-600">
+                    <Building2 className="icon-sm text-white" />
+                  </div>
+                  <span className="font-medium">{company.name}</span>
                 </div>
               </SelectItem>
             ))}
