@@ -486,10 +486,10 @@ const ReportsPage = () => {
                     />
 
                     {/* Info Footer */}
-                    <div className="rounded-2xl border border-[rgba(66,84,112,0.55)] bg-[rgba(18,25,41,0.92)] p-6 shadow-[0_20px_45px_rgba(5,10,24,0.35)]">
+                    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_18px_40px_rgba(15,23,42,0.08)] transition-colors dark:border-[rgba(66,84,112,0.55)] dark:bg-[rgba(18,25,41,0.92)] dark:shadow-[0_20px_45px_rgba(5,10,24,0.35)]">
                         <div className="flex items-start gap-4">
-                            <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-info/15 flex items-center justify-center">
-                                <AlertCircle className="h-5 w-5 text-info" />
+                            <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-info/10 text-info flex items-center justify-center dark:bg-info/20">
+                                <AlertCircle className="h-5 w-5" />
                             </div>
                             <div>
                                 <h3 className="font-bold text-foreground mb-1">Actualizaciones automáticas</h3>

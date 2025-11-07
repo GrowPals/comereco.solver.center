@@ -24,7 +24,7 @@ const TABS = [
 ];
 
 const SettingsCard = ({ title, description, children, onSave, isSaving }) => (
-    <Card className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
+    <Card className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-border surface-overlay shadow-lg">
         <CardHeader className="space-y-3 pb-4">
             <CardTitle className="text-2xl font-bold text-foreground">{title}</CardTitle>
             {description && <CardDescription className="text-base text-muted-foreground">{description}</CardDescription>}
