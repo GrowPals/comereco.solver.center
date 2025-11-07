@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import logger from '@/utils/logger';
 
 // Obtener variables de entorno - NO usar valores hardcodeados en producción
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -24,7 +25,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
     errorMessage += 'Copia .env.example a .env y completa los valores.';
   }
 
-  console.error('⚠️', errorMessage);
+  logger.error('⚠️ Supabase configuration error', errorMessage);
 
   // Crear error con mensaje más descriptivo
   const error = new Error(errorMessage);

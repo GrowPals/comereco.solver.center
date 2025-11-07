@@ -1,4 +1,3 @@
-
 import React, { useState, memo, useCallback } from 'react';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { Button } from '@/components/ui/button';
@@ -77,7 +76,7 @@ const CommentsSection = memo(({ requisitionId, comments = [], onAddComment, onDe
             onChange={(e) => setNewComment(e.target.value)}
             className="flex-1"
           />
-          <Button type="submit" disabled={!newComment.trim() || isSubmitting} size="icon">
+          <Button type="submit" disabled={!newComment.trim() || isSubmitting} size="icon" aria-label="Enviar comentario">
             <Send className="h-4 w-4" />
           </Button>
         </div>
@@ -118,8 +117,9 @@ const CommentsSection = memo(({ requisitionId, comments = [], onAddComment, onDe
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7"
+                        className="h-7 w-7 hover:bg-destructive/10 focus:ring-2 focus:ring-destructive"
                         onClick={() => handleDelete(comment.id)}
+                        aria-label={`Eliminar comentario de ${comment.userName}`}
                       >
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>

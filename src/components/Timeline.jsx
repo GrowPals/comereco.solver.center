@@ -7,10 +7,10 @@ import { es } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 
 const statusConfig = {
-  created: { icon: Clock, color: 'bg-[#3086F4]' },
-  in_review: { icon: User, color: 'bg-[#FFAD3B]' },
-  approved: { icon: Check, color: 'bg-[#28E888]' },
-  rejected: { icon: X, color: 'bg-[#FF5A5C]' },
+  created: { icon: Clock, color: 'bg-info' },
+  in_review: { icon: User, color: 'bg-warning' },
+  approved: { icon: Check, color: 'bg-success' },
+  rejected: { icon: X, color: 'bg-error' },
 };
 
 const TimelineItem = ({ item, isLast }) => {
@@ -28,12 +28,12 @@ const TimelineItem = ({ item, isLast }) => {
         <div className={cn("w-10 h-10 rounded-full flex items-center justify-center text-white", config.color)}>
           <Icon className="w-5 h-5" />
         </div>
-        {!isLast && <div className="w-0.5 flex-1 bg-[#E2E4E6] mt-2" />}
+        {!isLast && <div className="w-0.5 flex-1 bg-border mt-2" />}
       </div>
       <div className="pb-8">
         <p className="font-semibold capitalize">{item.status.replace('_', ' ')}</p>
-        <p className="text-sm text-[#7E8899]">{item.user}</p>
-        <p className="text-xs text-[#7E8899] mt-1">{format(new Date(item.date), "dd MMM yyyy, hh:mm a", { locale: es })}</p>
+        <p className="text-sm text-muted-foreground">{item.user}</p>
+        <p className="text-xs text-muted-foreground mt-1">{format(new Date(item.date), "dd MMM yyyy, hh:mm a", { locale: es })}</p>
       </div>
     </motion.div>
   );
@@ -41,9 +41,11 @@ const TimelineItem = ({ item, isLast }) => {
 
 const Timeline = ({ items }) => {
   return (
-    <div className="p-4">
+    <div className="p-4" role="list" aria-label="Histórico de cambios de requisición">
       {items.map((item, index) => (
-        <TimelineItem key={index} item={item} isLast={index === items.length - 1} />
+        <div key={index} role="listitem" aria-label={`${item.status.replace('_', ' ')} por ${item.user} - ${format(new Date(item.date), "dd MMM yyyy", { locale: es })}`}>
+          <TimelineItem item={item} isLast={index === items.length - 1} />
+        </div>
       ))}
     </div>
   );

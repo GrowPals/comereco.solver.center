@@ -2,6 +2,7 @@
 import { supabase } from '@/lib/customSupabaseClient';
 import { getCachedSession } from '@/lib/supabaseHelpers';
 import logger from '@/utils/logger';
+import { PAGINATION } from '@/constants/config';
 import { formatErrorMessage } from '@/utils/errorHandler';
 
 /**
@@ -113,7 +114,7 @@ export const getRecentRequisitions = async () => {
             .select('id, internal_folio, created_at, total_amount, business_status, project_id')
             .eq('created_by', session.user.id)
             .order('created_at', { ascending: false })
-            .limit(5);
+            .limit(PAGINATION.DASHBOARD_LIMIT);
 
         if (error) {
             logger.error('Error fetching recent requisitions:', error);
@@ -162,7 +163,7 @@ export const getSupervisorProjectsActivity = async () => {
     const { data, error } = await supabase
         .from('projects')
         .select('id, name, description')
-        .limit(5);
+        .limit(PAGINATION.DASHBOARD_LIMIT);
 
      if (error) {
         logger.error('Error fetching supervisor projects activity:', error);
