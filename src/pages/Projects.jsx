@@ -51,11 +51,13 @@ const ProjectCard = ({ project, onEdit, onDelete, onManageMembers, onView }) => 
 
       <div>
         <div className="mb-3 flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div className="icon-badge flex h-12 w-12 items-center justify-center">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="icon-badge flex h-12 w-12 flex-shrink-0 items-center justify-center">
               <FolderKanban className="h-6 w-6 text-primary-600 dark:text-primary-100" />
             </div>
-            <h3 className="text-xl font-bold text-foreground">{project.name}</h3>
+            <h3 className="text-xl font-bold leading-snug text-foreground break-words">
+              {project.name}
+            </h3>
           </div>
           {canManageProjects && (
             <DropdownMenu>

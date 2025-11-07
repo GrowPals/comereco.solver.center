@@ -215,10 +215,23 @@ const NotificationsPage = () => {
                     </Card>
 
                     <Tabs value={activeTab} onValueChange={setActiveTab}>
-                        <TabsList className="grid w-full grid-cols-2 rounded-xl h-12">
-                            <TabsTrigger value="all" className="rounded-lg">Todas</TabsTrigger>
-                            <TabsTrigger value="unread" className="rounded-lg">
-                                No Leídas {unreadCount > 0 && <span className="ml-2 bg-primary-600 text-white h-5 w-5 text-xs rounded-full flex items-center justify-center">{unreadCount}</span>}
+                        <TabsList className="grid h-12 w-full grid-cols-2 rounded-2xl border border-border/70 bg-[var(--surface-contrast)] p-1 shadow-sm dark:border-[rgba(124,188,255,0.35)] dark:bg-[#081526]">
+                            <TabsTrigger
+                                value="all"
+                                className="rounded-xl text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-primary-700 data-[state=active]:shadow-lg data-[state=active]:ring-1 data-[state=active]:ring-primary/25 dark:data-[state=active]:bg-[#112541] dark:data-[state=active]:text-primary-100"
+                            >
+                                Todas
+                            </TabsTrigger>
+                            <TabsTrigger
+                                value="unread"
+                                className="rounded-xl text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-primary-700 data-[state=active]:shadow-lg data-[state=active]:ring-1 data-[state=active]:ring-primary/25 dark:data-[state=active]:bg-[#112541] dark:data-[state=active]:text-primary-100"
+                            >
+                                No Leídas
+                                {unreadCount > 0 && (
+                                    <span className="ml-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary-600 text-[11px] font-bold text-white dark:bg-primary-400">
+                                        {unreadCount}
+                                    </span>
+                                )}
                             </TabsTrigger>
                         </TabsList>
                     </Tabs>
