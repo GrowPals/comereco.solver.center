@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm, Controller } from 'react-hook-form';
-import { Plus, MoreHorizontal, User as UserIcon, Shield, Briefcase, Trash2, Code } from 'lucide-react';
+import { Plus, MoreHorizontal, User as UserIcon, Shield, Briefcase, Trash2, Code, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -495,6 +495,12 @@ const Users = () => {
                                         )}
                                         {roleMapping[user.role_v2]?.label || user.role_v2}
                                     </Badge>
+                                    {user.can_submit_without_approval && (
+                                        <Badge variant="outline" className="font-semibold text-amber-700 border-amber-200 bg-amber-50 dark:text-amber-300 dark:border-amber-700 dark:bg-amber-950/50" title="Puede enviar requisiciones sin aprobación previa">
+                                            <Zap className="mr-1 h-3 w-3" />
+                                            Envío Directo
+                                        </Badge>
+                                    )}
                                     <Badge variant={user.is_active !== false ? 'success' : 'destructive'}>
                                         {user.is_active !== false ? 'Activo' : 'Inactivo'}
                                     </Badge>
@@ -542,12 +548,20 @@ const Users = () => {
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <Badge variant="outline" className={`font-semibold shadow-sm ${roleMapping[user.role_v2]?.colors || ''}`}>
-                                            {roleMapping[user.role_v2]?.icon && (
-                                                React.createElement(roleMapping[user.role_v2].icon, { className: "w-4 h-4 mr-2" })
+                                        <div className="flex flex-col gap-2">
+                                            <Badge variant="outline" className={`font-semibold shadow-sm ${roleMapping[user.role_v2]?.colors || ''}`}>
+                                                {roleMapping[user.role_v2]?.icon && (
+                                                    React.createElement(roleMapping[user.role_v2].icon, { className: "w-4 h-4 mr-2" })
+                                                )}
+                                                {roleMapping[user.role_v2]?.label || user.role_v2}
+                                            </Badge>
+                                            {user.can_submit_without_approval && (
+                                                <Badge variant="outline" className="font-semibold text-amber-700 border-amber-200 bg-amber-50 dark:text-amber-300 dark:border-amber-700 dark:bg-amber-950/50 w-fit" title="Puede enviar requisiciones sin aprobación previa">
+                                                    <Zap className="mr-1 h-3 w-3" />
+                                                    Envío Directo
+                                                </Badge>
                                             )}
-                                            {roleMapping[user.role_v2]?.label || user.role_v2}
-                                        </Badge>
+                                        </div>
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant={user.is_active !== false ? 'success' : 'destructive'} className="shadow-sm">

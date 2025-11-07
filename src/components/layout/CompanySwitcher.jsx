@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Building } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 
 const CompanySwitcher = ({ variant = 'default' }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isChanging, setIsChanging] = useState(false);
   const { toast } = useToast();
   const {
     companies,
@@ -19,6 +20,15 @@ const CompanySwitcher = ({ variant = 'default' }) => {
     toggleGlobalView,
     isLoading,
   } = useCompanyScope();
+
+  // Efecto de animación al cambiar empresa
+  useEffect(() => {
+    if (activeCompanyId !== null || isGlobalView) {
+      setIsChanging(true);
+      const timer = setTimeout(() => setIsChanging(false), 600);
+      return () => clearTimeout(timer);
+    }
+  }, [activeCompanyId, isGlobalView]);
 
   if (!companies.length && isLoading) {
     // En variante icon, no mostrar nada mientras carga
@@ -90,11 +100,17 @@ const CompanySwitcher = ({ variant = 'default' }) => {
           onClick={() => setIsDialogOpen(true)}
           className={cn(
             'relative h-11 w-11 overflow-visible rounded-full border border-border bg-[var(--surface-contrast)] shadow-none hover:bg-[var(--surface-muted)]',
-            'transition-colors'
+            'transition-all duration-300',
+            isChanging && 'ring-2 ring-primary-400/50 ring-offset-2 ring-offset-background'
           )}
           aria-label="Selector de empresa"
         >
-          <Building className="h-5 w-5 text-primary-600" />
+          <Building
+            className={cn(
+              'h-5 w-5 text-primary-600 transition-transform duration-300',
+              isChanging && 'scale-110'
+            )}
+          />
         </Button>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -128,8 +144,16 @@ const CompanySwitcher = ({ variant = 'default' }) => {
 
   // Variante default para desktop
   return (
-    <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-muted/40 px-3 py-2">
-      <Building className="h-4 w-4 text-primary-600" />
+    <div className={cn(
+      'flex items-center gap-2 rounded-xl border border-border/70 bg-muted/40 px-3 py-2 transition-all duration-300',
+      isChanging && 'ring-2 ring-primary-400/50 ring-offset-2 ring-offset-background'
+    )}>
+      <Building
+        className={cn(
+          'h-4 w-4 text-primary-600 transition-transform duration-300',
+          isChanging && 'scale-110'
+        )}
+      />
       <Select value={selectValue} onValueChange={handleChange}>
         <SelectTrigger className="border-0 bg-transparent px-0 text-sm font-medium">
           <SelectValue placeholder="Selecciona una empresa" />
