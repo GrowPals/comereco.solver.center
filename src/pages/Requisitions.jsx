@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Pagination } from '@/components/ui/pagination';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PageContainer from '@/components/layout/PageContainer';
 
@@ -74,29 +75,47 @@ const RequisitionsPage = () => {
                 </p>
               </div>
               <div className="grid w-full gap-3 sm:w-auto sm:grid-cols-[auto_auto] sm:items-center">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => refetch()}
-                  disabled={isFetching}
-                  className="h-10 w-10 rounded-xl border border-border bg-card shadow-sm hover:bg-muted"
-                >
-                  <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin text-primary-500' : 'text-muted-foreground'}`} />
-                </Button>
-                <Button
-                  onClick={() => navigate('/requisitions/new')}
-                  size="lg"
-                  className="w-full rounded-xl shadow-lg sm:w-auto"
-                >
-                  <Plus className="mr-2 h-5 w-5" />
-                  Nueva Requisición
-                </Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="secondary"
+                        size="icon"
+                        onClick={() => refetch()}
+                        disabled={isFetching}
+                        className="h-10 w-10 rounded-xl shadow-sm"
+                      >
+                        <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin text-primary-500' : 'text-muted-foreground'}`} />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Actualizar lista de requisiciones</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        onClick={() => navigate('/requisitions/new')}
+                        size="lg"
+                        className="w-full rounded-xl shadow-lg sm:w-auto"
+                      >
+                        <Plus className="mr-2 h-5 w-5" />
+                        Nueva Requisición
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Crear una nueva requisición de compra</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </div>
           </header>
 
-          {/* Filters */}
-          <div className="mb-6 flex flex-col gap-4 surface-card p-4 sm:flex-row sm:flex-wrap sm:items-center">
+          {/* Filters - Sticky on scroll */}
+          <div className="sticky top-0 z-10 mb-6 flex flex-col gap-4 surface-card p-4 sm:flex-row sm:flex-wrap sm:items-center backdrop-blur-md shadow-sm">
             <div className="flex items-center gap-2 text-sm">
               <Filter className="h-5 w-5 text-muted-foreground" />
               <span className="font-semibold text-foreground">Filtros:</span>

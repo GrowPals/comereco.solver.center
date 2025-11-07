@@ -28,6 +28,7 @@ import PageContainer from '@/components/layout/PageContainer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import logger from '@/utils/logger';
 import { useToast } from '@/components/ui/useToast';
 import { cn } from '@/lib/utils';
@@ -410,21 +411,39 @@ const ReportsPage = () => {
                             </div>
                         </div>
                         <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
-                            <Button
-                                onClick={exportToExcel}
-                                className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md hover:from-green-600 hover:to-green-700 sm:w-auto"
-                            >
-                                <FileSpreadsheet className="h-4 w-4 mr-2" />
-                                Exportar Excel
-                            </Button>
-                            <Button
-                                onClick={exportToPDF}
-                                variant="outline"
-                                className="w-full border-2 hover:bg-muted/70 sm:w-auto"
-                            >
-                                <Download className="h-4 w-4 mr-2" />
-                                Exportar PDF
-                            </Button>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button
+                                            onClick={exportToExcel}
+                                            className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md hover:from-green-600 hover:to-green-700 sm:w-auto"
+                                        >
+                                            <FileSpreadsheet className="h-4 w-4 mr-2" />
+                                            Exportar Excel
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>Descargar reporte completo en formato CSV/Excel</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button
+                                            onClick={exportToPDF}
+                                            variant="outline"
+                                            className="w-full border-2 hover:bg-muted/70 sm:w-auto"
+                                        >
+                                            <Download className="h-4 w-4 mr-2" />
+                                            Exportar PDF
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>Función en desarrollo - próximamente disponible</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
                         </div>
                     </header>
 
