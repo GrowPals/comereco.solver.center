@@ -81,7 +81,7 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <button
-                                    className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200 hover:bg-[var(--surface-muted)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-background dark:hover:bg-[rgba(26,48,86,0.65)]"
+                                    className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200 hover:bg-[var(--surface-muted)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-background dark:hover:bg-[rgba(26,48,86,0.55)]"
                                     aria-label={`Menú de usuario: ${userName}`}
                                     aria-haspopup="true"
                                 >
@@ -92,12 +92,12 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
                                         </AvatarFallback>
                                     </Avatar>
                                     <span className="text-sm font-semibold text-foreground">{userName}</span>
-                                    <ChevronDown className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                                    <ChevronDown className="icon-sm text-muted-foreground transition-transform group-hover:translate-y-0.5" aria-hidden="true" />
                                 </button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-56" align="end" role="menu">
                                 <DropdownMenuItem asChild role="menuitem">
-                                    <Link to="/profile"><User className="mr-2 h-4 w-4" aria-hidden="true" /> Mi Perfil</Link>
+                                    <Link to="/profile"><User className="mr-2 icon-sm" aria-hidden="true" /> Mi Perfil</Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
@@ -106,7 +106,7 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
                                     role="menuitem"
                                     aria-label="Cerrar sesión"
                                 >
-                                    <LogOut className="mr-2 h-4 w-4" aria-hidden="true" />
+                                    <LogOut className="mr-2 icon-sm" aria-hidden="true" />
                                     <span>Cerrar Sesión</span>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
