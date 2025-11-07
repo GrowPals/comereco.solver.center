@@ -28,6 +28,8 @@ import { ProductRestockRuleSection } from '@/components/inventory/ProductRestock
 import RelatedProducts from '@/components/RelatedProducts';
 import { cn } from '@/lib/utils';
 import { formatPrice } from '@/lib/formatters';
+import logger from '@/utils/logger';
+import { PAGINATION } from '@/constants/config';
 
 // Función para obtener producto por ID
 const fetchProductById = async (productId, companyId) => {
@@ -43,7 +45,7 @@ const fetchProductById = async (productId, companyId) => {
 };
 
 // Función para obtener productos relacionados
-const fetchRelatedProducts = async (categoryId, currentProductId, companyId, limit = 8) => {
+const fetchRelatedProducts = async (categoryId, currentProductId, companyId, limit = PAGINATION.RELATED_PRODUCTS_LIMIT) => {
   // Primero intentar por categoría
   let query = supabase
     .from('products')
@@ -106,7 +108,7 @@ const fetchProductHistory = async (productId, userId) => {
       .eq('requisitions.created_by', userId)
       .in('requisitions.status', ['approved', 'delivered', 'completed'])
       .order('requisitions.created_at', { ascending: false })
-      .limit(10);
+      .limit(PAGINATION.PRODUCT_HISTORY_LIMIT);
 
     if (error || !data || data.length === 0) return null;
 
@@ -122,7 +124,7 @@ const fetchProductHistory = async (productId, userId) => {
       order_count: data.length
     };
   } catch (error) {
-    console.error('Error fetching history:', error);
+    logger.error('Error fetching product history:', error);
     return null;
   }
 };
@@ -260,7 +262,7 @@ export default function ProductDetail() {
       setShowAddedFeedback(true);
       setTimeout(() => setShowAddedFeedback(false), 2000);
     } catch (error) {
-      console.error('Error al actualizar carrito:', error);
+      logger.error('Error updating cart:', error);
     } finally {
       setIsAddingToCart(false);
     }

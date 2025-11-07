@@ -141,10 +141,12 @@ export const RestockRuleCard = ({ rule, projects }) => {
         <div className="grid grid-cols-2 gap-2">
           <Button
             variant="ghost"
-            className="h-10 rounded-2xl text-sm font-semibold shadow-sm transition-all duration-200 hover:-translate-y-0.5"
-            style={rule.status === 'active'
-              ? { background: 'rgba(33, 46, 69, 0.65)', color: '#f1f5ff' }
-              : { background: '#00C853', color: '#06111c' }}
+            className={cn(
+              "h-10 rounded-2xl text-sm font-semibold shadow-sm transition-all duration-200 hover:-translate-y-0.5",
+              rule.status === 'active'
+                ? "bg-surface-secondary/65 text-primary-50"
+                : "bg-accent text-surface-primary"
+            )}
             onClick={controller.handleToggleStatus}
             disabled={controller.isToggling}
           >

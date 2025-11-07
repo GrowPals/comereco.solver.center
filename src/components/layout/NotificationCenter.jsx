@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, memo, useCallback } from 'react';
 import { Bell, CheckCheck, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
@@ -20,12 +20,19 @@ const notificationIcons = {
     info: { color: 'text-primary-600 dark:text-primary-100', icon: Bell },
 };
 
+// UUID validation regex (extracted for performance)
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+const isValidUUID = (str) => {
+    if (!str) return false;
+    return UUID_REGEX.test(str);
+};
 
 // =================================================================
 // Componentes de UI
 // =================================================================
 
-const NotificationItem = ({ notification, onRead }) => {
+const NotificationItem = memo(({ notification, onRead }) => {
     const navigate = useNavigate();
     const config = notificationIcons[notification.type] || notificationIcons.info;
     const Icon = config.icon;
@@ -60,7 +67,9 @@ const NotificationItem = ({ notification, onRead }) => {
             </div>
         </div>
     );
-};
+});
+
+NotificationItem.displayName = 'NotificationItem';
 
 const NotificationCenter = ({ variant = 'popover' }) => {
     const { user } = useSupabaseAuth();
@@ -72,12 +81,6 @@ const NotificationCenter = ({ variant = 'popover' }) => {
 
     useEffect(() => {
         if (!user?.id) return;
-
-        const isValidUUID = (str) => {
-            if (!str) return false;
-            const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-            return uuidRegex.test(str);
-        };
 
         if (!isValidUUID(user.id)) {
             logger.error('Invalid user ID format for notifications');
