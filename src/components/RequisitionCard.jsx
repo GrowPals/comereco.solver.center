@@ -12,8 +12,8 @@ import { Card, CardContent } from '@/components/ui/card';
 
 const statusStyles = {
   draft: {
-    badge: 'border-border bg-muted/70 text-muted-foreground dark:border-border dark:bg-card/70 dark:text-foreground/80',
-    accent: 'bg-muted/80 dark:bg-muted/70',
+    badge: 'border-border bg-muted/85 text-muted-foreground dark:border-border dark:bg-card/85 dark:text-foreground/80',
+    accent: 'bg-muted/90 dark:bg-muted/85',
   },
   submitted: {
     badge: 'border-amber-200 bg-amber-100/80 text-amber-700 dark:border-amber-400/60 dark:bg-amber-500/20 dark:text-amber-200',
@@ -32,12 +32,12 @@ const statusStyles = {
     accent: 'bg-gradient-primary',
   },
   cancelled: {
-    badge: 'border-[rgba(239,83,80,0.4)] bg-[rgba(239,83,80,0.18)] text-error dark:border-[rgba(239,83,80,0.35)] dark:bg-[rgba(239,83,80,0.15)] dark:text-error',
-    accent: 'bg-[rgba(239,83,80,0.4)]',
+    badge: 'border-[rgba(239,83,80,0.4)] bg-[rgba(239,83,80,0.35)] text-error dark:border-[rgba(239,83,80,0.35)] dark:bg-[rgba(239,83,80,0.30)] dark:text-error',
+    accent: 'bg-[rgba(239,83,80,0.6)]',
   },
   default: {
-    badge: 'border-border bg-muted/70 text-muted-foreground dark:border-border dark:bg-card/70 dark:text-foreground/80',
-    accent: 'bg-muted/80 dark:bg-muted/70',
+    badge: 'border-border bg-muted/85 text-muted-foreground dark:border-border dark:bg-card/85 dark:text-foreground/80',
+    accent: 'bg-muted/90 dark:bg-muted/85',
   },
 };
 
