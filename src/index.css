@@ -16,11 +16,13 @@
     --primary-100: #DBEAFE;
     --primary-200: #BFDBFE;
     --primary-300: #93C5FD;
+    --primary-400: #60A5FA;
     --primary-500: #3B82F6;  /* BASE - Professional Blue */
     --primary-600: #2563EB;
     --primary-700: #1D4ED8;
     --primary-800: #1E40AF;
     --primary-900: #1E3A8A;
+    --primary-950: #172554;
 
     /* ============ ACCENT COLORS - ComerECO Green (Strategic Use) ============ */
     --accent-50: #E6F9F0;
