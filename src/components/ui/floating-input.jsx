@@ -75,7 +75,7 @@ const FloatingInput = React.forwardRef(({ className, type, label, icon, error, .
       {icon && (
         <div
           className={cn(
-            "pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-neutral-500 transition-colors duration-200 dark:text-neutral-400",
+            "pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-neutral-600 transition-colors duration-200 dark:text-neutral-400",
             isFloating && "text-primary-500 dark:text-primary-400",
             error && "text-red-500 dark:text-red-400"
           )}

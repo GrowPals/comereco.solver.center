@@ -61,7 +61,7 @@ const NotificationItem = memo(({ notification, onRead }) => {
             <div className="flex-1 min-w-0">
                 <p className={cn("font-semibold text-sm text-foreground dark:text-foreground/95", !notification.is_read && "text-foreground")}>{notification.title}</p>
                 <p className="text-xs text-muted-foreground/90 dark:text-foreground/70 mt-0.5 line-clamp-2">{notification.message}</p>
-                <p className="text-xs text-neutral-500 mt-2 font-medium">
+                <p className="text-xs text-muted-foreground mt-2 font-medium">
                     {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true, locale: es })}
                 </p>
             </div>
