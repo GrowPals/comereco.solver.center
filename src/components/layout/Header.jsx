@@ -50,7 +50,6 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
         <header
             className={cn(
                 'nav-shell sticky top-0 z-40 w-full transition-shadow duration-200',
-                'supports-[backdrop-filter]:backdrop-blur-sm supports-[backdrop-filter]:backdrop-saturate-150',
                 'px-4 pb-2 pt-[calc(env(safe-area-inset-top)+0.55rem)] sm:px-6 sm:py-3 lg:px-10',
                 'transition-colors duration-200'
             )}

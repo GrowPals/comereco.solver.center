@@ -21,7 +21,7 @@ const BottomNav = memo(({ onMenuClick, isMenuOpen = false }) => {
 
     return (
         <nav
-            className="bottom-nav-shell fixed bottom-0 left-0 right-0 z-50 transition-transform duration-200 supports-[backdrop-filter]:backdrop-blur-sm supports-[backdrop-filter]:backdrop-saturate-150 lg:hidden"
+            className="bottom-nav-shell fixed bottom-0 left-0 right-0 z-50 transition-transform duration-200 lg:hidden"
             role="navigation"
             aria-label="Navegación móvil principal"
         >
