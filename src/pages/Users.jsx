@@ -90,16 +90,17 @@ const UserForm = ({ user, onSave, onCancel, isLoading, approvalBypassSupported, 
             {!user && (
                  <div>
                     <Label htmlFor="email">Email</Label>
-                    <Input 
-                        id="email" 
-                        type="email" 
-                        {...register('email', { 
+                    <Input
+                        id="email"
+                        type="email"
+                        autoComplete="email"
+                        {...register('email', {
                             required: 'El email es requerido',
                             pattern: {
                                 value: /^\S+@\S+$/i,
                                 message: 'Formato de email inválido'
                             }
-                        })} 
+                        })}
                     />
                     {errors.email && <p className="text-destructive text-sm mt-1">{errors.email.message}</p>}
                 </div>
@@ -107,15 +108,16 @@ const UserForm = ({ user, onSave, onCancel, isLoading, approvalBypassSupported, 
              {user && (
                  <div>
                     <Label htmlFor="fullName">Nombre Completo</Label>
-                    <Input 
-                        id="fullName" 
-                        {...register('full_name', { 
+                    <Input
+                        id="fullName"
+                        autoComplete="name"
+                        {...register('full_name', {
                             required: 'El nombre completo es requerido',
                             minLength: {
                                 value: 2,
                                 message: 'El nombre debe tener al menos 2 caracteres'
                             }
-                        })} 
+                        })}
                     />
                     {errors.full_name && <p className="text-destructive text-sm mt-1">{errors.full_name.message}</p>}
                 </div>
