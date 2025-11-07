@@ -141,11 +141,11 @@ const RequisitionDetail = () => {
     const { internal_folio, created_at, business_status, creator, items, total_amount, comments, project } = requisition;
 
     const statusConfig = {
-        draft: { text: 'Borrador', variant: 'muted', accent: 'bg-muted' },
-        submitted: { text: 'Enviada', variant: 'warning', accent: 'bg-gradient-warning' },
-        approved: { text: 'Aprobada', variant: 'success', accent: 'bg-gradient-accent' },
-        rejected: { text: 'Rechazada', variant: 'danger', accent: 'bg-gradient-error' },
-        ordered: { text: 'Ordenada', variant: 'info', accent: 'bg-gradient-info' },
+        draft: { text: 'Borrador', variant: 'draft', accent: 'bg-muted' },
+        submitted: { text: 'Enviada', variant: 'sent', accent: 'bg-gradient-warning' },
+        approved: { text: 'Aprobada', variant: 'approved', accent: 'bg-gradient-accent' },
+        rejected: { text: 'Rechazada', variant: 'rejected', accent: 'bg-gradient-error' },
+        ordered: { text: 'Ordenada', variant: 'ordered', accent: 'bg-gradient-info' },
         cancelled: { text: 'Cancelada', variant: 'muted', accent: 'bg-muted' },
     };
 

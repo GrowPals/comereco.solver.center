@@ -11,52 +11,22 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/formatters';
 
-const statusStyles = {
-  draft: {
-    badge: 'border-border bg-muted/85 text-muted-foreground dark:border-border dark:bg-card/85 dark:text-foreground/80',
-    accent: 'bg-muted/90 dark:bg-muted/85',
-  },
-  submitted: {
-    badge: 'border-amber-200 bg-amber-100/80 text-amber-700 dark:border-amber-400/60 dark:bg-amber-500/20 dark:text-amber-200',
-    accent: 'bg-amber-500',
-  },
-  approved: {
-    badge: 'border-emerald-200 bg-emerald-100/80 text-emerald-700 dark:border-emerald-400/60 dark:bg-emerald-500/20 dark:text-emerald-200',
-    accent: 'bg-gradient-accent',
-  },
-  rejected: {
-    badge: 'border-red-200 bg-red-100/80 text-red-700 dark:border-red-400/60 dark:bg-red-500/20 dark:text-red-200',
-    accent: 'bg-red-500',
-  },
-  ordered: {
-    badge: 'border-primary-200 bg-primary-50/80 text-primary-700 dark:border-primary-400/60 dark:bg-primary-500/20 dark:text-primary-200',
-    accent: 'bg-gradient-primary',
-  },
-  cancelled: {
-    badge: 'border-[rgba(239,83,80,0.4)] bg-[rgba(239,83,80,0.35)] text-error dark:border-[rgba(239,83,80,0.35)] dark:bg-[rgba(239,83,80,0.30)] dark:text-error',
-    accent: 'bg-[rgba(239,83,80,0.6)]',
-  },
-  default: {
-    badge: 'border-border bg-muted/85 text-muted-foreground dark:border-border dark:bg-card/85 dark:text-foreground/80',
-    accent: 'bg-muted/90 dark:bg-muted/85',
-  },
-};
-
-const statusTranslations = {
-  draft: 'Borrador',
-  submitted: 'Enviada',
-  approved: 'Aprobada',
-  rejected: 'Rechazada',
-  ordered: 'Ordenada',
-  cancelled: 'Cancelada',
+const statusAccents = {
+  draft: 'bg-muted/90 dark:bg-muted/85',
+  submitted: 'bg-amber-500',
+  approved: 'bg-gradient-accent',
+  rejected: 'bg-red-500',
+  ordered: 'bg-gradient-primary',
+  cancelled: 'bg-[rgba(239,83,80,0.6)]',
+  default: 'bg-muted/90 dark:bg-muted/85',
 };
 
 const RequisitionCard = memo(({ requisition }) => {
   const navigate = useNavigate();
   
-  // Memoizar información de estado
-  const statusInfo = useMemo(() => 
-    statusStyles[requisition?.business_status] || statusStyles.default,
+  // Memoizar accent de estado para la barra superior
+  const statusAccent = useMemo(() =>
+    statusAccents[requisition?.business_status] || statusAccents.default,
     [requisition?.business_status]
   );
 
@@ -107,7 +77,7 @@ const RequisitionCard = memo(({ requisition }) => {
         aria-label={`Requisición ${requisition.internal_folio || requisition.id}`}
       >
         {/* Accent Bar */}
-        <div className={cn('absolute top-0 left-0 right-0 h-1 transition-transform duration-300', statusInfo.accent)} />
+        <div className={cn('absolute top-0 left-0 right-0 h-1 transition-transform duration-300', statusAccent)} />
 
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row md:items-center gap-6">
@@ -160,9 +130,7 @@ const RequisitionCard = memo(({ requisition }) => {
 
             {/* Status Badge & Action */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 md:ml-auto">
-              <Badge variant="outline" className={cn('text-xs font-semibold capitalize px-3 py-1.5', statusInfo.badge)}>
-                {statusTranslations[requisition.business_status] || requisition.business_status}
-              </Badge>
+              <Badge status={requisition.business_status} />
               <Button
                 variant="ghost"
                 size="sm"
