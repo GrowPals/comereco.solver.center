@@ -373,7 +373,7 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
             )}
             </div>
 
-            <DialogFooter className="sticky bottom-0 flex flex-col gap-2 border-t border-border bg-background/90 px-6 py-4 backdrop-blur dark:bg-card/80">
+            <DialogFooter className="surface-sticky sticky bottom-0 flex flex-col gap-2 rounded-b-2xl px-6 py-4">
               <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
                 <Button
                   variant="outline"

@@ -260,7 +260,7 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
                         <Label htmlFor="is_active">{isActive ? 'Activo' : 'Inactivo'}</Label>
                     </div>
                     </div>
-                    <DialogFooter className="sticky bottom-0 flex flex-col gap-2 border-t border-border bg-card/95 px-6 py-4 backdrop-blur">
+                    <DialogFooter className="surface-sticky sticky bottom-0 flex flex-col gap-2 rounded-b-2xl px-6 py-4">
                         <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
                             <Button variant="outline" type="button" onClick={onClose} disabled={isSubmitting || uploadingImage} className="rounded-xl">Cancelar</Button>
                             <Button type="submit" isLoading={isSubmitting || uploadingImage} isSuccess={formStatus.status === 'success'} className="rounded-xl shadow-button hover:shadow-button-hover">

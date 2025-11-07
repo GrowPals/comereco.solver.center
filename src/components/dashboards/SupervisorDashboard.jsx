@@ -70,7 +70,7 @@ const SupervisorDashboard = ({ user }) => {
                             projects?.map(p => (
                                 <div
                                     key={p.id}
-                                    className="p-4 rounded-lg border border-border bg-card/95 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-md cursor-pointer group"
+                                    className="group cursor-pointer rounded-lg border border-border bg-[var(--surface-overlay)] p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-md"
                                     onClick={() => navigate(`/projects`)}
                                 >
                                     <p className="font-semibold text-sm text-foreground transition-colors group-hover:text-primary-600">{p.name}</p>

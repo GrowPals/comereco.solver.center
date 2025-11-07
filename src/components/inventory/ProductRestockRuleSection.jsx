@@ -165,7 +165,7 @@ export const ProductRestockRuleSection = ({ product, stock }) => {
 
   return (
     <section id="restock-rule" className="mt-20">
-      <div className="space-y-6 rounded-3xl border border-border bg-card/95 p-6 shadow-sm dark:border-border dark:bg-card/85 sm:p-8">
+      <div className="surface-overlay space-y-6 p-6 sm:p-8">
         <header className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-3 text-muted-foreground">

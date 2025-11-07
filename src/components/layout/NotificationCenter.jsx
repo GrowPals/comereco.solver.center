@@ -200,7 +200,7 @@ const NotificationCenter = ({ variant = 'popover' }) => {
                 </Button>
             </PopoverTrigger>
             <PopoverContent align="end" className="w-[380px] p-0 shadow-2xl">
-                <div className="flex items-center justify-between border-b border-border bg-card/95 p-4 dark:border-[#274675] dark:bg-[#152643]/92">
+                <div className="flex items-center justify-between border-b border-border bg-[var(--surface-overlay)] p-4">
                     <div className="flex items-center gap-2">
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-primary">
                             <Bell className="h-4 w-4 text-white" />
@@ -230,7 +230,7 @@ const NotificationCenter = ({ variant = 'popover' }) => {
                 </div>
 
                 {notifications.length > 0 && (
-                    <div className="border-t border-border bg-muted/40 p-3 text-center dark:bg-card/60">
+                    <div className="border-t border-border bg-[var(--surface-overlay)] p-3 text-center">
                         <Button variant="link" size="sm" className="font-semibold" onClick={() => { setOpen(false); navigate('/notifications'); }}>
                             Ver todas las notificaciones →
                         </Button>

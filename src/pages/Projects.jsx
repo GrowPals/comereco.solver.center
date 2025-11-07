@@ -192,7 +192,7 @@ const ProjectFormModal = ({ project, isOpen, onClose, onSave, supervisors, isAdm
               <Label htmlFor="active" className="text-sm font-medium text-muted-foreground">Activo</Label>
             </div>
           </div>
-          <DialogFooter className="sticky bottom-0 flex flex-col gap-2 border-t border-border bg-background/90 px-6 py-4 backdrop-blur">
+          <DialogFooter className="surface-sticky sticky bottom-0 flex flex-col gap-2 rounded-b-2xl px-6 py-4">
             <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
               <Button variant="outline" onClick={onClose} className="rounded-xl">Cancelar</Button>
               <Button onClick={handleSubmit} className="rounded-xl shadow-button hover:shadow-button-hover">Guardar</Button>
@@ -338,7 +338,7 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
                             )}
                         </div>
                     </div>
-                    <DialogFooter className="sticky bottom-0 border-t border-border bg-background/90 px-6 py-4 backdrop-blur">
+                    <DialogFooter className="surface-sticky sticky bottom-0 rounded-b-2xl px-6 py-4">
                         <Button onClick={onClose} className="rounded-xl">Cerrar</Button>
                     </DialogFooter>
                 </div>

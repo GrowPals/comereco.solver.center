@@ -314,7 +314,7 @@ const ProfilePage = () => {
                     size="sm"
                     onClick={handleRemoveAvatar}
                     disabled={isUploadingAvatar}
-                    className="h-11 rounded-full px-5 text-white/85 hover:bg-white/10 hover:text-white"
+                    className="h-11 rounded-full border border-white/40 bg-white/5 px-5 text-white transition-colors duration-200 hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
                   >
                     <Trash2 className="mr-2 h-4 w-4 text-white/80 dark:text-primary-200" />
                     Quitar

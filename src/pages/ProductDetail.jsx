@@ -574,10 +574,10 @@ export default function ProductDetail() {
             <button
               onClick={handleToggleFavorite}
               className={cn(
-                "absolute top-4 right-4 p-2.5 rounded-full transition-all shadow-lg backdrop-blur-sm",
+                "absolute top-4 right-4 rounded-full border border-border/70 bg-[var(--surface-overlay)] p-2.5 text-muted-foreground shadow-md transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400",
                 isFavorite
-                  ? "bg-card/95 text-red-500 hover:bg-red-50"
-                  : "bg-card/95 text-muted-foreground hover:bg-muted"
+                  ? "text-red-500 hover:bg-red-50 dark:hover:bg-red-500/15"
+                  : "hover:text-primary-600 hover:bg-muted"
               )}
               aria-label={isFavorite ? "Quitar de favoritos" : "Agregar a favoritos"}
             >
@@ -800,7 +800,7 @@ export default function ProductDetail() {
       </div>
 
       {/* Botón flotante en móvil - mejorado */}
-      <div className="fixed bottom-0 left-0 right-0 p-3 bg-card/95 backdrop-blur-md border-t lg:hidden shadow-2xl">
+      <div className="surface-sticky fixed bottom-0 left-0 right-0 p-3 lg:hidden">
         <div className="max-w-md mx-auto flex gap-3">
           <div className="flex items-center gap-1 bg-muted rounded-lg px-2 flex-shrink-0">
             <button

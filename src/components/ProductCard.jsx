@@ -80,7 +80,7 @@ const ProductCard = memo(({ product }) => {
   return (
     <article
       className={cn(
-        'group relative flex w-[88vw] max-w-[22rem] flex-col overflow-hidden rounded-3xl surface-card transition-all duration-300 hover:-translate-y-1 focus-visible:outline-none focus-visible:shadow-[var(--focus-glow)] sm:w-full sm:max-w-none'
+        'group relative flex w-full flex-col overflow-hidden rounded-3xl surface-card transition-all duration-300 hover:-translate-y-1 focus-visible:outline-none focus-visible:shadow-[var(--focus-glow)]'
       )}
       role="article"
       aria-label={`Producto ${productName}, precio ${productPrice} pesos`}

@@ -203,7 +203,7 @@ const SaveTemplateModal = ({ isOpen, onOpenChange, cartItems }) => {
               />
             </div>
           </div>
-          <DialogFooter className="sticky bottom-0 flex flex-col gap-2 border-t border-border bg-card/95 px-6 py-4 backdrop-blur">
+          <DialogFooter className="surface-sticky sticky bottom-0 flex flex-col gap-2 rounded-b-2xl px-6 py-4">
             <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
               <Button variant="outline" onClick={() => onOpenChange(false)} className="rounded-xl">
                 Cancelar
@@ -424,7 +424,7 @@ const CartPage = () => {
       </PageContainer>
 
       {items.length > 0 && (
-        <div className="fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+5.5rem)] z-40 border-t border-border bg-card/95 px-4 py-4 shadow-[0_-10px_30px_rgba(15,23,42,0.08)] backdrop-blur lg:hidden">
+        <div className="surface-sticky fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+5.5rem)] z-40 px-4 py-4 lg:hidden">
           <div className="mx-auto flex w-full max-w-3xl flex-col gap-3">
             <div className="flex items-center justify-between text-sm font-semibold text-foreground">
               <span>Total</span>

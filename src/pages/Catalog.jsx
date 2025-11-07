@@ -304,10 +304,10 @@ const CatalogPage = () => {
                     </Select>
                   </div>
 
-                  <div className="mt-3 flex items-center justify-between rounded-xl border border-border/80 bg-white/95 px-3 py-3 text-[11px] shadow-sm transition-colors dark:border-border dark:bg-muted/70">
+                  <div className="mt-3 flex items-center justify-between rounded-2xl border border-border/80 bg-[var(--surface-overlay-strong)] px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground shadow-sm transition-colors dark:border-border/70 dark:bg-[var(--surface-overlay)] dark:text-muted-foreground">
                     <Label
                       htmlFor="availability-toggle-mobile"
-                      className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"
+                      className="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
                     >
                       Incluir sin stock
                     </Label>
@@ -361,7 +361,7 @@ const CatalogPage = () => {
 
               {!showInitialLoading && !showEmptyState && !isError && (
                 <>
-                  <div className="grid grid-cols-1 justify-items-start gap-4 sm:justify-items-center md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                     {products.map((product) => (
                       <ProductCard key={product.id} product={product} />
                     ))}
