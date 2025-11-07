@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Heart, Loader2, Minus, Plus, Trash2 } from 'lucide-react';
+import { Heart, Loader2, Minus, Plus, Trash2, Check } from 'lucide-react';
 
 import { useCart } from '@/context/CartContext';
 import { useFavorites } from '@/hooks/useFavorites';
@@ -15,6 +15,7 @@ const ProductCard = memo(({ product }) => {
   const { favorites, toggleFavorite } = useFavorites();
 
   const [isAdding, setIsAdding] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [currentQuantity, setCurrentQuantity] = useState(0);
 
   const isFavorite = Array.isArray(favorites) && favorites.includes(product.id);
@@ -52,6 +53,10 @@ const ProductCard = memo(({ product }) => {
       setIsAdding(true);
       Promise.resolve()
         .then(() => addToCart(product))
+        .then(() => {
+          setShowSuccess(true);
+          setTimeout(() => setShowSuccess(false), 2000);
+        })
         .finally(() => setIsAdding(false));
     },
     [addToCart, currentQuantity, isInStock, product]
@@ -80,17 +85,18 @@ const ProductCard = memo(({ product }) => {
   return (
     <article
       className={cn(
-        'group relative flex w-full flex-col overflow-hidden rounded-3xl surface-card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
-        'dark:hover:shadow-elevated'
+        'group relative flex w-full flex-col overflow-hidden rounded-3xl surface-card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:hover:shadow-elevated',
+        !isInStock && 'opacity-70 grayscale-[0.3]'
       )}
       role="article"
-      aria-label={`Producto ${productName}, precio ${productPrice} pesos`}
+      aria-label={`Producto ${productName}, precio ${productPrice} pesos${!isInStock ? ', sin stock' : ''}`}
     >
       <div className="relative w-full overflow-hidden">
         <button
           type="button"
           onClick={handleNavigate}
           className="block w-full overflow-hidden"
+          disabled={!isInStock}
         >
           <OptimizedImage
             src={product.image_url || product.image}
@@ -103,7 +109,7 @@ const ProductCard = memo(({ product }) => {
 
         <div className="absolute left-4 top-3 flex flex-wrap gap-2">
           {product.category && (
-            <span className="surface-chip px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+            <span className="rounded-full border border-border/60 bg-white/95 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-foreground shadow-sm backdrop-blur-sm dark:border-border dark:bg-card/90 dark:text-foreground">
               {product.category}
             </span>
           )}
@@ -112,10 +118,10 @@ const ProductCard = memo(({ product }) => {
           type="button"
           onClick={handleToggleFavorite}
           className={cn(
-            "absolute right-4 top-3 flex h-9 w-9 items-center justify-center rounded-full surface-chip transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500",
+            "absolute right-4 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-white/95 text-muted-foreground shadow-sm backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 dark:border-border dark:bg-card/90",
             isFavorite
-              ? "text-red-500 shadow-[0_0_16px_rgba(239,68,68,0.4)] hover:shadow-[0_0_20px_rgba(239,68,68,0.5)] dark:shadow-[0_0_20px_rgba(239,68,68,0.5)]"
-              : "text-muted-foreground/80 hover:text-red-500 hover:shadow-md"
+              ? "text-red-500 hover:scale-110 shadow-[0_0_16px_rgba(239,68,68,0.4)] dark:shadow-[0_0_20px_rgba(239,68,68,0.5)]"
+              : "hover:text-red-500"
           )}
           aria-label={
             isFavorite
@@ -126,8 +132,8 @@ const ProductCard = memo(({ product }) => {
         >
           <Heart
             className={cn(
-              'h-4 w-4 transition-transform duration-200',
-              isFavorite && 'scale-110 fill-red-500'
+              'h-4 w-4 transition-all duration-300',
+              isFavorite && 'animate-[heartBeat_0.3s_ease-in-out] fill-current scale-110'
             )}
             aria-hidden="true"
           />
@@ -144,18 +150,21 @@ const ProductCard = memo(({ product }) => {
             {productName}
           </h3>
         </button>
-        <p className="text-sm font-medium text-muted-foreground/80">
-          <span className={cn(isInStock ? 'text-success' : 'text-error uppercase')}>
+        <p className="text-sm font-medium text-muted-foreground">
+          <span className={cn(
+            'font-semibold',
+            isInStock ? 'text-success' : 'text-error uppercase'
+          )}>
             {availabilityLabel}
           </span>
           {Number.isFinite(stock) && (
-            <span className="text-muted-foreground/70">{` · ${stock} pzas`}</span>
+            <span className="text-muted-foreground">{` · ${stock} pzas`}</span>
           )}
         </p>
 
         <div className="flex flex-1 flex-col justify-between gap-4">
           <div className="rounded-xl bg-muted/40 p-3 dark:bg-muted/20">
-            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/70">
+            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               Precio
             </span>
             <div className="mt-1 flex items-baseline justify-between gap-2">
@@ -163,7 +172,7 @@ const ProductCard = memo(({ product }) => {
                 ${productPrice}
               </p>
               {unitLabel && (
-                <span className="text-sm font-semibold text-muted-foreground/70">/ {unitLabel}</span>
+                <span className="text-sm font-semibold text-muted-foreground">/ {unitLabel}</span>
               )}
             </div>
           </div>
@@ -174,12 +183,21 @@ const ProductCard = memo(({ product }) => {
               onClick={handleAddToCart}
               disabled={isAdding || !isInStock}
               className={cn(
-                'flex w-full items-center justify-center gap-2 rounded-2xl bg-primary-600 py-3 text-base font-semibold text-white transition-transform active:scale-[0.98]',
-                isInStock ? 'hover:bg-primary-700' : 'cursor-not-allowed bg-muted/60 text-muted-foreground/80'
+                'flex w-full items-center justify-center gap-2 rounded-2xl py-3 text-base font-semibold text-white transition-all active:scale-[0.98]',
+                showSuccess
+                  ? 'bg-success hover:bg-success/90'
+                  : isInStock
+                    ? 'bg-primary-600 hover:bg-primary-700 hover:shadow-button'
+                    : 'cursor-not-allowed bg-muted/60 text-muted-foreground'
               )}
             >
               {isAdding ? (
                 <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
+              ) : showSuccess ? (
+                <>
+                  <Check className="h-5 w-5 animate-[checkBounce_0.5s_ease-in-out]" aria-hidden="true" />
+                  Agregado
+                </>
               ) : (
                 <>
                   <Plus className="h-5 w-5" aria-hidden="true" />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { ShoppingCart } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,17 @@ export function CartIcon({ variant = 'default' }) {
   const navigate = useNavigate();
   const location = useLocation();
   const isCompact = variant === 'compact';
+  const [shouldAnimate, setShouldAnimate] = useState(false);
+  const prevItemsRef = useRef(totalItems);
+
+  useEffect(() => {
+    if (totalItems > prevItemsRef.current) {
+      setShouldAnimate(true);
+      const timer = setTimeout(() => setShouldAnimate(false), 600);
+      return () => clearTimeout(timer);
+    }
+    prevItemsRef.current = totalItems;
+  }, [totalItems]);
 
   const handleClick = () => {
     if (location.pathname.startsWith('/cart')) {
@@ -38,13 +49,18 @@ export function CartIcon({ variant = 'default' }) {
       )}
       aria-label={totalItems > 0 ? `Abrir carrito, ${totalItems} productos` : 'Abrir carrito'}
     >
-      <ShoppingCart className={cn('h-6 w-6', isCompact && 'h-5 w-5')} />
+      <ShoppingCart className={cn(
+        'h-6 w-6 transition-transform',
+        isCompact && 'h-5 w-5',
+        shouldAnimate && 'animate-[wiggle_0.3s_ease-in-out]'
+      )} />
       {totalItems > 0 && (
         <span
           className={cn(
-            'absolute -top-1.5 -right-1.5 z-20 flex h-5 min-w-[1.75rem] items-center justify-center rounded-full bg-destructive px-1.5 text-xs font-bold text-destructive-foreground leading-tight',
-            'shadow-none dark:shadow-[0_20px_48px_rgba(4,12,28,0.55)]',
-            totalItems > 99 && 'px-2'
+            'absolute -top-1.5 -right-1.5 z-20 flex h-5 min-w-[1.75rem] items-center justify-center rounded-full bg-destructive px-1.5 text-xs font-bold text-destructive-foreground leading-tight transition-all',
+            'shadow-sm dark:shadow-[0_20px_48px_rgba(4,12,28,0.55)]',
+            totalItems > 99 && 'px-2',
+            shouldAnimate && 'animate-[badgePulse_0.4s_ease-in-out]'
           )}
         >
           {totalItems > 99 ? '99+' : totalItems}
