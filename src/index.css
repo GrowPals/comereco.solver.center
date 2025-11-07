@@ -754,12 +754,12 @@
     pointer-events: auto;
   }
 
-  /* Base icon badges - neutral surface that respects component color classes */
+  /* Base icon badges - neutral gray surface to reduce visual noise */
   .icon-badge,
   .metric-icon,
   .stat-icon {
-    background: rgba(248, 250, 252, 0.7);
-    border: 1px solid rgba(226, 232, 240, 0.6);
+    background: rgba(241, 245, 249, 0.9); /* slate-100 equivalent */
+    border: 1px solid rgba(226, 232, 240, 0.8);
     box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
     border-radius: 999px;
     /* No forced color - let components define their own via Tailwind utilities */
@@ -769,13 +769,13 @@
   .metric-icon svg,
   .stat-icon svg {
     /* Let component color classes control SVG color */
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.05));
   }
 
-  /* Primary variant with blue gradient (opt-in) */
+  /* Primary variant with subtle neutral background (opt-in) */
   .icon-badge--primary {
-    background: linear-gradient(135deg, rgba(239, 246, 255, 0.9) 0%, rgba(219, 234, 254, 0.7) 100%) !important;
-    border: 1px solid rgba(59, 130, 246, 0.08) !important;
+    background: rgba(241, 245, 249, 0.95) !important; /* slate-100 */
+    border: 1px solid rgba(203, 213, 225, 0.6) !important; /* slate-300 */
     color: var(--primary-600) !important;
   }
 
@@ -803,17 +803,17 @@
   .dark .icon-badge,
   .dark .metric-icon,
   .dark .stat-icon {
-    background: rgba(28, 52, 92, 0.5);
-    border: 1px solid rgba(120, 192, 255, 0.25);
+    background: rgba(51, 65, 85, 0.5); /* slate-700 with 50% opacity */
+    border: 1px solid rgba(71, 85, 105, 0.6); /* slate-600 */
     box-shadow: var(--shadow-sm);
     /* No forced color - let components define their own via Tailwind utilities */
   }
 
   .dark .icon-badge--primary {
-    background: rgba(28, 52, 92, 0.65) !important;
-    border: 1px solid rgba(120, 192, 255, 0.28) !important;
+    background: rgba(51, 65, 85, 0.5) !important; /* slate-700 */
+    border: 1px solid rgba(71, 85, 105, 0.6) !important; /* slate-600 */
     box-shadow: var(--shadow-sm) !important;
-    color: #f4f8ff !important;
+    color: #93C5FD !important; /* primary-300 for better contrast */
   }
 
   .dark .favorite-icon {
@@ -894,8 +894,8 @@
 
   .stat-icon,
   .metric-icon {
-    background: linear-gradient(135deg, rgba(239, 246, 255, 0.9) 0%, rgba(219, 234, 254, 0.7) 100%);
-    border: 1px solid rgba(59, 130, 246, 0.08);
+    background: rgba(241, 245, 249, 0.9); /* slate-100 - neutral background */
+    border: 1px solid rgba(226, 232, 240, 0.8); /* slate-200 */
     box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
     color: var(--primary-600);
   }
