@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
 import { Search, Filter, RefreshCw, Layers, ShieldCheck, PauseCircle } from 'lucide-react';
 import PageContainer from '@/components/layout/PageContainer';

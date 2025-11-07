@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import EmptyState from '@/components/EmptyState';
 import { History } from 'lucide-react';
 import { Button } from '@/components/ui/button';

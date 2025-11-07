@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PlusCircle, MoreHorizontal, Edit, Trash2, Users, FolderKanban, UserPlus, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -229,8 +229,10 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
 
     const addMemberMutation = useMutation({
         mutationFn: ({ projectId, userId }) => addProjectMember(projectId, userId),
-        onSuccess: () => {
-            queryClient.invalidateQueries(['projectMembers', project.id]);
+        onSuccess: (_data, variables) => {
+            // Usar el projectId de las variables de mutación en lugar del prop
+            if (!variables.projectId) return;
+            queryClient.invalidateQueries(['projectMembers', variables.projectId]);
             toast({ title: 'Miembro agregado' });
             setSelectedUser(MANAGE_MEMBERS_PLACEHOLDER);
         },
@@ -239,8 +241,10 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
 
     const removeMemberMutation = useMutation({
         mutationFn: ({ projectId, userId }) => removeProjectMember(projectId, userId),
-        onSuccess: () => {
-            queryClient.invalidateQueries(['projectMembers', project.id]);
+        onSuccess: (_data, variables) => {
+            // Usar el projectId de las variables de mutación en lugar del prop
+            if (!variables.projectId) return;
+            queryClient.invalidateQueries(['projectMembers', variables.projectId]);
             toast({ title: 'Miembro eliminado' });
         },
         onError: (error) => toast({ variant: 'destructive', title: 'Error', description: error.message }),
@@ -249,8 +253,10 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
     const toggleApprovalMutation = useMutation({
         mutationFn: ({ projectId, userId, requiresApproval }) =>
             updateProjectMemberApproval(projectId, userId, requiresApproval),
-        onSuccess: () => {
-            queryClient.invalidateQueries(['projectMembers', project.id]);
+        onSuccess: (_data, variables) => {
+            // Usar el projectId de las variables de mutación en lugar del prop
+            if (!variables.projectId) return;
+            queryClient.invalidateQueries(['projectMembers', variables.projectId]);
             toast({ title: 'Configuración actualizada' });
         },
         onError: (error) => toast({ variant: 'destructive', title: 'Error', description: error.message }),

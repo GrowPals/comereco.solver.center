@@ -125,16 +125,19 @@ const NotificationCenter = ({ variant = 'popover' }) => {
                 filter: `user_id=eq.${user.id}` // Filtro explícito por user_id
             }, (payload) => {
                 logger.info('Notification updated:', payload.new);
-                const oldNotification = notifications.find(n => n.id === payload.new.id);
-                setNotifications(prev =>
-                    prev.map(n => n.id === payload.new.id ? payload.new : n)
-                );
-                // Actualizar contador si cambió el estado de lectura
-                if (oldNotification && !oldNotification.is_read && payload.new.is_read) {
-                    setUnreadCount(prev => Math.max(0, prev - 1));
-                } else if (oldNotification && oldNotification.is_read && !payload.new.is_read) {
-                    setUnreadCount(prev => prev + 1);
-                }
+                setNotifications(prev => {
+                    // Buscar la notificación anterior en el estado actual
+                    const oldNotification = prev.find(n => n.id === payload.new.id);
+
+                    // Actualizar contador si cambió el estado de lectura
+                    if (oldNotification && !oldNotification.is_read && payload.new.is_read) {
+                        setUnreadCount(c => Math.max(0, c - 1));
+                    } else if (oldNotification && oldNotification.is_read && !payload.new.is_read) {
+                        setUnreadCount(c => c + 1);
+                    }
+
+                    return prev.map(n => n.id === payload.new.id ? payload.new : n);
+                });
             })
             .subscribe((status, err) => {
                 if (status === 'SUBSCRIBED') {
