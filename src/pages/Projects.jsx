@@ -51,11 +51,11 @@ const ProjectCard = ({ project, onEdit, onDelete, onManageMembers, onView }) => 
 
       <div>
         <div className="mb-3 flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div className="icon-badge flex h-12 w-12 items-center justify-center">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="icon-badge flex h-12 w-12 flex-shrink-0 items-center justify-center">
               <FolderKanban className="h-6 w-6 text-primary-600 dark:text-primary-100" />
             </div>
-            <h3 className="text-xl font-bold text-foreground">{project.name}</h3>
+            <h3 className="text-xl font-bold text-foreground break-words min-w-0 flex-1">{project.name}</h3>
           </div>
           {canManageProjects && (
             <DropdownMenu>
@@ -395,12 +395,12 @@ const ProjectsPage = () => {
         <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
           {/* Header */}
           <header className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
-            <div className="flex items-center gap-3 sm:gap-4">
-              <div className="icon-badge flex h-12 w-12 items-center justify-center sm:h-14 sm:w-14">
+            <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+              <div className="icon-badge flex h-12 w-12 flex-shrink-0 items-center justify-center sm:h-14 sm:w-14">
                 <FolderKanban className="h-6 w-6 text-primary-600 dark:text-primary-100 sm:h-7 sm:w-7" aria-hidden="true" />
               </div>
-              <div className="space-y-1">
-                <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+              <div className="space-y-1 min-w-0 flex-1">
+                <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl break-words">
                   <span className="bg-gradient-primary bg-clip-text text-transparent">Proyectos</span>
                 </h1>
                 <p className="text-sm text-muted-foreground sm:text-base">

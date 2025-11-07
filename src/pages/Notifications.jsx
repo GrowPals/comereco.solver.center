@@ -24,11 +24,11 @@ import PageLoader from '@/components/PageLoader';
 import PageContainer from '@/components/layout/PageContainer';
 
 const notificationIcons = {
-    success: { icon: CheckCheck, badgeClass: 'text-emerald-600 dark:text-emerald-200 ring-1 ring-emerald-300/45 dark:ring-emerald-500/40' },
-    warning: { icon: Bell, badgeClass: 'text-amber-500 dark:text-amber-200 ring-1 ring-amber-300/45 dark:ring-amber-500/35' },
-    danger: { icon: X, badgeClass: 'text-red-500 dark:text-red-200 ring-1 ring-red-300/50 dark:ring-red-500/40' },
-    info: { icon: Bell, badgeClass: 'text-primary-600 dark:text-primary-100 ring-1 ring-primary-300/45 dark:ring-primary-400/35' },
-    default: { icon: Bell, badgeClass: 'text-muted-foreground ring-1 ring-border/70 dark:text-primary-200/70 dark:ring-[#31537f]/50' },
+    success: { icon: CheckCheck, badgeClass: 'text-emerald-600 dark:text-emerald-200 ring-1 ring-emerald-300/25 dark:ring-emerald-500/40' },
+    warning: { icon: Bell, badgeClass: 'text-amber-600 dark:text-amber-200 ring-1 ring-amber-300/25 dark:ring-amber-500/35' },
+    danger: { icon: X, badgeClass: 'text-red-600 dark:text-red-200 ring-1 ring-red-300/30 dark:ring-red-500/40' },
+    info: { icon: Bell, badgeClass: 'text-primary-600 dark:text-primary-100 ring-1 ring-primary-300/20 dark:ring-primary-400/35' },
+    default: { icon: Bell, badgeClass: 'text-muted-foreground ring-1 ring-border/40 dark:text-primary-200/70 dark:ring-[#31537f]/50' },
 };
 
 const groupNotificationsByDate = (notifications) => {
