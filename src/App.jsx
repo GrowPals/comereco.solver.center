@@ -259,7 +259,11 @@ const App = () => (
   <Router>
     <AppProviders>
       <ToastProvider>
-        <Suspense fallback={<PageLoader />}>
+        <Suspense fallback={
+          <div className="flex items-center justify-center h-screen bg-background">
+            <PageLoader />
+          </div>
+        }>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route
