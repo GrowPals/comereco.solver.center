@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Calendar, Hash, User, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { formatCurrency } from '@/lib/formatters';
 
 const statusStyles = {
   draft: {
@@ -70,10 +71,10 @@ const RequisitionCard = memo(({ requisition }) => {
   }, [requisition?.created_at]);
 
   // Memoizar monto formateado
-  const formattedAmount = useMemo(() => {
-    const amount = Number(requisition?.total_amount) || 0;
-    return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(amount);
-  }, [requisition?.total_amount]);
+  const formattedAmount = useMemo(() =>
+    formatCurrency(requisition?.total_amount),
+    [requisition?.total_amount]
+  );
 
   const handleCardClick = useCallback(() => {
     if (requisition?.id) {

@@ -30,6 +30,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/useToast';
 import { cn } from '@/lib/utils';
+import { formatNumber } from '@/lib/formatters';
 
 // Componente de tarjeta de estadística
 const StatCard = ({ icon: Icon, title, value, subtitle, color = 'blue', trend }) => {
@@ -169,10 +170,10 @@ const MonthlyTrendChart = ({ data }) => {
                                         <span className="font-bold text-foreground w-16">{item.mes}</span>
                                         <div className="flex gap-4 text-xs">
                                             <span className="text-foreground/90 font-semibold">
-                                                ${approvedValue.toLocaleString('es-MX')}
+                                                ${formatNumber(approvedValue)}
                                             </span>
                                             <span className="text-muted-foreground font-semibold">
-                                                ${pendingValue.toLocaleString('es-MX')}
+                                                ${formatNumber(pendingValue)}
                                             </span>
                                         </div>
                                     </div>
@@ -183,7 +184,7 @@ const MonthlyTrendChart = ({ data }) => {
                                         >
                                             {approvedPercentage > 15 && (
                                                 <span>
-                                                    ${approvedValue.toLocaleString('es-MX')}
+                                                    ${formatNumber(approvedValue)}
                                                 </span>
                                             )}
                                         </div>
@@ -193,7 +194,7 @@ const MonthlyTrendChart = ({ data }) => {
                                         >
                                             {pendingPercentage > 15 && (
                                                 <span>
-                                                    ${pendingValue.toLocaleString('es-MX')}
+                                                    ${formatNumber(pendingValue)}
                                                 </span>
                                             )}
                                         </div>
@@ -431,28 +432,28 @@ const ReportsPage = () => {
                         <StatCard
                             icon={FileText}
                             title="Total Requisiciones"
-                            value={generalStats?.totalRequisitions?.toLocaleString('es-MX') || '0'}
+                            value={formatNumber(generalStats?.totalRequisitions || 0)}
                             subtitle="Todas las requisiciones"
                             color="blue"
                         />
                         <StatCard
                             icon={DollarSign}
                             title="Monto Aprobado"
-                            value={`$${generalStats?.totalApproved?.toLocaleString('es-MX') || '0'}`}
+                            value={`$${formatNumber(generalStats?.totalApproved || 0)}`}
                             subtitle="Requisiciones aprobadas"
                             color="green"
                         />
                         <StatCard
                             icon={Clock}
                             title="Pendientes"
-                            value={generalStats?.pendingApprovals?.toLocaleString('es-MX') || '0'}
+                            value={formatNumber(generalStats?.pendingApprovals || 0)}
                             subtitle="Esperando aprobación"
                             color="amber"
                         />
                         <StatCard
                             icon={Users}
                             title="Usuarios Activos"
-                            value={generalStats?.activeUsers?.toLocaleString('es-MX') || '0'}
+                            value={formatNumber(generalStats?.activeUsers || 0)}
                             subtitle="En tu organización"
                             color="purple"
                         />

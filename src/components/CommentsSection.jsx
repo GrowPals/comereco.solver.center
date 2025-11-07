@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -11,7 +11,7 @@ import { es } from 'date-fns/locale';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const CommentsSection = ({ requisitionId, comments = [], onAddComment, onDeleteComment }) => {
-  const { user } = useAuth();
+  const { user } = useSupabaseAuth();
   const { toast } = useToast();
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -26,8 +26,8 @@ const CommentsSection = ({ requisitionId, comments = [], onAddComment, onDeleteC
         id: `comment-${Date.now()}`,
         requisitionId,
         userId: user.id,
-        userName: user.nombre,
-        userAvatar: user.avatar,
+        userName: user.full_name || user.email,
+        userAvatar: user.avatar_url,
         message: newComment.trim(),
         timestamp: new Date().toISOString(),
       };
@@ -67,8 +67,8 @@ const CommentsSection = ({ requisitionId, comments = [], onAddComment, onDeleteC
     <div className="space-y-4">
       <form onSubmit={handleSubmit} className="flex gap-2">
         <Avatar className="h-10 w-10 shrink-0">
-          <AvatarImage src={user?.avatar} alt={user?.nombre} />
-          <AvatarFallback>{user?.nombre?.[0]}</AvatarFallback>
+          <AvatarImage src={user?.avatar_url} alt={user?.full_name || user?.email} />
+          <AvatarFallback>{(user?.full_name || user?.email)?.[0]}</AvatarFallback>
         </Avatar>
         <div className="flex-1 flex gap-2">
           <Input

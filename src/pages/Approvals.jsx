@@ -22,6 +22,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import logger from '@/utils/logger';
 import { cn } from '@/lib/utils';
+import { formatNumber } from '@/lib/formatters';
 
 const Approvals = () => {
     const navigate = useNavigate();
@@ -217,7 +218,7 @@ const Approvals = () => {
                                                 <div>
                                                     <p className="mb-0.5 text-xs text-muted-foreground">Monto Total</p>
                                                     <p className="text-2xl font-bold text-foreground">
-                                                        ${req.total_amount.toLocaleString('es-MX')}
+                                                        ${formatNumber(req.total_amount)}
                                                     </p>
                                                 </div>
                                             </div>

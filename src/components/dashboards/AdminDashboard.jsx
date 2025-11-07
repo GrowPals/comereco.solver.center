@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getDashboardStats } from '@/services/dashboardService';
 import StatCard from './StatCard';
@@ -7,10 +7,12 @@ import QuickAccess from './QuickAccess';
 import RecentRequisitions from './RecentRequisitions';
 import { Users, FolderKanban, FileText, ShoppingBag, BarChart2 } from 'lucide-react';
 
-const AdminDashboard = ({ user }) => {
+const AdminDashboard = memo(({ user }) => {
     const { data: stats, isLoading } = useQuery({
         queryKey: ['dashboardStats', user.id],
         queryFn: getDashboardStats,
+        staleTime: 1000 * 60 * 5, // 5 minutos
+        gcTime: 1000 * 60 * 30, // 30 minutos
     });
 
     const formatCurrency = (value) => value ? `$${Number(value).toFixed(2)}` : '$0.00';
@@ -54,6 +56,6 @@ const AdminDashboard = ({ user }) => {
             </div>
         </div>
     );
-};
+});
 
 export default AdminDashboard;
