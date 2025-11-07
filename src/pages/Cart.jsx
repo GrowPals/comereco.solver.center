@@ -165,7 +165,7 @@ const SaveTemplateModal = ({ isOpen, onOpenChange, cartItems }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md border border-border bg-card shadow-2xl p-0">
+      <DialogContent className="sm:max-w-md border border-border bg-card shadow-soft-xl p-0">
         <div className="flex max-h-[calc(100dvh-4rem)] flex-col">
           <DialogHeader className="px-6 pt-6">
             <DialogTitle className="flex items-center gap-2 text-xl">
@@ -371,7 +371,7 @@ const CartPage = () => {
                   ))}
                 </div>
 
-                <aside className="hidden rounded-2xl border border-border bg-card p-6 shadow-lg lg:block lg:sticky lg:top-32 lg:h-fit">
+                <aside className="hidden rounded-2xl border border-border bg-card p-6 shadow-soft-md lg:block lg:sticky lg:top-32 lg:h-fit">
                   <h2 className="text-lg font-semibold text-foreground">Resumen</h2>
                   <div className="mt-4 space-y-3 text-sm text-muted-foreground">
                     <div className="flex justify-between">

@@ -61,7 +61,7 @@ const NotificationItem = memo(({ notification, onRead }) => {
             <div className="flex-1 min-w-0">
                 <p className={cn("font-semibold text-sm text-foreground dark:text-foreground/95", !notification.is_read && "text-foreground")}>{notification.title}</p>
                 <p className="text-xs text-muted-foreground/90 dark:text-foreground/70 mt-0.5 line-clamp-2">{notification.message}</p>
-                <p className="text-xs text-neutral-500 mt-2 font-medium">
+                <p className="text-xs text-muted-foreground mt-2 font-medium">
                     {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true, locale: es })}
                 </p>
             </div>
@@ -172,41 +172,37 @@ const NotificationCenter = ({ variant = 'popover' }) => {
 
     if (variant === 'icon') {
         return (
-            <Button
-                variant="ghost"
-                size="icon"
-                className="relative h-11 w-11 overflow-visible rounded-full border border-border bg-[var(--surface-contrast)] text-foreground shadow-none transition-colors hover:bg-[var(--surface-muted)] hover:shadow-none active:shadow-none dark:border-[#1a2f4f] dark:bg-[rgba(12,26,52,0.72)] dark:text-primary-50 dark:hover:bg-[rgba(16,32,62,0.85)] dark:hover:border-[#4678d4] dark:shadow-[0_22px_48px_rgba(5,12,28,0.52)] dark:hover:shadow-[0_28px_60px_rgba(6,14,30,0.6)]"
+            <button
+                className="header-action-btn focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
                 aria-label={`Ver notificaciones${unreadCount > 0 ? `, ${unreadCount} sin leer` : ''}`}
                 onClick={() => navigate('/notifications')}
             >
                 <Bell className="h-5 w-5" />
                 {unreadCount > 0 && (
-                    <div className="absolute -top-1.5 -right-1.5 z-20 flex h-5 min-w-[1.75rem] items-center justify-center rounded-full bg-gradient-error px-1.5 text-xs font-bold text-white leading-tight shadow-none dark:shadow-[0_20px_48px_rgba(4,12,28,0.55)]">
+                    <span className={cn('header-badge', unreadCount > 0 && 'animate-pulse')}>
                         {unreadCount > 99 ? '99+' : unreadCount}
-                    </div>
+                    </span>
                 )}
-            </Button>
+            </button>
         );
     }
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="relative overflow-visible rounded-full border border-border bg-[var(--surface-contrast)] text-foreground shadow-none transition-colors hover:bg-[var(--surface-muted)] hover:shadow-none active:shadow-none dark:border-[#1a2f4f] dark:bg-[rgba(12,26,52,0.72)] dark:text-primary-50 dark:hover:bg-[rgba(16,32,62,0.85)] dark:hover:border-[#4678d4] dark:shadow-[0_22px_48px_rgba(5,12,28,0.52)] dark:hover:shadow-[0_28px_60px_rgba(6,14,30,0.6)]"
+                <button
+                    className="header-action-btn focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
                     aria-label={`Ver notificaciones, ${unreadCount} no leídas`}
                 >
                     <Bell className="h-5 w-5" />
                     {unreadCount > 0 && (
-                        <div className="absolute -top-1.5 -right-1.5 z-20 flex h-5 min-w-[1.75rem] items-center justify-center rounded-full bg-gradient-error px-1.5 text-xs font-bold text-white leading-tight shadow-none dark:shadow-[0_20px_48px_rgba(4,12,28,0.55)] animate-pulse">
+                        <span className={cn('header-badge', unreadCount > 0 && 'animate-pulse')}>
                             {unreadCount > 99 ? '99+' : unreadCount}
-                        </div>
+                        </span>
                     )}
-                </Button>
+                </button>
             </PopoverTrigger>
-            <PopoverContent align="end" className="w-[380px] p-0 shadow-2xl">
+            <PopoverContent align="end" className="w-[380px] p-0 shadow-soft-xl">
                 <div className="flex items-center justify-between border-b border-border bg-[var(--surface-overlay)] p-4">
                     <div className="flex items-center gap-2">
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-primary">

@@ -46,7 +46,7 @@ const ProjectCard = ({ project, onEdit, onDelete, onManageMembers, onView }) => 
   const { canManageProjects } = useUserPermissions();
   const isActive = project.status === 'active';
   return (
-    <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border-2 border-border bg-card p-6 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-border dark:bg-card">
+    <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border-2 border-border bg-card p-6 shadow-soft-md transition-all duration-300 hover:-translate-y-1 hover:shadow-soft-lg dark:border-border dark:bg-card">
       {/* Accent bar on hover */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
 
@@ -145,7 +145,7 @@ const ProjectFormModal = ({ project, isOpen, onClose, onSave, supervisors, isAdm
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg p-0 shadow-2xl">
+      <DialogContent className="sm:max-w-lg p-0 shadow-soft-xl">
         <div className="flex max-h-[calc(100dvh-4rem)] flex-col">
           <DialogHeader className="px-6 pt-6">
             <DialogTitle className="text-2xl font-bold">
@@ -266,7 +266,7 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-2xl p-0 shadow-2xl">
+            <DialogContent className="max-w-2xl p-0 shadow-soft-xl">
                 <div className="flex max-h-[calc(100dvh-4rem)] flex-col">
                     <DialogHeader className="px-6 pt-6">
                         <DialogTitle>Gestionar Miembros de &quot;{project?.name}&quot;</DialogTitle>
@@ -415,7 +415,7 @@ const ProjectsPage = () => {
               <Button
                 size="lg"
                 onClick={() => setFormModal({ isOpen: true, project: null })}
-                className="w-full rounded-xl shadow-lg hover:shadow-xl sm:w-auto"
+                className="w-full rounded-xl shadow-soft-md hover:shadow-soft-lg sm:w-auto"
               >
                 <PlusCircle className="mr-2 h-5 w-5" />
                 Crear Proyecto

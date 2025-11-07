@@ -127,7 +127,7 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-2xl border border-border bg-card shadow-2xl p-0">
+            <DialogContent className="sm:max-w-2xl border border-border bg-card shadow-soft-xl p-0">
                 <form onSubmit={handleSubmit(onSubmit)} className="flex max-h-[calc(100dvh-3.5rem)] flex-col">
                     <DialogHeader className="px-6 pt-6">
                         <DialogTitle className="text-2xl font-bold">
@@ -362,7 +362,7 @@ const ManageProductsPage = () => {
                     </header>
 
                     {products?.length > 0 ? (
-                        <div className="overflow-hidden rounded-2xl border-2 border-border bg-card shadow-lg">
+                        <div className="overflow-hidden rounded-2xl border-2 border-border bg-card shadow-soft-md">
                             <div className="w-full overflow-x-auto">
                             <Table className="min-w-[720px] md:min-w-full">
                             <TableHeader>

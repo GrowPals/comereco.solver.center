@@ -94,13 +94,13 @@ const FavoritesPage = () => {
             <>
                 <Helmet><title>{`Mis Favoritos - ComerECO`}</title></Helmet>
                 <PageContainer className="flex items-center justify-center">
-                    <div className="bg-card rounded-2xl shadow-lg p-12 max-w-md border-2 border-error/30">
+                    <div className="bg-card rounded-2xl shadow-soft-md p-12 max-w-md border-2 border-error/30">
                         <EmptyState
                             icon={AlertCircle}
                             title="Error al Cargar Favoritos"
                             description="No pudimos cargar tus productos favoritos. Por favor, inténtalo de nuevo."
                             actionButton={
-                                <Button onClick={() => window.location.reload()} size="lg" className="shadow-lg hover:shadow-xl">
+                                <Button onClick={() => window.location.reload()} size="lg" className="shadow-soft-md hover:shadow-soft-lg">
                                     Reintentar
                                 </Button>
                             }
@@ -117,13 +117,13 @@ const FavoritesPage = () => {
             <>
                 <Helmet><title>Mis Favoritos - ComerECO</title></Helmet>
                 <PageContainer className="flex items-center justify-center">
-                    <div className="bg-card rounded-2xl shadow-lg p-12 max-w-md border-2 border-border">
+                    <div className="bg-card rounded-2xl shadow-soft-md p-12 max-w-md border-2 border-border">
                         <EmptyState
                             icon={<Star className="favorite-icon" />}
                             title="Aún no tienes favoritos"
                             description="Explora el catálogo y marca los productos que más te gustan para encontrarlos aquí fácilmente."
                             actionButton={
-                                <Button onClick={() => navigate('/catalog')} size="lg" className="shadow-lg hover:shadow-xl bg-gradient-to-r from-primary-500 to-primary-700 hover:from-primary-600 hover:to-primary-800">
+                                <Button onClick={() => navigate('/catalog')} size="lg" className="shadow-soft-md hover:shadow-soft-lg bg-gradient-to-r from-primary-500 to-primary-700 hover:from-primary-600 hover:to-primary-800">
                                     <ShoppingBag className="mr-2 h-5 w-5" />
                                     Explorar Catálogo
                                 </Button>
@@ -158,7 +158,7 @@ const FavoritesPage = () => {
                             onClick={() => navigate('/catalog')}
                             size="lg"
                             variant="outline"
-                            className="shadow-md hover:shadow-lg whitespace-nowrap border-2"
+                            className="shadow-md hover:shadow-soft-md whitespace-nowrap border-2"
                         >
                             <ShoppingBag className="mr-2 h-5 w-5" />
                             Seguir Explorando
@@ -196,7 +196,7 @@ const FavoritesPage = () => {
                         <Button
                             onClick={() => navigate('/catalog')}
                             size="lg"
-                            className="shadow-lg hover:shadow-xl bg-gradient-to-r from-primary-500 to-primary-700 hover:from-primary-600 hover:to-primary-800"
+                            className="shadow-soft-md hover:shadow-soft-lg bg-gradient-to-r from-primary-500 to-primary-700 hover:from-primary-600 hover:to-primary-800"
                         >
                             <ShoppingBag className="mr-2 h-5 w-5" />
                             Ver Catálogo Completo

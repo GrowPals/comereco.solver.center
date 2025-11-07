@@ -142,11 +142,11 @@ const RequisitionDetail = () => {
     const { internal_folio, created_at, business_status, creator, items, total_amount, comments, project } = requisition;
 
     const statusConfig = {
-        draft: { text: 'Borrador', variant: 'muted', accent: 'bg-muted' },
-        submitted: { text: 'Enviada', variant: 'warning', accent: 'bg-gradient-warning' },
-        approved: { text: 'Aprobada', variant: 'success', accent: 'bg-gradient-accent' },
-        rejected: { text: 'Rechazada', variant: 'danger', accent: 'bg-gradient-error' },
-        ordered: { text: 'Ordenada', variant: 'info', accent: 'bg-gradient-info' },
+        draft: { text: 'Borrador', variant: 'draft', accent: 'bg-muted' },
+        submitted: { text: 'Enviada', variant: 'sent', accent: 'bg-gradient-warning' },
+        approved: { text: 'Aprobada', variant: 'approved', accent: 'bg-gradient-accent' },
+        rejected: { text: 'Rechazada', variant: 'rejected', accent: 'bg-gradient-error' },
+        ordered: { text: 'Ordenada', variant: 'ordered', accent: 'bg-gradient-info' },
         cancelled: { text: 'Cancelada', variant: 'muted', accent: 'bg-muted' },
     };
 
@@ -158,7 +158,7 @@ const RequisitionDetail = () => {
             <PageContainer>
                 <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
                     {/* Header with accent bar */}
-                    <header className="relative rounded-2xl border-2 border-border bg-card p-6 shadow-lg overflow-hidden sm:p-8">
+                    <header className="relative rounded-2xl border-2 border-border bg-card p-6 shadow-soft-md overflow-hidden sm:p-8">
                         {/* Top accent bar based on status */}
                         <div className={`absolute top-0 left-0 right-0 h-1.5 ${currentStatus.accent}`} />
 
@@ -284,7 +284,7 @@ const RequisitionDetail = () => {
                                 <CardContent className="space-y-4">
                                     {isOwner && business_status === 'draft' && (
                                         <Button
-                                            className="w-full shadow-md hover:shadow-lg"
+                                            className="w-full shadow-md hover:shadow-soft-md"
                                             size="lg"
                                             onClick={handleSubmit}
                                             disabled={actionLoading}
@@ -301,7 +301,7 @@ const RequisitionDetail = () => {
                                                         <TooltipTrigger asChild>
                                                             <DialogTrigger asChild>
                                                                 <Button
-                                                                    className="w-full shadow-md hover:shadow-lg"
+                                                                    className="w-full shadow-md hover:shadow-soft-md"
                                                                     variant="accent"
                                                                     size="lg"
                                                                     disabled={actionLoading}
@@ -367,7 +367,7 @@ const RequisitionDetail = () => {
                                                         <TooltipTrigger asChild>
                                                             <DialogTrigger asChild>
                                                                 <Button
-                                                                    className="w-full shadow-md hover:shadow-lg"
+                                                                    className="w-full shadow-md hover:shadow-soft-md"
                                                                     variant="destructive"
                                                                     size="lg"
                                                                     disabled={actionLoading}

@@ -56,7 +56,7 @@ const SearchDialog = memo(({ open, onOpenChange }) => {
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => { onOpenChange(isOpen); if (!isOpen) setQuery(''); }}>
-      <DialogContent className="sm:max-w-[600px] p-0 shadow-lg border-border" role="dialog" aria-modal="true" aria-labelledby="search-dialog-title">
+      <DialogContent className="sm:max-w-[600px] p-0 shadow-soft-md border-border" role="dialog" aria-modal="true" aria-labelledby="search-dialog-title">
         <DialogHeader className="p-6 pb-0">
           <DialogTitle id="search-dialog-title">Buscar en ComerECO</DialogTitle>
         </DialogHeader>

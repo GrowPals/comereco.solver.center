@@ -146,7 +146,7 @@ const Approvals = () => {
 
                 {requisitions?.length === 0 ? (
                     <div className="mx-auto w-full max-w-7xl">
-                        <div className="rounded-2xl border border-border bg-card shadow-lg dark:border-border dark:bg-card">
+                        <div className="rounded-2xl border border-border bg-card shadow-soft-md dark:border-border dark:bg-card">
                             <div className="flex flex-col items-center justify-center min-h-[360px] md:min-h-[480px] max-w-md mx-auto px-6 text-center">
                                 {/* Icon with consistent circular background */}
                                 <div className="w-20 h-20 rounded-full bg-green-50 dark:bg-neutral-800 flex items-center justify-center mb-6">
@@ -175,7 +175,7 @@ const Approvals = () => {
                                 <div
                                     key={req.id}
                                     className={cn(
-                                        'group relative cursor-pointer overflow-hidden rounded-2xl border-2 border-border bg-card shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-border dark:bg-card',
+                                        'group relative cursor-pointer overflow-hidden rounded-2xl border-2 border-border bg-card shadow-soft-md transition-all duration-300 hover:-translate-y-1 hover:shadow-soft-lg dark:border-border dark:bg-card',
                                         isDismissing && 'pointer-events-none opacity-0 translate-y-3 scale-[0.98]'
                                     )}
                                     style={isDismissing ? { maxHeight: 0, marginTop: 0, marginBottom: 0, paddingTop: 0, paddingBottom: 0 } : undefined}

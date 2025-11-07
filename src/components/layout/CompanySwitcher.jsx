@@ -35,11 +35,11 @@ const CompanySwitcher = ({ variant = 'default' }) => {
     if (variant === 'icon') return null;
 
     return (
-      <div className="flex items-center gap-3 rounded-full border border-border bg-card/60 px-5 py-2.5 text-sm text-muted-foreground shadow-sm backdrop-blur-sm">
-        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10">
-          <Building2 className="icon-sm animate-pulse text-primary-600 dark:text-primary-400" />
+      <div className="company-switcher-pill opacity-60">
+        <div className="company-switcher-badge-icon">
+          <Building2 className="icon-sm animate-pulse text-white" />
         </div>
-        <span className="font-medium">Cargando...</span>
+        <span className="text-sm font-medium text-muted-foreground">Cargando...</span>
       </div>
     );
   }
@@ -52,8 +52,8 @@ const CompanySwitcher = ({ variant = 'default' }) => {
     // En variante default, mostrar la empresa asignada (solo lectura)
     const companyName = companies[0]?.name || 'Empresa no asignada';
     return (
-      <div className="flex min-w-[240px] max-w-[280px] items-center gap-3 rounded-2xl border border-border bg-card px-5 py-3 shadow-sm backdrop-blur-sm">
-        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-sm">
+      <div className="company-switcher-pill cursor-default">
+        <div className="company-switcher-badge-icon">
           <Building2 className="icon-sm text-white" />
         </div>
         <div className="flex flex-col overflow-hidden">
@@ -113,18 +113,16 @@ const CompanySwitcher = ({ variant = 'default' }) => {
               <button
                 onClick={() => setIsDialogOpen(true)}
                 className={cn(
-                  'relative flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-card shadow-sm transition-all duration-300',
-                  'hover:shadow-md hover:scale-105 active:scale-95',
+                  'company-switcher-icon',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
                   isChanging && 'ring-2 ring-primary-500/50 ring-offset-2 ring-offset-background'
                 )}
                 aria-label="Selector de empresa"
               >
                 <div className={cn(
-                  'flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-300',
-                  isGlobalView
-                    ? 'bg-gradient-to-br from-blue-500 to-indigo-600'
-                    : 'bg-gradient-to-br from-primary-500 to-primary-600'
+                  'company-switcher-badge-icon',
+                  isGlobalView && 'company-switcher-badge-icon--global',
+                  isChanging && 'scale-110'
                 )}>
                   {isGlobalView ? (
                     <Globe2 className={cn('icon-sm text-white transition-transform duration-300', isChanging && 'scale-110')} />
@@ -154,10 +152,9 @@ const CompanySwitcher = ({ variant = 'default' }) => {
               {/* Vista actual */}
               <div className="flex items-center gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3">
                 <div className={cn(
-                  'flex h-10 w-10 items-center justify-center rounded-lg',
-                  isGlobalView
-                    ? 'bg-gradient-to-br from-blue-500 to-indigo-600'
-                    : 'bg-gradient-to-br from-primary-500 to-primary-600'
+                  'company-switcher-badge-icon',
+                  isGlobalView && 'company-switcher-badge-icon--global',
+                  'w-10 h-10'
                 )}>
                   {isGlobalView ? (
                     <Globe2 className="icon-md text-white" />
@@ -183,7 +180,7 @@ const CompanySwitcher = ({ variant = 'default' }) => {
                 <SelectContent className="max-h-64">
                   <SelectItem value="all">
                     <div className="flex items-center gap-3 py-1">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600">
+                      <div className="company-switcher-badge-icon company-switcher-badge-icon--global">
                         <Globe2 className="icon-sm text-white" />
                       </div>
                       <span className="font-medium">Todas las empresas</span>
@@ -192,7 +189,7 @@ const CompanySwitcher = ({ variant = 'default' }) => {
                   {companies.map((company) => (
                     <SelectItem key={company.id} value={company.id}>
                       <div className="flex items-center gap-3 py-1">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary-500 to-primary-600">
+                        <div className="company-switcher-badge-icon">
                           <Building2 className="icon-sm text-white" />
                         </div>
                         <span className="font-medium">{company.name}</span>
@@ -212,23 +209,20 @@ const CompanySwitcher = ({ variant = 'default' }) => {
   return (
     <div
       className={cn(
-        'group relative flex min-w-[220px] max-w-[280px] items-center gap-3 rounded-2xl border border-border bg-card px-5 py-3 shadow-sm backdrop-blur-sm transition-all duration-300',
-        'hover:shadow-md hover:border-primary-300/50 dark:hover:border-primary-500/50',
+        'company-switcher-pill group',
         isChanging && 'ring-2 ring-primary-500/50 ring-offset-2 ring-offset-background'
       )}
     >
       {/* Badge visual */}
       <div className={cn(
-        'flex h-9 w-9 items-center justify-center rounded-xl shadow-sm transition-all duration-300',
-        isGlobalView
-          ? 'bg-gradient-to-br from-blue-500 to-indigo-600 group-hover:shadow-md'
-          : 'bg-gradient-to-br from-primary-500 to-primary-600 group-hover:shadow-md',
+        'company-switcher-badge-icon',
+        isGlobalView && 'company-switcher-badge-icon--global',
         isChanging && 'scale-110'
       )}>
         {isGlobalView ? (
-          <Globe2 className="icon-sm text-white transition-transform duration-300" />
+          <Globe2 className="icon-sm text-white" />
         ) : (
-          <Building2 className="icon-sm text-white transition-transform duration-300" />
+          <Building2 className="icon-sm text-white" />
         )}
       </div>
 
@@ -247,7 +241,7 @@ const CompanySwitcher = ({ variant = 'default' }) => {
           <SelectContent className="max-h-64 min-w-[280px]">
             <SelectItem value="all">
               <div className="flex items-center gap-3 py-1">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600">
+                <div className="company-switcher-badge-icon company-switcher-badge-icon--global">
                   <Globe2 className="icon-sm text-white" />
                 </div>
                 <span className="font-medium">Todas las empresas</span>
@@ -256,7 +250,7 @@ const CompanySwitcher = ({ variant = 'default' }) => {
             {companies.map((company) => (
               <SelectItem key={company.id} value={company.id}>
                 <div className="flex items-center gap-3 py-1">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary-500 to-primary-600">
+                  <div className="company-switcher-badge-icon">
                     <Building2 className="icon-sm text-white" />
                   </div>
                   <span className="font-medium">{company.name}</span>

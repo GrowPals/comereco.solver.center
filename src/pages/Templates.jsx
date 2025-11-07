@@ -46,7 +46,7 @@ const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
 
   return (
     <div className={cn(
-      "surface-card group relative flex flex-col justify-between overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl",
+      "surface-card group relative flex flex-col justify-between overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-soft-lg",
       isFrequentlyUsed && "ring-2 ring-primary-500/30 dark:ring-primary-400/40"
     )}>
       {/* Accent bar on hover - changes color based on usage */}
@@ -283,7 +283,7 @@ const TemplatesPage = () => {
               ))}
             </div>
           ) : (
-            <div className="rounded-2xl border border-border bg-card p-8 shadow-lg dark:border-border dark:bg-card sm:p-12 lg:p-16">
+            <div className="rounded-2xl border border-border bg-card p-8 shadow-soft-md dark:border-border dark:bg-card sm:p-12 lg:p-16">
               <EmptyState
                 icon={Bot}
                 title="Aún no tienes plantillas"
@@ -298,7 +298,7 @@ const TemplatesPage = () => {
       {formModal.isOpen && <TemplateFormModal isOpen={formModal.isOpen} onClose={() => setFormModal({ isOpen: false, template: null })} template={formModal.template} onSave={handleSave} />}
       
       <Dialog open={deleteModal.isOpen} onOpenChange={() => setDeleteModal({ isOpen: false, template: null })}>
-        <DialogContent className="sm:max-w-md border border-border bg-card shadow-2xl dark:border-border dark:bg-card">
+        <DialogContent className="sm:max-w-md border border-border bg-card shadow-soft-xl dark:border-border dark:bg-card">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold">¿Eliminar plantilla &quot;{deleteModal.template?.name}&quot;?</DialogTitle>
             <DialogDescription className="text-base">Esta acción no se puede deshacer.</DialogDescription>

@@ -18,7 +18,7 @@ const HistoryPage = () => {
                     title="Historial en Construcción"
                     description="Estamos desarrollando esta funcionalidad para que puedas consultar tu historial completo de requisiciones."
                     actionButton={
-                        <Button onClick={() => navigate('/requisitions')} size="lg" className="shadow-lg hover:shadow-xl">
+                        <Button onClick={() => navigate('/requisitions')} size="lg" className="shadow-soft-md hover:shadow-soft-lg">
                             Ver Requisiciones Activas
                         </Button>
                     }

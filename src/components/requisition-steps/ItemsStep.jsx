@@ -214,7 +214,7 @@ const ItemsStep = () => {
         )}
 
         {totalItems > 0 && (
-          <Card className="sticky bottom-20 bg-card/80 backdrop-blur-sm shadow-lg">
+          <Card className="sticky bottom-20 bg-card/80 backdrop-blur-sm shadow-soft-md">
             <CardContent className="p-4">
               <div className="flex justify-between items-center text-sm text-neutral-70">
                 <p>Subtotal</p>

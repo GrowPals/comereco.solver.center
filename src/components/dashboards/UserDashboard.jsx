@@ -51,7 +51,7 @@ const UserDashboard = ({ user }) => {
                         Gestiona tus requisiciones y revisa tu actividad reciente
                     </p>
                 </div>
-                <Button size="lg" className="whitespace-nowrap shadow-lg" onClick={handleNavigateToCatalog}>
+                <Button size="lg" className="whitespace-nowrap shadow-soft-md" onClick={handleNavigateToCatalog}>
                     <ShoppingCart className="mr-2 h-5 w-5" aria-hidden="true" /> Nueva Requisición
                 </Button>
             </div>
@@ -96,8 +96,8 @@ const UserDashboard = ({ user }) => {
 
                             <div className="grid gap-4 sm:grid-cols-3 mb-8">
                                 <div className="flex items-start gap-3 p-4 rounded-xl bg-background/60 dark:bg-card/40">
-                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-900/30">
-                                        <ShoppingCart className="h-5 w-5 text-primary-600 dark:text-primary-300" />
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-700/50">
+                                        <ShoppingCart className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-sm text-foreground mb-1">Explora el catálogo</h3>
@@ -106,8 +106,8 @@ const UserDashboard = ({ user }) => {
                                 </div>
 
                                 <div className="flex items-start gap-3 p-4 rounded-xl bg-background/60 dark:bg-card/40">
-                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-900/30">
-                                        <FileText className="h-5 w-5 text-primary-600 dark:text-primary-300" />
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-700/50">
+                                        <FileText className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-sm text-foreground mb-1">Crea tu requisición</h3>
@@ -116,8 +116,8 @@ const UserDashboard = ({ user }) => {
                                 </div>
 
                                 <div className="flex items-start gap-3 p-4 rounded-xl bg-background/60 dark:bg-card/40">
-                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-900/30">
-                                        <CheckCircle className="h-5 w-5 text-primary-600 dark:text-primary-300" />
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-700/50">
+                                        <CheckCircle className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-sm text-foreground mb-1">Envía y aprueba</h3>
