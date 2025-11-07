@@ -9,17 +9,7 @@
     "build": "vite build && node fix-html-order.cjs",
     "build:clean": "rm -rf dist .vite node_modules/.vite && npm run build",
     "preview": "vite preview --host ::",
-    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix --quiet",
-    "test:rls": "vitest --run --config tests/rls/vitest.config.ts",
-    "report:indexes": "node tools/report-unused-indexes.ts",
-    "seed:platform-admins": "node tools/seed-platform-admins.mjs",
-    "seed:core-admins": "node tools/bootstrap-core-admins.mjs",
-    "verify:supabase": "bash scripts/scripts/verify-supabase.sh",
-    "cleanup:logs": "bash scripts/cleanup-logs.sh",
-    "maintenance": "bash scripts/maintenance.sh",
-    "deploy": "bash scripts/deploy.sh",
-    "backup:db": "bash scripts/backup-db.sh",
-    "health": "bash scripts/check-health.sh"
+    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix --quiet"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.1.2",
@@ -62,22 +52,18 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",
-    "@faker-js/faker": "^8.4.1",
     "@types/node": "^20.8.3",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",
     "autoprefixer": "^10.4.16",
-    "dotenv": "^16.4.5",
     "eslint": "^9.39.1",
     "eslint-plugin-react": "^7.37.3",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.16",
-    "pg": "^8.12.0",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.3",
-    "vite": "^4.4.5",
-    "vitest": "^1.6.0"
+    "vite": "^4.4.5"
   },
   "overrides": {
     "react": "18.3.1",

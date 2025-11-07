@@ -18,7 +18,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
     errorMessage += '   • VITE_SUPABASE_URL = https://azjaehrdzdfgrumbqmuc.supabase.co\n';
     errorMessage += '   • VITE_SUPABASE_ANON_KEY = [tu clave anon de Supabase]\n\n';
     errorMessage += '4. Redeploy el proyecto\n\n';
-    errorMessage += '📖 Ver guía completa: VERCEL_DEPLOYMENT.md en el repositorio';
+    errorMessage += '📖 Revisa el README (sección "Despliegue en Vercel") para más detalles.';
   } else {
     // En desarrollo local
     errorMessage += 'Asegúrate de tener VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY en tu archivo .env\n';

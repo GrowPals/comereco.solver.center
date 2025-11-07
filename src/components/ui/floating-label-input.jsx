@@ -29,7 +29,19 @@ const FloatingLabelInput = React.forwardRef(({
   const isFloating = isFocused || hasValue;
 
   // Generar ID único si no se proporciona
-  const inputId = id || React.useId();
+  const generatedId = React.useId();
+  const inputId = id ?? generatedId;
+
+  // Handlers que respetan props
+  const handleFocus = (e) => {
+    setIsFocused(true);
+    if (onFocus) onFocus(e);
+  };
+
+  const handleBlur = (e) => {
+    setIsFocused(false);
+    if (onBlur) onBlur(e);
+  };
 
   // Handlers que respetan props
   const handleFocus = (e) => {
