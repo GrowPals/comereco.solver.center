@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { HelpCircle, Mail, MessageCircle, ExternalLink, User, UserCheck, UserCog, ShoppingCart, CheckCircle, Package, BookOpen, ArrowRight } from 'lucide-react';
+import { HelpCircle, Mail, MessageCircle, ExternalLink, User, UserCheck, UserCog, ShoppingCart, CheckCircle, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import PageContainer from '@/components/layout/PageContainer';
@@ -66,122 +66,99 @@ const HelpPage = () => {
             <PageContainer>
                 <div className="mx-auto max-w-5xl space-y-6 sm:space-y-8">
                     {/* Header */}
-                    <header className="mb-12">
-                        <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-3">
-                            Centro de Ayuda
-                        </h1>
-                        <p className="text-base text-neutral-600 dark:text-neutral-400 max-w-2xl">
-                            Estamos aquí para ayudarte. Elige el método de contacto que prefieras o consulta nuestras guías y preguntas frecuentes
-                        </p>
+                    <header className="flex flex-col items-start gap-6 border-b border-border pb-8 sm:flex-row sm:items-center sm:justify-between dark:border-border">
+                        <div className="flex items-center gap-4">
+                            <div className="icon-badge flex h-14 w-14 items-center justify-center">
+                                <HelpCircle className="h-7 w-7 text-primary-600 dark:text-primary-100" aria-hidden="true" />
+                            </div>
+                            <div>
+                                <h1 className="mb-1 text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
+                                    Centro de <span className="bg-gradient-primary bg-clip-text text-transparent">Ayuda</span>
+                                </h1>
+                                <p className="text-base text-muted-foreground sm:text-lg">
+                                    Encuentra respuestas y soporte para usar ComerECO
+                                </p>
+                            </div>
+                        </div>
                     </header>
 
                     {/* Sección de Contacto Rápido */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                        {/* Card 1: Email */}
-                        <div className="bg-white dark:bg-neutral-900 rounded-xl shadow-sm dark:shadow-lg border border-neutral-200 dark:border-neutral-800 p-6 hover:shadow-md dark:hover:shadow-xl transition-shadow duration-200">
-                            {/* Icono */}
-                            <div className="w-12 h-12 rounded-lg bg-blue-100 dark:bg-neutral-800 flex items-center justify-center mb-4">
-                                <Mail className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                            </div>
-                            {/* Título */}
-                            <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100 mb-2">
-                                Contacto por Email
-                            </h3>
-                            {/* Descripción */}
-                            <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
-                                Envíanos un correo y te responderemos en menos de 24 horas
-                            </p>
-                            {/* Link de acción */}
-                            <a
-                                href="mailto:team@growpals.mx"
-                                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold text-sm flex items-center gap-2 group"
-                            >
-                                team@growpals.mx
-                                <ExternalLink className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                            </a>
-                        </div>
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <Card className="border border-border transition-shadow duration-300 hover:shadow-lg dark:border-border">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Mail className="h-5 w-5 text-primary-500" />
+                                    Contacto por Email
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="mb-4 text-sm text-muted-foreground">
+                                    ¿Tienes una pregunta específica o necesitas asistencia técnica?
+                                </p>
+                                <Button
+                                    variant="outline"
+                                    className="w-full"
+                                    onClick={() => window.location.href = 'mailto:team@growpals.mx'}
+                                >
+                                    team@growpals.mx
+                                    <ExternalLink className="ml-2 h-4 w-4" />
+                                </Button>
+                            </CardContent>
+                        </Card>
 
-                        {/* Card 2: Chat en Vivo */}
-                        <div className="bg-white dark:bg-neutral-900 rounded-xl shadow-sm dark:shadow-lg border border-neutral-200 dark:border-neutral-800 p-6 opacity-75">
-                            {/* Icono */}
-                            <div className="w-12 h-12 rounded-lg bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center mb-4">
-                                <MessageCircle className="w-6 h-6 text-neutral-400 dark:text-neutral-500" />
-                            </div>
-                            {/* Título */}
-                            <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100 mb-2">
-                                Chat en Vivo
-                            </h3>
-                            {/* Descripción */}
-                            <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
-                                Chatea en tiempo real con nuestro equipo de soporte
-                            </p>
-                            {/* Botón deshabilitado */}
-                            <button
-                                disabled
-                                className="text-neutral-500 dark:text-neutral-500 font-semibold text-sm flex items-center gap-2 cursor-not-allowed"
-                            >
-                                Próximamente
-                                <span className="text-xs bg-neutral-200 dark:bg-neutral-700 px-2 py-0.5 rounded-full">
-                                    Beta
-                                </span>
-                            </button>
-                        </div>
-
-                        {/* Card 3: Guía de Usuario */}
-                        <div className="bg-white dark:bg-neutral-900 rounded-xl shadow-sm dark:shadow-lg border border-neutral-200 dark:border-neutral-800 p-6 hover:shadow-md dark:hover:shadow-xl transition-shadow duration-200">
-                            {/* Icono */}
-                            <div className="w-12 h-12 rounded-lg bg-green-100 dark:bg-neutral-800 flex items-center justify-center mb-4">
-                                <BookOpen className="w-6 h-6 text-green-600 dark:text-green-400" />
-                            </div>
-                            {/* Título */}
-                            <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100 mb-2">
-                                Guía de Usuario
-                            </h3>
-                            {/* Descripción */}
-                            <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
-                                Consulta tutoriales y documentación detallada
-                            </p>
-                            {/* Link de acción */}
-                            <a
-                                href="#guia"
-                                className="text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-semibold text-sm flex items-center gap-2 group"
-                            >
-                                Ver guía
-                                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                            </a>
-                        </div>
+                        <Card className="border border-border transition-shadow duration-300 hover:shadow-lg dark:border-border">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <MessageCircle className="h-5 w-5 text-emerald-500" />
+                                    Chat en Vivo
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="mb-4 text-sm text-muted-foreground">
+                                    Habla directamente con nuestro equipo de soporte en tiempo real.
+                                </p>
+                                <Button
+                                    variant="outline"
+                                    className="w-full"
+                                    disabled
+                                >
+                                    Próximamente
+                                </Button>
+                            </CardContent>
+                        </Card>
                     </div>
 
                     {/* Preguntas Frecuentes */}
-                    <section id="guia" className="mb-12">
-                        <h2 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-6">
-                            Preguntas Frecuentes
-                        </h2>
-                        <Card className="border border-border dark:border-border">
-                            <CardContent className="pt-6">
-                                <Accordion type="multiple" className="w-full">
-                                    {faqData.map((section, index) => (
-                                        <div key={index} className="mb-4 last:mb-0">
-                                            <h3 className="mb-2 flex items-center gap-2 text-lg font-semibold text-foreground">
-                                                <section.icon className={`h-5 w-5 ${section.color}`} />
-                                                {section.role}
-                                            </h3>
-                                            {section.questions.map((faq, qIndex) => (
-                                                <AccordionItem key={qIndex} value={`item-${index}-${qIndex}`}>
-                                                    <AccordionTrigger className="text-left font-medium text-foreground hover:no-underline">
-                                                        {faq.q}
-                                                    </AccordionTrigger>
-                                                    <AccordionContent>
-                                                        <p className="text-sm text-muted-foreground" dangerouslySetInnerHTML={{ __html: faq.a }} />
-                                                    </AccordionContent>
-                                                </AccordionItem>
-                                            ))}
-                                        </div>
-                                    ))}
-                                </Accordion>
-                            </CardContent>
-                        </Card>
-                    </section>
+                    <Card className="border border-border dark:border-border">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-3 text-xl">
+                                <HelpCircle className="h-6 w-6 text-muted-foreground" />
+                                Guía de Usuario y Preguntas Frecuentes
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <Accordion type="multiple" className="w-full">
+                                {faqData.map((section, index) => (
+                                    <div key={index} className="mb-4 last:mb-0">
+                                        <h3 className="mb-2 flex items-center gap-2 text-lg font-semibold text-foreground">
+                                            <section.icon className={`h-5 w-5 ${section.color}`} />
+                                            {section.role}
+                                        </h3>
+                                        {section.questions.map((faq, qIndex) => (
+                                            <AccordionItem key={qIndex} value={`item-${index}-${qIndex}`}>
+                                                <AccordionTrigger className="text-left font-medium text-foreground hover:no-underline">
+                                                    {faq.q}
+                                                </AccordionTrigger>
+                                                <AccordionContent>
+                                                    <p className="text-sm text-muted-foreground" dangerouslySetInnerHTML={{ __html: faq.a }} />
+                                                </AccordionContent>
+                                            </AccordionItem>
+                                        ))}
+                                    </div>
+                                ))}
+                            </Accordion>
+                        </CardContent>
+                    </Card>
 
                     {/* Info adicional */}
                     <div className="rounded-2xl border border-[rgba(66,84,112,0.55)] bg-[rgba(18,25,41,0.9)] p-6 shadow-[0_20px_45px_rgba(5,10,24,0.35)]">
