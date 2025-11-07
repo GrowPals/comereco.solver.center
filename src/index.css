@@ -92,12 +92,13 @@
     --gradient-error: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
     --gradient-info: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
 
-    /* ============ GLOW EFFECTS ============ */
-    --glow-primary: 0 0 22px rgba(66, 165, 255, 0.45), 0 0 44px rgba(66, 165, 255, 0.25);
-    --glow-accent: 0 0 22px rgba(0, 200, 83, 0.45), 0 0 44px rgba(0, 200, 83, 0.25);
-    --glow-success: 0 0 22px rgba(0, 200, 83, 0.45), 0 0 44px rgba(0, 200, 83, 0.25);
-    --glow-warning: 0 0 20px rgba(255, 192, 70, 0.4), 0 0 36px rgba(255, 192, 70, 0.24);
-    --glow-error: 0 0 22px rgba(239, 83, 80, 0.45), 0 0 44px rgba(239, 83, 80, 0.24);
+    /* ============ GLOW EFFECTS - Light Mode (Solo CTAs) ============ */
+    /* En modo claro: NO glows - se ven sucios en fondos blancos */
+    --glow-primary: none;
+    --glow-accent: none;
+    --glow-success: none;
+    --glow-warning: none;
+    --glow-error: none;
 
     /* ============ TAILWIND MAPPING ============ */
     --background: #FFFFFF;
@@ -128,45 +129,54 @@
     --input: var(--neutral-200);
     --ring: var(--primary-200);
 
-    /* ============ SHADOW & SURFACE TOKENS ============ */
-    --shadow-soft-sm: 0 2px 4px rgba(15, 23, 42, 0.12);
-    --shadow-soft-md: 0 4px 12px rgba(15, 23, 42, 0.14);
-    --shadow-soft-lg: 0 8px 22px rgba(15, 23, 42, 0.16);
-    --shadow-ring-subtle: 0 0 0 1px rgba(209, 222, 240, 0.82);
+    /* ============ SHADOW & SURFACE TOKENS - Light Mode ============ */
+    /* Sombras limpias, profesionales, sin glows - basadas en elevación */
+    --shadow-soft-sm: 0 1px 2px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.08);
+    --shadow-soft-md: 0 2px 4px rgba(15, 23, 42, 0.08), 0 4px 8px rgba(15, 23, 42, 0.1);
+    --shadow-soft-lg: 0 4px 8px rgba(15, 23, 42, 0.1), 0 8px 16px rgba(15, 23, 42, 0.12);
+    --shadow-ring-subtle: 0 0 0 1px rgba(209, 222, 240, 0.6);
+
     --surface-contrast: #ffffff;
     --surface-muted: #f8fafc;
     --surface-floating: #ffffff;
     --surface-overlay: #ffffff;
     --surface-overlay-strong: #f7f9ff;
     --surface-subtle: #ffffff;
+
     --sidebar-surface: #ffffff;
-    --sidebar-border: rgba(15, 23, 42, 0.06);
-    --sidebar-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+    --sidebar-border: rgba(15, 23, 42, 0.08);
+    --sidebar-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+
     --nav-surface: #ffffff;
-    --nav-border: rgba(148, 163, 184, 0.16);
-    --nav-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+    --nav-border: rgba(148, 163, 184, 0.14);
+    --nav-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
     --nav-backdrop-blur: 0px;
+
     --bottom-nav-surface: #ffffff;
-    --bottom-nav-border: rgba(148, 163, 184, 0.2);
-    --bottom-nav-shadow: 0 -8px 20px rgba(15, 23, 42, 0.12);
+    --bottom-nav-border: rgba(148, 163, 184, 0.18);
+    --bottom-nav-shadow: 0 -2px 8px rgba(15, 23, 42, 0.08);
+
     --nav-label-muted: rgba(100, 116, 139, 0.82);
     --nav-label-active: var(--primary-600);
-    --nav-chip-border: rgba(59, 130, 246, 0.2);
-    --nav-chip-glow: 0 4px 12px rgba(59, 130, 246, 0.16);
-    --nav-icon-active-glow: 0 0 0 rgba(0, 0, 0, 0);
+    --nav-chip-border: rgba(59, 130, 246, 0.24);
+    --nav-chip-glow: none; /* Sin glow en light mode */
+    --nav-icon-active-glow: none; /* Sin glow en light mode */
+
     --overlay-backdrop: rgba(15, 23, 42, 0.45);
     --focus-glow: 0 0 0 4px rgba(59, 130, 246, 0.12);
-    --shadow-xs: 0 2px 4px rgba(15, 23, 42, 0.12);
-    --shadow-sm: 0 4px 10px rgba(15, 23, 42, 0.14);
-    --shadow-md: 0 6px 16px rgba(15, 23, 42, 0.16);
-    --shadow-lg: 0 8px 20px rgba(15, 23, 42, 0.18);
-    --shadow-xl: 0 10px 24px rgba(15, 23, 42, 0.2);
-    --shadow-2xl: 0 14px 32px rgba(15, 23, 42, 0.22);
-    --shadow-floating: 0 10px 26px rgba(15, 23, 42, 0.18);
-    --shadow-card: 0 6px 18px rgba(15, 23, 42, 0.16);
-    --shadow-elevated: 0 10px 28px rgba(15, 23, 42, 0.2);
-    --shadow-button: 0 4px 12px rgba(59, 130, 246, 0.18);
-    --shadow-button-hover: 0 6px 16px rgba(59, 130, 246, 0.24);
+
+    /* Escala de sombras unificada - Light Mode */
+    --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.08);
+    --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.1);
+    --shadow-md: 0 4px 8px rgba(15, 23, 42, 0.12);
+    --shadow-lg: 0 8px 16px rgba(15, 23, 42, 0.14);
+    --shadow-xl: 0 12px 24px rgba(15, 23, 42, 0.16);
+    --shadow-2xl: 0 16px 32px rgba(15, 23, 42, 0.18);
+    --shadow-floating: 0 8px 20px rgba(15, 23, 42, 0.14);
+    --shadow-card: 0 2px 8px rgba(15, 23, 42, 0.1);
+    --shadow-elevated: 0 8px 20px rgba(15, 23, 42, 0.15);
+    --shadow-button: 0 2px 4px rgba(15, 23, 42, 0.1);
+    --shadow-button-hover: 0 4px 12px rgba(15, 23, 42, 0.15);
 
     /* ============ SPACING SCALE (Base 4px) ============ */
     --space-0_5: 2px;
@@ -200,7 +210,7 @@
   }
 
   .dark {
-    /* Dark mode inspirado en dashboards financieros azulados */
+    /* Dark mode elegante y sobrio - Sin efectos sci-fi */
     --neutral-950: #020611;
     --neutral-900: #040916;
     --neutral-850: #061124;
@@ -215,10 +225,11 @@
     --background: radial-gradient(circle at top, #0f1c2d 0%, #050b16 60%, #03070f 100%);
     --foreground: #e6efff;
 
-    --card: #0d1a2e;
+    /* Mejor contraste para cards */
+    --card: #14213d;
     --card-foreground: #f4f7ff;
 
-    --popover: #0e1c30;
+    --popover: #14213d;
     --popover-foreground: var(--card-foreground);
 
     --primary: #4f8cff;
@@ -237,70 +248,80 @@
     --info-light: rgba(79, 140, 255, 0.22);
 
     --muted: rgba(20, 38, 62, 0.85);
-    --muted-foreground: rgba(210, 224, 250, 0.92);
+    --muted-foreground: rgba(210, 224, 250, 0.95);
 
     --accent: rgba(85, 158, 255, 0.32);
     --accent-foreground: var(--card-foreground);
 
-    --border: rgba(100, 145, 220, 0.38);
-    --input: rgba(100, 145, 220, 0.35);
+    /* Mejor contraste en borders */
+    --border: rgba(100, 145, 220, 0.5);
+    --input: rgba(100, 145, 220, 0.48);
     --ring: rgba(105, 170, 255, 0.55);
 
-    --shadow-soft-sm: 0 10px 28px rgba(3, 10, 24, 0.58);
-    --shadow-soft-md: 0 18px 42px rgba(2, 8, 22, 0.64);
-    --shadow-soft-lg: 0 26px 58px rgba(1, 6, 18, 0.7);
-    --shadow-ring-subtle: 0 0 0 1px rgba(95, 162, 255, 0.28);
+    /* ============ SHADOW & SURFACE TOKENS - Dark Mode ============ */
+    /* Sombras sin border glows innecesarios - Elegantes y refinadas */
+    --shadow-soft-sm: 0 2px 8px rgba(3, 10, 24, 0.4), 0 6px 16px rgba(3, 10, 24, 0.3);
+    --shadow-soft-md: 0 4px 12px rgba(2, 8, 22, 0.45), 0 8px 24px rgba(2, 8, 22, 0.35);
+    --shadow-soft-lg: 0 8px 20px rgba(1, 6, 18, 0.5), 0 16px 40px rgba(1, 6, 18, 0.4);
+    --shadow-ring-subtle: 0 0 0 1px rgba(95, 162, 255, 0.2);
 
-    --surface-contrast: rgba(14, 28, 48, 0.92);
-    --surface-muted: rgba(12, 24, 42, 0.88);
-    --surface-floating: #0b1426;
-    --surface-overlay: #0c172a;
-    --surface-overlay-strong: #0a1424;
-    --surface-subtle: rgba(18, 32, 54, 0.82);
+    --surface-contrast: rgba(20, 33, 61, 0.95);
+    --surface-muted: rgba(18, 30, 54, 0.9);
+    --surface-floating: #14213d;
+    --surface-overlay: #14213d;
+    --surface-overlay-strong: #0f1a2e;
+    --surface-subtle: rgba(20, 33, 61, 0.85);
+
     --sidebar-surface: linear-gradient(160deg, #0f1d31 0%, #061023 100%);
-    --sidebar-border: rgba(90, 150, 230, 0.26);
-    --sidebar-shadow: 0 26px 60px rgba(1, 8, 24, 0.68);
+    --sidebar-border: rgba(90, 150, 230, 0.28);
+    --sidebar-shadow: 0 4px 16px rgba(1, 8, 24, 0.5);
+
     --nav-surface: linear-gradient(155deg, #0c182c, #070e1c);
-    --nav-border: rgba(102, 162, 240, 0.28);
-    --nav-shadow: 0 18px 46px rgba(2, 8, 22, 0.7);
+    --nav-border: rgba(102, 162, 240, 0.3);
+    --nav-shadow: 0 2px 8px rgba(2, 8, 22, 0.5);
     --nav-backdrop-blur: 0px;
+
     --bottom-nav-surface: #070e1c;
-    --bottom-nav-border: rgba(100, 164, 240, 0.28);
-    --bottom-nav-shadow: 0 -16px 48px rgba(1, 6, 18, 0.72);
+    --bottom-nav-border: rgba(100, 164, 240, 0.32);
+    --bottom-nav-shadow: 0 -4px 12px rgba(1, 6, 18, 0.5);
+
     --nav-label-muted: rgba(190, 210, 242, 0.72);
     --nav-label-active: #f4f8ff;
     --nav-chip-border: rgba(102, 168, 255, 0.48);
-    --nav-chip-glow: 0 0 18px rgba(102, 168, 255, 0.45), 0 0 32px rgba(102, 168, 255, 0.22);
-    --nav-icon-active-glow: 0 0 12px rgba(110, 182, 255, 0.5);
+    --nav-chip-glow: none; /* Sin glow innecesario */
+    --nav-icon-active-glow: none; /* Sin glow innecesario */
 
     --overlay-backdrop: rgba(2, 8, 20, 0.75);
     --focus-glow: 0 0 0 4px rgba(102, 168, 255, 0.28);
-    --shadow-xs: 0 0 0 1px rgba(102, 168, 255, 0.22), 0 10px 26px rgba(2, 8, 22, 0.62);
-    --shadow-sm: 0 0 0 1px rgba(110, 182, 255, 0.24), 0 16px 34px rgba(1, 6, 18, 0.66);
-    --shadow-md: 0 0 0 1px rgba(122, 196, 255, 0.28), 0 22px 44px rgba(1, 5, 16, 0.7);
-    --shadow-lg: 0 0 0 1px rgba(138, 210, 255, 0.32), 0 28px 58px rgba(1, 4, 14, 0.74);
-    --shadow-xl: 0 0 0 1px rgba(150, 220, 255, 0.36), 0 34px 72px rgba(1, 3, 12, 0.78);
-    --shadow-2xl: 0 0 0 1px rgba(166, 232, 255, 0.4), 0 42px 88px rgba(1, 2, 10, 0.82);
-    --shadow-floating: 0 0 0 1px rgba(120, 192, 255, 0.3), 0 30px 64px rgba(1, 6, 18, 0.7);
-    --shadow-button: 0 0 0 1px rgba(124, 198, 255, 0.44), 0 24px 48px rgba(1, 6, 18, 0.72);
-    --shadow-button-hover: 0 0 0 1px rgba(140, 212, 255, 0.5), 0 30px 58px rgba(1, 6, 18, 0.78);
-    --shadow-color: rgba(3, 8, 22, 0.72);
-    --shadow-card: 0 28px 58px rgba(6, 14, 30, 0.62);
-    --shadow-elevated: 0 36px 80px rgba(5, 12, 26, 0.68);
 
-    --glow-primary: 0 0 20px rgba(110, 182, 255, 0.44), 0 0 40px rgba(110, 182, 255, 0.2);
-    --glow-accent: 0 0 18px rgba(28, 214, 161, 0.45), 0 0 36px rgba(28, 214, 161, 0.22);
-    --glow-success: 0 0 18px rgba(28, 214, 161, 0.45), 0 0 36px rgba(28, 214, 161, 0.22);
-    --glow-warning: 0 0 16px rgba(255, 180, 84, 0.4), 0 0 32px rgba(255, 180, 84, 0.2);
-    --glow-error: 0 0 20px rgba(255, 107, 107, 0.42), 0 0 40px rgba(255, 107, 107, 0.2);
+    /* Escala de sombras unificada - Dark Mode sin border glows */
+    --shadow-xs: 0 2px 4px rgba(2, 8, 22, 0.5);
+    --shadow-sm: 0 4px 8px rgba(1, 6, 18, 0.55);
+    --shadow-md: 0 6px 12px rgba(1, 5, 16, 0.6);
+    --shadow-lg: 0 8px 16px rgba(1, 4, 14, 0.65);
+    --shadow-xl: 0 12px 24px rgba(1, 3, 12, 0.7);
+    --shadow-2xl: 0 16px 32px rgba(1, 2, 10, 0.75);
+    --shadow-floating: 0 8px 20px rgba(1, 6, 18, 0.6);
+    --shadow-card: 0 4px 12px rgba(6, 14, 30, 0.5);
+    --shadow-elevated: 0 8px 24px rgba(5, 12, 26, 0.6);
+    --shadow-button: 0 2px 8px rgba(1, 6, 18, 0.5);
+    --shadow-button-hover: 0 4px 12px rgba(1, 6, 18, 0.6);
+
+    /* ============ GLOW EFFECTS - Dark Mode (Solo CTAs primarios) ============ */
+    /* Glows sutiles y refinados, solo donde agregan valor real */
+    --glow-primary: 0 0 16px rgba(79, 140, 255, 0.3);
+    --glow-accent: 0 0 14px rgba(28, 214, 161, 0.32);
+    --glow-success: 0 0 14px rgba(28, 214, 161, 0.32);
+    --glow-warning: 0 0 12px rgba(255, 180, 84, 0.28);
+    --glow-error: 0 0 14px rgba(255, 107, 107, 0.3);
 
     --favorite-500: #FFD291;
     --favorite-600: #FFB347;
     --favorite-700: #FF962A;
-    --favorite-glow-light: 0 0 42px rgba(255, 207, 129, 0.42);
+    --favorite-glow-light: none; /* Sin glow en favoritos */
 
-    --dark-surface-highlight: radial-gradient(circle at 15% 15%, rgba(66, 165, 255, 0.18), transparent 55%);
-    --dark-surface-accent: radial-gradient(circle at 85% 25%, rgba(0, 204, 255, 0.15), transparent 60%);
+    --dark-surface-highlight: radial-gradient(circle at 15% 15%, rgba(66, 165, 255, 0.12), transparent 55%);
+    --dark-surface-accent: radial-gradient(circle at 85% 25%, rgba(0, 204, 255, 0.08), transparent 60%);
     --dark-surface-base: linear-gradient(160deg, rgba(6, 12, 26, 0.95) 0%, rgba(5, 10, 24, 0.98) 45%, rgba(3, 9, 21, 0.98) 100%);
   }
 }
@@ -745,47 +766,44 @@
 
   .favorite-icon {
     color: var(--favorite-500) !important;
-    text-shadow: 0 6px 18px rgba(249, 174, 79, 0.35);
-    transition: color 200ms ease, text-shadow 200ms ease;
+    transition: color 200ms ease, transform 200ms ease;
   }
 
   .favorite-icon-badge {
-    background: linear-gradient(135deg, var(--favorite-50), rgba(255, 238, 211, 0.92)) !important;
-    border: 1px solid rgba(249, 174, 79, 0.35) !important;
-    box-shadow: 0 14px 28px rgba(249, 174, 79, 0.22), var(--favorite-glow-light);
+    background: var(--favorite-50) !important;
+    border: 1px solid rgba(249, 174, 79, 0.3) !important;
+    box-shadow: var(--shadow-sm);
   }
 
   .favorite-spotlight {
-    background: linear-gradient(120deg, rgba(255, 248, 236, 0.95), rgba(255, 236, 210, 0.9)) !important;
+    background: var(--favorite-50) !important;
     border: 1px solid rgba(249, 174, 79, 0.25) !important;
-    box-shadow: 0 30px 68px rgba(249, 174, 79, 0.22);
+    box-shadow: var(--shadow-md);
   }
 
   .dark .icon-badge,
   .dark .metric-icon,
   .dark .stat-icon {
-    background: linear-gradient(145deg, rgba(28, 52, 92, 0.65), rgba(16, 32, 60, 0.85)) !important;
+    background: rgba(28, 52, 92, 0.7) !important;
     border: 1px solid rgba(120, 192, 255, 0.35) !important;
-    box-shadow: 0 16px 34px rgba(4, 10, 24, 0.6) !important;
+    box-shadow: var(--shadow-sm) !important;
     color: #f4f8ff;
   }
 
   .dark .favorite-icon {
-    color: #FFE8B3 !important;
-    filter: drop-shadow(0 0 12px rgba(255, 204, 128, 0.65));
-    text-shadow: 0 0 18px rgba(255, 204, 128, 0.6);
+    color: #FFD291 !important;
   }
 
   .dark .favorite-icon-badge {
-    background: radial-gradient(circle at 30% 20%, rgba(255, 204, 128, 0.35), rgba(14, 24, 44, 0.98)) !important;
-    border: 1px solid rgba(255, 204, 128, 0.5) !important;
-    box-shadow: 0 26px 58px rgba(0, 0, 0, 0.65), 0 0 48px rgba(255, 191, 102, 0.42);
+    background: rgba(255, 204, 128, 0.15) !important;
+    border: 1px solid rgba(255, 204, 128, 0.35) !important;
+    box-shadow: var(--shadow-md);
   }
 
   .dark .favorite-spotlight {
-    background: radial-gradient(circle at 20% 20%, rgba(255, 204, 128, 0.18), rgba(10, 18, 32, 0.9)) !important;
-    border: 1px solid rgba(255, 204, 128, 0.35) !important;
-    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.7), 0 0 42px rgba(255, 174, 84, 0.32) !important;
+    background: rgba(255, 204, 128, 0.12) !important;
+    border: 1px solid rgba(255, 204, 128, 0.28) !important;
+    box-shadow: var(--shadow-lg);
   }
 
   .dark .bg-gradient-to-br.from-primary-50.to-primary-100,
@@ -796,7 +814,6 @@
   .dark .bg-gradient-to-br.from-red-50.to-red-100 {
     background: rgba(94, 162, 255, 0.16) !important;
     border: 1px solid rgba(130, 200, 255, 0.32) !important;
-    box-shadow: 0 0 24px rgba(80, 150, 255, 0.32) !important;
     color: #e5efff !important;
   }
 
@@ -851,9 +868,9 @@
 
   .stat-icon,
   .metric-icon {
-    background: linear-gradient(135deg, rgba(240, 245, 255, 0.92), rgba(220, 233, 255, 0.88));
+    background: var(--primary-50);
     border: 1px solid rgba(200, 215, 255, 0.6);
-    box-shadow: 0 8px 18px rgba(45, 92, 180, 0.15);
+    box-shadow: var(--shadow-xs);
     color: var(--primary-600);
   }
 
@@ -864,9 +881,9 @@
 
   .dark .stat-icon,
   .dark .metric-icon {
-    background: rgba(94, 162, 255, 0.16) !important;
-    border: 1px solid rgba(130, 200, 255, 0.35) !important;
-    box-shadow: 0 0 24px rgba(80, 150, 255, 0.32) !important;
+    background: rgba(79, 140, 255, 0.18) !important;
+    border: 1px solid rgba(120, 192, 255, 0.35) !important;
+    box-shadow: var(--shadow-sm) !important;
     color: #dfe9ff;
   }
 

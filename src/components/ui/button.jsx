@@ -9,39 +9,39 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // Primary - Professional Blue
-        default: 'border border-primary-500/40 bg-gradient-primary text-white shadow-button hover:shadow-glow-primary hover:-translate-y-0.5 active:translate-y-0 active:shadow-button rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/10 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border dark:border-[#2a4c88] dark:bg-[linear-gradient(135deg,rgba(46,120,255,0.92)_0%,rgba(25,70,210,0.88)_100%)] dark:shadow-[0_0_26px_rgba(64,150,255,0.45)] dark:hover:shadow-[0_0_42px_rgba(94,186,255,0.6)]',
+        // Default - CTA Primario con glow sutil en dark mode
+        default: 'border border-primary-500/30 bg-gradient-primary text-white shadow-button hover:shadow-button-hover rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/8 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border-primary-400/40 dark:bg-[linear-gradient(135deg,rgba(79,140,255,0.95)_0%,rgba(45,99,235,0.92)_100%)] dark:shadow-button dark:hover:shadow-[0_4px_16px_rgba(1,6,18,0.65),0_0_16px_rgba(79,140,255,0.3)]',
 
-        // Intense gradient for CTAs
-        primary: 'border border-primary-600/45 bg-gradient-primary-intense text-white shadow-button hover:shadow-glow-primary hover:-translate-y-0.5 active:translate-y-0 active:shadow-button rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/10 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border dark:border-[#3260a8] dark:bg-[linear-gradient(135deg,rgba(50,132,255,0.95)_0%,rgba(28,88,220,0.9)_100%)] dark:shadow-[0_0_30px_rgba(70,160,255,0.5)] dark:hover:shadow-[0_0_46px_rgba(108,200,255,0.66)]',
+        // Primary - CTA Destacado con glow sutil en dark mode
+        primary: 'border border-primary-600/35 bg-gradient-primary-intense text-white shadow-button hover:shadow-button-hover rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/8 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border-primary-400/45 dark:bg-[linear-gradient(135deg,rgba(59,130,246,0.96)_0%,rgba(37,99,235,0.93)_100%)] dark:shadow-button dark:hover:shadow-[0_6px_18px_rgba(1,6,18,0.7),0_0_18px_rgba(59,130,246,0.32)]',
 
-        // Accent - ComerECO Green (for success/approve actions)
-        accent: 'border border-emerald-400/40 bg-gradient-accent text-white shadow-accent hover:shadow-glow-accent hover:-translate-y-0.5 active:translate-y-0 rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/10 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border dark:border-emerald-200/35 dark:bg-[linear-gradient(135deg,rgba(0,201,118,0.85)_0%,rgba(0,150,82,0.78)_100%)] dark:shadow-[0_0_22px_rgba(0,200,119,0.32)] dark:hover:shadow-[0_0_34px_rgba(48,237,158,0.48)]',
+        // Accent - ComerECO Green (sin glow innecesario)
+        accent: 'border border-emerald-500/30 bg-gradient-accent text-white shadow-button hover:shadow-button-hover rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/8 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border-emerald-400/35 dark:bg-[linear-gradient(135deg,rgba(16,185,129,0.92)_0%,rgba(5,150,105,0.88)_100%)] dark:shadow-button dark:hover:shadow-elevated',
 
-        // Success with green gradient
-        success: 'border border-emerald-400/40 bg-gradient-success text-white shadow-accent hover:shadow-glow-success hover:-translate-y-0.5 active:translate-y-0 rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/10 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border dark:border-emerald-200/35 dark:bg-[linear-gradient(135deg,rgba(0,210,112,0.82)_0%,rgba(0,170,88,0.76)_100%)] dark:shadow-[0_0_22px_rgba(0,210,120,0.32)] dark:hover:shadow-[0_0_34px_rgba(40,240,150,0.48)]',
+        // Success - Sin glow, solo sombras
+        success: 'border border-emerald-500/30 bg-gradient-success text-white shadow-button hover:shadow-button-hover rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/8 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border-emerald-400/35 dark:bg-[linear-gradient(135deg,rgba(16,185,129,0.9)_0%,rgba(5,150,105,0.86)_100%)] dark:shadow-button dark:hover:shadow-elevated',
 
-        // Destructive with gradient
-        destructive: 'border border-red-400/45 bg-gradient-error text-white shadow-[0_4px_12px_rgba(239,68,68,0.3)] hover:shadow-glow-error hover:-translate-y-0.5 active:translate-y-0 rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/10 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border dark:border-red-300/30 dark:bg-[linear-gradient(135deg,rgba(239,68,68,0.85)_0%,rgba(200,40,40,0.78)_100%)] dark:shadow-[0_0_24px_rgba(255,100,100,0.34)] dark:hover:shadow-[0_0_36px_rgba(255,120,120,0.52)]',
+        // Destructive - Sin glow excesivo
+        destructive: 'border border-red-500/35 bg-gradient-error text-white shadow-button hover:shadow-button-hover rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/8 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border-red-400/35 dark:bg-[linear-gradient(135deg,rgba(239,68,68,0.92)_0%,rgba(220,38,38,0.88)_100%)] dark:shadow-button dark:hover:shadow-elevated',
 
-        // Outline with border
-        outline: 'border-2 border-primary-500 bg-transparent text-primary-600 hover:bg-gradient-primary hover:text-white hover:shadow-glow-primary hover:border-transparent rounded-xl transition-all dark:text-primary-100 dark:border-[rgba(124,188,255,0.55)] dark:bg-[rgba(12,28,52,0.45)] dark:hover:bg-[linear-gradient(135deg,rgba(52,130,255,0.42)_0%,rgba(32,96,230,0.38)_100%)] dark:hover:text-white dark:shadow-[0_0_16px_rgba(90,170,255,0.35)] dark:hover:shadow-[0_0_28px_rgba(120,210,255,0.45)]',
+        // Outline - Limpio sin efectos sci-fi
+        outline: 'border-2 border-primary-500/70 bg-transparent text-primary-600 hover:bg-primary-50 hover:border-primary-600 rounded-xl transition-all dark:text-primary-100 dark:border-primary-400/50 dark:bg-card/40 dark:hover:bg-primary-900/20 dark:hover:border-primary-400/70 dark:hover:text-primary-50',
 
-        // Secondary with subtle gradient
-        secondary: 'bg-card border-2 border-border text-foreground/80 shadow-sm hover:shadow-md hover:border-border/80 hover:-translate-y-0.5 active:translate-y-0 rounded-xl hover:bg-muted/70 dark:border-[#21385f] dark:bg-[linear-gradient(135deg,rgba(12,26,48,0.85)_0%,rgba(10,20,38,0.78)_100%)] dark:text-primary-100 dark:shadow-[0_0_18px_rgba(40,80,160,0.28)] dark:hover:border-[#4a78c8] dark:hover:bg-[linear-gradient(135deg,rgba(18,38,70,0.95)_0%,rgba(14,30,54,0.9)_100%)] dark:hover:shadow-[0_0_28px_rgba(74,148,255,0.45)]',
+        // Secondary - Sutil y profesional
+        secondary: 'bg-card border border-border text-foreground/85 shadow-sm hover:shadow-md hover:border-border/60 rounded-xl hover:bg-muted/50 dark:border-border dark:bg-card/80 dark:text-foreground dark:hover:bg-card dark:hover:border-border/40',
 
-        // Ghost
-        ghost: 'border border-border/70 bg-[var(--surface-contrast)] text-foreground/80 shadow-sm hover:bg-[var(--surface-muted)] hover:text-foreground rounded-xl active:bg-primary/10 dark:border-[#213c68] dark:text-primary-100 dark:bg-[rgba(14,28,52,0.85)] dark:hover:bg-[rgba(24,46,86,0.85)] dark:active:bg-[rgba(34,72,130,0.75)] dark:hover:text-white',
+        // Ghost - Minimalista
+        ghost: 'border border-transparent bg-transparent text-foreground/80 hover:bg-muted/50 hover:text-foreground rounded-xl active:bg-primary/10 dark:text-foreground/85 dark:hover:bg-card/50 dark:hover:text-foreground',
 
-        // Link
-        link: 'text-primary-600 underline-offset-4 hover:underline hover:text-primary-700 active:text-primary-800',
+        // Link - Simple
+        link: 'text-primary-600 underline-offset-4 hover:underline hover:text-primary-700 active:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300',
       },
       size: {
         default: 'h-11 px-6 py-3',
         sm: 'h-9 px-4 py-2 text-sm rounded-lg',
         lg: 'h-14 px-8 py-4 text-lg rounded-2xl',
         icon: 'h-11 w-11 rounded-xl',
-        fab: 'h-14 w-14 rounded-full shadow-button hover:shadow-glow-primary hover:scale-110 active:scale-100',
+        fab: 'h-14 w-14 rounded-full shadow-button hover:shadow-button-hover hover:scale-105 active:scale-100 dark:shadow-button dark:hover:shadow-[0_6px_18px_rgba(1,6,18,0.7),0_0_18px_rgba(79,140,255,0.3)]',
       },
     },
     defaultVariants: {

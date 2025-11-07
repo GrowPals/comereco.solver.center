@@ -5,14 +5,16 @@ const Card = React.forwardRef(({ className, interactive = false, accentColor = '
   <div
     ref={ref}
     className={cn(
-      'relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300',
+      'relative overflow-hidden rounded-2xl border border-border bg-card shadow-card transition-all duration-300',
+      // Accent bar top - mantener como indicador visual elegante
       'before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:scale-x-0 before:rounded-t-2xl before:transition-transform before:duration-300',
       accentColor === 'primary' && 'before:bg-gradient-primary',
       accentColor === 'accent' && 'before:bg-gradient-accent',
       accentColor === 'success' && 'before:bg-gradient-success',
-      'after:pointer-events-none after:absolute after:inset-0 after:bg-gradient-to-br after:from-white/0 after:via-white/0 after:to-white/30 after:opacity-0 after:transition-opacity after:duration-300',
-      'dark:border-[rgba(120,190,255,0.18)] dark:bg-[linear-gradient(165deg,rgba(14,31,58,0.96)_0%,rgba(9,21,44,0.96)_100%)] dark:shadow-[0_32px_70px_rgba(5,12,28,0.58)] dark:after:bg-[radial-gradient(circle_at_22%_18%,rgba(88,158,255,0.16),transparent_65%)] dark:after:opacity-20 dark:hover:after:opacity-35',
-      interactive && 'cursor-pointer hover:-translate-y-1 hover:border-neutral-300 hover:before:scale-x-100 hover:after:opacity-100 hover:shadow-lg dark:hover:border-[rgba(150,210,255,0.35)] dark:hover:shadow-[0_36px_90px_rgba(7,16,36,0.72)]',
+      // Dark mode: limpio sin overlays innecesarios
+      'dark:border-border dark:bg-card dark:shadow-card',
+      // Interactive: shadow transitions sin translate (evita layout shift)
+      interactive && 'cursor-pointer hover:border-neutral-300 hover:before:scale-x-100 hover:shadow-elevated dark:hover:border-border/70 dark:hover:shadow-elevated',
       className
     )}
     {...props}

@@ -85,7 +85,7 @@ const ProductCard = memo(({ product }) => {
   return (
     <article
       className={cn(
-        'group relative flex w-full flex-col overflow-hidden rounded-3xl surface-card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:hover:shadow-elevated',
+        'group relative flex w-full flex-col overflow-hidden rounded-3xl surface-card transition-all duration-300 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:hover:shadow-elevated',
         !isInStock && 'opacity-70 grayscale-[0.3]'
       )}
       role="article"
@@ -118,9 +118,9 @@ const ProductCard = memo(({ product }) => {
           type="button"
           onClick={handleToggleFavorite}
           className={cn(
-            "absolute right-4 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-white/95 text-muted-foreground shadow-sm backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 dark:border-border dark:bg-card/90",
+            "absolute right-4 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-white/95 text-muted-foreground shadow-sm backdrop-blur-sm transition-all duration-200 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 dark:border-border dark:bg-card/90",
             isFavorite
-              ? "text-red-500 hover:scale-110 shadow-[0_0_16px_rgba(239,68,68,0.4)] dark:shadow-[0_0_20px_rgba(239,68,68,0.5)]"
+              ? "text-red-500 hover:scale-110"
               : "hover:text-red-500"
           )}
           aria-label={
