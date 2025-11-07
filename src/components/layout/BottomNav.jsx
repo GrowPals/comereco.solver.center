@@ -72,7 +72,7 @@ const BottomNav = memo(({ onMenuClick, isMenuOpen = false }) => {
                     aria-label="Ir al catálogo de productos"
                 >
                     <div className="relative -mt-2 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary-500 to-primary-600 shadow-button transition-all duration-300 hover:shadow-button-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-2 focus-visible:ring-offset-background group-active:scale-95">
-                        <Plus className="h-7 w-7 text-white transition-transform duration-200 group-hover:scale-110 drop-shadow-[0_2px_12px_rgba(255,255,255,0.4)]" aria-hidden="true" />
+                        <Plus className="h-7 w-7 text-white transition-transform duration-200 group-hover:scale-110 drop-shadow-[0_1px_4px_rgba(255,255,255,0.25)]" aria-hidden="true" />
                     </div>
                     <span className="nav-label nav-label-active mt-1 font-semibold">
                         Agregar

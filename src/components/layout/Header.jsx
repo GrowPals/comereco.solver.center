@@ -81,7 +81,7 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <button
-                                    className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200 hover:bg-[var(--surface-muted)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-background dark:hover:bg-[rgba(26,48,86,0.65)]"
+                                    className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200 hover:bg-[var(--surface-muted)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-background dark:hover:bg-[rgba(26,48,86,0.55)]"
                                     aria-label={`Menú de usuario: ${userName}`}
                                     aria-haspopup="true"
                                 >
