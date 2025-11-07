@@ -4,10 +4,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useCompanyScope } from '@/context/CompanyScopeContext';
+import { useToast } from '@/components/ui/useToast';
 import { cn } from '@/lib/utils';
 
 const CompanySwitcher = ({ variant = 'default' }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { toast } = useToast();
   const {
     companies,
     activeCompanyId,
@@ -46,13 +48,27 @@ const CompanySwitcher = ({ variant = 'default' }) => {
   }
 
   const handleChange = (value) => {
-    if (value === 'all') {
+    const isChangingToGlobal = value === 'all';
+    const selectedCompany = companies.find(c => c.id === value);
+
+    if (isChangingToGlobal) {
       toggleGlobalView(true);
       setActiveCompanyId(null);
+      toast({
+        title: 'Vista Global Activada',
+        description: 'Ahora estás viendo datos de todas las empresas.',
+        variant: 'success'
+      });
     } else {
       toggleGlobalView(false);
       setActiveCompanyId(value);
+      toast({
+        title: 'Empresa Cambiada',
+        description: `Ahora estás viendo: ${selectedCompany?.name || 'la empresa seleccionada'}`,
+        variant: 'success'
+      });
     }
+
     // Cerrar el dialog después de seleccionar (solo en variante icon)
     if (variant === 'icon') {
       setIsDialogOpen(false);
