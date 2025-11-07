@@ -163,7 +163,8 @@ const NotificationCenter = ({ variant = 'popover' }) => {
                 logger.error('Error marking notification as read:', error);
             }
         }
-        setOpen(false);
+        // Delay before closing to show the read state transition
+        setTimeout(() => setOpen(false), 300);
     };
 
     if (variant === 'icon') {
