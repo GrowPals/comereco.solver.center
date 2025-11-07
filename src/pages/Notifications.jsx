@@ -111,7 +111,7 @@ const NotificationsPage = () => {
         return (
             <Card
                 className={cn(
-                    "surface-card flex items-start gap-4 p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-xl cursor-pointer",
+                    "surface-card flex items-start gap-4 p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-soft-lg cursor-pointer",
                     isUnread && "ring-1 ring-primary-300/45 dark:ring-primary-400/40",
                     isSelected && "ring-2 ring-primary-500 border-primary-400/80 dark:ring-primary-300 dark:border-primary-400/50"
                 )}
@@ -181,7 +181,7 @@ const NotificationsPage = () => {
                         </Button>
                     </header>
 
-                    <Card className="surface-card p-4 shadow-lg sm:p-6">
+                    <Card className="surface-card p-4 shadow-soft-md sm:p-6">
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
                             <div className="relative w-full sm:max-w-xs">
                                 <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
@@ -229,7 +229,7 @@ const NotificationsPage = () => {
                                 initial={{ y: -50, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
                                 exit={{ y: -50, opacity: 0 }}
-                                className="sticky top-2 z-10 flex items-center justify-between surface-card border border-primary/30 p-4 shadow-xl ring-1 ring-primary-300/35 backdrop-blur dark:border-primary/40 dark:ring-primary-400/30"
+                                className="sticky top-2 z-10 flex items-center justify-between surface-card border border-primary/30 p-4 shadow-soft-lg ring-1 ring-primary-300/35 backdrop-blur dark:border-primary/40 dark:ring-primary-400/30"
                             >
                                 <p className="font-bold text-foreground">{selectedIds.length} seleccionada(s)</p>
                                 <div className="flex gap-2">
@@ -256,7 +256,7 @@ const NotificationsPage = () => {
                             ))}
                         </div>
                     ) : (
-                        <div className="surface-card p-20 text-center shadow-lg">
+                        <div className="surface-card p-20 text-center shadow-soft-md">
                             <div className="icon-badge mx-auto mb-6 flex h-20 w-20 items-center justify-center text-muted-foreground">
                                 <Search className="h-10 w-10" aria-hidden="true" />
                             </div>
@@ -268,7 +268,7 @@ const NotificationsPage = () => {
             </PageContainer>
             
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <DialogContent className="sm:max-w-md border border-border bg-card shadow-2xl dark:border-border dark:bg-card">
+                <DialogContent className="sm:max-w-md border border-border bg-card shadow-soft-xl dark:border-border dark:bg-card">
                     <DialogHeader>
                         <DialogTitle className="text-2xl font-bold">Confirmar Acción</DialogTitle>
                     </DialogHeader>

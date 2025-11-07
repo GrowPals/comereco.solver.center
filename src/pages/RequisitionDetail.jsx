@@ -157,7 +157,7 @@ const RequisitionDetail = () => {
             <PageContainer>
                 <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
                     {/* Header with accent bar */}
-                    <header className="relative rounded-2xl border-2 border-border bg-card p-6 shadow-lg overflow-hidden sm:p-8">
+                    <header className="relative rounded-2xl border-2 border-border bg-card p-6 shadow-soft-md overflow-hidden sm:p-8">
                         {/* Top accent bar based on status */}
                         <div className={`absolute top-0 left-0 right-0 h-1.5 ${currentStatus.accent}`} />
 
@@ -287,7 +287,7 @@ const RequisitionDetail = () => {
                                 <CardContent className="space-y-4">
                                     {isOwner && business_status === 'draft' && (
                                         <Button
-                                            className="w-full shadow-md hover:shadow-lg"
+                                            className="w-full shadow-md hover:shadow-soft-md"
                                             size="lg"
                                             onClick={handleSubmit}
                                             disabled={actionLoading}
@@ -304,7 +304,7 @@ const RequisitionDetail = () => {
                                                         <TooltipTrigger asChild>
                                                             <DialogTrigger asChild>
                                                                 <Button
-                                                                    className="w-full shadow-md hover:shadow-lg"
+                                                                    className="w-full shadow-md hover:shadow-soft-md"
                                                                     variant="accent"
                                                                     size="lg"
                                                                     disabled={actionLoading}
@@ -370,7 +370,7 @@ const RequisitionDetail = () => {
                                                         <TooltipTrigger asChild>
                                                             <DialogTrigger asChild>
                                                                 <Button
-                                                                    className="w-full shadow-md hover:shadow-lg"
+                                                                    className="w-full shadow-md hover:shadow-soft-md"
                                                                     variant="destructive"
                                                                     size="lg"
                                                                     disabled={actionLoading}

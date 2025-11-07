@@ -43,7 +43,7 @@ const ProjectDetail = () => {
       <PageContainer>
         <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
           {/* Header Skeleton */}
-          <div className="rounded-2xl border-2 border-border bg-card p-5 shadow-lg sm:p-8">
+          <div className="rounded-2xl border-2 border-border bg-card p-5 shadow-soft-md sm:p-8">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex w-full items-start gap-3 sm:gap-4 sm:w-auto">
                 <Skeleton className="h-11 w-11 rounded-xl" />
@@ -63,7 +63,7 @@ const ProjectDetail = () => {
           {/* Statistics Cards Skeleton */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="rounded-2xl border-2 border-border bg-card p-6 shadow-lg">
+              <div key={i} className="rounded-2xl border-2 border-border bg-card p-6 shadow-soft-md">
                 <div className="flex items-center justify-between">
                   <div className="space-y-2">
                     <Skeleton className="h-4 w-32" />
@@ -78,7 +78,7 @@ const ProjectDetail = () => {
           {/* Content Grid Skeleton */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {[...Array(2)].map((_, i) => (
-              <div key={i} className="rounded-2xl border-2 border-border bg-card shadow-lg">
+              <div key={i} className="rounded-2xl border-2 border-border bg-card shadow-soft-md">
                 <div className="p-6 border-b border-border">
                   <div className="flex items-center gap-3">
                     <Skeleton className="h-12 w-12 rounded-xl" />
@@ -144,7 +144,7 @@ const ProjectDetail = () => {
       <PageContainer>
         <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
           {/* Header */}
-          <header className="relative overflow-hidden rounded-2xl border-2 border-border bg-card p-5 shadow-lg transition-shadow duration-300 hover:shadow-xl sm:p-8">
+          <header className="relative overflow-hidden rounded-2xl border-2 border-border bg-card p-5 shadow-soft-md transition-shadow duration-300 hover:shadow-soft-lg sm:p-8">
             <div className={`absolute top-0 left-0 right-0 h-1.5 ${currentStatus.accent}`} />
             
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
@@ -191,7 +191,7 @@ const ProjectDetail = () => {
 
           {/* Statistics Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="shadow-lg border-2 transition-shadow duration-300 hover:shadow-xl">
+            <Card className="shadow-soft-md border-2 transition-shadow duration-300 hover:shadow-soft-lg">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -202,7 +202,7 @@ const ProjectDetail = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card className="shadow-lg border-2 transition-shadow duration-300 hover:shadow-xl">
+            <Card className="shadow-soft-md border-2 transition-shadow duration-300 hover:shadow-soft-lg">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -213,7 +213,7 @@ const ProjectDetail = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card className="shadow-lg border-2 transition-shadow duration-300 hover:shadow-xl">
+            <Card className="shadow-soft-md border-2 transition-shadow duration-300 hover:shadow-soft-lg">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -224,7 +224,7 @@ const ProjectDetail = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card className="shadow-lg border-2 transition-shadow duration-300 hover:shadow-xl">
+            <Card className="shadow-soft-md border-2 transition-shadow duration-300 hover:shadow-soft-lg">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -239,7 +239,7 @@ const ProjectDetail = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Members Card */}
-            <Card className="shadow-lg border-2 transition-shadow duration-300 hover:shadow-xl">
+            <Card className="shadow-soft-md border-2 transition-shadow duration-300 hover:shadow-soft-lg">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">
                   <div className="icon-badge flex h-12 w-12 items-center justify-center">
@@ -297,7 +297,7 @@ const ProjectDetail = () => {
             </Card>
 
             {/* Requisitions Card */}
-            <Card className="shadow-lg border-2 transition-shadow duration-300 hover:shadow-xl">
+            <Card className="shadow-soft-md border-2 transition-shadow duration-300 hover:shadow-soft-lg">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">
                   <div className="icon-badge flex h-12 w-12 items-center justify-center">

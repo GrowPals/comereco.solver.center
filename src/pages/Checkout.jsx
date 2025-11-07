@@ -254,7 +254,7 @@ const CheckoutPage = () => {
                         <Button
                             type="submit"
                             size="lg"
-                            className="w-full shadow-lg hover:shadow-xl"
+                            className="w-full shadow-soft-md hover:shadow-soft-lg"
                             isLoading={createRequisitionMutation.isPending}
                         >
                             Crear Requisición

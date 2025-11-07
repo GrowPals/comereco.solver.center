@@ -22,7 +22,7 @@ const StatCard = memo(({ title, value, icon: Icon, isLoading, format = val => va
         <Card interactive className="group stat-card surface-card">
             <CardHeader className="relative z-10 flex flex-row items-center justify-between space-y-0 pb-3">
                 {Icon && (
-                    <div className="stat-icon flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg">
+                    <div className="stat-icon flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:shadow-soft-md">
                         <Icon className="h-6 w-6 text-primary-500 dark:text-primary-200" />
                     </div>
                 )}
