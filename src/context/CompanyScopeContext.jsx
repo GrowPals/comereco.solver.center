@@ -19,7 +19,7 @@ export const CompanyScopeProvider = ({ children }) => {
   const isDev = user?.role_v2 === 'dev';
   const userCompany = user?.company;
 
-  const { data: companies = [], isLoading } = useQuery({
+  const { data: rawCompanies = [], isLoading } = useQuery({
     queryKey: ['company-scope', isDev ? 'all' : userCompany?.id],
     queryFn: async () => {
       if (!user) return [];
@@ -31,6 +31,59 @@ export const CompanyScopeProvider = ({ children }) => {
     enabled: !!user,
     staleTime: 1000 * 60,
   });
+  const companies = useMemo(() => {
+    if (!rawCompanies.length) return [];
+
+    const toKey = (company) => {
+      const location = company?.bind_location_id?.trim().toLowerCase();
+      if (location) return `bind:${location}`;
+      const priceList = company?.bind_price_list_id?.trim().toLowerCase();
+      if (priceList) return `price:${priceList}`;
+      const normalizedName = company?.name?.trim().toLowerCase();
+      if (normalizedName) return `name:${normalizedName}`;
+      return `id:${company?.id ?? Math.random().toString(36).slice(2)}`;
+    };
+
+    const preferCandidate = (current, next) => {
+      const currentName = current?.name?.trim() ?? '';
+      const nextName = next?.name?.trim() ?? '';
+
+      // Prefer the shortest readable name (avoids "ComerECO - X" duplicating "X")
+      if (currentName.length !== nextName.length) {
+        return nextName.length < currentName.length;
+      }
+
+      const currentHasPrefix = currentName.includes(' - ');
+      const nextHasPrefix = nextName.includes(' - ');
+      if (currentHasPrefix !== nextHasPrefix) {
+        return !nextHasPrefix;
+      }
+
+      // Default to keeping the first one
+      return false;
+    };
+
+    const bestByKey = new Map();
+
+    rawCompanies.forEach((company, index) => {
+      if (!company) return;
+      const key = toKey(company);
+      const snapshot = bestByKey.get(key);
+
+      if (!snapshot) {
+        bestByKey.set(key, { company, index });
+        return;
+      }
+
+      if (preferCandidate(snapshot.company, company)) {
+        bestByKey.set(key, { company, index: snapshot.index });
+      }
+    });
+
+    return Array.from(bestByKey.values())
+      .sort((a, b) => a.index - b.index)
+      .map((entry) => entry.company);
+  }, [rawCompanies]);
 
   const [selectedCompanyId, setSelectedCompanyId] = useState(null);
   const [isGlobalView, setIsGlobalView] = useState(isDev);

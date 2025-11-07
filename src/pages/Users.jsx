@@ -45,6 +45,7 @@ import PageLoader from '@/components/PageLoader';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
+import { useCompanyScope } from '@/context/CompanyScopeContext';
 
 
 // Mapeo de roles según app_role_v2 enum (admin | supervisor | user | dev)
@@ -178,10 +179,14 @@ const Users = () => {
     const queryClient = useQueryClient();
 
     const { isDev } = useUserPermissions();
+    const { activeCompanyId, isGlobalView } = useCompanyScope();
+    const scopeKey = isGlobalView ? 'all' : activeCompanyId ?? 'unassigned';
+    const canFetchUsers = isGlobalView || Boolean(activeCompanyId);
 
     const { data: users, isLoading, isError, error } = useQuery({
-        queryKey: ['users'],
+        queryKey: ['users', scopeKey],
         queryFn: fetchUsersInCompany,
+        enabled: canFetchUsers,
     });
 
     const [approvalBypassSupported, setApprovalBypassSupported] = useState(isApprovalBypassSupported());
@@ -213,7 +218,7 @@ const Users = () => {
 
     const mutationOptions = {
         onSuccess: () => {
-            queryClient.invalidateQueries(['users']);
+            queryClient.invalidateQueries({ queryKey: ['users'] });
             setIsFormOpen(false);
             setEditingUser(null);
         },
