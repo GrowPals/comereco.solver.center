@@ -754,22 +754,33 @@
     pointer-events: auto;
   }
 
-  /* Premium gradient icon badges - Light mode uses branded blues instead of gray */
+  /* Base icon badges - neutral surface that respects component color classes */
   .icon-badge,
   .metric-icon,
   .stat-icon {
-    background: linear-gradient(135deg, rgba(239, 246, 255, 0.9) 0%, rgba(219, 234, 254, 0.7) 100%);
-    border: 1px solid rgba(59, 130, 246, 0.08);
+    background: rgba(248, 250, 252, 0.7);
+    border: 1px solid rgba(226, 232, 240, 0.6);
     box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
-    color: var(--primary-600);
     border-radius: 999px;
+    /* No forced color - let components define their own via Tailwind utilities */
   }
 
   .icon-badge svg,
   .metric-icon svg,
   .stat-icon svg {
-    color: inherit;
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15));
+    /* Let component color classes control SVG color */
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+  }
+
+  /* Primary variant with blue gradient (opt-in) */
+  .icon-badge--primary {
+    background: linear-gradient(135deg, rgba(239, 246, 255, 0.9) 0%, rgba(219, 234, 254, 0.7) 100%) !important;
+    border: 1px solid rgba(59, 130, 246, 0.08) !important;
+    color: var(--primary-600) !important;
+  }
+
+  .icon-badge--primary svg {
+    color: inherit !important;
   }
 
   .favorite-icon {
@@ -792,10 +803,17 @@
   .dark .icon-badge,
   .dark .metric-icon,
   .dark .stat-icon {
+    background: rgba(28, 52, 92, 0.5);
+    border: 1px solid rgba(120, 192, 255, 0.25);
+    box-shadow: var(--shadow-sm);
+    /* No forced color - let components define their own via Tailwind utilities */
+  }
+
+  .dark .icon-badge--primary {
     background: rgba(28, 52, 92, 0.65) !important;
     border: 1px solid rgba(120, 192, 255, 0.28) !important;
     box-shadow: var(--shadow-sm) !important;
-    color: #f4f8ff;
+    color: #f4f8ff !important;
   }
 
   .dark .favorite-icon {

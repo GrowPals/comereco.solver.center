@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format, isToday, isYesterday, isThisWeek, startOfDay } from 'date-fns';
@@ -135,7 +135,7 @@ const NotificationsPage = () => {
                     <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{notification.message}</p>
                     <p className="mt-2 text-xs text-muted-foreground/80">{format(new Date(notification.created_at), 'dd MMM, HH:mm', { locale: es })}</p>
                 </div>
-                <DropdownMenu onOpenChange={(e) => e.stopPropagation()}>
+                <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()} className="rounded-xl h-9 w-9">
                             <MoreVertical className="h-5 w-5" />

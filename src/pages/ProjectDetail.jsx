@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, Users, FileText, TrendingUp, Calendar, Shield, CheckCircle2, XCircle, Clock, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';

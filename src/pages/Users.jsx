@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm, Controller } from 'react-hook-form';
 import { Plus, MoreHorizontal, User as UserIcon, Shield, Briefcase, Trash2, Code, Zap } from 'lucide-react';

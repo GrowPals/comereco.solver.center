@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useRequisitions } from '@/hooks/useRequisitions';
 import { useQuery } from '@tanstack/react-query';
 import { getMyProjects } from '@/services/projectService';
