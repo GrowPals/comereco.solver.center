@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import PageContainer from '@/components/layout/PageContainer';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { SectionIcon } from '@/components/ui/icon-wrapper';
 
 const faqData = [
   {
@@ -68,9 +69,7 @@ const HelpPage = () => {
                     {/* Header */}
                     <header className="flex flex-col items-start gap-6 border-b border-border pb-8 sm:flex-row sm:items-center sm:justify-between dark:border-border">
                         <div className="flex items-center gap-4">
-                            <div className="icon-badge flex h-14 w-14 items-center justify-center">
-                                <HelpCircle className="h-7 w-7 text-primary-600 dark:text-primary-100" aria-hidden="true" />
-                            </div>
+                            <SectionIcon icon={HelpCircle} className="h-7 w-7" />
                             <div>
                                 <h1 className="mb-1 text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
                                     Centro de <span className="bg-gradient-primary bg-clip-text text-transparent">Ayuda</span>
@@ -163,9 +162,7 @@ const HelpPage = () => {
                     {/* Info adicional */}
                     <div className="rounded-2xl border border-border bg-muted/40 p-6 shadow-lg transition-colors dark:border-border dark:bg-card/60">
                         <div className="flex items-start gap-4">
-                            <div className="icon-badge flex h-10 w-10 flex-shrink-0 items-center justify-center">
-                                <HelpCircle className="h-5 w-5 text-primary-600 dark:text-primary-400" aria-hidden="true" />
-                            </div>
+                            <SectionIcon icon={HelpCircle} />
                             <div>
                                 <h3 className="mb-1 font-bold text-foreground">¿No encuentras lo que buscas?</h3>
                                 <p className="text-sm text-muted-foreground">

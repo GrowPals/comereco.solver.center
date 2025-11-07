@@ -25,6 +25,7 @@ import { es } from 'date-fns/locale';
 import logger from '@/utils/logger';
 import { cn } from '@/lib/utils';
 import { formatNumber } from '@/lib/formatters';
+import { IconWrapper, SectionIcon } from '@/components/ui/icon-wrapper';
 
 const Approvals = () => {
     const navigate = useNavigate();
@@ -187,9 +188,7 @@ const Approvals = () => {
                                         {/* Header */}
                                         <div className="flex items-start justify-between mb-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="icon-badge flex h-12 w-12 items-center justify-center">
-                                                    <FileText className="h-6 w-6 text-primary-600 dark:text-primary-100" />
-                                                </div>
+                                                <SectionIcon icon={FileText} />
                                                 <div>
                                                     <p className="mb-1 text-sm font-medium text-muted-foreground">Folio</p>
                                                     <p className="text-xl font-bold text-foreground">{req.internal_folio}</p>
@@ -225,9 +224,7 @@ const Approvals = () => {
                                         {/* Monto */}
                                         <div className="flex items-center justify-between mb-5">
                                             <div className="flex items-center gap-2">
-                                                <div className="icon-badge flex h-10 w-10 items-center justify-center text-emerald-600 dark:text-emerald-200">
-                                                    <DollarSign className="h-5 w-5" />
-                                                </div>
+                                                <IconWrapper icon={DollarSign} variant="neutral" size="md" className="text-emerald-600 dark:text-emerald-200" />
                                                 <div>
                                                     <p className="mb-0.5 text-xs text-muted-foreground">Monto Total</p>
                                                     <p className="text-2xl font-bold text-foreground">

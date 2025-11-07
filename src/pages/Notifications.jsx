@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import PageLoader from '@/components/PageLoader';
 import PageContainer from '@/components/layout/PageContainer';
+import { IconWrapper, SectionIcon } from '@/components/ui/icon-wrapper';
 
 const notificationIcons = {
     success: { icon: CheckCheck, badgeClass: 'text-emerald-600 dark:text-emerald-200 ring-1 ring-emerald-300/25 dark:ring-emerald-500/40' },
@@ -127,9 +128,7 @@ const NotificationsPage = () => {
                     className="mt-1"
                     onClick={(e) => e.stopPropagation()}
                 />
-                <div className={cn("icon-badge flex h-12 w-12 shrink-0 items-center justify-center", badgeClass)}>
-                    <Icon className="h-6 w-6" aria-hidden="true" />
-                </div>
+                <IconWrapper icon={Icon} variant="neutral" size="lg" className={badgeClass} />
                 <div className="flex-1">
                     <p className={cn("text-base", notification.is_read ? "font-semibold text-foreground" : "font-bold text-foreground")}>{notification.title}</p>
                     <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{notification.message}</p>
@@ -161,9 +160,7 @@ const NotificationsPage = () => {
                 <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
                     <header className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:pb-6 dark:border-border">
                         <div className="flex items-center gap-3 sm:gap-4">
-                            <div className="icon-badge flex h-12 w-12 items-center justify-center sm:h-14 sm:w-14">
-                                <Bell className="h-6 w-6 text-primary-600 dark:text-primary-100 sm:h-7 sm:w-7" aria-hidden="true" />
-                            </div>
+                            <SectionIcon icon={Bell} className="sm:h-7 sm:w-7" />
                             <div className="space-y-1">
                                 <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Notificaciones</h1>
                                 {unreadCount > 0 && (
@@ -257,9 +254,7 @@ const NotificationsPage = () => {
                         </div>
                     ) : (
                         <div className="surface-card p-20 text-center shadow-lg">
-                            <div className="icon-badge mx-auto mb-6 flex h-20 w-20 items-center justify-center text-muted-foreground">
-                                <Search className="h-10 w-10" aria-hidden="true" />
-                            </div>
+                            <IconWrapper icon={Search} variant="neutral" size="xl" className="mx-auto mb-6 text-muted-foreground" />
                             <h3 className="mb-2 text-2xl font-bold text-foreground">No se encontraron notificaciones</h3>
                             <p className="text-base text-muted-foreground">Intenta ajustar tus filtros de búsqueda.</p>
                         </div>

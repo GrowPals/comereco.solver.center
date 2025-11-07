@@ -2,6 +2,7 @@
 import React, { memo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { StatIcon } from '@/components/ui/icon-wrapper';
 
 const StatCard = memo(({ title, value, icon: Icon, isLoading, format = val => val }) => {
     if (isLoading) {
@@ -22,8 +23,8 @@ const StatCard = memo(({ title, value, icon: Icon, isLoading, format = val => va
         <Card interactive className="group stat-card surface-card">
             <CardHeader className="relative z-10 flex flex-row items-center justify-between space-y-0 pb-3">
                 {Icon && (
-                    <div className="stat-icon flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg">
-                        <Icon className="h-6 w-6 text-primary-500 dark:text-primary-200" />
+                    <div className="transition-all duration-300 group-hover:scale-110">
+                        <StatIcon icon={Icon} />
                     </div>
                 )}
             </CardHeader>

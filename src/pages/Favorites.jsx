@@ -12,6 +12,7 @@ import ProductCardSkeleton from '@/components/skeletons/ProductCardSkeleton';
 import EmptyState from '@/components/EmptyState';
 import PageContainer from '@/components/layout/PageContainer';
 import logger from '@/utils/logger';
+import { SectionIcon } from '@/components/ui/icon-wrapper';
 
 // Función para obtener productos favoritos por IDs
 const fetchFavoriteProducts = async (productIds) => {
@@ -62,9 +63,7 @@ const FavoritesPage = () => {
                         {/* Header Skeleton */}
                         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-border">
                             <div className="flex items-center gap-4">
-                                <div className="icon-badge favorite-icon-badge flex h-14 w-14 items-center justify-center">
-                                    <Star className="favorite-icon h-7 w-7" aria-hidden="true" />
-                                </div>
+                                <SectionIcon icon={Star} className="favorite-icon h-7 w-7" />
                                 <div>
                                     <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-1">
                                         Mis <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">Favoritos</span>
@@ -145,9 +144,7 @@ const FavoritesPage = () => {
                     {/* Header */}
                     <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-border">
                         <div className="flex items-center gap-4">
-                            <div className="icon-badge favorite-icon-badge flex h-14 w-14 items-center justify-center">
-                                <Star className="favorite-icon h-7 w-7" aria-hidden="true" />
-                            </div>
+                            <SectionIcon icon={Star} className="favorite-icon h-7 w-7" />
                             <div>
                                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-1">
                                     Mis <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">Favoritos</span>
@@ -171,9 +168,7 @@ const FavoritesPage = () => {
                     {/* Info Card */}
                     <div className="favorite-spotlight hidden rounded-2xl p-6 md:block">
                         <div className="flex items-start gap-4">
-                            <div className="icon-badge favorite-icon-badge flex h-10 w-10 flex-shrink-0 items-center justify-center">
-                                <Star className="favorite-icon h-5 w-5" />
-                            </div>
+                            <SectionIcon icon={Star} className="favorite-icon" />
                             <div>
                                 <h3 className="font-bold text-foreground mb-1">Tus productos favoritos</h3>
                                 <p className="text-sm text-muted-foreground">

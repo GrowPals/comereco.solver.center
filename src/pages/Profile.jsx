@@ -15,6 +15,7 @@ import { uploadProfileAvatar } from '@/services/imageService';
 import logger from '@/utils/logger';
 import RequisitionCard from '@/components/RequisitionCard';
 import PageContainer from '@/components/layout/PageContainer';
+import { IconWrapper, SectionIcon } from '@/components/ui/icon-wrapper';
 
 const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name, editable = false, placeholder }) => {
   const isEditableState = isEditing && editable;
@@ -23,9 +24,7 @@ const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name, e
   if (isEditableState) {
     return (
       <div className="flex items-center gap-4 rounded-2xl border border-border/60 bg-muted/70 px-4 py-4 shadow-sm transition-colors dark:border-border/70 dark:bg-[#0f1a2d]/85">
-        <div className="icon-badge flex h-10 w-10 shrink-0 items-center justify-center">
-          <Icon className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
-        </div>
+        <IconWrapper icon={Icon} variant="neutral" size="md" />
         <div className="flex-1">
           <FloatingLabelInput
             name={name}
@@ -43,9 +42,7 @@ const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name, e
   // Modo solo lectura
   return (
     <div className="flex items-center gap-4 py-4 transition-colors">
-      <div className="icon-badge flex h-10 w-10 items-center justify-center">
-        <Icon className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
-      </div>
+      <IconWrapper icon={Icon} variant="neutral" size="md" />
       <div className="flex-1">
         <p className="mb-1 text-sm font-medium text-muted-foreground">{label}</p>
         <p className="font-bold text-foreground">{value || placeholder || 'No especificado'}</p>
@@ -59,9 +56,7 @@ const MobileProfileInfoRow = ({ icon: Icon, label, value, placeholder, editable 
 
   return (
     <div className="flex items-start gap-4 rounded-2xl border border-border/50 bg-card/80 p-4 shadow-sm dark:border-[rgba(90,150,230,0.35)] dark:bg-[#0e1829]">
-      <div className="icon-badge flex h-11 w-11 shrink-0 items-center justify-center">
-        <Icon className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
-      </div>
+      <IconWrapper icon={Icon} variant="neutral" size="lg" />
       <div className="flex-1">
         {isEditableState ? (
           <FloatingLabelInput
@@ -613,9 +608,7 @@ const ProfilePage = () => {
               <Card className="rounded-2xl border border-border shadow-lg dark:border-border">
                 <CardHeader className="pb-4">
                   <div className="mb-2 flex items-center gap-3">
-                    <div className="icon-badge flex h-10 w-10 items-center justify-center">
-                      <User className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
-                    </div>
+                    <SectionIcon icon={User} />
                     <CardTitle className="text-2xl font-bold text-foreground">Estadísticas</CardTitle>
                   </div>
                 </CardHeader>
@@ -641,9 +634,7 @@ const ProfilePage = () => {
               <Card className="rounded-2xl border border-border shadow-lg lg:col-span-2 dark:border-border">
                 <CardHeader className="pb-4">
                   <div className="mb-2 flex items-center gap-3">
-                    <div className="icon-badge flex h-10 w-10 items-center justify-center">
-                      <User className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
-                    </div>
+                    <SectionIcon icon={User} />
                     <CardTitle className="text-2xl font-bold text-foreground">Actividad Reciente</CardTitle>
                   </div>
                 </CardHeader>
@@ -654,9 +645,7 @@ const ProfilePage = () => {
                     recentRequisitions.map(req => <RequisitionCard key={req.id} requisition={req} />)
                   ) : (
                     <div className="py-12 text-center">
-                      <div className="icon-badge mx-auto mb-4 flex h-16 w-16 items-center justify-center text-muted-foreground">
-                        <User className="h-8 w-8" aria-hidden="true" />
-                      </div>
+                      <IconWrapper icon={User} variant="neutral" size="xl" className="mx-auto mb-4 text-muted-foreground" />
                       <p className="font-medium text-muted-foreground">No tienes actividad reciente</p>
                     </div>
                   )}

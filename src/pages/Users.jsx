@@ -48,6 +48,7 @@ import { useUserPermissions } from '@/hooks/useUserPermissions';
 import { useCompanyScope } from '@/context/CompanyScopeContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { FloatingLabelInput } from '@/components/ui/floating-label-input';
+import { SectionIcon } from '@/components/ui/icon-wrapper';
 
 
 // Mapeo de roles según app_role_v2 enum (admin | supervisor | user | dev)
@@ -412,9 +413,7 @@ const Users = () => {
                     {/* Header */}
                     <header className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
                         <div className="flex items-center gap-3 sm:gap-4">
-                            <div className="icon-badge flex h-12 w-12 items-center justify-center sm:h-14 sm:w-14">
-                                <UserIcon className="h-6 w-6 text-primary-600 dark:text-primary-100 sm:h-7 sm:w-7" aria-hidden="true" />
-                            </div>
+                            <SectionIcon icon={UserIcon} className="sm:h-7 sm:w-7" />
                             <div className="space-y-1">
                                 <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
                                     Gestión de <span className="bg-gradient-primary bg-clip-text text-transparent">Usuarios</span>

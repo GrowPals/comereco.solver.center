@@ -54,8 +54,8 @@ const NotificationItem = memo(({ notification, onRead }) => {
         >
             <div className="flex-shrink-0 flex items-center pt-1">
               {!notification.is_read && <div className="w-2.5 h-2.5 rounded-full bg-gradient-primary mr-2 animate-pulse" />}
-              <div className={cn("icon-badge flex items-center justify-center w-10 h-10 rounded-xl transition-transform duration-200 group-hover:scale-105", config.color)}>
-                  <Icon className="w-5 h-5" />
+              <div className="flex items-center justify-center transition-transform duration-200 group-hover:scale-105">
+                  <Icon className={cn("w-5 h-5", config.color)} />
               </div>
             </div>
             <div className="flex-1 min-w-0">
@@ -227,8 +227,8 @@ const NotificationCenter = ({ variant = 'popover' }) => {
                         notifications.map(n => <NotificationItem key={n.id} notification={n} onRead={handleMarkAsRead} />)
                     ) : (
                         <div className="p-12 text-center">
-                            <div className="icon-badge mx-auto mb-4 flex h-16 w-16 items-center justify-center text-primary-600 dark:text-primary-100">
-                                <CheckCheck className="h-8 w-8" />
+                            <div className="mx-auto mb-4 flex items-center justify-center">
+                                <CheckCheck className="h-12 w-12 text-blue-600 dark:text-blue-400" />
                             </div>
                             <p className="text-base font-bold text-foreground">Todo al día</p>
                             <p className="mt-1 text-sm text-muted-foreground">No tienes notificaciones nuevas.</p>
