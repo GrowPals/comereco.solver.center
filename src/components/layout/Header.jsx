@@ -120,7 +120,7 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
                     <div className="flex-1">
                         <GlobalSearch variant="mobile" />
                     </div>
-                    <CompanySwitcher />
+                    <CompanySwitcher variant="icon" />
                     <NotificationCenter variant="icon" />
                     <CartIcon variant="compact" />
                     <ThemeToggle />
