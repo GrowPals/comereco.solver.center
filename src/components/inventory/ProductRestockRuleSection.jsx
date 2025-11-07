@@ -22,8 +22,8 @@ import {
 } from '@/components/ui/select';
 
 const STATUS_BADGES = {
-  active: 'border-emerald-200 bg-emerald-100/80 text-emerald-700 dark:border-emerald-500/40 dark:bg-emerald-500/20 dark:text-emerald-200',
-  paused: 'border-amber-200 bg-amber-100/80 text-amber-700 dark:border-amber-500/40 dark:bg-amber-500/15 dark:text-amber-200'
+  active: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400',
+  paused: 'bg-amber-50 text-amber-800 dark:bg-amber-500/15 dark:text-amber-400'
 };
 
 export const ProductRestockRuleSection = ({ product, stock }) => {
@@ -180,7 +180,7 @@ export const ProductRestockRuleSection = ({ product, stock }) => {
           </div>
 
           {rule && (
-            <Badge className={cn('self-start border px-4 py-1 text-xs font-semibold uppercase tracking-wide', STATUS_BADGES[rule.status])}>
+            <Badge className={cn('self-start px-4 py-1 text-xs font-semibold uppercase tracking-wide rounded-full', STATUS_BADGES[rule.status])}>
               {rule.status === 'active' ? 'Regla activa' : 'Regla pausada'}
             </Badge>
           )}

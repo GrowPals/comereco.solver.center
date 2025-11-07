@@ -55,25 +55,25 @@ const roleMapping = {
     user: {
         label: 'Usuario',
         icon: UserIcon,
-        colors: 'text-slate-700 border-slate-200 bg-slate-50 dark:text-slate-200 dark:border-slate-700 dark:bg-slate-900/50',
+        colors: 'bg-slate-100 text-slate-700 dark:bg-slate-700/50 dark:text-slate-300',
         description: 'Puede crear requisiciones y ver catálogo de productos'
     },
     supervisor: {
         label: 'Supervisor',
         icon: Briefcase,
-        colors: 'text-blue-700 border-blue-200 bg-blue-50 dark:text-blue-300 dark:border-blue-700 dark:bg-blue-950/50',
+        colors: 'bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400',
         description: 'Puede aprobar requisiciones y gestionar proyectos de su equipo'
     },
     admin: {
         label: 'Admin',
         icon: Shield,
-        colors: 'text-purple-700 border-purple-200 bg-purple-50 dark:text-purple-300 dark:border-purple-700 dark:bg-purple-950/50',
+        colors: 'bg-purple-50 text-purple-700 dark:bg-purple-500/15 dark:text-purple-400',
         description: 'Acceso completo: gestión de usuarios, productos y toda la plataforma'
     },
     dev: {
         label: 'Developer',
         icon: Code,
-        colors: 'text-emerald-700 border-emerald-200 bg-emerald-50 dark:text-emerald-300 dark:border-emerald-700 dark:bg-emerald-950/50',
+        colors: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400',
         description: 'Acceso de desarrollador con permisos especiales de plataforma'
     },
 };
@@ -499,7 +499,7 @@ const Users = () => {
                                 <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                                     <Tooltip>
                                         <TooltipTrigger asChild>
-                                            <Badge variant="outline" className={`font-semibold cursor-help ${roleMapping[user.role_v2]?.colors || ''}`}>
+                                            <Badge className={`font-semibold cursor-help rounded-full ${roleMapping[user.role_v2]?.colors || ''}`}>
                                                 {roleMapping[user.role_v2]?.icon && (
                                                     React.createElement(roleMapping[user.role_v2].icon, { className: 'mr-1 h-4 w-4' })
                                                 )}
@@ -511,7 +511,7 @@ const Users = () => {
                                         </TooltipContent>
                                     </Tooltip>
                                     {user.can_submit_without_approval && (
-                                        <Badge variant="outline" className="font-semibold text-amber-700 border-amber-200 bg-amber-50 dark:text-amber-300 dark:border-amber-700 dark:bg-amber-950/50" title="Puede enviar requisiciones sin aprobación previa">
+                                        <Badge className="font-semibold rounded-full bg-amber-50 text-amber-800 dark:bg-amber-500/15 dark:text-amber-400" title="Puede enviar requisiciones sin aprobación previa">
                                             <Zap className="mr-1 h-3 w-3" />
                                             Envío Directo
                                         </Badge>
@@ -578,7 +578,7 @@ const Users = () => {
                                                 </TooltipContent>
                                             </Tooltip>
                                             {user.can_submit_without_approval && (
-                                                <Badge variant="outline" className="font-semibold text-amber-700 border-amber-200 bg-amber-50 dark:text-amber-300 dark:border-amber-700 dark:bg-amber-950/50 w-fit" title="Puede enviar requisiciones sin aprobación previa">
+                                                <Badge className="font-semibold rounded-full bg-amber-50 text-amber-800 dark:bg-amber-500/15 dark:text-amber-400 w-fit" title="Puede enviar requisiciones sin aprobación previa">
                                                     <Zap className="mr-1 h-3 w-3" />
                                                     Envío Directo
                                                 </Badge>
