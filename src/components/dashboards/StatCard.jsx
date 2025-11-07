@@ -20,18 +20,18 @@ const StatCard = memo(({ title, value, icon: Icon, isLoading, format = val => va
 
     return (
         <Card interactive className="group stat-card surface-card">
-            <CardHeader className="relative z-10 flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    {title}
-                </CardTitle>
+            <CardHeader className="relative z-10 flex flex-row items-center justify-between space-y-0 pb-3">
                 {Icon && (
-                    <div className="stat-icon flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-300 group-hover:scale-110">
+                    <div className="stat-icon flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg">
                         <Icon className="h-6 w-6 text-primary-500 dark:text-primary-200" />
                     </div>
                 )}
             </CardHeader>
             <CardContent className="relative z-10">
-                <div className="mb-1 text-4xl font-bold tracking-tight text-foreground">
+                <CardTitle className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                    {title}
+                </CardTitle>
+                <div className="mb-2 text-3xl font-extrabold tracking-tight text-foreground">
                     {format(value)}
                 </div>
                 <div className="mt-3 h-1 w-16 rounded-full bg-gradient-primary transition-all duration-300 group-hover:w-full"></div>
