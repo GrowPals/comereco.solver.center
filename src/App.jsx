@@ -180,7 +180,11 @@ const AppLayout = () => {
         >
           <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
             <ErrorBoundary level="page">
-              <Suspense fallback={<div className="h-full"><PageLoader /></div>}>
+              <Suspense fallback={
+                <div className="flex items-center justify-center min-h-[calc(100vh-12rem)]">
+                  <PageLoader />
+                </div>
+              }>
                 <Routes location={location}>
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/requisitions" element={<RequisitionsPage />} />
