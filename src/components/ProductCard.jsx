@@ -109,7 +109,7 @@ const ProductCard = memo(({ product }) => {
 
         <div className="absolute left-4 top-3 flex flex-wrap gap-2">
           {product.category && (
-            <span className="rounded-full border border-border/60 bg-white/95 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-foreground shadow-sm backdrop-blur-sm dark:border-border dark:bg-card/90 dark:text-foreground">
+            <span className="rounded-full border border-border bg-white px-3 py-1 text-xs font-semibold uppercase tracking-wide text-foreground shadow-sm dark:border-border dark:bg-card/90 dark:text-foreground">
               {product.category}
             </span>
           )}
@@ -118,7 +118,7 @@ const ProductCard = memo(({ product }) => {
           type="button"
           onClick={handleToggleFavorite}
           className={cn(
-            "absolute right-4 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-white/95 text-muted-foreground shadow-sm backdrop-blur-sm transition-all duration-200 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 dark:border-border dark:bg-card/90",
+            "absolute right-4 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-border bg-white text-muted-foreground shadow-sm transition-all duration-200 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 dark:border-border dark:bg-card/90",
             isFavorite
               ? "text-red-500 hover:scale-110"
               : "hover:text-red-500"
