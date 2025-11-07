@@ -79,3 +79,6 @@ integrations/
 docs/
 maintenance-data/
 migration-data/
+scripts/
+tools/
+tests/
