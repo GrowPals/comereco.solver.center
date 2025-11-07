@@ -2,6 +2,7 @@ import { supabase } from '@/lib/customSupabaseClient';
 import { getCachedSession, ensureScopedCompanyId } from '@/lib/supabaseHelpers';
 import { formatErrorMessage } from '@/utils/errorHandler';
 import logger from '@/utils/logger';
+import { PAGINATION } from '@/constants/config';
 
 const RESTOCK_RULE_SELECT = `
     id,
@@ -75,7 +76,7 @@ export const getRestockRule = async ({ productId, projectId } = {}) => {
             .eq('company_id', companyId)
             .eq('product_id', productId)
             .order('updated_at', { ascending: false })
-            .limit(1);
+            .limit(PAGINATION.RESTOCK_RULES_LIMIT);
 
         query = normalizeProjectFilter(query, projectId);
 

@@ -9,9 +9,7 @@ const FloatingInput = React.forwardRef(({ className, type, label, icon, error, .
   // Detect if input has value on mount and when props change
   React.useEffect(() => {
     const input = inputRef.current;
-    if (input && input.value) {
-      setHasValue(true);
-    }
+    setHasValue(Boolean(input?.value));
   }, [props.value, props.defaultValue]);
 
   const handleFocus = () => setIsFocused(true);

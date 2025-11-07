@@ -39,7 +39,7 @@ const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name, e
             value={value || ''}
             onChange={onChange}
             placeholder={placeholder}
-            className="mt-1 h-10 rounded-xl border border-border/60 bg-background/95 text-foreground shadow-inner transition-colors focus-visible:border-primary-400 focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:border-border/60 dark:bg-[#121c30] dark:text-foreground"
+            className="mt-1 h-10 rounded-xl border border-border/60 bg-background/95 text-foreground shadow-inner transition-colors focus-visible:border-primary-400 focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:border-[rgba(90,150,230,0.4)] dark:bg-[#0d1624] dark:text-foreground"
           />
         ) : (
           <p className="font-bold text-foreground">{value || placeholder || 'No especificado'}</p>
@@ -53,7 +53,7 @@ const MobileProfileInfoRow = ({ icon: Icon, label, value, placeholder, editable 
   const isEditableState = isEditing && editable;
 
   return (
-    <div className="flex items-start gap-4 rounded-2xl border border-border/50 bg-card/80 p-4 shadow-sm dark:border-border/60 dark:bg-[#122039]/80">
+    <div className="flex items-start gap-4 rounded-2xl border border-border/50 bg-card/80 p-4 shadow-sm dark:border-[rgba(90,150,230,0.35)] dark:bg-[#0e1829]">
       <div className="icon-badge flex h-11 w-11 shrink-0 items-center justify-center">
         <Icon className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
       </div>
@@ -65,7 +65,7 @@ const MobileProfileInfoRow = ({ icon: Icon, label, value, placeholder, editable 
             value={value || ''}
             onChange={onChange}
             placeholder={placeholder}
-            className="mt-2 h-10 rounded-xl border border-border/60 bg-background/90 text-foreground shadow-inner focus-visible:border-primary-400 focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            className="mt-2 h-10 rounded-xl border border-border/60 bg-background/90 text-foreground shadow-inner focus-visible:border-primary-400 focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:border-[rgba(90,150,230,0.4)] dark:bg-[#0d1624]"
           />
         ) : (
           <p className="mt-1 text-base font-semibold text-foreground">{value || placeholder || 'No especificado'}</p>

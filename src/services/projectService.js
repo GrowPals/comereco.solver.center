@@ -4,6 +4,7 @@ import { getCachedSession, ensureScopedCompanyId } from '@/lib/supabaseHelpers';
 import { getUserAccessContext, invalidateAccessContext } from '@/lib/accessControl';
 import { scopeToCompany } from '@/lib/companyScope';
 import logger from '@/utils/logger';
+import { PAGINATION } from '@/constants/config';
 import { formatErrorMessage } from '@/utils/errorHandler';
 
 const PROFILE_BASE_FIELDS = ['id', 'full_name', 'avatar_url', 'role_v2'];
@@ -606,7 +607,7 @@ export const getProjectDetails = async (projectId) => {
     .select('id, internal_folio, created_at, business_status, total_amount, created_by')
     .eq('project_id', projectId)
     .order('created_at', { ascending: false })
-    .limit(50);
+    .limit(PAGINATION.PROJECTS_LIMIT);
 
   if (requisitionsError) {
     logger.error('Error fetching project requisitions:', requisitionsError);

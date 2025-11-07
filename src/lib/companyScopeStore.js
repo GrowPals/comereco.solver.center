@@ -1,3 +1,5 @@
+import logger from '@/utils/logger';
+
 const GLOBAL_SCOPE = '__COMPANY_SCOPE_ALL__';
 
 let overrideCompanyId = null;
@@ -12,7 +14,7 @@ export const setCompanyScopeOverride = (companyId) => {
     try {
       listener(overrideCompanyId);
     } catch (error) {
-      console.error('companyScope listener error', error);
+      logger.error('Company scope listener error:', error);
     }
   });
 };
