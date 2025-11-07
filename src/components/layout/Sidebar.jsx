@@ -8,14 +8,19 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/components/ui/useToast';
 import { cn } from '@/lib/utils';
 
-const MenuItem = memo(({ to, icon: Icon, children, onClick, badge, iconVariant = 'default' }) => {
+const MenuItem = memo(({ to, icon: Icon, children, onClick, badge }) => {
     const location = useLocation();
     const isActive = location.pathname === to || (to !== '/dashboard' && location.pathname.startsWith(to));
 
-    const isFavoriteVariant = iconVariant === 'favorite';
+    const handleClick = (e) => {
+        // Ejecutar el callback de cierre del menú móvil
+        if (onClick) {
+            onClick(e);
+        }
+    };
 
     return (
-        <NavLink to={to} onClick={onClick}>
+        <NavLink to={to} onClick={handleClick}>
             <div
                 className={cn(
                     'group flex items-center gap-3 rounded-lg px-4 py-3 transition-all duration-200',
@@ -32,8 +37,7 @@ const MenuItem = memo(({ to, icon: Icon, children, onClick, badge, iconVariant =
                         'w-5 h-5 flex-shrink-0 transition-colors',
                         isActive
                             ? 'text-primary-700 dark:text-primary-200'
-                            : 'text-neutral-500 dark:text-neutral-400',
-                        isFavoriteVariant && 'favorite-icon'
+                            : 'text-neutral-500 dark:text-neutral-400'
                     )}
                 />
 
@@ -100,7 +104,7 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
             title: 'Mis Herramientas',
             items: [
                 { to: '/templates', icon: LayoutTemplate, text: 'Plantillas' },
-                { to: '/favorites', icon: Star, text: 'Favoritos', iconVariant: 'favorite' },
+                { to: '/favorites', icon: Star, text: 'Favoritos' },
             ]
         });
 
@@ -205,7 +209,6 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
                                     key={item.to}
                                     to={item.to}
                                     icon={item.icon}
-                                    iconVariant={item.iconVariant}
                                     onClick={handleNavClick}
                                     badge={item.badge}
                                 >
