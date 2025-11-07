@@ -38,7 +38,7 @@ const QuickAccess = memo(({ actions = [] }) => {
                             <button
                                 key={uniqueKey}
                                 onClick={() => handleActionClick(action.path)}
-                                className="group dashboard-action surface-card flex items-center gap-4 rounded-xl border-2 border-border p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+                                className="group dashboard-action surface-card flex items-center gap-4 rounded-xl border-2 border-border p-4 transition-all duration-200 hover:border-primary/40 hover:shadow-md"
                                 aria-label={action.label || 'Acción rápida'}
                             >
                                 <div className="metric-icon flex h-12 w-12 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-110">
