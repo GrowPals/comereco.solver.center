@@ -6,15 +6,30 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Validar que las variables estén configuradas
 if (!supabaseUrl || !supabaseAnonKey) {
-  const errorMessage = 'Variables de entorno de Supabase no configuradas. ' +
-    'Asegúrate de tener VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY en tu archivo .env';
-  
+  let errorMessage = '❌ Variables de entorno de Supabase no configuradas.\n\n';
+
   if (import.meta.env.PROD) {
-    throw new Error(errorMessage);
+    // En producción (Vercel), dar instrucciones específicas
+    errorMessage += '🔧 SOLUCIÓN PARA VERCEL:\n\n';
+    errorMessage += '1. Ve a tu proyecto en Vercel Dashboard\n';
+    errorMessage += '2. Settings → Environment Variables\n';
+    errorMessage += '3. Agrega estas variables:\n\n';
+    errorMessage += '   • VITE_SUPABASE_URL = https://azjaehrdzdfgrumbqmuc.supabase.co\n';
+    errorMessage += '   • VITE_SUPABASE_ANON_KEY = [tu clave anon de Supabase]\n\n';
+    errorMessage += '4. Redeploy el proyecto\n\n';
+    errorMessage += '📖 Ver guía completa: VERCEL_DEPLOYMENT.md en el repositorio';
   } else {
-    console.error('⚠️', errorMessage);
-    throw new Error(errorMessage);
+    // En desarrollo local
+    errorMessage += 'Asegúrate de tener VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY en tu archivo .env\n';
+    errorMessage += 'Copia .env.example a .env y completa los valores.';
   }
+
+  console.error('⚠️', errorMessage);
+
+  // Crear error con mensaje más descriptivo
+  const error = new Error(errorMessage);
+  error.name = 'ConfigurationError';
+  throw error;
 }
 
 /**
