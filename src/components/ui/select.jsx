@@ -14,11 +14,12 @@ const SelectTrigger = React.forwardRef(({ className, children, ...props }, ref) 
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      'flex h-12 w-full items-center justify-between rounded-xl border border-border bg-background px-4 py-3 text-base text-foreground ring-offset-background placeholder:text-neutral-500 transition-all',
-      'hover:border-neutral-300 hover:bg-muted/70 dark:hover:border-border dark:hover:bg-muted/30',
-      'focus:outline-none focus:ring-2 focus:ring-primary-200/40 focus:ring-offset-2 focus:border-primary-500',
-      'data-[state=open]:border-primary-500 data-[state=open]:ring-2 data-[state=open]:ring-primary-200/35 data-[state=open]:bg-background dark:data-[state=open]:bg-neutral-900',
-      'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-neutral-50 dark:disabled:bg-card',
+      'flex h-12 w-full items-center justify-between rounded-xl border border-border/80 bg-[var(--surface-contrast)] px-4 py-3 text-base text-foreground ring-offset-background placeholder:text-neutral-500 shadow-xs transition-all',
+      'hover:border-neutral-300 dark:hover:border-[rgba(120,186,255,0.5)]',
+      'focus:outline-none focus:shadow-[var(--focus-glow)] focus:ring-0 focus:border-primary-500 dark:focus:border-[rgba(124,188,255,0.7)]',
+      'data-[state=open]:border-primary-500 data-[state=open]:shadow-[var(--focus-glow)] dark:data-[state=open]:border-[rgba(124,188,255,0.7)]',
+      'dark:border-[rgba(90,150,230,0.35)] dark:bg-[#0f1a2d] dark:text-neutral-50',
+      'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-neutral-50 dark:disabled:bg-[rgba(16,32,60,0.8)]',
       className
     )}
     {...props}
@@ -58,7 +59,7 @@ const SelectContent = React.forwardRef(({ className, children, position = 'poppe
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        'relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-2xl border border-border bg-card text-foreground shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 dark:shadow-[0_20px_50px_rgba(8,15,32,0.55)]',
+        'relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-2xl border border-border bg-card text-foreground shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 dark:border-[rgba(90,150,230,0.35)] dark:bg-[#0e1829] dark:shadow-[0_20px_50px_rgba(8,15,32,0.7)]',
         position === 'popper' &&
           'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
         className
@@ -87,10 +88,10 @@ const SelectItem = React.forwardRef(({ className, children, ...props }, ref) => 
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex w-full cursor-pointer select-none items-center rounded-lg py-2.5 pl-8 pr-2 text-sm text-foreground/80 outline-none transition-colors',
-      'hover:bg-muted/70 hover:text-foreground',
-      'focus:bg-muted/70 focus:text-foreground',
-      'data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary-600 data-[state=checked]:font-semibold dark:data-[state=checked]:text-primary-200 dark:data-[state=checked]:bg-primary/20',
+      'relative flex w-full cursor-pointer select-none items-center rounded-lg py-2.5 pl-8 pr-2 text-sm text-foreground/90 outline-none transition-colors',
+      'hover:bg-muted/70 hover:text-foreground dark:hover:bg-[rgba(30,60,110,0.5)]',
+      'focus:bg-muted/70 focus:text-foreground dark:focus:bg-[rgba(30,60,110,0.5)]',
+      'data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary-600 data-[state=checked]:font-semibold dark:data-[state=checked]:text-primary-100 dark:data-[state=checked]:bg-primary/25',
       'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className
     )}
