@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Mail, Lock, Eye, EyeOff, AlertTriangle } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, AlertTriangle, CheckCircle } from 'lucide-react';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { supabase } from '@/lib/customSupabaseClient';
 import { RippleButton } from '@/components/ui/ripple-button';
@@ -37,6 +37,7 @@ const LoginPage = () => {
     const [showResetDialog, setShowResetDialog] = useState(false);
     const [resetEmail, setResetEmail] = useState('');
     const [isResetting, setIsResetting] = useState(false);
+    const [hasPreloadedEmail] = useState(() => !!localStorage.getItem('rememberMeEmail'));
 
     useEffect(() => {
       if (session) {
@@ -164,7 +165,7 @@ const LoginPage = () => {
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
                         className={cn(
-                            "rounded-3xl border-2 border-border bg-background/95 p-6 shadow-2xl backdrop-blur-md sm:p-10 dark:border-border/50 dark:bg-card/95",
+                            "rounded-3xl border-2 border-border bg-background/95 p-5 shadow-2xl backdrop-blur-md sm:p-8 md:p-10 dark:border-border/50 dark:bg-card/95",
                             isShaking && 'animate-shake'
                         )}
                     >
@@ -195,6 +196,17 @@ const LoginPage = () => {
                                     })}
                                     disabled={isLoading}
                                 />
+                                {hasPreloadedEmail && !errors.email && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -5 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.3, delay: 0.2 }}
+                                        className="mt-2 flex items-center gap-1.5 text-xs font-medium text-primary-600 dark:text-primary-300"
+                                    >
+                                        <CheckCircle className="h-3.5 w-3.5" />
+                                        <span>Email recordado</span>
+                                    </motion.div>
+                                )}
                             </div>
 
                             {/* Password Input */}

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm, Controller } from 'react-hook-form';
-import { Plus, MoreHorizontal, User as UserIcon, Shield, Briefcase, Trash2, Code } from 'lucide-react';
+import { Plus, MoreHorizontal, User as UserIcon, Shield, Briefcase, Trash2, Code, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -55,21 +55,25 @@ const roleMapping = {
     user: {
         label: 'Usuario',
         icon: UserIcon,
+        colors: 'text-slate-700 border-slate-200 bg-slate-50 dark:text-slate-200 dark:border-slate-700 dark:bg-slate-900/50',
         description: 'Puede crear requisiciones y ver catálogo de productos'
     },
     supervisor: {
         label: 'Supervisor',
         icon: Briefcase,
+        colors: 'text-blue-700 border-blue-200 bg-blue-50 dark:text-blue-300 dark:border-blue-700 dark:bg-blue-950/50',
         description: 'Puede aprobar requisiciones y gestionar proyectos de su equipo'
     },
     admin: {
         label: 'Admin',
         icon: Shield,
+        colors: 'text-purple-700 border-purple-200 bg-purple-50 dark:text-purple-300 dark:border-purple-700 dark:bg-purple-950/50',
         description: 'Acceso completo: gestión de usuarios, productos y toda la plataforma'
     },
     dev: {
         label: 'Developer',
         icon: Code,
+        colors: 'text-emerald-700 border-emerald-200 bg-emerald-50 dark:text-emerald-300 dark:border-emerald-700 dark:bg-emerald-950/50',
         description: 'Acceso de desarrollador con permisos especiales de plataforma'
     },
 };
@@ -356,36 +360,43 @@ const Users = () => {
 
     const roleOptions = Object.entries(roleMapping).filter(([key]) => (key === 'dev' ? isDev : true));
 
-    const getToggleStatusDialogProps = () => {
-        if (!userToToggle) return null;
+    const getToggleStatusMessage = () => {
+        if (!userToToggle) return { title: '', description: '', confirmText: '', variant: 'default' };
         const currentStatus = userToToggle.is_active !== false;
         const action = currentStatus ? 'desactivar' : 'activar';
-        const actionCap = currentStatus ? 'Desactivar' : 'Activar';
         return {
-            title: `¿${actionCap} usuario?`,
-            description: `¿Estás seguro de ${action} a ${resolveUserLabel(userToToggle)}? ${currentStatus ? 'El usuario no podrá acceder al sistema hasta que se reactive.' : 'El usuario recuperará el acceso al sistema.'}`,
-            confirmText: `${actionCap} usuario`,
-            variant: currentStatus ? 'warning' : 'default',
+            title: currentStatus ? '¿Desactivar usuario?' : '¿Activar usuario?',
+            description: `¿Estás seguro de ${action} a ${resolveUserLabel(userToToggle)}? ${
+                currentStatus
+                    ? 'El usuario no podrá acceder al sistema hasta que sea reactivado.'
+                    : 'El usuario recuperará acceso completo al sistema.'
+            }`,
+            confirmText: currentStatus ? 'Desactivar usuario' : 'Activar usuario',
+            variant: currentStatus ? 'warning' : 'default'
         };
     };
 
-    const toggleDialogProps = getToggleStatusDialogProps();
+    const toggleStatusDialogProps = getToggleStatusMessage();
 
     return (
         <TooltipProvider>
             <Helmet>
                 <title>Gestión de Usuarios - ComerECO</title>
             </Helmet>
+
+            {/* Dialog para cambiar estado */}
             <ConfirmDialog
                 open={isToggleStatusDialogOpen}
                 onOpenChange={setToggleStatusDialogOpen}
-                title={toggleDialogProps?.title || ''}
-                description={toggleDialogProps?.description || ''}
-                confirmText={toggleDialogProps?.confirmText || 'Confirmar'}
+                title={toggleStatusDialogProps.title}
+                description={toggleStatusDialogProps.description}
+                confirmText={toggleStatusDialogProps.confirmText}
                 cancelText="Cancelar"
-                variant={toggleDialogProps?.variant || 'default'}
+                variant={toggleStatusDialogProps.variant}
                 onConfirm={confirmToggleStatus}
             />
+
+            {/* Dialog para eliminar */}
             <ConfirmDialog
                 open={isDeleteDialogOpen}
                 onOpenChange={setDeleteDialogOpen}
@@ -458,10 +469,10 @@ const Users = () => {
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="h-9 w-9 rounded-xl border border-border text-muted-foreground transition-colors hover:bg-muted/85 dark:border-border dark:hover:bg-muted/70"
+                                                        className="h-11 w-11 rounded-xl border border-border text-muted-foreground transition-colors hover:bg-muted/85 dark:border-border dark:hover:bg-muted/70"
                                                         aria-label={`Acciones para ${resolveUserLabel(user)}`}
                                                     >
-                                                        <MoreHorizontal className="h-4 w-4" />
+                                                        <MoreHorizontal className="h-5 w-5" />
                                                     </Button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end" className="rounded-xl surface-card p-2">
@@ -488,7 +499,7 @@ const Users = () => {
                                 <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                                     <Tooltip>
                                         <TooltipTrigger asChild>
-                                            <Badge variant="outline" className="font-semibold cursor-help">
+                                            <Badge variant="outline" className={`font-semibold cursor-help ${roleMapping[user.role_v2]?.colors || ''}`}>
                                                 {roleMapping[user.role_v2]?.icon && (
                                                     React.createElement(roleMapping[user.role_v2].icon, { className: 'mr-1 h-4 w-4' })
                                                 )}
@@ -499,6 +510,12 @@ const Users = () => {
                                             <p>{roleMapping[user.role_v2]?.description || 'Rol de usuario'}</p>
                                         </TooltipContent>
                                     </Tooltip>
+                                    {user.can_submit_without_approval && (
+                                        <Badge variant="outline" className="font-semibold text-amber-700 border-amber-200 bg-amber-50 dark:text-amber-300 dark:border-amber-700 dark:bg-amber-950/50" title="Puede enviar requisiciones sin aprobación previa">
+                                            <Zap className="mr-1 h-3 w-3" />
+                                            Envío Directo
+                                        </Badge>
+                                    )}
                                     <Badge variant={user.is_active !== false ? 'success' : 'destructive'}>
                                         {user.is_active !== false ? 'Activo' : 'Inactivo'}
                                     </Badge>
@@ -546,19 +563,27 @@ const Users = () => {
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <Badge variant="outline" className="font-semibold shadow-sm cursor-help">
-                                                    {roleMapping[user.role_v2]?.icon && (
-                                                        React.createElement(roleMapping[user.role_v2].icon, { className: "w-4 h-4 mr-2" })
-                                                    )}
-                                                    {roleMapping[user.role_v2]?.label || user.role_v2}
+                                        <div className="flex flex-col gap-2">
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Badge variant="outline" className={`font-semibold shadow-sm cursor-help ${roleMapping[user.role_v2]?.colors || ''}`}>
+                                                        {roleMapping[user.role_v2]?.icon && (
+                                                            React.createElement(roleMapping[user.role_v2].icon, { className: "w-4 h-4 mr-2" })
+                                                        )}
+                                                        {roleMapping[user.role_v2]?.label || user.role_v2}
+                                                    </Badge>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>{roleMapping[user.role_v2]?.description || 'Rol de usuario'}</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                            {user.can_submit_without_approval && (
+                                                <Badge variant="outline" className="font-semibold text-amber-700 border-amber-200 bg-amber-50 dark:text-amber-300 dark:border-amber-700 dark:bg-amber-950/50 w-fit" title="Puede enviar requisiciones sin aprobación previa">
+                                                    <Zap className="mr-1 h-3 w-3" />
+                                                    Envío Directo
                                                 </Badge>
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p>{roleMapping[user.role_v2]?.description || 'Rol de usuario'}</p>
-                                            </TooltipContent>
-                                        </Tooltip>
+                                            )}
+                                        </div>
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant={user.is_active !== false ? 'success' : 'destructive'} className="shadow-sm">

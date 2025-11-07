@@ -134,7 +134,7 @@ const ResetPassword = () => {
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
                         className={cn(
-                            "rounded-3xl border-2 border-border bg-background/90 p-6 shadow-2xl backdrop-blur-sm sm:p-10 dark:border-border dark:bg-card/85",
+                            "rounded-3xl border-2 border-border bg-background/90 p-5 shadow-2xl backdrop-blur-sm sm:p-8 md:p-10 dark:border-border dark:bg-card/85",
                             isShaking && 'animate-shake'
                         )}
                     >

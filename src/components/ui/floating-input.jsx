@@ -4,44 +4,58 @@ import { cn } from "@/lib/utils"
 const FloatingInput = React.forwardRef(({ className, type, label, icon, error, ...props }, ref) => {
   const [isFocused, setIsFocused] = React.useState(false);
   const [hasValue, setHasValue] = React.useState(false);
-  const [isAutofilled, setIsAutofilled] = React.useState(false);
   const inputRef = React.useRef(null);
 
-  // Detect if input has value on mount and when props change
+  // Fix for browser autocomplete detection
   React.useEffect(() => {
     const input = inputRef.current;
-    setHasValue(Boolean(input?.value));
+    if (!input) return;
 
-    // Check for autofill on mount and periodically
+    // Check for autofill immediately
     const checkAutofill = () => {
-      if (input) {
-        try {
-          const autofilled = input.matches(':-webkit-autofill') || input.matches(':autofill');
-          setIsAutofilled(autofilled);
-        } catch (e) {
-          // Fallback: check if input has value but user hasn't interacted
-          setIsAutofilled(Boolean(input.value) && !hasValue);
-        }
+      try {
+        const isAutofilled = input.matches(':-webkit-autofill') ||
+                           input.matches(':-moz-autofill') ||
+                           input.matches(':autofill') ||
+                           input.value !== '';
+        setHasValue(isAutofilled);
+      } catch (e) {
+        // Fallback for browsers without autofill pseudo-class
+        setHasValue(Boolean(input.value));
       }
     };
 
+    // Check on mount
     checkAutofill();
-    const intervalId = setInterval(checkAutofill, 500);
 
-    return () => clearInterval(intervalId);
-  }, [props.value, props.defaultValue, hasValue]);
+    // Check periodically for autofill (some browsers fill after a delay)
+    const autofillCheckInterval = setInterval(checkAutofill, 100);
+    const autofillTimeout = setTimeout(() => clearInterval(autofillCheckInterval), 1000);
+
+    // Listen for input changes
+    const handleInput = () => setHasValue(input.value !== '');
+    input.addEventListener('input', handleInput);
+
+    // Listen for animation start (webkit autofill triggers this)
+    const handleAnimationStart = (e) => {
+      if (e.animationName === 'onAutoFillStart') {
+        setHasValue(true);
+      }
+    };
+    input.addEventListener('animationstart', handleAnimationStart);
+
+    return () => {
+      clearInterval(autofillCheckInterval);
+      clearTimeout(autofillTimeout);
+      input.removeEventListener('input', handleInput);
+      input.removeEventListener('animationstart', handleAnimationStart);
+    };
+  }, []);
 
   const handleFocus = () => setIsFocused(true);
   const handleBlur = (e) => {
     setIsFocused(false);
     setHasValue(e.target.value !== '');
-  };
-
-  const handleAnimationStart = (e) => {
-    // Detect webkit autofill animation
-    if (e.animationName === 'onAutoFillStart') {
-      setIsAutofilled(true);
-    }
   };
 
   // Combine refs to handle both internal and forwarded refs
@@ -54,15 +68,15 @@ const FloatingInput = React.forwardRef(({ className, type, label, icon, error, .
     }
   }, [ref]);
 
-  const isFloating = isFocused || hasValue || props.value || props.defaultValue || isAutofilled;
+  const isFloating = isFocused || hasValue || props.value || props.defaultValue;
 
   return (
     <div className="relative w-full group">
       {icon && (
         <div
           className={cn(
-            "pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-400",
-            isFloating && "text-primary-500 scale-105 dark:text-primary-400",
+            "pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-neutral-500 transition-colors duration-200 dark:text-neutral-400",
+            isFloating && "text-primary-500 dark:text-primary-400",
             error && "text-red-500 dark:text-red-400"
           )}
         >
@@ -77,7 +91,6 @@ const FloatingInput = React.forwardRef(({ className, type, label, icon, error, .
           "focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-200/30",
           "overflow-hidden text-ellipsis ring-offset-background dark:border-border dark:bg-card dark:text-neutral-50",
           "disabled:cursor-not-allowed disabled:bg-neutral-50 disabled:opacity-60 dark:disabled:bg-card",
-          "autofill:pt-6 autofill:pb-2",
           icon ? "pl-12 pr-4" : "px-4",
           error && "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-200/30 dark:border-red-600 dark:focus-visible:ring-red-500/25",
           className
@@ -85,7 +98,6 @@ const FloatingInput = React.forwardRef(({ className, type, label, icon, error, .
         ref={setRefs}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        onAnimationStart={handleAnimationStart}
         placeholder={label}
         {...props}
       />
@@ -93,11 +105,11 @@ const FloatingInput = React.forwardRef(({ className, type, label, icon, error, .
       {label && (
         <label
           className={cn(
-            "pointer-events-none absolute left-4 font-medium text-neutral-600 transition-all duration-200 ease-out dark:text-neutral-300",
+            "pointer-events-none absolute left-4 font-medium text-neutral-600 transition-all duration-200 dark:text-neutral-100",
             icon && "left-12",
             isFloating
-              ? "top-2 text-xs text-primary-600 dark:text-primary-300"
-              : "top-1/2 -translate-y-1/2 text-base text-neutral-600 dark:text-neutral-300",
+              ? "top-2 text-xs text-primary-600 dark:text-primary-200"
+              : "top-1/2 -translate-y-1/2 text-base text-neutral-600 dark:text-neutral-100",
             error && isFloating && "text-red-600 dark:text-red-400"
           )}
         >

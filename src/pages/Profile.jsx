@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { FloatingLabelInput } from '@/components/ui/floating-label-input';
 import { useToastNotification } from '@/components/ui/toast-notification';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -20,31 +19,36 @@ import PageContainer from '@/components/layout/PageContainer';
 const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name, editable = false, placeholder }) => {
   const isEditableState = isEditing && editable;
 
-  return (
-    <div
-      className={cn(
-        'flex items-center gap-4 transition-colors',
-        isEditableState
-          ? 'rounded-2xl border border-border/60 bg-muted/70 px-4 py-3 shadow-sm dark:border-border/70 dark:bg-[#0f1a2d]/85'
-          : 'py-4'
-      )}
-    >
-      <div className="icon-badge flex h-10 w-10 items-center justify-center">
-        <Icon className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
-      </div>
-      <div className="flex-1">
-        {!isEditableState && <p className="mb-1 text-sm font-medium text-muted-foreground">{label}</p>}
-        {isEditableState ? (
+  // Si es editable y estamos en modo edición, usar FloatingLabelInput
+  if (isEditableState) {
+    return (
+      <div className="flex items-center gap-4 rounded-2xl border border-border/60 bg-muted/70 px-4 py-4 shadow-sm transition-colors dark:border-border/70 dark:bg-[#0f1a2d]/85">
+        <div className="icon-badge flex h-10 w-10 shrink-0 items-center justify-center">
+          <Icon className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
+        </div>
+        <div className="flex-1">
           <FloatingLabelInput
             name={name}
             value={value || ''}
             onChange={onChange}
             label={label}
-            className="h-14"
+            icon={<Icon />}
+            className="h-12"
           />
-        ) : (
-          <p className="font-bold text-foreground">{value || placeholder || 'No especificado'}</p>
-        )}
+        </div>
+      </div>
+    );
+  }
+
+  // Modo solo lectura
+  return (
+    <div className="flex items-center gap-4 py-4 transition-colors">
+      <div className="icon-badge flex h-10 w-10 items-center justify-center">
+        <Icon className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
+      </div>
+      <div className="flex-1">
+        <p className="mb-1 text-sm font-medium text-muted-foreground">{label}</p>
+        <p className="font-bold text-foreground">{value || placeholder || 'No especificado'}</p>
       </div>
     </div>
   );
@@ -59,17 +63,20 @@ const MobileProfileInfoRow = ({ icon: Icon, label, value, placeholder, editable 
         <Icon className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
       </div>
       <div className="flex-1">
-        {!isEditableState && <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/80">{label}</p>}
         {isEditableState ? (
           <FloatingLabelInput
             name={name}
             value={value || ''}
             onChange={onChange}
             label={label}
-            className="mt-1 h-14"
+            icon={<Icon />}
+            className="h-12"
           />
         ) : (
-          <p className="mt-1 text-base font-semibold text-foreground">{value || placeholder || 'No especificado'}</p>
+          <>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/80">{label}</p>
+            <p className="mt-1 text-base font-semibold text-foreground">{value || placeholder || 'No especificado'}</p>
+          </>
         )}
       </div>
     </div>

@@ -161,16 +161,16 @@ const HelpPage = () => {
                     </Card>
 
                     {/* Info adicional */}
-                    <div className="rounded-2xl border border-[rgba(66,84,112,0.55)] bg-[rgba(18,25,41,0.9)] p-6 shadow-[0_20px_45px_rgba(5,10,24,0.35)]">
+                    <div className="rounded-2xl border border-border bg-muted/40 p-6 shadow-lg transition-colors dark:border-border dark:bg-card/60">
                         <div className="flex items-start gap-4">
-                            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-[rgba(66,165,255,0.15)]">
-                                <HelpCircle className="h-5 w-5 text-info" />
+                            <div className="icon-badge flex h-10 w-10 flex-shrink-0 items-center justify-center">
+                                <HelpCircle className="h-5 w-5 text-primary-600 dark:text-primary-400" aria-hidden="true" />
                             </div>
                             <div>
                                 <h3 className="mb-1 font-bold text-foreground">¿No encuentras lo que buscas?</h3>
                                 <p className="text-sm text-muted-foreground">
                                     Nuestro equipo de soporte está disponible para ayudarte. Envíanos un correo a{' '}
-                                    <a href="mailto:team@growpals.mx" className="font-medium text-primary-600 hover:underline">
+                                    <a href="mailto:team@growpals.mx" className="font-medium text-primary-600 hover:underline dark:text-primary-400">
                                         team@growpals.mx
                                     </a>
                                     {' '}y te responderemos lo antes posible.
