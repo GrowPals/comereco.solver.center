@@ -52,7 +52,7 @@ const SummaryStat = ({ icon: Icon, title, value }) => (
       </span>
       <div className="leading-tight">
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/80">{title}</p>
-        <p className="text-2xl font-semibold text-foreground">{value}</p>
+        <p className="text-3xl font-extrabold text-foreground">{value}</p>
       </div>
     </div>
   </div>
@@ -159,6 +159,13 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
           Limpiar filtros
         </Button>
         <Button
+          variant="outline"
+          onClick={handleClear}
+          className="h-10 rounded-2xl border-2 border-orange-400 text-sm font-semibold text-orange-600 hover:bg-orange-50 dark:border-orange-500 dark:text-orange-400 dark:hover:bg-neutral-800"
+        >
+          Reiniciar filtros
+        </Button>
+        <Button
           variant="secondary"
           disabled={isRefreshing}
           onClick={() => onFiltersChange({ ...filters })}
@@ -232,20 +239,11 @@ const InventoryRestockRules = () => {
 
       <div className="mx-auto flex w-full max-w-[92rem] flex-col gap-6 lg:gap-7">
         <section className="surface-panel px-5 py-4 sm:px-6 sm:py-5">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-            <div className="space-y-1">
-              <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-[2.05rem]">Reabastecimiento automático</h1>
-              <p className="max-w-2xl text-sm text-muted-foreground">
-                Configura reglas para disparar requisiciones cuando el stock llegue a un mínimo.
-              </p>
-            </div>
-            <Button
-              variant="outline"
-              className="hidden h-11 rounded-2xl px-6 text-sm font-semibold lg:inline-flex"
-              onClick={() => setFilters({ searchTerm: '', status: 'all', projectId: 'all', category: 'all', page: 1 })}
-            >
-              Reiniciar filtros
-            </Button>
+          <div className="space-y-1">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-[2.05rem]">Reabastecimiento automático</h1>
+            <p className="max-w-2xl text-sm text-muted-foreground">
+              Configura reglas para disparar requisiciones cuando el stock llegue a un mínimo.
+            </p>
           </div>
         </section>
 
