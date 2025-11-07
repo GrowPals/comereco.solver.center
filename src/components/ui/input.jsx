@@ -23,10 +23,10 @@ const Input = React.forwardRef(({ className, type, icon, error, success, ...prop
         type={type}
         className={cn(
           "flex h-12 w-full rounded-xl border border-border/80 bg-[var(--surface-contrast)] px-4 py-3 text-base text-foreground shadow-xs ring-offset-background transition-all duration-200 file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-400",
-          "focus-visible:outline-none focus-visible:border-primary-500 focus-visible:shadow-[var(--focus-glow)] focus-visible:ring-0 dark:focus-visible:border-[rgba(124,188,255,0.55)]",
-          "hover:border-neutral-300 dark:hover:border-[rgba(120,186,255,0.35)]",
-          "dark:border-border dark:bg-[rgba(14,28,52,0.88)] dark:text-neutral-50 dark:placeholder:text-neutral-400",
-          "disabled:cursor-not-allowed disabled:bg-neutral-50 disabled:opacity-60 dark:disabled:bg-[rgba(16,32,60,0.6)]",
+          "focus-visible:outline-none focus-visible:border-primary-500 focus-visible:shadow-[var(--focus-glow)] focus-visible:ring-0 dark:focus-visible:border-[rgba(124,188,255,0.7)]",
+          "hover:border-neutral-300 dark:hover:border-[rgba(120,186,255,0.5)]",
+          "dark:border-[rgba(90,150,230,0.35)] dark:bg-[#0f1a2d] dark:text-neutral-50 dark:placeholder:text-neutral-500",
+          "disabled:cursor-not-allowed disabled:bg-neutral-50 disabled:opacity-60 dark:disabled:bg-[rgba(16,32,60,0.8)]",
           icon ? "pl-12" : "px-4",
           error && "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-200/30 focus-visible:shadow-none dark:border-red-600 dark:focus-visible:ring-red-500/25",
           success && "border-green-500 focus-visible:border-green-500 focus-visible:ring-green-200/30 dark:border-green-500 dark:focus-visible:ring-green-500/25",

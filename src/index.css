@@ -528,6 +528,12 @@
     -webkit-backdrop-filter: blur(calc(var(--nav-backdrop-blur) * 0.65));
   }
 
+  /* Ensure sidebar has solid background in dark mode for better readability */
+  .dark .sidebar-shell {
+    background: linear-gradient(160deg, #0f1d31 0%, #061023 100%);
+    border-right: 1px solid rgba(90, 150, 230, 0.28);
+  }
+
   @media (min-width: 1024px) {
     .sidebar-shell {
       border-right: 1px solid var(--sidebar-border);
@@ -848,28 +854,8 @@
     box-shadow: 0 0 16px rgba(70, 140, 255, 0.2) !important;
   }
 
-  .dark .bg-white,
-  .dark .bg-card,
-  .dark .bg-muted,
-  .dark .bg-secondary,
-  .dark .bg-white\/95,
-  .dark .bg-white\/90,
-  .dark .bg-white\/85,
-  .dark .bg-white\/80,
-  .dark .bg-card\/95,
-  .dark .bg-card\/90,
-  .dark .bg-card\/85,
-  .dark .bg-muted\/95,
-  .dark .bg-muted\/90,
-  .dark .bg-muted\/80,
-  .dark .bg-muted\/70,
-  .dark .bg-secondary\/80,
-  .dark .bg-secondary\/70 {
-    background: transparent !important;
-    border-color: transparent !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-  }
+  /* Removed global transparent background override for better contrast in dark mode */
+  /* Components should define their own dark mode backgrounds explicitly */
 
   .dark .border-border,
   .dark .border-neutral-800,
