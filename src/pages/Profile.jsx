@@ -24,7 +24,7 @@ const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name, e
       className={cn(
         'flex items-center gap-4 transition-colors',
         isEditableState
-          ? 'rounded-2xl border border-border/60 bg-muted/40 px-4 py-4 shadow-sm dark:border-[rgba(90,150,230,0.4)] dark:bg-[#0f1a2d]'
+          ? 'rounded-2xl border border-border/60 bg-muted/70 px-4 py-4 shadow-sm dark:border-border/70 dark:bg-[#0f1a2d]/85'
           : 'py-4'
       )}
     >
@@ -615,8 +615,8 @@ const ProfilePage = () => {
                   {loading ? (
                     <Skeleton className="h-16 w-full rounded-xl" />
                   ) : (
-                    <div className="rounded-xl border border-primary-200 bg-white/90 p-4 shadow-inner transition-colors dark:border-white/12 dark:bg-white/6 dark:backdrop-blur-sm dark:shadow-[inset_0_1px_14px_rgba(15,35,68,0.35)]">
-                      <p className="mb-1 text-sm font-medium text-muted-foreground dark:text-muted-foreground/60">Requisiciones creadas</p>
+                    <div className="rounded-xl border border-primary-200 bg-white/90 p-4 shadow-inner transition-colors dark:border-white/12 dark:bg-white/18 dark:backdrop-blur-sm dark:shadow-[inset_0_1px_14px_rgba(15,35,68,0.35)]">
+                      <p className="mb-1 text-sm font-medium text-muted-foreground">Requisiciones creadas</p>
                       <p className="text-3xl font-bold text-foreground">{stats.created}</p>
                     </div>
                   )}

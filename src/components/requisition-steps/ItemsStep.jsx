@@ -9,6 +9,7 @@ import EmptyState from '@/components/EmptyState';
 import { getProducts } from '@/services/productService';
 import { motion, AnimatePresence } from 'framer-motion';
 import PageLoader from '@/components/PageLoader';
+import { formatCurrency } from '@/lib/formatters';
 
 const ProductCard = ({ product, onAdd }) => (
   <Card className="overflow-hidden">
@@ -25,10 +26,7 @@ const ProductCard = ({ product, onAdd }) => (
       </div>
       <div className="mt-4 flex justify-between items-center">
         <p className="font-bold">
-          {new Intl.NumberFormat('es-MX', {
-            style: 'currency',
-            currency: 'MXN',
-          }).format(product.price)}
+          {formatCurrency(product.price)}
         </p>
         <Button size="sm" variant="secondary" onClick={() => onAdd(product)} disabled={product.stock <= 0}>
           <Plus className="h-4 w-4 mr-1" /> Agregar
@@ -56,10 +54,7 @@ const CartItem = ({ item, onUpdate, onRemove }) => (
       <div className="min-w-0">
         <p className="font-semibold truncate">{item.nombre}</p>
         <p className="text-sm text-neutral-70">
-          {new Intl.NumberFormat('es-MX', {
-            style: 'currency',
-            currency: 'MXN',
-          }).format(item.precio)}
+          {formatCurrency(item.precio)}
         </p>
       </div>
     </div>
@@ -223,30 +218,17 @@ const ItemsStep = () => {
             <CardContent className="p-4">
               <div className="flex justify-between items-center text-sm text-neutral-70">
                 <p>Subtotal</p>
-                <p>
-                  {new Intl.NumberFormat('es-MX', {
-                    style: 'currency',
-                    currency: 'MXN',
-                  }).format(subtotal)}
-                </p>
+                <p>{formatCurrency(subtotal)}</p>
               </div>
               <div className="flex justify-between items-center text-sm text-neutral-70">
                 <p>IVA (16%)</p>
-                <p>
-                  {new Intl.NumberFormat('es-MX', {
-                    style: 'currency',
-                    currency: 'MXN',
-                  }).format(vat)}
-                </p>
+                <p>{formatCurrency(vat)}</p>
               </div>
               <div className="border-t my-2" />
               <div className="flex justify-between items-center font-bold text-lg">
                 <p>Total</p>
                 <p className="text-secondary">
-                  {new Intl.NumberFormat('es-MX', {
-                    style: 'currency',
-                    currency: 'MXN',
-                  }).format(total)}
+                  {formatCurrency(total)}
                 </p>
               </div>
             </CardContent>

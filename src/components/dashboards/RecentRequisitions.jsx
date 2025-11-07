@@ -10,7 +10,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Clock } from 'lucide-react';
+import { formatPrice } from '@/lib/formatters';
 
+// Funciones helper movidas fuera del componente para evitar recreación
 const getStatusVariant = (status) => {
     switch (status) {
         case 'approved': return 'success';
@@ -38,8 +40,10 @@ const RecentRequisitions = memo(() => {
     const { data: requisitions, isLoading, isError } = useQuery({
         queryKey: ['recentRequisitions'],
         queryFn: getRecentRequisitions,
-        retry: false, // No reintentar si falla
-        refetchOnWindowFocus: false, // No reintentar al enfocar ventana
+        staleTime: 1000 * 60 * 2, // 2 minutos
+        gcTime: 1000 * 60 * 10, // 10 minutos
+        retry: false,
+        refetchOnWindowFocus: false,
     });
 
     // Asegurar que requisitions sea un array
@@ -110,7 +114,7 @@ const RecentRequisitions = memo(() => {
                                             {format(parseISO(req.created_at), 'dd MMM yyyy', { locale: es })}
                                         </TableCell>
                                         <TableCell className="font-semibold text-foreground">
-                                            ${req.total_amount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                                            ${formatPrice(req.total_amount)}
                                         </TableCell>
                                         <TableCell className="text-right">
                                             <Badge

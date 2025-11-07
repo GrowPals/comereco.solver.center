@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Edit } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { formatCurrency } from '@/lib/formatters';
 
 const ReviewStep = ({ onEdit }) => {
   const { getValues } = useFormContext();
@@ -74,18 +75,11 @@ const ReviewStep = ({ onEdit }) => {
               <div>
                 <p className="font-semibold">{item.nombre}</p>
                 <p className="text-sm text-neutral-70">
-                  {item.quantity} x{' '}
-                  {new Intl.NumberFormat('es-MX', {
-                    style: 'currency',
-                    currency: 'MXN',
-                  }).format(item.precio)}
+                  {item.quantity} x {formatCurrency(item.precio)}
                 </p>
               </div>
               <p className="font-semibold">
-                {new Intl.NumberFormat('es-MX', {
-                  style: 'currency',
-                  currency: 'MXN',
-                }).format(item.precio * item.quantity)}
+                {formatCurrency(item.precio * item.quantity)}
               </p>
             </div>
           ))}
@@ -99,29 +93,16 @@ const ReviewStep = ({ onEdit }) => {
         <CardContent className="space-y-2">
           <div className="flex justify-between items-center">
             <p className="text-neutral-70">Subtotal</p>
-            <p>
-              {new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(subtotal)}
-            </p>
+            <p>{formatCurrency(subtotal)}</p>
           </div>
           <div className="flex justify-between items-center">
             <p className="text-neutral-70">IVA (16%)</p>
-            <p>
-              {new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(vat)}
-            </p>
+            <p>{formatCurrency(vat)}</p>
           </div>
           <div className="border-t pt-4 mt-4 flex justify-between items-center font-bold text-lg">
             <p>Total</p>
             <p className="text-secondary">
-              {new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(total)}
+              {formatCurrency(total)}
             </p>
           </div>
         </CardContent>

@@ -25,7 +25,7 @@ const CommentsSection = memo(({ requisitionId, comments = [], onAddComment, onDe
         id: `comment-${Date.now()}`,
         requisitionId,
         userId: user.id,
-        userName: user.full_name,
+        userName: user.full_name || user.email,
         userAvatar: user.avatar_url,
         message: newComment.trim(),
         timestamp: new Date().toISOString(),
@@ -66,8 +66,8 @@ const CommentsSection = memo(({ requisitionId, comments = [], onAddComment, onDe
     <div className="space-y-4">
       <form onSubmit={handleSubmit} className="flex gap-2">
         <Avatar className="h-10 w-10 shrink-0">
-          <AvatarImage src={user?.avatar_url} alt={user?.full_name} />
-          <AvatarFallback>{user?.full_name?.[0] || user?.email?.[0]?.toUpperCase()}</AvatarFallback>
+          <AvatarImage src={user?.avatar_url} alt={user?.full_name || user?.email} />
+          <AvatarFallback>{((user?.full_name || user?.email)?.[0] || '?').toUpperCase()}</AvatarFallback>
         </Avatar>
         <div className="flex-1 flex gap-2">
           <Input
@@ -141,4 +141,3 @@ const CommentsSection = memo(({ requisitionId, comments = [], onAddComment, onDe
 CommentsSection.displayName = 'CommentsSection';
 
 export default CommentsSection;
-
