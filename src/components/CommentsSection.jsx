@@ -1,5 +1,4 @@
-
-import React, { useState, memo } from 'react';
+import React, { useState, memo, useCallback } from 'react';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -52,7 +51,7 @@ const CommentsSection = memo(({ requisitionId, comments = [], onAddComment, onDe
     }
   };
 
-  const handleDelete = (commentId) => {
+  const handleDelete = useCallback((commentId) => {
     if (onDeleteComment) {
       onDeleteComment(commentId);
       toast({
@@ -61,14 +60,14 @@ const CommentsSection = memo(({ requisitionId, comments = [], onAddComment, onDe
         variant: 'info',
       });
     }
-  };
+  }, [onDeleteComment, toast]);
 
   return (
     <div className="space-y-4">
       <form onSubmit={handleSubmit} className="flex gap-2">
         <Avatar className="h-10 w-10 shrink-0">
           <AvatarImage src={user?.avatar_url} alt={user?.full_name || user?.email} />
-          <AvatarFallback>{(user?.full_name || user?.email)?.[0]}</AvatarFallback>
+          <AvatarFallback>{((user?.full_name || user?.email)?.[0] || '?').toUpperCase()}</AvatarFallback>
         </Avatar>
         <div className="flex-1 flex gap-2">
           <Input

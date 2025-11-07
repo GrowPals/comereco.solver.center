@@ -1,5 +1,5 @@
 
-import React, { useCallback } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getRecentRequisitions } from '@/services/dashboardService';
@@ -35,7 +35,7 @@ const getStatusLabel = (status) => {
     }
 };
 
-const RecentRequisitions = () => {
+const RecentRequisitions = memo(() => {
     const navigate = useNavigate();
     const { data: requisitions, isLoading, isError } = useQuery({
         queryKey: ['recentRequisitions'],
@@ -47,7 +47,17 @@ const RecentRequisitions = () => {
     });
 
     // Asegurar que requisitions sea un array
-    const safeRequisitions = Array.isArray(requisitions) ? requisitions : [];
+    const safeRequisitions = useMemo(
+        () => (Array.isArray(requisitions) ? requisitions : []),
+        [requisitions]
+    );
+
+    const handleRowClick = useCallback(
+        (reqId) => {
+            navigate(`/requisitions/${reqId}`);
+        },
+        [navigate]
+    );
 
     return (
         <Card className="dashboard-panel surface-panel">
@@ -95,7 +105,7 @@ const RecentRequisitions = () => {
                                 safeRequisitions.map(req => (
                                     <TableRow
                                         key={req.id}
-                                        onClick={() => navigate(`/requisitions/${req.id}`)}
+                                        onClick={() => handleRowClick(req.id)}
                                         className="cursor-pointer hover:bg-muted/70 transition-colors border-border/70"
                                     >
                                         <TableCell className="font-bold text-foreground">{req.internal_folio}</TableCell>
@@ -123,6 +133,8 @@ const RecentRequisitions = () => {
             </CardContent>
         </Card>
     );
-};
+});
+
+RecentRequisitions.displayName = 'RecentRequisitions';
 
 export default RecentRequisitions;

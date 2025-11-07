@@ -184,8 +184,8 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
                             </AvatarFallback>
                         </Avatar>
                         <div className="min-w-0 flex-1">
-                            <p className="text-base font-bold text-foreground">{primaryName}</p>
-                            <p className="truncate text-sm text-muted-foreground">{userEmail}</p>
+                            <p className="text-base font-bold text-foreground truncate" title={primaryName}>{primaryName}</p>
+                            <p className="truncate text-sm text-muted-foreground" title={userEmail}>{userEmail}</p>
                             <span className="mt-1 inline-block rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary-600 dark:bg-primary/20 dark:text-primary-100">
                                 {isAdmin ? 'Administrador' : isSupervisor ? 'Supervisor' : 'Usuario'}
                             </span>
