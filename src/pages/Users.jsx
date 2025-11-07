@@ -47,6 +47,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
 import { useCompanyScope } from '@/context/CompanyScopeContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { FloatingLabelInput } from '@/components/ui/floating-label-input';
 
 
 // Mapeo de roles según app_role_v2 enum (admin | supervisor | user | dev)
@@ -123,18 +124,18 @@ const UserForm = ({ user, onSave, onCancel, isLoading, approvalBypassSupported, 
             )}
              {user && (
                  <div>
-                    <Label htmlFor="fullName">Nombre Completo</Label>
-                    <Input 
-                        id="fullName" 
-                        {...register('full_name', { 
+                    <FloatingLabelInput
+                        id="fullName"
+                        label="Nombre Completo"
+                        error={errors.full_name?.message}
+                        {...register('full_name', {
                             required: 'El nombre completo es requerido',
                             minLength: {
                                 value: 2,
                                 message: 'El nombre debe tener al menos 2 caracteres'
                             }
-                        })} 
+                        })}
                     />
-                    {errors.full_name && <p className="text-destructive text-sm mt-1">{errors.full_name.message}</p>}
                 </div>
             )}
             <div>
@@ -369,7 +370,7 @@ const Users = () => {
     const toggleDialogProps = getToggleStatusDialogProps();
 
     return (
-        <>
+        <TooltipProvider>
             <Helmet>
                 <title>Gestión de Usuarios - ComerECO</title>
             </Helmet>
@@ -483,21 +484,19 @@ const Users = () => {
                                     </div>
                                 </div>
                                 <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <Badge variant="outline" className="font-semibold cursor-help">
-                                                    {roleMapping[user.role_v2]?.icon && (
-                                                        React.createElement(roleMapping[user.role_v2].icon, { className: 'mr-1 h-4 w-4' })
-                                                    )}
-                                                    {roleMapping[user.role_v2]?.label || user.role_v2}
-                                                </Badge>
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p>{roleMapping[user.role_v2]?.description || 'Rol de usuario'}</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Badge variant="outline" className="font-semibold cursor-help">
+                                                {roleMapping[user.role_v2]?.icon && (
+                                                    React.createElement(roleMapping[user.role_v2].icon, { className: 'mr-1 h-4 w-4' })
+                                                )}
+                                                {roleMapping[user.role_v2]?.label || user.role_v2}
+                                            </Badge>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>{roleMapping[user.role_v2]?.description || 'Rol de usuario'}</p>
+                                        </TooltipContent>
+                                    </Tooltip>
                                     <Badge variant={user.is_active !== false ? 'success' : 'destructive'}>
                                         {user.is_active !== false ? 'Activo' : 'Inactivo'}
                                     </Badge>
@@ -545,21 +544,19 @@ const Users = () => {
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <TooltipProvider>
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <Badge variant="outline" className="font-semibold shadow-sm cursor-help">
-                                                        {roleMapping[user.role_v2]?.icon && (
-                                                            React.createElement(roleMapping[user.role_v2].icon, { className: "w-4 h-4 mr-2" })
-                                                        )}
-                                                        {roleMapping[user.role_v2]?.label || user.role_v2}
-                                                    </Badge>
-                                                </TooltipTrigger>
-                                                <TooltipContent>
-                                                    <p>{roleMapping[user.role_v2]?.description || 'Rol de usuario'}</p>
-                                                </TooltipContent>
-                                            </Tooltip>
-                                        </TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Badge variant="outline" className="font-semibold shadow-sm cursor-help">
+                                                    {roleMapping[user.role_v2]?.icon && (
+                                                        React.createElement(roleMapping[user.role_v2].icon, { className: "w-4 h-4 mr-2" })
+                                                    )}
+                                                    {roleMapping[user.role_v2]?.label || user.role_v2}
+                                                </Badge>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>{roleMapping[user.role_v2]?.description || 'Rol de usuario'}</p>
+                                            </TooltipContent>
+                                        </Tooltip>
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant={user.is_active !== false ? 'success' : 'destructive'} className="shadow-sm">
@@ -631,7 +628,7 @@ const Users = () => {
                     />
                 </DialogContent>
             </Dialog>
-        </>
+        </TooltipProvider>
     );
 };
 

@@ -11,13 +11,17 @@ const FloatingLabelInput = React.forwardRef(({
   ...props
 }, ref) => {
   const [isFocused, setIsFocused] = React.useState(false);
-  const [hasValue, setHasValue] = React.useState(false);
 
-  const inputId = id || `floating-input-${Math.random().toString(36).substr(2, 9)}`;
+  // Generate stable ID only once
+  const inputId = React.useMemo(() =>
+    id || `floating-input-${Math.random().toString(36).substr(2, 9)}`,
+    [id]
+  );
 
-  // Check if input has value on mount or when value changes
-  React.useEffect(() => {
-    setHasValue(!!props.value || !!props.defaultValue);
+  // Check if input has value - directly from props for controlled inputs
+  const hasValue = React.useMemo(() => {
+    const value = props.value ?? props.defaultValue;
+    return value !== undefined && value !== null && value !== '';
   }, [props.value, props.defaultValue]);
 
   const handleFocus = (e) => {
@@ -27,7 +31,6 @@ const FloatingLabelInput = React.forwardRef(({
 
   const handleBlur = (e) => {
     setIsFocused(false);
-    setHasValue(!!e.target.value);
     if (props.onBlur) props.onBlur(e);
   };
 
