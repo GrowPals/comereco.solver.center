@@ -5,13 +5,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useCompanyScope } from '@/context/CompanyScopeContext';
-import { useToast } from '@/components/ui/useToast';
 import { cn } from '@/lib/utils';
 
 const CompanySwitcher = ({ variant = 'default' }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isChanging, setIsChanging] = useState(false);
-  const { toast } = useToast();
   const {
     companies,
     activeCompanyId,
@@ -60,24 +58,13 @@ const CompanySwitcher = ({ variant = 'default' }) => {
 
   const handleChange = (value) => {
     const isChangingToGlobal = value === 'all';
-    const selectedCompany = companies.find(c => c.id === value);
 
     if (isChangingToGlobal) {
       toggleGlobalView(true);
       setActiveCompanyId(null);
-      toast({
-        title: 'Vista Global Activada',
-        description: 'Ahora estás viendo datos de todas las empresas.',
-        variant: 'success'
-      });
     } else {
       toggleGlobalView(false);
       setActiveCompanyId(value);
-      toast({
-        title: 'Empresa Cambiada',
-        description: `Ahora estás viendo: ${selectedCompany?.name || 'la empresa seleccionada'}`,
-        variant: 'success'
-      });
     }
 
     // Cerrar el dialog después de seleccionar (solo en variante icon)

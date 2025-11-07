@@ -5,6 +5,7 @@ import { getCompanyScopeOverride, COMPANY_SCOPE_GLOBAL } from '@/lib/companyScop
 let sessionCache = null;
 let sessionCacheTime = 0;
 const CACHE_DURATION = 5000; // 5 segundos
+const AUTH_STORAGE_KEY = 'comereco-auth';
 
 /**
  * Helper optimizado para obtener sesión con cache temporal
@@ -48,6 +49,18 @@ export const getCachedUser = async () => {
 export const clearSessionCache = () => {
   sessionCache = null;
   sessionCacheTime = 0;
+};
+
+export const clearLocalAuthStorage = () => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  try {
+    window.localStorage.removeItem(AUTH_STORAGE_KEY);
+  } catch (error) {
+    console.warn('Unable to clear auth storage', error);
+  }
 };
 
 // Escuchar cambios de auth para limpiar cache

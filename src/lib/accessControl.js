@@ -1,10 +1,12 @@
 import { supabase } from '@/lib/customSupabaseClient';
 import { getCachedSession } from '@/lib/supabaseHelpers';
+import { getCompanyScopeOverride, COMPANY_SCOPE_GLOBAL } from '@/lib/companyScopeStore';
 import logger from '@/utils/logger';
 
 const ACCESS_CACHE_TTL = 5000; // 5 segundos
 let accessCache = null;
 let accessCacheTime = 0;
+let lastScopeOverride = null;
 
 const buildApprovalMap = (rows = []) => {
   const map = new Map();
@@ -74,8 +76,16 @@ export const getRequiresApprovalFromContext = (accessContext, projectId, userId)
 
 export const getUserAccessContext = async ({ forceRefresh = false } = {}) => {
   const now = Date.now();
+  const scopeOverride = typeof getCompanyScopeOverride === 'function'
+    ? getCompanyScopeOverride()
+    : null;
 
-  if (!forceRefresh && accessCache && (now - accessCacheTime) < ACCESS_CACHE_TTL) {
+  if (
+    !forceRefresh &&
+    accessCache &&
+    (now - accessCacheTime) < ACCESS_CACHE_TTL &&
+    scopeOverride === lastScopeOverride
+  ) {
     return accessCache;
   }
 
@@ -103,9 +113,23 @@ export const getUserAccessContext = async ({ forceRefresh = false } = {}) => {
   const isSupervisor = role === 'supervisor';
   const isUser = role === 'user';
 
+  const baseCompanyId = profile.company_id;
+  let scopedCompanyId = baseCompanyId;
+
+  if (scopeOverride) {
+    if (scopeOverride === COMPANY_SCOPE_GLOBAL && isDev) {
+      scopedCompanyId = null;
+    } else if (scopeOverride !== COMPANY_SCOPE_GLOBAL) {
+      scopedCompanyId = scopeOverride;
+    }
+  }
+
   const access = {
     userId,
-    companyId: profile.company_id,
+    companyId: scopedCompanyId,
+    homeCompanyId: baseCompanyId,
+    scopeOverride,
+    isGlobalScope: scopeOverride === COMPANY_SCOPE_GLOBAL,
     role,
     isDev,
     isAdmin,
@@ -196,6 +220,7 @@ export const getUserAccessContext = async ({ forceRefresh = false } = {}) => {
 
   accessCache = access;
   accessCacheTime = now;
+  lastScopeOverride = scopeOverride;
 
   return access;
 };
@@ -203,6 +228,7 @@ export const getUserAccessContext = async ({ forceRefresh = false } = {}) => {
 export const invalidateAccessContext = () => {
   accessCache = null;
   accessCacheTime = 0;
+  lastScopeOverride = null;
 };
 
 if (typeof window !== 'undefined') {

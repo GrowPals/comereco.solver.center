@@ -72,7 +72,7 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
 
   return (
     <div className="surface-panel rounded-2xl px-4 py-3 sm:px-5 sm:py-4">
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(280px,2.2fr)_repeat(3,minmax(190px,1fr))] xl:gap-4">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-[minmax(280px,2.2fr)_repeat(3,minmax(190px,1fr))] xl:gap-4">
         <div className="flex flex-col justify-end">
           <label
             htmlFor="restock-search"
@@ -81,14 +81,14 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
             Buscar
           </label>
           <div className="relative mt-2">
-            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/70 dark:text-primary-100/70" />
+            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               id="restock-search"
               type="search"
               placeholder="Nombre, SKU o notas"
               value={filters.searchTerm}
               onChange={(event) => handleUpdate('searchTerm', event.target.value)}
-              className="h-11 rounded-2xl border border-border bg-white/80 pl-12 text-sm font-medium text-foreground/90 placeholder:text-muted-foreground/70 focus:border-primary focus:ring-primary/20 dark:border-[rgba(120,190,255,0.28)] dark:bg-[rgba(16,32,60,0.72)] dark:text-primary-50 dark:placeholder:text-primary-200/60"
+              className="h-11 rounded-2xl border-2 border-border bg-background/80 pl-12 text-sm font-medium text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20 dark:border-border dark:bg-card/80 dark:text-foreground"
             />
           </div>
         </div>
@@ -98,7 +98,7 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
             <Filter className="h-4 w-4" /> Estado
           </label>
           <Select value={filters.status} onValueChange={(value) => handleUpdate('status', value)}>
-            <SelectTrigger className="mt-2 h-11 rounded-2xl border-border bg-white/80 text-sm font-medium text-foreground/90 dark:border-[rgba(120,190,255,0.28)] dark:bg-[rgba(16,32,60,0.72)] dark:text-primary-50">
+            <SelectTrigger className="mt-2 h-11 rounded-2xl border-2 border-border bg-background/80 text-sm font-medium text-foreground dark:border-border dark:bg-card/80 dark:text-foreground">
               <SelectValue placeholder="Estado" />
             </SelectTrigger>
             <SelectContent>
@@ -114,7 +114,7 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
         <div className="flex flex-col justify-end">
           <label className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/80">Proyecto</label>
           <Select value={filters.projectId} onValueChange={(value) => handleUpdate('projectId', value)}>
-            <SelectTrigger className="mt-2 h-11 rounded-2xl border-border bg-white/80 text-sm font-medium text-foreground/90 dark:border-[rgba(120,190,255,0.28)] dark:bg-[rgba(16,32,60,0.72)] dark:text-primary-50">
+            <SelectTrigger className="mt-2 h-11 rounded-2xl border-2 border-border bg-background/80 text-sm font-medium text-foreground dark:border-border dark:bg-card/80 dark:text-foreground">
               <SelectValue placeholder="Proyecto" />
             </SelectTrigger>
             <SelectContent>
@@ -132,7 +132,7 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
         <div className="flex flex-col justify-end">
           <label className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/80">Categoría</label>
           <Select value={filters.category} onValueChange={(value) => handleUpdate('category', value)}>
-            <SelectTrigger className="mt-2 h-11 rounded-2xl border-border bg-white/80 text-sm font-medium text-foreground/90 dark:border-[rgba(120,190,255,0.28)] dark:bg-[rgba(16,32,60,0.72)] dark:text-primary-50">
+            <SelectTrigger className="mt-2 h-11 rounded-2xl border-2 border-border bg-background/80 text-sm font-medium text-foreground dark:border-border dark:bg-card/80 dark:text-foreground">
               <SelectValue placeholder="Categoría" />
             </SelectTrigger>
             <SelectContent>
@@ -154,7 +154,7 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
         <Button
           variant="ghost"
           onClick={handleClear}
-          className="h-10 rounded-2xl border border-transparent text-sm font-semibold text-muted-foreground hover:border-border hover:text-foreground dark:border-[rgba(120,190,255,0.28)] dark:text-primary-100"
+          className="h-10 rounded-2xl border-2 border-border text-sm font-semibold text-muted-foreground hover:bg-muted/70 hover:text-foreground dark:border-border dark:text-foreground"
         >
           Limpiar filtros
         </Button>

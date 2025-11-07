@@ -1,8 +1,25 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { getAllCompanies } from '@/services/companyService';
 import { setCompanyScopeOverride, COMPANY_SCOPE_GLOBAL } from '@/lib/companyScopeStore';
+import { invalidateAccessContext } from '@/lib/accessControl';
+
+const GLOBAL_SCOPE_STORAGE_KEY = 'companyScope:isGlobal';
+
+const readStoredGlobalPreference = () => {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+  return window.localStorage.getItem(GLOBAL_SCOPE_STORAGE_KEY) === 'true';
+};
+
+const persistGlobalPreference = (isGlobal) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  window.localStorage.setItem(GLOBAL_SCOPE_STORAGE_KEY, isGlobal ? 'true' : 'false');
+};
 
 const CompanyScopeContext = createContext({
   companies: [],
@@ -18,6 +35,7 @@ export const CompanyScopeProvider = ({ children }) => {
   const { user } = useSupabaseAuth();
   const isDev = user?.role_v2 === 'dev';
   const userCompany = user?.company;
+  const queryClient = useQueryClient();
 
   const { data: rawCompanies = [], isLoading } = useQuery({
     queryKey: ['company-scope', isDev ? 'all' : userCompany?.id],
@@ -86,7 +104,26 @@ export const CompanyScopeProvider = ({ children }) => {
   }, [rawCompanies]);
 
   const [selectedCompanyId, setSelectedCompanyId] = useState(null);
-  const [isGlobalView, setIsGlobalView] = useState(isDev);
+  const [isGlobalView, setIsGlobalViewRaw] = useState(() => (isDev ? readStoredGlobalPreference() : false));
+
+  useEffect(() => {
+    if (!isDev) {
+      setIsGlobalViewRaw(false);
+      if (typeof window !== 'undefined') {
+        window.localStorage.removeItem(GLOBAL_SCOPE_STORAGE_KEY);
+      }
+      return;
+    }
+
+    setIsGlobalViewRaw(readStoredGlobalPreference());
+  }, [isDev]);
+
+  const setIsGlobalView = (nextValue) => {
+    setIsGlobalViewRaw(nextValue);
+    if (isDev) {
+      persistGlobalPreference(nextValue);
+    }
+  };
 
   // Inicializa selección cuando cambian las empresas disponibles o el rol
   useEffect(() => {
@@ -125,6 +162,15 @@ export const CompanyScopeProvider = ({ children }) => {
       setCompanyScopeOverride(selectedCompanyId);
     }
   }, [user, isDev, isGlobalView, selectedCompanyId]);
+
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    invalidateAccessContext();
+    queryClient.invalidateQueries({ predicate: () => true });
+  }, [user?.id, isDev, isGlobalView, selectedCompanyId, queryClient]);
 
   const handleSetCompany = (companyId) => {
     setSelectedCompanyId(companyId || null);

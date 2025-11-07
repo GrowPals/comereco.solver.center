@@ -1,6 +1,7 @@
 
 import React, { createContext, useState, useEffect, useContext, useCallback, useMemo } from 'react';
 import { supabase } from '@/lib/customSupabaseClient';
+import { clearSessionCache, clearLocalAuthStorage } from '@/lib/supabaseHelpers';
 import PageLoader from '@/components/PageLoader';
 import logger from '@/utils/logger';
 
@@ -164,12 +165,37 @@ export const SupabaseAuthProvider = ({ children }) => {
   }, [fetchUserProfile]);
   
   const signOut = useCallback(async () => {
-    const { error } = await supabase.auth.signOut();
-    if (!error) {
+    const handleLocalSignOut = async () => {
+      try {
+        await supabase.auth.signOut({ scope: 'local' });
+      } catch (localError) {
+        logger.warn('Local sign out failed (continuing):', localError);
+      }
+    };
+
+    try {
+      await handleLocalSignOut();
+      clearLocalAuthStorage();
+      const { error } = await supabase.auth.signOut({ scope: 'global' });
+
+      if (error && !error.message?.toLowerCase().includes('session not found')) {
+        logger.error('Error signing out:', error);
+        return { error };
+      }
+
+      clearSessionCache();
       setUser(null);
       setSession(null);
+      return { error: null };
+    } catch (err) {
+      logger.error('Unexpected error during sign out:', err);
+      await handleLocalSignOut();
+      clearLocalAuthStorage();
+      clearSessionCache();
+      setUser(null);
+      setSession(null);
+      return { error: err };
     }
-    return { error };
   }, []);
 
 

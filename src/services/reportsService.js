@@ -285,11 +285,19 @@ export const getGeneralStats = async () => {
 
     let activeUsers = 0;
     if (access.isAdmin) {
-        const { count, error } = await supabase
+        let activeUsersQuery = supabase
             .from('profiles')
             .select('*', { count: 'exact', head: true })
-            .eq('company_id', access.companyId)
             .eq('is_active', true);
+
+        const targetCompanyId = access.companyId
+            || (!access.isGlobalScope ? access.homeCompanyId : null);
+
+        if (targetCompanyId) {
+            activeUsersQuery = activeUsersQuery.eq('company_id', targetCompanyId);
+        }
+
+        const { count, error } = await activeUsersQuery;
         if (error) {
             logger.error('Error counting active users:', error);
         } else {
@@ -360,9 +368,12 @@ export const getRequisitionsByUser = async () => {
                 .select('id, full_name');
 
             if (access.isAdmin) {
-                profilesQuery = profilesQuery
-                    .in('id', uniqueUserIds)
-                    .eq('company_id', access.companyId);
+                profilesQuery = profilesQuery.in('id', uniqueUserIds);
+                const targetCompanyId = access.companyId
+                    || (!access.isGlobalScope ? access.homeCompanyId : null);
+                if (targetCompanyId) {
+                    profilesQuery = profilesQuery.eq('company_id', targetCompanyId);
+                }
             } else if (access.isSupervisor) {
                 profilesQuery = profilesQuery.in('id', uniqueUserIds);
             } else {

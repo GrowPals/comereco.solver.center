@@ -1,12 +1,12 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
-import { getCachedSession, ensureScopedCompanyId } from '@/lib/supabaseHelpers';
+import { getCachedSession, ensureScopedCompanyId, getScopedCompanyId } from '@/lib/supabaseHelpers';
 import { formatErrorMessage } from '@/utils/errorHandler';
 import logger from '@/utils/logger';
 
 /**
- * CORREGIDO: Asegura que la sesión esté activa antes de hacer queries
- * RLS filtra automáticamente por company_id según REFERENCIA_TECNICA_BD_SUPABASE.md
+ * CORREGIDO: Respeta el Company Scope seleccionado (empresa específica o vista global para devs)
+ * Filtra productos por la empresa activa del contexto CompanyScopeContext
  */
 export const fetchProducts = async ({ pageParam = 0, searchTerm = '', category = '', availability = '', pageSize = 12 }) => {
     try {
@@ -17,18 +17,30 @@ export const fetchProducts = async ({ pageParam = 0, searchTerm = '', category =
             return { products: [], totalCount: 0 };
         }
 
+        // Obtener empresa seleccionada (permite vista global para devs)
+        const { companyId, isGlobal, error: scopeError } = await getScopedCompanyId({ allowGlobal: true });
+        if (scopeError) {
+            logger.error('Error getting company scope:', scopeError);
+            return { products: [], totalCount: 0 };
+        }
+
         const ITEMS_PER_PAGE = Math.max(12, Number.isFinite(pageSize) && pageSize > 0 ? Math.floor(pageSize) : 12);
         const from = pageParam * ITEMS_PER_PAGE;
         const to = from + ITEMS_PER_PAGE - 1;
 
-        // RLS filtra automáticamente por company_id del usuario autenticado
+        // Construir query base
         let query = supabase
             .from('products')
             .select('*', { count: 'exact' })
             .eq('is_active', true)
             .order('name', { ascending: true })
             .range(from, to);
-        
+
+        // Filtrar por empresa SOLO si no está en vista global
+        if (!isGlobal && companyId) {
+            query = query.eq('company_id', companyId);
+        }
+
         if (searchTerm) {
             query = query.or(`name.ilike.%${searchTerm}%,sku.ilike.%${searchTerm}%`);
         }
@@ -110,8 +122,8 @@ export const fetchProductCategories = async () => {
 };
 
 /**
- * CORREGIDO: Valida sesión antes de hacer queries
- * RLS filtra automáticamente por company_id
+ * CORREGIDO: Respeta el Company Scope seleccionado
+ * Filtra productos por la empresa activa o muestra todos si está en vista global
  */
 export const getAdminProducts = async () => {
     // Validar sesión antes de hacer queries (usando cache)
@@ -120,11 +132,25 @@ export const getAdminProducts = async () => {
         throw new Error("Sesión no válida. Por favor, inicia sesión nuevamente.");
     }
 
-    const { data, error } = await supabase
+    // Obtener empresa seleccionada (permite vista global para devs)
+    const { companyId, isGlobal, error: scopeError } = await getScopedCompanyId({ allowGlobal: true });
+    if (scopeError) {
+        logger.error('Error getting company scope:', scopeError);
+        throw new Error("Error al obtener el alcance de empresa.");
+    }
+
+    let query = supabase
         .from('products')
         .select('*')
         .order('name', { ascending: true });
-        
+
+    // Filtrar por empresa SOLO si no está en vista global
+    if (!isGlobal && companyId) {
+        query = query.eq('company_id', companyId);
+    }
+
+    const { data, error } = await query;
+
     if (error) {
         logger.error('Error fetching admin products:', error);
         throw new Error(formatErrorMessage(error));
