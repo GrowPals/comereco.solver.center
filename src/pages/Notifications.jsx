@@ -175,7 +175,7 @@ const NotificationsPage = () => {
                             onClick={() => confirmAction('markAllRead', allNotifications.filter(n => !n.is_read).map(n => n.id))}
                             disabled={unreadCount === 0}
                             size="lg"
-                            className="w-full rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full rounded-xl shadow-button hover:shadow-button-hover sm:w-auto"
                         >
                             <CheckCheck className="mr-2 h-5 w-5" /> Marcar todo como leído
                         </Button>
@@ -186,14 +186,14 @@ const NotificationsPage = () => {
                             <div className="relative w-full sm:max-w-xs">
                                 <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
                                 <Input
-                                    placeholder="Buscar notificaciones..."
+                                    placeholder="Buscar..."
                                     value={filters.query}
                                     onChange={e => setFilters(p => ({ ...p, query: e.target.value }))}
-                                    className="h-11 rounded-xl pl-10 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-colors"
+                                    className="h-11 rounded-xl pl-10"
                                 />
                             </div>
                             <Select value={filters.type} onValueChange={v => setFilters(p => ({ ...p, type: v }))}>
-                                <SelectTrigger className="h-11 w-full rounded-xl sm:w-[220px] focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-colors">
+                                <SelectTrigger className="h-11 w-full rounded-xl sm:w-[220px]">
                                     <SelectValue placeholder="Todos los tipos" />
                                 </SelectTrigger>
                                 <SelectContent className="rounded-xl border-border bg-card dark:border-border dark:bg-card">
@@ -207,7 +207,7 @@ const NotificationsPage = () => {
                             <Button
                                 variant="ghost"
                                 onClick={() => setFilters({ query: '', type: 'all' })}
-                                className="w-full rounded-xl text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100 font-medium hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors sm:w-auto"
+                                className="w-full rounded-xl border border-transparent hover:border-border sm:w-auto dark:hover:border-border"
                             >
                                 <X className="mr-2 h-4 w-4" />Limpiar
                             </Button>
@@ -215,22 +215,12 @@ const NotificationsPage = () => {
                     </Card>
 
                     <Tabs value={activeTab} onValueChange={setActiveTab}>
-                        <div className="border-b border-neutral-200 dark:border-neutral-700">
-                            <TabsList className="h-auto bg-transparent p-0 gap-6">
-                                <TabsTrigger
-                                    value="all"
-                                    className="rounded-none bg-transparent pb-3 px-1 border-b-2 border-transparent data-[state=active]:border-blue-600 dark:data-[state=active]:border-blue-400 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 data-[state=active]:font-semibold data-[state=inactive]:text-neutral-500 dark:data-[state=inactive]:text-neutral-400 data-[state=inactive]:hover:text-neutral-700 dark:data-[state=inactive]:hover:text-neutral-300 data-[state=inactive]:hover:border-neutral-300 dark:data-[state=inactive]:hover:border-neutral-600 font-medium text-sm transition-all duration-200 shadow-none"
-                                >
-                                    Todas
-                                </TabsTrigger>
-                                <TabsTrigger
-                                    value="unread"
-                                    className="rounded-none bg-transparent pb-3 px-1 border-b-2 border-transparent data-[state=active]:border-blue-600 dark:data-[state=active]:border-blue-400 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 data-[state=active]:font-semibold data-[state=inactive]:text-neutral-500 dark:data-[state=inactive]:text-neutral-400 data-[state=inactive]:hover:text-neutral-700 dark:data-[state=inactive]:hover:text-neutral-300 data-[state=inactive]:hover:border-neutral-300 dark:data-[state=inactive]:hover:border-neutral-600 font-medium text-sm transition-all duration-200 shadow-none"
-                                >
-                                    No Leídas {unreadCount > 0 && <span className="ml-2 bg-blue-600 text-white h-5 w-5 text-xs rounded-full flex items-center justify-center">{unreadCount}</span>}
-                                </TabsTrigger>
-                            </TabsList>
-                        </div>
+                        <TabsList className="grid w-full grid-cols-2 rounded-xl h-12">
+                            <TabsTrigger value="all" className="rounded-lg">Todas</TabsTrigger>
+                            <TabsTrigger value="unread" className="rounded-lg">
+                                No Leídas {unreadCount > 0 && <span className="ml-2 bg-primary-600 text-white h-5 w-5 text-xs rounded-full flex items-center justify-center">{unreadCount}</span>}
+                            </TabsTrigger>
+                        </TabsList>
                     </Tabs>
                 
                     <AnimatePresence>
@@ -267,8 +257,8 @@ const NotificationsPage = () => {
                         </div>
                     ) : (
                         <div className="surface-card p-20 text-center shadow-lg">
-                            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-blue-100 dark:bg-neutral-800">
-                                <Search className="h-12 w-12 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+                            <div className="icon-badge mx-auto mb-6 flex h-20 w-20 items-center justify-center text-muted-foreground">
+                                <Search className="h-10 w-10" aria-hidden="true" />
                             </div>
                             <h3 className="mb-2 text-2xl font-bold text-foreground">No se encontraron notificaciones</h3>
                             <p className="text-base text-muted-foreground">Intenta ajustar tus filtros de búsqueda.</p>
