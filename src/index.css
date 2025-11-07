@@ -215,17 +215,17 @@
     --background: radial-gradient(circle at top, #0f1c2d 0%, #050b16 60%, #03070f 100%);
     --foreground: #e6efff;
 
-    --card: #0b1626;
+    --card: #0d1a2e;
     --card-foreground: #f4f7ff;
 
-    --popover: #0c182a;
+    --popover: #0e1c30;
     --popover-foreground: var(--card-foreground);
 
     --primary: #4f8cff;
     --primary-foreground: #081427;
 
-    --secondary: rgba(18, 36, 60, 0.85);
-    --secondary-foreground: #d9e6ff;
+    --secondary: rgba(22, 40, 65, 0.90);
+    --secondary-foreground: #e6f0ff;
 
     --success: #1cd6a1;
     --success-light: rgba(28, 214, 161, 0.18);
@@ -236,15 +236,15 @@
     --info: #4f8cff;
     --info-light: rgba(79, 140, 255, 0.22);
 
-    --muted: rgba(18, 34, 58, 0.78);
-    --muted-foreground: rgba(201, 215, 242, 0.8);
+    --muted: rgba(20, 38, 62, 0.85);
+    --muted-foreground: rgba(210, 224, 250, 0.92);
 
-    --accent: rgba(85, 158, 255, 0.28);
+    --accent: rgba(85, 158, 255, 0.32);
     --accent-foreground: var(--card-foreground);
 
-    --border: rgba(95, 138, 210, 0.22);
-    --input: rgba(95, 138, 210, 0.28);
-    --ring: rgba(95, 162, 255, 0.5);
+    --border: rgba(100, 145, 220, 0.38);
+    --input: rgba(100, 145, 220, 0.35);
+    --ring: rgba(105, 170, 255, 0.55);
 
     --shadow-soft-sm: 0 10px 28px rgba(3, 10, 24, 0.58);
     --shadow-soft-md: 0 18px 42px rgba(2, 8, 22, 0.64);

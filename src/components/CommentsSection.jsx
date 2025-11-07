@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import React, { useState, memo, useCallback } from 'react';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -10,8 +10,8 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const CommentsSection = ({ requisitionId, comments = [], onAddComment, onDeleteComment }) => {
-  const { user } = useAuth();
+const CommentsSection = memo(({ requisitionId, comments = [], onAddComment, onDeleteComment }) => {
+  const { user } = useSupabaseAuth();
   const { toast } = useToast();
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -52,7 +52,7 @@ const CommentsSection = ({ requisitionId, comments = [], onAddComment, onDeleteC
     }
   };
 
-  const handleDelete = (commentId) => {
+  const handleDelete = useCallback((commentId) => {
     if (onDeleteComment) {
       onDeleteComment(commentId);
       toast({
@@ -61,7 +61,7 @@ const CommentsSection = ({ requisitionId, comments = [], onAddComment, onDeleteC
         variant: 'info',
       });
     }
-  };
+  }, [onDeleteComment, toast]);
 
   return (
     <div className="space-y-4">
@@ -136,7 +136,9 @@ const CommentsSection = ({ requisitionId, comments = [], onAddComment, onDeleteC
       </div>
     </div>
   );
-};
+});
+
+CommentsSection.displayName = 'CommentsSection';
 
 export default CommentsSection;
 

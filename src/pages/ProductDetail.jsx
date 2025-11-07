@@ -19,7 +19,7 @@ import {
   Check
 } from 'lucide-react';
 import { supabase } from '@/lib/customSupabaseClient';
-import { useCart } from '@/hooks/useCart';
+import { useCart } from '@/context/CartContext';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { Button } from '@/components/ui/button';
