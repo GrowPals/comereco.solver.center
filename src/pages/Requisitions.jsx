@@ -198,17 +198,13 @@ const RequisitionsPage = () => {
                   title={hasFilters ? "No se encontraron requisiciones" : "No tienes requisiciones"}
                   description={hasFilters
                     ? "Intenta ajustar los filtros para ver más resultados."
-                    : "Tus requisiciones aparecerán aquí una vez que las crees. Haz clic en el botón para comenzar."
+                    : "Crea tu primera requisición desde el botón superior para empezar a gestionar pedidos"
                   }
                   action={hasFilters ? {
                     label: 'Limpiar filtros',
                     onClick: clearFilters,
                     icon: X
-                  } : {
-                    label: 'Nueva Requisición',
-                    onClick: () => navigate('/requisitions/new'),
-                    icon: Plus
-                  }}
+                  } : undefined}
                 />
               </div>
             </div>
