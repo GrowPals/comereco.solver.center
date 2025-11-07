@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { PlusCircle, MoreHorizontal, Edit, Trash2, LayoutTemplate, FilePlus, Bot, Zap } from 'lucide-react';
+import { PlusCircle, MoreHorizontal, Edit, Trash2, LayoutTemplate, FilePlus, Bot, Zap, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/useToast';
 import {
@@ -235,21 +235,21 @@ const TemplatesPage = () => {
                 <p className="text-sm text-muted-foreground sm:text-lg">Reutiliza tus pedidos frecuentes con un solo clic.</p>
               </div>
             </div>
-            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
+            <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
               <Button
                 onClick={() => setFormModal({ isOpen: true, template: null })}
                 size="lg"
                 variant="outline"
-                className="w-full shadow-button hover:shadow-button-hover sm:w-auto sm:whitespace-nowrap"
+                className="w-full rounded-full border-2 py-3 px-6 font-semibold transition-all duration-200 hover:bg-muted/50 sm:w-auto sm:whitespace-nowrap"
               >
                 <PlusCircle className="mr-2 h-5 w-5" /> Nueva Plantilla
               </Button>
               <Button
                 onClick={() => navigate('/catalog')}
                 size="lg"
-                className="w-full shadow-button hover:shadow-button-hover sm:w-auto sm:whitespace-nowrap"
+                className="w-full rounded-full py-3 px-6 font-semibold shadow-lg hover:shadow-xl transition-all duration-200 sm:w-auto sm:whitespace-nowrap"
               >
-                <FilePlus className="mr-2 h-5 w-5" /> Desde Carrito
+                <ShoppingCart className="mr-2 h-5 w-5" /> Desde Carrito
               </Button>
             </div>
           </header>
@@ -261,13 +261,30 @@ const TemplatesPage = () => {
               ))}
             </div>
           ) : (
-            <div className="rounded-2xl border border-border bg-card p-8 shadow-lg dark:border-border dark:bg-card sm:p-12 lg:p-16">
-              <EmptyState
-                icon={Bot}
-                title="Aún no tienes plantillas"
-                description="Crea tu primera plantilla guardando un carrito de compras para agilizar tus pedidos futuros."
-                actionButton={<Button onClick={() => navigate('/catalog')} size="lg" className="shadow-button hover:shadow-button-hover">Ir al Catálogo</Button>}
-              />
+            <div className="flex flex-col items-center justify-center min-h-[400px] max-w-md mx-auto px-6 text-center">
+              {/* Icon with circular background */}
+              <div className="w-20 h-20 rounded-full bg-yellow-100 dark:bg-neutral-800 flex items-center justify-center mb-6">
+                <ShoppingCart className="w-12 h-12 text-yellow-600 dark:text-yellow-400" />
+              </div>
+
+              {/* Title */}
+              <h3 className="text-2xl font-bold text-foreground mb-3">
+                Aún no tienes plantillas
+              </h3>
+
+              {/* Description */}
+              <p className="text-sm leading-relaxed mb-6 text-muted-foreground">
+                Las plantillas te permiten crear requisiciones recurrentes más rápido. Crea una nueva o conviértela desde tu carrito actual
+              </p>
+
+              {/* CTA Button */}
+              <Button
+                onClick={() => navigate('/catalog')}
+                size="lg"
+                className="rounded-full py-3 px-8 font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+              >
+                Ir al Catálogo
+              </Button>
             </div>
           )}
         </div>
