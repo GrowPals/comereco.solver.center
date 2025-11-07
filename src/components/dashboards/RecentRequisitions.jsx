@@ -20,6 +20,8 @@ const getStatusVariant = (status) => {
         case 'submitted': return 'warning';
         case 'cancelled': return 'destructive';
         case 'draft': return 'secondary';
+        case 'ordered': return 'default'; // Info/blue badge para "Ordenada"
+        case 'processing': return 'default';
         default: return 'default';
     }
 };
@@ -31,6 +33,8 @@ const getStatusLabel = (status) => {
         case 'submitted': return 'Enviada';
         case 'cancelled': return 'Cancelada';
         case 'draft': return 'Borrador';
+        case 'ordered': return 'Ordenada';
+        case 'processing': return 'En proceso';
         default: return status;
     }
 };

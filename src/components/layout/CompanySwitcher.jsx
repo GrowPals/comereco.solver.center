@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Building } from 'lucide-react';
+import { Building, Globe } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -36,9 +36,11 @@ const CompanySwitcher = ({ variant = 'default' }) => {
     if (variant === 'icon') return null;
 
     return (
-      <div className="flex items-center gap-2 rounded-xl border border-border/70 px-3 py-2 text-sm text-muted-foreground">
-        <Building className="h-4 w-4 animate-pulse" />
-        Cargando empresas...
+      <div className="flex items-center gap-3 rounded-full border border-primary-200/50 bg-white/80 px-4 py-2.5 text-sm text-primary-600 shadow-sm dark:border-primary-500/30 dark:bg-[rgba(20,33,61,0.85)]">
+        <div className="company-badge-icon">
+          <Building className="h-4 w-4 animate-pulse" />
+        </div>
+        <span className="font-medium">Cargando...</span>
       </div>
     );
   }
@@ -51,9 +53,18 @@ const CompanySwitcher = ({ variant = 'default' }) => {
     // En variante default, mostrar la empresa asignada (solo lectura)
     const companyName = companies[0]?.name || 'Empresa no asignada';
     return (
-      <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-muted/40 px-3 py-2 text-sm font-medium text-muted-foreground">
-        <Building className="h-4 w-4 text-muted-foreground" />
-        {companyName}
+      <div className="flex min-w-[260px] max-w-[300px] items-center gap-3 rounded-full border border-primary-200/50 bg-white/80 px-4 py-2.5 shadow-sm dark:border-primary-500/30 dark:bg-[rgba(20,33,61,0.85)]">
+        <div className="company-badge-icon">
+          <Building className="h-4 w-4" />
+        </div>
+        <div className="flex flex-col overflow-hidden">
+          <span className="text-[0.625rem] font-semibold uppercase tracking-wider text-primary-600/70 dark:text-primary-300/70">
+            Empresa activa
+          </span>
+          <span className="truncate text-sm font-bold text-foreground">
+            {companyName}
+          </span>
+        </div>
       </div>
     );
   }
@@ -93,32 +104,33 @@ const CompanySwitcher = ({ variant = 'default' }) => {
     ? 'Todas las empresas'
     : companies.find(c => c.id === activeCompanyId)?.name || 'Selecciona una empresa';
 
-  // Variante de ícono para móvil
+  // Variante de ícono para móvil - Solo mostrar el badge icon (más legible que un punto)
   if (variant === 'icon') {
     return (
       <>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
+              <button
                 onClick={() => setIsDialogOpen(true)}
                 className={cn(
-                  'relative h-11 w-11 overflow-visible rounded-full border border-border bg-[var(--surface-contrast)] shadow-none hover:bg-[var(--surface-muted)]',
-                  'transition-all duration-300',
-                  isChanging && 'ring-2 ring-primary-400/50 ring-offset-2 ring-offset-background'
+                  'company-badge-icon',
+                  'h-11 w-11 cursor-pointer transition-all duration-300',
+                  isChanging && 'ring-2 ring-primary-400/50 ring-offset-2 ring-offset-background dark:ring-cyan-400/60'
                 )}
                 aria-label="Selector de empresa"
               >
-                <Building
-                  className={cn(
-                    'h-5 w-5 text-primary-600 transition-transform duration-300',
-                    isChanging && 'scale-110'
-                  )}
-                />
-              </Button>
+                {isGlobalView ? (
+                  <Globe className={cn('h-5 w-5 transition-transform duration-300', isChanging && 'scale-110')} />
+                ) : (
+                  <Building className={cn('h-5 w-5 transition-transform duration-300', isChanging && 'scale-110')} />
+                )}
+              </button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Cambiar empresa</p>
+              <p className="text-xs font-medium">
+                {isGlobalView ? 'Vista global' : activeCompanyName}
+              </p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -126,9 +138,9 @@ const CompanySwitcher = ({ variant = 'default' }) => {
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Seleccionar Empresa</DialogTitle>
-              <DialogDescription>
-                Empresa actual: <span className="font-semibold text-foreground">{activeCompanyName}</span>
+              <DialogTitle className="text-lg font-bold">Seleccionar Empresa</DialogTitle>
+              <DialogDescription className="text-sm">
+                Vista actual: <span className="font-semibold text-foreground">{activeCompanyName}</span>
               </DialogDescription>
             </DialogHeader>
             <div className="flex flex-col gap-3 py-4">
@@ -137,10 +149,18 @@ const CompanySwitcher = ({ variant = 'default' }) => {
                   <SelectValue placeholder="Selecciona una empresa" />
                 </SelectTrigger>
                 <SelectContent className="max-h-64">
-                  <SelectItem value="all">Todas las empresas</SelectItem>
+                  <SelectItem value="all">
+                    <div className="flex items-center gap-2">
+                      <Globe className="h-4 w-4" />
+                      <span>Todas las empresas</span>
+                    </div>
+                  </SelectItem>
                   {companies.map((company) => (
                     <SelectItem key={company.id} value={company.id}>
-                      {company.name}
+                      <div className="flex items-center gap-2">
+                        <Building className="h-4 w-4" />
+                        <span>{company.name}</span>
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -152,31 +172,51 @@ const CompanySwitcher = ({ variant = 'default' }) => {
     );
   }
 
-  // Variante default para desktop
+  // Variante default para desktop - Pill design con gradient badge
   return (
-    <div className={cn(
-      'flex items-center gap-2 rounded-xl border border-border/70 bg-muted/40 px-3 py-2 transition-all duration-300',
-      isChanging && 'ring-2 ring-primary-400/50 ring-offset-2 ring-offset-background'
-    )}>
-      <Building
-        className={cn(
-          'h-4 w-4 text-primary-600 transition-transform duration-300',
-          isChanging && 'scale-110'
+    <div
+      className={cn(
+        'flex min-w-[260px] max-w-[300px] items-center gap-3 rounded-full border border-primary-200/50 bg-white/80 px-4 py-2.5 shadow-sm backdrop-blur-sm transition-all duration-300',
+        'dark:border-primary-500/30 dark:bg-[rgba(20,33,61,0.85)]',
+        isChanging && 'ring-2 ring-primary-400/50 ring-offset-2 ring-offset-background dark:ring-cyan-400/60'
+      )}
+    >
+      <div className={cn('company-badge-icon', isChanging && 'scale-110')}>
+        {isGlobalView ? (
+          <Globe className="h-4 w-4 transition-transform duration-300" />
+        ) : (
+          <Building className="h-4 w-4 transition-transform duration-300" />
         )}
-      />
-      <Select value={selectValue} onValueChange={handleChange}>
-        <SelectTrigger className="border-0 bg-transparent px-0 text-sm font-medium">
-          <SelectValue placeholder="Selecciona una empresa" />
-        </SelectTrigger>
-        <SelectContent className="max-h-64">
-          <SelectItem value="all">Todas las empresas</SelectItem>
-          {companies.map((company) => (
-            <SelectItem key={company.id} value={company.id}>
-              {company.name}
+      </div>
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <span className="text-[0.625rem] font-semibold uppercase tracking-wider text-primary-600/70 dark:text-primary-300/70">
+          {isGlobalView ? 'Vista global' : 'Empresa activa'}
+        </span>
+        <Select value={selectValue} onValueChange={handleChange}>
+          <SelectTrigger className="h-auto border-0 bg-transparent p-0 shadow-none focus:ring-0 focus:ring-offset-0">
+            <SelectValue
+              placeholder="Selecciona una empresa"
+              className="truncate text-sm font-bold text-foreground"
+            />
+          </SelectTrigger>
+          <SelectContent className="max-h-64">
+            <SelectItem value="all">
+              <div className="flex items-center gap-2">
+                <Globe className="h-4 w-4" />
+                <span>Todas las empresas</span>
+              </div>
             </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+            {companies.map((company) => (
+              <SelectItem key={company.id} value={company.id}>
+                <div className="flex items-center gap-2">
+                  <Building className="h-4 w-4" />
+                  <span>{company.name}</span>
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
     </div>
   );
 };
