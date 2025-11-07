@@ -6,11 +6,51 @@ const FloatingInput = React.forwardRef(({ className, type, label, icon, error, .
   const [hasValue, setHasValue] = React.useState(false);
   const inputRef = React.useRef(null);
 
-  // Detect if input has value on mount and when props change
+  // Fix for browser autocomplete detection
   React.useEffect(() => {
     const input = inputRef.current;
-    setHasValue(Boolean(input?.value));
-  }, [props.value, props.defaultValue]);
+    if (!input) return;
+
+    // Check for autofill immediately
+    const checkAutofill = () => {
+      try {
+        const isAutofilled = input.matches(':-webkit-autofill') ||
+                           input.matches(':-moz-autofill') ||
+                           input.matches(':autofill') ||
+                           input.value !== '';
+        setHasValue(isAutofilled);
+      } catch (e) {
+        // Fallback for browsers without autofill pseudo-class
+        setHasValue(Boolean(input.value));
+      }
+    };
+
+    // Check on mount
+    checkAutofill();
+
+    // Check periodically for autofill (some browsers fill after a delay)
+    const autofillCheckInterval = setInterval(checkAutofill, 100);
+    const autofillTimeout = setTimeout(() => clearInterval(autofillCheckInterval), 1000);
+
+    // Listen for input changes
+    const handleInput = () => setHasValue(input.value !== '');
+    input.addEventListener('input', handleInput);
+
+    // Listen for animation start (webkit autofill triggers this)
+    const handleAnimationStart = (e) => {
+      if (e.animationName === 'onAutoFillStart') {
+        setHasValue(true);
+      }
+    };
+    input.addEventListener('animationstart', handleAnimationStart);
+
+    return () => {
+      clearInterval(autofillCheckInterval);
+      clearTimeout(autofillTimeout);
+      input.removeEventListener('input', handleInput);
+      input.removeEventListener('animationstart', handleAnimationStart);
+    };
+  }, []);
 
   const handleFocus = () => setIsFocused(true);
   const handleBlur = (e) => {
@@ -65,11 +105,11 @@ const FloatingInput = React.forwardRef(({ className, type, label, icon, error, .
       {label && (
         <label
           className={cn(
-            "pointer-events-none absolute left-4 font-medium text-neutral-600 transition-all duration-200 dark:text-neutral-300",
+            "pointer-events-none absolute left-4 font-medium text-neutral-600 transition-all duration-200 dark:text-neutral-100",
             icon && "left-12",
             isFloating
-              ? "top-2 text-xs text-primary-600 dark:text-primary-300"
-              : "top-1/2 -translate-y-1/2 text-base text-neutral-600 dark:text-neutral-300",
+              ? "top-2 text-xs text-primary-600 dark:text-primary-200"
+              : "top-1/2 -translate-y-1/2 text-base text-neutral-600 dark:text-neutral-100",
             error && isFloating && "text-red-600 dark:text-red-400"
           )}
         >
