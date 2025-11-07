@@ -92,6 +92,11 @@
     --gradient-error: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
     --gradient-info: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
 
+    /* ============ CHART/REPORT GRADIENTS ============ */
+    --gradient-chart-approved: linear-gradient(90deg, #4f8b72 0%, #2f6650 100%);
+    --gradient-chart-pending: linear-gradient(90deg, #f1b567 0%, #d58a2a 100%);
+    --gradient-chart-bar: linear-gradient(90deg, #6c7bd0 0%, #3f4f99 100%);
+
     /* ============ GLOW EFFECTS ============ */
     --glow-primary: 0 0 22px rgba(66, 165, 255, 0.45), 0 0 44px rgba(66, 165, 255, 0.25);
     --glow-accent: 0 0 22px rgba(0, 200, 83, 0.45), 0 0 44px rgba(0, 200, 83, 0.25);
@@ -241,6 +246,11 @@
 
     --accent: rgba(85, 158, 255, 0.32);
     --accent-foreground: var(--card-foreground);
+
+    /* ============ CHART/REPORT GRADIENTS (Dark Mode) ============ */
+    --gradient-chart-approved: linear-gradient(90deg, rgba(79, 139, 114, 0.85) 0%, rgba(47, 102, 80, 0.92) 100%);
+    --gradient-chart-pending: linear-gradient(90deg, rgba(241, 181, 103, 0.85) 0%, rgba(217, 138, 42, 0.92) 100%);
+    --gradient-chart-bar: linear-gradient(90deg, rgba(108, 123, 208, 0.85) 0%, rgba(63, 79, 153, 0.92) 100%);
 
     --border: rgba(100, 145, 220, 0.38);
     --input: rgba(100, 145, 220, 0.35);
