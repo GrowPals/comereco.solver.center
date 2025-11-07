@@ -11,6 +11,7 @@ import { useSessionExpirationHandler } from '@/hooks/useSessionExpirationHandler
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
 import BottomNav from '@/components/layout/BottomNav';
+import CompanyScopeIndicator from '@/components/layout/CompanyScopeIndicator';
 import PageLoader from '@/components/PageLoader';
 import SkipLinks from '@/components/SkipLinks';
 import AppProviders from '@/context/AppProviders';
@@ -165,6 +166,9 @@ const AppLayout = () => {
         isSidebarOpen ? 'lg:pl-[18rem]' : 'lg:pl-[5rem]'
       )}>
         {showNav && <Header setSidebarOpen={handleToggleSidebar} />}
+
+        {/* Floating company scope indicator */}
+        {showNav && <CompanyScopeIndicator />}
 
         {/* Zona de alertas globales */}
         <AlertContainer />
