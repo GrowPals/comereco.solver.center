@@ -6,6 +6,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CartProvider } from '@/context/CartContext';
 import { FavoritesProvider } from '@/context/FavoritesContext';
+import { AlertProvider } from '@/context/AlertContext';
 
 // Crear una instancia de QueryClient optimizada para rendimiento
 const queryClient = new QueryClient({
@@ -36,12 +37,14 @@ const AppProviders = ({ children }) => {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <SupabaseAuthProvider>
-          <FavoritesProvider>
-            <CartProvider>
-              {children}
-              <Toaster />
-            </CartProvider>
-          </FavoritesProvider>
+          <AlertProvider>
+            <FavoritesProvider>
+              <CartProvider>
+                {children}
+                <Toaster />
+              </CartProvider>
+            </FavoritesProvider>
+          </AlertProvider>
         </SupabaseAuthProvider>
       </ThemeProvider>
     </QueryClientProvider>

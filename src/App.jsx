@@ -16,6 +16,7 @@ import SkipLinks from '@/components/SkipLinks';
 import AppProviders from '@/context/AppProviders';
 import { ToastProvider } from '@/components/ui/toast-notification';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { AlertContainer } from '@/components/AlertContainer';
 import { cn } from '@/lib/utils';
 
 // Lazy loading de las páginas
@@ -164,6 +165,9 @@ const AppLayout = () => {
         isSidebarOpen ? 'lg:pl-[18rem]' : 'lg:pl-[5rem]'
       )}>
         {showNav && <Header setSidebarOpen={handleToggleSidebar} />}
+
+        {/* Zona de alertas globales */}
+        <AlertContainer />
 
         <main
           className="app-main-shell relative w-full flex-1 overflow-x-hidden pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-[calc(env(safe-area-inset-top)+1rem)] transition-all duration-300 sm:pt-[calc(env(safe-area-inset-top)+1.5rem)] lg:pb-10 lg:pt-10"
