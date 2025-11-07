@@ -31,7 +31,7 @@ const CartItemRow = memo(({ item, onDecrease, onIncrease, onRemove }) => {
   const subtotal = useMemo(() => itemPrice * itemQuantity, [itemPrice, itemQuantity]);
 
   return (
-    <div className="surface-card grid grid-cols-[auto,1fr,auto] items-start gap-4 rounded-2xl border border-border p-4 shadow-sm transition-all duration-200 hover:border-primary-200 hover:shadow-md">
+    <div className="surface-card grid grid-cols-[auto,1fr,auto] items-start gap-4 rounded-2xl border border-border p-4 shadow-sm transition-all duration-200 hover:border-primary-300 dark:hover:border-primary-500/40 hover:shadow-md hover:shadow-primary-500/10 dark:hover:shadow-primary-500/20">
       <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-muted/85">
         <OptimizedImage
           src={item.image_url}

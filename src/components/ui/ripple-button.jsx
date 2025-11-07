@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-const RippleButton = React.forwardRef(({ children, className, onClick, ...props }, ref) => {
+const RippleButton = React.forwardRef(({ children, className, onClick, isLoading, isSuccess, ...props }, ref) => {
   const [ripples, setRipples] = useState([]);
 
   const addRipple = (event) => {
+    // Don't add ripple if loading
+    if (isLoading) return;
+
     const button = event.currentTarget;
     const rect = button.getBoundingClientRect();
     const size = Math.max(rect.width, rect.height);
@@ -37,6 +40,8 @@ const RippleButton = React.forwardRef(({ children, className, onClick, ...props 
       ref={ref}
       className={cn("relative overflow-hidden", className)}
       onClick={addRipple}
+      isLoading={isLoading}
+      isSuccess={isSuccess}
       {...props}
     >
       {children}

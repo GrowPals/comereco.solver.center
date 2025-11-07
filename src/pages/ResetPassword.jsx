@@ -159,6 +159,7 @@ const ResetPassword = () => {
                                         icon={<Lock />}
                                         error={errors.password?.message}
                                         className="pr-14"
+                                        autoComplete="new-password"
                                         {...register('password', {
                                             required: 'La contraseña es requerida',
                                             minLength: {
@@ -190,6 +191,7 @@ const ResetPassword = () => {
                                         icon={<Lock />}
                                         error={errors.confirmPassword?.message}
                                         className="pr-14"
+                                        autoComplete="new-password"
                                         {...register('confirmPassword', {
                                             required: 'Debes confirmar tu contraseña',
                                             validate: value =>
@@ -236,9 +238,10 @@ const ResetPassword = () => {
                                 type="submit"
                                 size="lg"
                                 className="w-full shadow-lg hover:shadow-xl"
+                                isLoading={isLoading}
                                 disabled={isLoading}
                             >
-                                {isLoading ? 'Actualizando...' : 'Actualizar Contraseña'}
+                                {!isLoading && 'Actualizar Contraseña'}
                             </RippleButton>
 
                             {/* Back to Login */}
@@ -246,7 +249,7 @@ const ResetPassword = () => {
                                 <button
                                     type="button"
                                     onClick={() => navigate('/login')}
-                                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                                    className="text-sm text-muted-foreground transition-colors hover:text-foreground min-h-[44px] inline-flex items-center justify-center px-4"
                                     disabled={isLoading}
                                 >
                                     Volver al inicio de sesión

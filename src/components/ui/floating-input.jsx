@@ -6,12 +6,6 @@ const FloatingInput = React.forwardRef(({ className, type, label, icon, error, .
   const [hasValue, setHasValue] = React.useState(false);
   const inputRef = React.useRef(null);
 
-  // Detect if input has value on mount and when props change
-  React.useEffect(() => {
-    const input = inputRef.current;
-    setHasValue(Boolean(input?.value));
-  }, [props.value, props.defaultValue]);
-
   // Fix for browser autocomplete detection
   React.useEffect(() => {
     const input = inputRef.current;
