@@ -1,0 +1,1218 @@
+{
+  "soluciones_a_la_orden": [
+    {
+      "nombre": "Desengrasante Industrial Kleen Pro 5L",
+      "descripcion": "Desengrasante concentrado biodegradable para uso industrial, elimina grasa pesada",
+      "stock": 145,
+      "unidad": "botella",
+      "precio": 285.00,
+      "imagen": "https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=400",
+      "categoria": "Químicos de Limpieza",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Cloro Líquido Industrial 20L",
+      "descripcion": "Hipoclorito de sodio al 13%, ideal para desinfección de áreas industriales",
+      "stock": 89,
+      "unidad": "garrafón",
+      "precio": 420.00,
+      "imagen": "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=400",
+      "categoria": "Químicos de Limpieza",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Detergente en Polvo Industrial 25kg",
+      "descripcion": "Detergente alcalino para lavado de pisos y superficies industriales",
+      "stock": 67,
+      "unidad": "costal",
+      "precio": 850.00,
+      "imagen": "https://images.unsplash.com/photo-1610557892470-55d9e80c0bce?w=400",
+      "categoria": "Químicos de Limpieza",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Limpiador Multiusos Pinol 5L",
+      "descripcion": "Limpiador desinfectante aroma pino, uso rudo",
+      "stock": 192,
+      "unidad": "botella",
+      "precio": 165.00,
+      "imagen": "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=400",
+      "categoria": "Químicos de Limpieza",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Aromatizante Ambiental Spray 400ml",
+      "descripcion": "Eliminador de olores con fragancia fresca, larga duración",
+      "stock": 156,
+      "unidad": "lata",
+      "precio": 95.00,
+      "imagen": "https://images.unsplash.com/photo-1585421514738-01798e348b17?w=400",
+      "categoria": "Químicos de Limpieza",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Escoba Industrial Fibra Dura 60cm",
+      "descripcion": "Escoba de cerda sintética resistente, mango reforzado",
+      "stock": 78,
+      "unidad": "pieza",
+      "precio": 125.00,
+      "imagen": "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=400",
+      "categoria": "Herramientas de Limpieza",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Jalador Industrial con Mango Telescópico",
+      "descripcion": "Jalador de agua profesional 45cm con mango ajustable hasta 1.80m",
+      "stock": 54,
+      "unidad": "pieza",
+      "precio": 185.00,
+      "imagen": "https://images.unsplash.com/photo-1585421514738-01798e348b17?w=400",
+      "categoria": "Herramientas de Limpieza",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Trapeador Tipo Kentucky Industrial",
+      "descripcion": "Trapeador de algodón 500g con herraje metálico reforzado",
+      "stock": 112,
+      "unidad": "pieza",
+      "precio": 145.00,
+      "imagen": "https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=400",
+      "categoria": "Herramientas de Limpieza",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Cubeta Industrial Plástica 20L",
+      "descripcion": "Cubeta reforzada con asa metálica, ideal para uso rudo",
+      "stock": 95,
+      "unidad": "pieza",
+      "precio": 135.00,
+      "imagen": "https://images.unsplash.com/photo-1610557892470-55d9e80c0bce?w=400",
+      "categoria": "Herramientas de Limpieza",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Cepillo para Pisos Largo con Fibra Dura",
+      "descripcion": "Cepillo industrial 30cm con mango de 120cm, fibra resistente",
+      "stock": 63,
+      "unidad": "pieza",
+      "precio": 165.00,
+      "imagen": "https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?w=400",
+      "categoria": "Herramientas de Limpieza",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Bolsas de Basura Negras Calibre 1.5 90x120cm",
+      "descripcion": "Bolsas extra resistentes para residuos pesados, paquete 10 piezas",
+      "stock": 187,
+      "unidad": "paquete",
+      "precio": 125.00,
+      "imagen": "https://images.unsplash.com/photo-1604187351574-c75ca79f5807?w=400",
+      "categoria": "Consumibles",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Papel Higiénico Jumbo Industrial 300m",
+      "descripcion": "Rollo jumbo blanco 2 capas, rendimiento 300 metros",
+      "stock": 145,
+      "unidad": "rollo",
+      "precio": 85.00,
+      "imagen": "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=400",
+      "categoria": "Consumibles",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Toalla de Papel en Rollo 90m",
+      "descripcion": "Toalla absorbente blanca, rollo de 90 metros",
+      "stock": 168,
+      "unidad": "rollo",
+      "precio": 65.00,
+      "imagen": "https://images.unsplash.com/photo-1585421514738-01798e348b17?w=400",
+      "categoria": "Consumibles",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Jabón Líquido Antibacterial 5L",
+      "descripcion": "Jabón de manos con glicerina y agentes antibacteriales",
+      "stock": 124,
+      "unidad": "botella",
+      "precio": 195.00,
+      "imagen": "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=400",
+      "categoria": "Consumibles",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Guantes de Látex Amarillos Talla M",
+      "descripcion": "Guantes reutilizables para limpieza, calibre medio",
+      "stock": 196,
+      "unidad": "par",
+      "precio": 42.00,
+      "imagen": "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=400",
+      "categoria": "Equipo de Protección",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Guantes de Nitrilo Desechables Caja 100",
+      "descripcion": "Guantes sin polvo, resistentes a químicos, talla L",
+      "stock": 85,
+      "unidad": "caja",
+      "precio": 285.00,
+      "imagen": "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=400",
+      "categoria": "Equipo de Protección",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Cubrebocas Tricapa Caja 50 Piezas",
+      "descripcion": "Cubrebocas desechable 3 capas con ajuste nasal",
+      "stock": 142,
+      "unidad": "caja",
+      "precio": 145.00,
+      "imagen": "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=400",
+      "categoria": "Equipo de Protección",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Lentes de Seguridad Transparentes",
+      "descripcion": "Lentes antiempañante con protección UV",
+      "stock": 67,
+      "unidad": "pieza",
+      "precio": 65.00,
+      "imagen": "https://images.unsplash.com/photo-1577401239170-897942555fb3?w=400",
+      "categoria": "Equipo de Protección",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Botas de Hule Negras Antiderrapantes",
+      "descripcion": "Botas impermeables con suela antiderrapante, talla 26",
+      "stock": 45,
+      "unidad": "par",
+      "precio": 285.00,
+      "imagen": "https://images.unsplash.com/photo-1520219788328-06135dd71689?w=400",
+      "categoria": "Equipo de Protección",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Mandil Industrial Impermeable",
+      "descripcion": "Mandil de PVC resistente a químicos y agua",
+      "stock": 58,
+      "unidad": "pieza",
+      "precio": 165.00,
+      "imagen": "https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=400",
+      "categoria": "Equipo de Protección",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Pastillas Urinal Desodorante 100g",
+      "descripcion": "Pastillas desodorantes para mingitorios, aroma fresco",
+      "stock": 178,
+      "unidad": "pieza",
+      "precio": 35.00,
+      "imagen": "https://images.unsplash.com/photo-1585421514738-01798e348b17?w=400",
+      "categoria": "Sanitarios",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Gel Antibacterial 5L Industrial",
+      "descripcion": "Gel desinfectante con 70% alcohol, para dispensador",
+      "stock": 96,
+      "unidad": "botella",
+      "precio": 385.00,
+      "imagen": "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=400",
+      "categoria": "Sanitarios",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Dispensador de Papel Higiénico Jumbo",
+      "descripcion": "Dispensador plástico blanco para rollo jumbo",
+      "stock": 42,
+      "unidad": "pieza",
+      "precio": 285.00,
+      "imagen": "https://images.unsplash.com/photo-1604187351574-c75ca79f5807?w=400",
+      "categoria": "Sanitarios",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Dispensador de Jabón Líquido 1L",
+      "descripcion": "Dispensador manual de pared, capacidad 1 litro",
+      "stock": 54,
+      "unidad": "pieza",
+      "precio": 185.00,
+      "imagen": "https://images.unsplash.com/photo-1585421514738-01798e348b17?w=400",
+      "categoria": "Sanitarios",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Limpia Vidrios Profesional 5L",
+      "descripcion": "Limpiador de cristales sin rayas, rinde hasta 50 ventanas",
+      "stock": 89,
+      "unidad": "botella",
+      "precio": 225.00,
+      "imagen": "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=400",
+      "categoria": "Químicos Especializados",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Pulidor de Pisos Acrílico 5L",
+      "descripcion": "Cera líquida autonivelante para pisos, acabado brillante",
+      "stock": 67,
+      "unidad": "botella",
+      "precio": 465.00,
+      "imagen": "https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=400",
+      "categoria": "Químicos Especializados",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Removedor de Sarro Industrial 5L",
+      "descripcion": "Ácido desincrustante para baños y sanitarios",
+      "stock": 73,
+      "unidad": "botella",
+      "precio": 285.00,
+      "imagen": "https://images.unsplash.com/photo-1585421514738-01798e348b17?w=400",
+      "categoria": "Químicos Especializados",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Desinfectante de Superficies 5L",
+      "descripcion": "Sanitizante quat base, elimina 99.9% bacterias",
+      "stock": 118,
+      "unidad": "botella",
+      "precio": 325.00,
+      "imagen": "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=400",
+      "categoria": "Químicos Especializados",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Mopas de Microfibra 40cm",
+      "descripcion": "Mopa húmeda de microfibra para limpieza profunda",
+      "stock": 95,
+      "unidad": "pieza",
+      "precio": 185.00,
+      "imagen": "https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=400",
+      "categoria": "Herramientas Especiales",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Carro de Limpieza Doble Cubo",
+      "descripcion": "Carro industrial con 2 cubetas de 20L y bolsa para basura",
+      "stock": 18,
+      "unidad": "pieza",
+      "precio": 1850.00,
+      "imagen": "https://images.unsplash.com/photo-1610557892470-55d9e80c0bce?w=400",
+      "categoria": "Herramientas Especiales",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Escurridor de Trapeador Tipo Prensa",
+      "descripcion": "Exprimidor manual de acero inoxidable",
+      "stock": 34,
+      "unidad": "pieza",
+      "precio": 485.00,
+      "imagen": "https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=400",
+      "categoria": "Herramientas Especiales",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Aspiradora Industrial 20L",
+      "descripcion": "Aspiradora seco/húmedo 1400W motor industrial",
+      "stock": 12,
+      "unidad": "pieza",
+      "precio": 3850.00,
+      "imagen": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400",
+      "categoria": "Maquinaria",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Pulidora de Pisos 13 Pulgadas",
+      "descripcion": "Pulidora eléctrica 1500W con almohadillas incluidas",
+      "stock": 8,
+      "unidad": "pieza",
+      "precio": 5850.00,
+      "imagen": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400",
+      "categoria": "Maquinaria",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Hidrolavadora Industrial 1800PSI",
+      "descripcion": "Lavadora de presión eléctrica con manguera 8m",
+      "stock": 15,
+      "unidad": "pieza",
+      "precio": 4850.00,
+      "imagen": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400",
+      "categoria": "Maquinaria",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Señalización Piso Mojado",
+      "descripcion": "Cono advertencia amarillo plegable",
+      "stock": 48,
+      "unidad": "pieza",
+      "precio": 125.00,
+      "imagen": "https://images.unsplash.com/photo-1614935151651-0bea6508db6b?w=400",
+      "categoria": "Señalización",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Cinta Antiderrapante 5cm x 10m",
+      "descripcion": "Cinta adhesiva texturizada para escaleras",
+      "stock": 86,
+      "unidad": "rollo",
+      "precio": 285.00,
+      "imagen": "https://images.unsplash.com/photo-1614935151651-0bea6508db6b?w=400",
+      "categoria": "Señalización",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Tapete Sanitizante 60x80cm",
+      "descripcion": "Tapete desinfectante para entrada con charola",
+      "stock": 28,
+      "unidad": "pieza",
+      "precio": 485.00,
+      "imagen": "https://images.unsplash.com/photo-1614935151651-0bea6508db6b?w=400",
+      "categoria": "Sanitarios",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Fibra Verde para Tallar 15x20cm",
+      "descripcion": "Fibra abrasiva de uso rudo, paquete 10 piezas",
+      "stock": 145,
+      "unidad": "paquete",
+      "precio": 85.00,
+      "imagen": "https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?w=400",
+      "categoria": "Consumibles",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Franelas de Algodón 40x40cm",
+      "descripcion": "Paños de limpieza 100% algodón, paquete 6 piezas",
+      "stock": 167,
+      "unidad": "paquete",
+      "precio": 125.00,
+      "imagen": "https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=400",
+      "categoria": "Consumibles",
+      "empresa": "soluciones"
+    },
+    {
+      "nombre": "Recoged or Metálico con Mango Largo",
+      "descripcion": "Recogedor industrial galvanizado 30cm",
+      "stock": 72,
+      "unidad": "pieza",
+      "precio": 145.00,
+      "imagen": "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=400",
+      "categoria": "Herramientas de Limpieza",
+      "empresa": "soluciones"
+    }
+  ],
+  "manny": [
+    {
+      "nombre": "Minisplit Inverter 1 Tonelada 110V",
+      "descripcion": "Aire acondicionado inverter frío/calor, bajo consumo energético",
+      "stock": 24,
+      "unidad": "pieza",
+      "precio": 8950.00,
+      "imagen": "https://images.unsplash.com/photo-1585927263501-ea2e801ebe9d?w=400",
+      "categoria": "Clima",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Minisplit Inverter 1.5 Toneladas 220V",
+      "descripcion": "Sistema split con control remoto y WiFi integrado",
+      "stock": 18,
+      "unidad": "pieza",
+      "precio": 11850.00,
+      "imagen": "https://images.unsplash.com/photo-1585927263501-ea2e801ebe9d?w=400",
+      "categoria": "Clima",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Minisplit Inverter 2 Toneladas 220V",
+      "descripcion": "Aire acondicionado alta eficiencia, clasificación A++",
+      "stock": 15,
+      "unidad": "pieza",
+      "precio": 14950.00,
+      "imagen": "https://images.unsplash.com/photo-1585927263501-ea2e801ebe9d?w=400",
+      "categoria": "Clima",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Calentador Solar 150 Litros",
+      "descripcion": "Sistema solar presurizado con 12 tubos al vacío",
+      "stock": 12,
+      "unidad": "pieza",
+      "precio": 9850.00,
+      "imagen": "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400",
+      "categoria": "Calentadores",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Calentador Solar 200 Litros",
+      "descripcion": "Boiler solar 16 tubos, estructura acero inoxidable",
+      "stock": 10,
+      "unidad": "pieza",
+      "precio": 12850.00,
+      "imagen": "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400",
+      "categoria": "Calentadores",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Calentador de Paso Gas LP 10L",
+      "descripcion": "Calentador instantáneo, encendido automático",
+      "stock": 28,
+      "unidad": "pieza",
+      "precio": 4850.00,
+      "imagen": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400",
+      "categoria": "Calentadores",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Panel Solar 450W Monocristalino",
+      "descripcion": "Panel fotovoltaico alta eficiencia 24V",
+      "stock": 45,
+      "unidad": "pieza",
+      "precio": 2850.00,
+      "imagen": "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400",
+      "categoria": "Energía Solar",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Kit Solar 2kW Off-Grid Completo",
+      "descripcion": "Sistema autónomo: 4 paneles, inversor, controlador, baterías",
+      "stock": 8,
+      "unidad": "kit",
+      "precio": 35850.00,
+      "imagen": "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400",
+      "categoria": "Energía Solar",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Inversor Solar 3kW On-Grid",
+      "descripcion": "Inversor de corriente conectado a red CFE",
+      "stock": 16,
+      "unidad": "pieza",
+      "precio": 12850.00,
+      "imagen": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400",
+      "categoria": "Energía Solar",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Batería Solar Ciclo Profundo 250Ah",
+      "descripcion": "Batería AGM 12V para sistemas solares",
+      "stock": 22,
+      "unidad": "pieza",
+      "precio": 5850.00,
+      "imagen": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400",
+      "categoria": "Energía Solar",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Taladro Percutor Inalámbrico 20V DeWalt",
+      "descripcion": "Taladro brushless con 2 baterías y maletín",
+      "stock": 32,
+      "unidad": "pieza",
+      "precio": 3850.00,
+      "imagen": "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=400",
+      "categoria": "Herramientas Eléctricas",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Esmeril Angular 7 Pulgadas 2000W",
+      "descripcion": "Amoladora industrial uso pesado",
+      "stock": 25,
+      "unidad": "pieza",
+      "precio": 2450.00,
+      "imagen": "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=400",
+      "categoria": "Herramientas Eléctricas",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Sierra Circular 7.25 Pulgadas 1500W",
+      "descripcion": "Sierra eléctrica con guía láser y disco incluido",
+      "stock": 28,
+      "unidad": "pieza",
+      "precio": 1850.00,
+      "imagen": "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=400",
+      "categoria": "Herramientas Eléctricas",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Compresor de Aire 50L 2.5HP",
+      "descripcion": "Compresor vertical con motor monofásico",
+      "stock": 14,
+      "unidad": "pieza",
+      "precio": 5850.00,
+      "imagen": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400",
+      "categoria": "Herramientas Eléctricas",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Pistola de Calor 2000W con Accesorios",
+      "descripcion": "Pistola térmica 2 temperaturas con boquillas",
+      "stock": 38,
+      "unidad": "pieza",
+      "precio": 850.00,
+      "imagen": "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=400",
+      "categoria": "Herramientas Eléctricas",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Soldadora Inverter 200A IGBT",
+      "descripcion": "Máquina de soldar electrodo portátil con careta",
+      "stock": 19,
+      "unidad": "pieza",
+      "precio": 4850.00,
+      "imagen": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400",
+      "categoria": "Herramientas Especializadas",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Extractor de Aire Industrial 20 Pulgadas",
+      "descripcion": "Ventilador industrial 3 velocidades 400W",
+      "stock": 16,
+      "unidad": "pieza",
+      "precio": 2850.00,
+      "imagen": "https://images.unsplash.com/photo-1626806819282-2c1dc01a5e0c?w=400",
+      "categoria": "Ventilación",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Ventilador de Pared 30 Pulgadas Industrial",
+      "descripcion": "Ventilador metálico alta rotación con control remoto",
+      "stock": 22,
+      "unidad": "pieza",
+      "precio": 1950.00,
+      "imagen": "https://images.unsplash.com/photo-1626806819282-2c1dc01a5e0c?w=400",
+      "categoria": "Ventilación",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Ventilador de Pedestal 30 Pulgadas",
+      "descripcion": "Ventilador oscilante industrial 3 velocidades",
+      "stock": 28,
+      "unidad": "pieza",
+      "precio": 1650.00,
+      "imagen": "https://images.unsplash.com/photo-1626806819282-2c1dc01a5e0c?w=400",
+      "categoria": "Ventilación",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Sistema de Ventilación con Ductos 8 Pulgadas",
+      "descripcion": "Extractor en línea con ducto flexible 3m",
+      "stock": 12,
+      "unidad": "kit",
+      "precio": 3850.00,
+      "imagen": "https://images.unsplash.com/photo-1626806819282-2c1dc01a5e0c?w=400",
+      "categoria": "Ventilación",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Escalera de Aluminio Tijera 2.4m",
+      "descripcion": "Escalera 8 peldaños antiderrapante 150kg",
+      "stock": 18,
+      "unidad": "pieza",
+      "precio": 1450.00,
+      "imagen": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400",
+      "categoria": "Herramientas",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Escalera Extensible Aluminio 6m",
+      "descripcion": "Escalera telescópica 3 secciones uso rudo",
+      "stock": 10,
+      "unidad": "pieza",
+      "precio": 4850.00,
+      "imagen": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400",
+      "categoria": "Herramientas",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Andamio Multifuncional 4x1 Aluminio",
+      "descripcion": "Andamio plegable hasta 3.5m altura",
+      "stock": 8,
+      "unidad": "pieza",
+      "precio": 3950.00,
+      "imagen": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400",
+      "categoria": "Herramientas",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Rotomartillo Inalámbrico 18V SDS Plus",
+      "descripcion": "Taladro percutor 3 modos con baterías",
+      "stock": 22,
+      "unidad": "pieza",
+      "precio": 4850.00,
+      "imagen": "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=400",
+      "categoria": "Herramientas Eléctricas",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Pulidora Orbital Inalámbrica 20V",
+      "descripcion": "Lijadora orbital brushless con maletín",
+      "stock": 16,
+      "unidad": "pieza",
+      "precio": 2650.00,
+      "imagen": "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=400",
+      "categoria": "Herramientas Eléctricas",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Sierra Caladora 800W con Luz LED",
+      "descripcion": "Caladora eléctrica 4 posiciones cambio rápido",
+      "stock": 28,
+      "unidad": "pieza",
+      "precio": 1450.00,
+      "imagen": "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=400",
+      "categoria": "Herramientas Eléctricas",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Multimetro Digital Profesional",
+      "descripcion": "Multímetro auto rango True RMS con pinzas",
+      "stock": 42,
+      "unidad": "pieza",
+      "precio": 850.00,
+      "imagen": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400",
+      "categoria": "Herramientas Medición",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Termómetro Infrarrojo Laser -50 a 550°C",
+      "descripcion": "Pirómetro digital con puntero láser doble",
+      "stock": 35,
+      "unidad": "pieza",
+      "precio": 650.00,
+      "imagen": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400",
+      "categoria": "Herramientas Medición",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Nivel Láser Autonivelante 360°",
+      "descripcion": "Nivel láser rotativo horizontal y vertical",
+      "stock": 18,
+      "unidad": "pieza",
+      "precio": 2850.00,
+      "imagen": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400",
+      "categoria": "Herramientas Medición",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Generador Eléctrico Gasolina 5000W",
+      "descripcion": "Planta de luz 4 tiempos arranque eléctrico",
+      "stock": 6,
+      "unidad": "pieza",
+      "precio": 12850.00,
+      "imagen": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400",
+      "categoria": "Energía",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "UPS/No-Break 2000VA Regulador Voltaje",
+      "descripcion": "Sistema respaldo con 8 contactos protegidos",
+      "stock": 24,
+      "unidad": "pieza",
+      "precio": 3850.00,
+      "imagen": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400",
+      "categoria": "Energía",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Regulador de Voltaje 3000W",
+      "descripcion": "Estabilizador automático 8 contactos",
+      "stock": 32,
+      "unidad": "pieza",
+      "precio": 1450.00,
+      "imagen": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400",
+      "categoria": "Energía",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Bomba Periférica 1/2HP Agua Limpia",
+      "descripcion": "Bomba superficie autocebante 40L/min",
+      "stock": 15,
+      "unidad": "pieza",
+      "precio": 1650.00,
+      "imagen": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400",
+      "categoria": "Bombeo",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Bomba Sumergible 1HP Pozo Profundo",
+      "descripcion": "Electrobomba 4 pulgadas acero inoxidable",
+      "stock": 12,
+      "unidad": "pieza",
+      "precio": 4850.00,
+      "imagen": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400",
+      "categoria": "Bombeo",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Presurizador Automático 1HP",
+      "descripcion": "Hidroneumático compacto con tablero",
+      "stock": 10,
+      "unidad": "pieza",
+      "precio": 5850.00,
+      "imagen": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400",
+      "categoria": "Bombeo",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Tinaco Polietileno 1100L Tricapa",
+      "descripcion": "Cisterna con tapa y flotador incluido",
+      "stock": 14,
+      "unidad": "pieza",
+      "precio": 2850.00,
+      "imagen": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400",
+      "categoria": "Almacenamiento",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Caja Herramientas Metálica 5 Gavetas",
+      "descripcion": "Gabinete portaherramientas con cerradura",
+      "stock": 16,
+      "unidad": "pieza",
+      "precio": 2450.00,
+      "imagen": "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=400",
+      "categoria": "Almacenamiento",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Reflector LED 100W Solar con Panel",
+      "descripcion": "Lámpara solar exterior con control remoto",
+      "stock": 38,
+      "unidad": "pieza",
+      "precio": 1450.00,
+      "imagen": "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400",
+      "categoria": "Iluminación",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Lámparas LED Alta Bahía 150W",
+      "descripcion": "Campana industrial UFO IP65 blanco frío",
+      "stock": 22,
+      "unidad": "pieza",
+      "precio": 1850.00,
+      "imagen": "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400",
+      "categoria": "Iluminación",
+      "empresa": "manny"
+    },
+    {
+      "nombre": "Panel LED Sobreponer 72W 60x60cm",
+      "descripcion": "Plafón cuadrado luz blanca 6500 lúmenes",
+      "stock": 45,
+      "unidad": "pieza",
+      "precio": 650.00,
+      "imagen": "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400",
+      "categoria": "Iluminación",
+      "empresa": "manny"
+    }
+  ],
+  "comereco": [
+    {
+      "nombre": "Papel Bond Carta 500 Hojas Scribe",
+      "descripcion": "Papel blanco 75g/m² para impresión láser",
+      "stock": 195,
+      "unidad": "paquete",
+      "precio": 125.00,
+      "imagen": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400",
+      "categoria": "Papelería",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Bolígrafos BIC Cristal Azul Caja 12",
+      "descripcion": "Plumas punto medio 1.0mm tinta base aceite",
+      "stock": 168,
+      "unidad": "caja",
+      "precio": 85.00,
+      "imagen": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400",
+      "categoria": "Papelería",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Lápices del 2 1/2 Caja 12 Piezas",
+      "descripcion": "Lápices de grafito hexagonales con goma",
+      "stock": 142,
+      "unidad": "caja",
+      "precio": 45.00,
+      "imagen": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400",
+      "categoria": "Papelería",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Cuadernos Profesionales 100 Hojas",
+      "descripcion": "Cuaderno espiral raya ancha pasta dura",
+      "stock": 187,
+      "unidad": "pieza",
+      "precio": 35.00,
+      "imagen": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400",
+      "categoria": "Papelería",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Post-it Amarillo 76x76mm 12 Blocks",
+      "descripcion": "Notas adhesivas reposicionables 100 hojas",
+      "stock": 156,
+      "unidad": "paquete",
+      "precio": 185.00,
+      "imagen": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400",
+      "categoria": "Papelería",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Marcadores Permanentes Sharpie Negro 12",
+      "descripcion": "Marcador punta fina indeleble multiuso",
+      "stock": 124,
+      "unidad": "caja",
+      "precio": 320.00,
+      "imagen": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400",
+      "categoria": "Papelería",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Folders Tamaño Carta Manila 100",
+      "descripcion": "Carpetas sin broche cartulina resistente",
+      "stock": 145,
+      "unidad": "paquete",
+      "precio": 165.00,
+      "imagen": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400",
+      "categoria": "Papelería",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Clips Mariposa #2 Caja 100",
+      "descripcion": "Sujetadores metálicos niquelados medianos",
+      "stock": 178,
+      "unidad": "caja",
+      "precio": 42.00,
+      "imagen": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400",
+      "categoria": "Papelería",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Engrapadora de Escritorio 20 Hojas",
+      "descripcion": "Engrapadora metálica base plástica",
+      "stock": 85,
+      "unidad": "pieza",
+      "precio": 95.00,
+      "imagen": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400",
+      "categoria": "Papelería",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Grapas Estándar 26/6 Caja 5000",
+      "descripcion": "Grapas galvanizadas para engrapadora",
+      "stock": 165,
+      "unidad": "caja",
+      "precio": 35.00,
+      "imagen": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400",
+      "categoria": "Papelería",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Paracetamol 500mg 20 Tabletas",
+      "descripcion": "Analgésico y antipirético uso general",
+      "stock": 195,
+      "unidad": "caja",
+      "precio": 45.00,
+      "imagen": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400",
+      "categoria": "Farmacia",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Ibuprofeno 400mg 10 Tabletas",
+      "descripcion": "Antiinflamatorio no esteroideo",
+      "stock": 168,
+      "unidad": "caja",
+      "precio": 65.00,
+      "imagen": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400",
+      "categoria": "Farmacia",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Curitas Adhesivas Surtidas 100 Piezas",
+      "descripcion": "Tiras adhesivas estériles varios tamaños",
+      "stock": 142,
+      "unidad": "caja",
+      "precio": 85.00,
+      "imagen": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400",
+      "categoria": "Farmacia",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Alcohol Etílico 96° 1 Litro",
+      "descripcion": "Alcohol antiséptico para desinfección",
+      "stock": 124,
+      "unidad": "botella",
+      "precio": 95.00,
+      "imagen": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400",
+      "categoria": "Farmacia",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Agua Oxigenada 120ml",
+      "descripcion": "Peróxido de hidrógeno 3% antiséptico",
+      "stock": 156,
+      "unidad": "botella",
+      "precio": 28.00,
+      "imagen": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400",
+      "categoria": "Farmacia",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Termómetro Digital Infrarrojo",
+      "descripcion": "Termómetro sin contacto lectura instantánea",
+      "stock": 45,
+      "unidad": "pieza",
+      "precio": 285.00,
+      "imagen": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400",
+      "categoria": "Farmacia",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Shampoo Pantene 400ml",
+      "descripcion": "Shampoo nutrición y brillo pro-vitamina",
+      "stock": 124,
+      "unidad": "botella",
+      "precio": 85.00,
+      "imagen": "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?w=400",
+      "categoria": "Cuidado Personal",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Jabón Líquido Antibacterial 500ml",
+      "descripcion": "Jabón de manos con glicerina aroma fresco",
+      "stock": 145,
+      "unidad": "botella",
+      "precio": 65.00,
+      "imagen": "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?w=400",
+      "categoria": "Cuidado Personal",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Pasta Dental Colgate 150g",
+      "descripcion": "Pasta con flúor protección anticaries",
+      "stock": 187,
+      "unidad": "tubo",
+      "precio": 42.00,
+      "imagen": "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?w=400",
+      "categoria": "Cuidado Personal",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Desodorante Rexona Clinical 50ml",
+      "descripcion": "Antitranspirante roll-on 48h protección",
+      "stock": 156,
+      "unidad": "pieza",
+      "precio": 85.00,
+      "imagen": "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?w=400",
+      "categoria": "Cuidado Personal",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Toallas Sanitarias Siempre Nocturna 10",
+      "descripcion": "Toallas con alas máxima absorción",
+      "stock": 168,
+      "unidad": "paquete",
+      "precio": 65.00,
+      "imagen": "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?w=400",
+      "categoria": "Cuidado Personal",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Pañuelos Desechables Kleenex 90 Piezas",
+      "descripcion": "Pañuelos faciales triple hoja suaves",
+      "stock": 142,
+      "unidad": "caja",
+      "precio": 35.00,
+      "imagen": "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?w=400",
+      "categoria": "Cuidado Personal",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Café Soluble Nescafé Clásico 200g",
+      "descripcion": "Café instantáneo 100% puro",
+      "stock": 124,
+      "unidad": "frasco",
+      "precio": 185.00,
+      "imagen": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400",
+      "categoria": "Despensa",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Azúcar Estándar 2kg",
+      "descripcion": "Azúcar refinada de caña blanca",
+      "stock": 156,
+      "unidad": "bolsa",
+      "precio": 48.00,
+      "imagen": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400",
+      "categoria": "Despensa",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Galletas Marías Gamesa 170g",
+      "descripcion": "Galletas integrales sin azúcar añadida",
+      "stock": 195,
+      "unidad": "paquete",
+      "precio": 28.00,
+      "imagen": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400",
+      "categoria": "Despensa",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Agua Embotellada Ciel 600ml",
+      "descripcion": "Agua purificada natural sin gas",
+      "stock": 187,
+      "unidad": "botella",
+      "precio": 12.00,
+      "imagen": "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400",
+      "categoria": "Bebidas",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Refresco Coca-Cola 600ml",
+      "descripcion": "Refresco de cola sabor original",
+      "stock": 168,
+      "unidad": "botella",
+      "precio": 18.00,
+      "imagen": "https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400",
+      "categoria": "Bebidas",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Jugo Del Valle Naranja 1L",
+      "descripcion": "Néctar de naranja 50% fruta",
+      "stock": 142,
+      "unidad": "botella",
+      "precio": 32.00,
+      "imagen": "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400",
+      "categoria": "Bebidas",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Vasos Desechables 8oz Paquete 50",
+      "descripcion": "Vasos térmicos de unicel blancos",
+      "stock": 178,
+      "unidad": "paquete",
+      "precio": 45.00,
+      "imagen": "https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=400",
+      "categoria": "Desechables",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Platos Desechables 9\" Paquete 25",
+      "descripcion": "Platos biodegradables rígidos",
+      "stock": 156,
+      "unidad": "paquete",
+      "precio": 52.00,
+      "imagen": "https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=400",
+      "categoria": "Desechables",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Cucharas Desechables Paquete 100",
+      "descripcion": "Cubiertos plásticos resistentes blancos",
+      "stock": 185,
+      "unidad": "paquete",
+      "precio": 42.00,
+      "imagen": "https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=400",
+      "categoria": "Desechables",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Servilletas de Papel 500 Piezas",
+      "descripcion": "Servilletas blancas hoja sencilla 30x30cm",
+      "stock": 195,
+      "unidad": "paquete",
+      "precio": 85.00,
+      "imagen": "https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=400",
+      "categoria": "Desechables",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Calculadora Científica Casio fx-82MS",
+      "descripcion": "Calculadora 240 funciones con estuche",
+      "stock": 45,
+      "unidad": "pieza",
+      "precio": 385.00,
+      "imagen": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400",
+      "categoria": "Oficina",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Cinta Adhesiva Scotch Transparente",
+      "descripcion": "Cinta 3/4\" x 65m con dispensador",
+      "stock": 168,
+      "unidad": "pieza",
+      "precio": 45.00,
+      "imagen": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400",
+      "categoria": "Oficina",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Tijeras Escolares Punta Roma 5\"",
+      "descripcion": "Tijeras acero inoxidable mango ergonómico",
+      "stock": 124,
+      "unidad": "pieza",
+      "precio": 35.00,
+      "imagen": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400",
+      "categoria": "Oficina",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Pegamento Líquido Resistol 250ml",
+      "descripcion": "Adhesivo blanco lavable no tóxico",
+      "stock": 142,
+      "unidad": "botella",
+      "precio": 48.00,
+      "imagen": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400",
+      "categoria": "Oficina",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Corrector Líquido Paper Mate 20ml",
+      "descripcion": "Corrector base agua secado rápido",
+      "stock": 156,
+      "unidad": "pieza",
+      "precio": 28.00,
+      "imagen": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400",
+      "categoria": "Oficina",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Resaltadores Colores Surtidos 5 Piezas",
+      "descripcion": "Marcatextos punta biselada colores pastel",
+      "stock": 135,
+      "unidad": "paquete",
+      "precio": 65.00,
+      "imagen": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400",
+      "categoria": "Oficina",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Pilas Alcalinas AA Duracell Paquete 8",
+      "descripcion": "Baterías alta duración 1.5V",
+      "stock": 168,
+      "unidad": "paquete",
+      "precio": 125.00,
+      "imagen": "https://images.unsplash.com/photo-1591217225646-55e0db480205?w=400",
+      "categoria": "Electrónica",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Pilas Alcalinas AAA Energizer 8 Piezas",
+      "descripcion": "Baterías larga vida 1.5V",
+      "stock": 145,
+      "unidad": "paquete",
+      "precio": 115.00,
+      "imagen": "https://images.unsplash.com/photo-1591217225646-55e0db480205?w=400",
+      "categoria": "Electrónica",
+      "empresa": "comereco"
+    },
+    {
+      "nombre": "Foco LED 12W Luz Blanca",
+      "descripcion": "Foco ahorrador base E27 1200 lúmenes",
+      "stock": 124,
+      "unidad": "pieza",
+      "precio": 65.00,
+      "imagen": "https://images.unsplash.com/photo-1524484485831-a92ffc0de03f?w=400",
+      "categoria": "Electrónica",
+      "empresa": "comereco"
+    }
+  ]
+}

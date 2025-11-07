@@ -98,7 +98,8 @@ export const getUserAccessContext = async ({ forceRefresh = false } = {}) => {
   }
 
   const role = profile.role_v2;
-  const isAdmin = role === 'admin';
+  const isDev = role === 'dev';
+  const isAdmin = isDev || role === 'admin';
   const isSupervisor = role === 'supervisor';
   const isUser = role === 'user';
 
@@ -106,6 +107,7 @@ export const getUserAccessContext = async ({ forceRefresh = false } = {}) => {
     userId,
     companyId: profile.company_id,
     role,
+    isDev,
     isAdmin,
     isSupervisor,
     isUser,

@@ -10,6 +10,7 @@ import { CartIcon } from '@/components/CartIcon';
 import GlobalSearch from '@/components/layout/GlobalSearch';
 import { cn } from '@/lib/utils';
 import ThemeToggle from '@/components/layout/ThemeToggle';
+import CompanySwitcher from '@/components/layout/CompanySwitcher';
 
 const MOBILE_BREAKPOINT = 1024;
 
@@ -75,6 +76,7 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
+                        <CompanySwitcher />
                         <CartIcon />
                         <NotificationCenter />
                         <DropdownMenu>
@@ -118,6 +120,7 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
                     <div className="flex-1">
                         <GlobalSearch variant="mobile" />
                     </div>
+                    <CompanySwitcher />
                     <NotificationCenter variant="icon" />
                     <CartIcon variant="compact" />
                     <ThemeToggle />

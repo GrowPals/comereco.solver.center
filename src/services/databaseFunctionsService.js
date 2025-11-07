@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/customSupabaseClient';
-import { getCachedSession, getCachedCompanyId } from '@/lib/supabaseHelpers';
+import { getCachedSession, ensureScopedCompanyId } from '@/lib/supabaseHelpers';
 import logger from '@/utils/logger';
 import { formatErrorMessage } from '@/utils/errorHandler';
 
@@ -155,9 +155,9 @@ export const clearUserCart = async () => {
  * @returns {Promise<Array>} Lista de categorías.
  */
 export const getUniqueProductCategories = async () => {
-  const { companyId, error: companyError } = await getCachedCompanyId();
+  const { companyId, error: companyError } = await ensureScopedCompanyId();
   if (companyError || !companyId) {
-    throw new Error("No se pudo obtener la información de la empresa.");
+    throw new Error(companyError?.message || "No se pudo seleccionar la empresa objetivo.");
   }
 
   // Optimizado: Usar el parámetro correcto del RPC y el helper cacheado
@@ -200,4 +200,3 @@ export const broadcastToCompany = async (eventName, payload) => {
     throw new Error(formatErrorMessage(error));
   }
 };
-

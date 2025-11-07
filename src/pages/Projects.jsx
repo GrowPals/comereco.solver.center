@@ -169,7 +169,7 @@ const ProjectFormModal = ({ project, isOpen, onClose, onSave, supervisors, isAdm
                     <SelectItem value={EMPTY_SUPERVISOR_VALUE}>Sin supervisor</SelectItem>
                     {supervisors?.filter(Boolean)?.map((s) => (
                       <SelectItem key={s.id} value={String(s.id)}>
-                        {s.full_name || 'Sin nombre'} ({s.role_v2 === 'admin' ? 'Admin' : 'Supervisor'})
+                        {s.full_name || 'Sin nombre'} ({s.role_v2 === 'dev' ? 'Developer' : s.role_v2 === 'admin' ? 'Admin' : 'Supervisor'})
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -361,7 +361,7 @@ const ProjectsPage = () => {
 
   const { data: projects, isLoading, isError } = useQuery({ queryKey: ['projects'], queryFn: getAllProjects });
   const { data: users } = useQuery({ queryKey: ['companyUsers'], queryFn: fetchUsersInCompany });
-  const supervisors = users?.filter(u => u.role_v2 === 'supervisor' || u.role_v2 === 'admin');
+  const supervisors = users?.filter(u => ['supervisor', 'admin', 'dev'].includes(u.role_v2));
 
   const mutationOptions = {
     onSuccess: () => {

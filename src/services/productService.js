@@ -1,6 +1,6 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
-import { getCachedSession, getCachedCompanyId } from '@/lib/supabaseHelpers';
+import { getCachedSession, ensureScopedCompanyId } from '@/lib/supabaseHelpers';
 import { formatErrorMessage } from '@/utils/errorHandler';
 import logger from '@/utils/logger';
 
@@ -89,9 +89,10 @@ export const fetchProductById = async (productId) => {
 };
 
 export const fetchProductCategories = async () => {
-    // Optimizado: Usar helper cacheado para obtener company_id
-    const { companyId, error: companyError } = await getCachedCompanyId();
-    if (companyError || !companyId) return [];
+    const { companyId, error: companyError } = await ensureScopedCompanyId();
+    if (companyError || !companyId) {
+        throw new Error(companyError?.message || 'Selecciona una empresa para ver categorías.');
+    }
     
     const { data, error } = await supabase.rpc('get_unique_product_categories', {
         company_id_param: companyId
@@ -156,10 +157,9 @@ export const createProduct = async (productData) => {
         throw new Error("El stock debe ser un número entero mayor o igual a 0.");
     }
 
-    // Optimizado: Usar helper cacheado para obtener company_id
-    const { companyId, error: companyError } = await getCachedCompanyId();
+    const { companyId, error: companyError } = await ensureScopedCompanyId();
     if (companyError || !companyId) {
-        throw new Error("No se pudo obtener la información de la empresa.");
+        throw new Error(companyError?.message || "Selecciona una empresa para crear productos.");
     }
     
     // Bind ID no se maneja en el MVP, se puede poner un placeholder
@@ -224,10 +224,16 @@ export const updateProduct = async (productData) => {
     if (cleanedData.price !== undefined) cleanedData.price = Number(cleanedData.price);
     if (cleanedData.stock !== undefined) cleanedData.stock = Math.floor(Number(cleanedData.stock));
     
+    const { companyId, error: companyError } = await ensureScopedCompanyId();
+    if (companyError || !companyId) {
+        throw new Error(companyError?.message || 'Selecciona una empresa para actualizar productos.');
+    }
+
     const { data, error } = await supabase
         .from('products')
         .update(cleanedData)
         .eq('id', id)
+        .eq('company_id', companyId)
         .select()
         .single();
         
