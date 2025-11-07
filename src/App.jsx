@@ -136,7 +136,9 @@ const AppLayout = () => {
   }, [isMobileNavOpen]);
 
   const pathsWithoutNav = ['/checkout', '/reset-password'];
+  const pathsWithoutBottomNav = ['/cart'];
   const showNav = !pathsWithoutNav.some(path => location.pathname.startsWith(path));
+  const showBottomNav = showNav && !pathsWithoutBottomNav.some(path => location.pathname.startsWith(path));
 
   return (
     <div className="min-h-screen bg-background transition-colors duration-200">
@@ -234,7 +236,7 @@ const AppLayout = () => {
         </main>
       </div>
 
-      {showNav && (
+      {showBottomNav && (
         <div className="lg:hidden">
           <BottomNav
             isMenuOpen={isMobileNavOpen}

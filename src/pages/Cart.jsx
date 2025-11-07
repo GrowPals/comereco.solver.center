@@ -31,67 +31,65 @@ const CartItemRow = memo(({ item, onDecrease, onIncrease, onRemove }) => {
   const subtotal = useMemo(() => itemPrice * itemQuantity, [itemPrice, itemQuantity]);
 
   return (
-    <div className="flex flex-col rounded-2xl border border-border bg-card p-4 shadow-sm transition-all duration-200 hover:border-primary-200 hover:shadow-md sm:flex-row sm:items-center sm:gap-6">
-      <div className="flex-shrink-0 overflow-hidden rounded-xl bg-muted">
+    <div className="flex items-start gap-4 rounded-2xl border border-border bg-card p-4 shadow-sm transition-all duration-200 hover:border-primary-200 hover:shadow-md">
+      <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-muted">
         <OptimizedImage
           src={item.image_url}
           alt={`Imagen de ${item.name || 'producto'}`}
           fallback="/placeholder.svg"
           loading="lazy"
-          className="h-24 w-24 object-contain p-2 sm:h-28 sm:w-28"
+          className="h-full w-full object-contain p-2"
         />
       </div>
 
-      <div className="mt-3 flex w-full flex-col gap-3 sm:mt-0 sm:flex-1">
-        <div>
-          <p className="line-clamp-2 text-base font-semibold text-foreground sm:text-lg">
-            {item.name || 'Producto sin nombre'}
-          </p>
-          {item.sku && (
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground/70 sm:text-sm">SKU: {item.sku}</p>
-          )}
-          <p className="mt-1 text-sm text-muted-foreground/80">
-            ${itemPrice.toFixed(2)} / {item.unit || 'unidad'}
-          </p>
+      <div className="flex flex-1 flex-col gap-3">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="line-clamp-2 text-base font-semibold text-foreground">
+              {item.name || 'Producto sin nombre'}
+            </p>
+            {item.sku && (
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground/70">
+                SKU: {item.sku}
+              </p>
+            )}
+            <p className="mt-1 text-sm text-muted-foreground/80">
+              ${itemPrice.toFixed(2)} / {item.unit || 'unidad'}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onRemove}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-red-200 text-red-600 transition-colors hover:bg-red-50 active:scale-95"
+            aria-label={`Eliminar ${item.name || 'producto'} del carrito`}
+          >
+            <Trash2 className="h-4 w-4" aria-hidden="true" />
+          </button>
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              size="icon"
+        <div className="flex items-end justify-between gap-3">
+          <div className="flex items-center gap-2 rounded-full border border-border/80 bg-muted/50 px-3 py-1.5 text-base font-semibold text-foreground">
+            <button
+              type="button"
               onClick={onDecrease}
-              className="h-10 w-10 rounded-full border-border text-muted-foreground transition-all duration-200 hover:border-red-200 hover:bg-red-50 hover:text-red-600 active:scale-95"
+              className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-red-600"
               aria-label={`Reducir cantidad de ${item.name || 'producto'}`}
             >
               {itemQuantity <= 1 ? <Trash2 className="h-4 w-4" aria-hidden="true" /> : <Minus className="h-4 w-4" aria-hidden="true" />}
-            </Button>
-            <span className="min-w-[3rem] rounded-full bg-muted px-4 py-2 text-center text-base font-semibold text-foreground">
-              {itemQuantity}
-            </span>
-            <Button
-              size="icon"
+            </button>
+            <span className="min-w-[2.5rem] text-center">{itemQuantity}</span>
+            <button
+              type="button"
               onClick={onIncrease}
-              className="h-10 w-10 rounded-full bg-primary-600 text-white transition-all duration-200 hover:bg-primary-700 active:scale-95"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-600 text-white transition-colors hover:bg-primary-700"
               aria-label={`Aumentar cantidad de ${item.name || 'producto'}`}
             >
               <Plus className="h-4 w-4" aria-hidden="true" />
-            </Button>
+            </button>
           </div>
-
-          <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end sm:justify-center sm:text-right">
-            <span className="text-sm text-muted-foreground/80">Subtotal</span>
-            <span className="text-lg font-bold text-foreground">${subtotal.toFixed(2)}</span>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onRemove}
-              className="flex items-center gap-1 text-sm text-red-600 hover:text-red-700"
-              aria-label={`Eliminar ${item.name || 'producto'} del carrito`}
-            >
-              <Trash2 className="h-4 w-4" aria-hidden="true" />
-              Quitar
-            </Button>
+          <div className="text-right">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/70">Subtotal</p>
+            <p className="text-xl font-bold text-foreground">${subtotal.toFixed(2)}</p>
           </div>
         </div>
       </div>
@@ -406,7 +404,7 @@ const CartPage = () => {
                       onClick={handleCheckout}
                       className="w-full rounded-xl bg-primary-600 text-white shadow-button hover:bg-primary-700 hover:shadow-button-hover"
                     >
-                      Finalizar compra
+                      Pedir
                     </Button>
                     <Button
                       variant="ghost"
@@ -425,32 +423,48 @@ const CartPage = () => {
 
       {items.length > 0 && (
         <div className="surface-sticky fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+5.5rem)] z-40 px-4 py-4 lg:hidden">
-          <div className="mx-auto flex w-full max-w-3xl flex-col gap-3">
-            <div className="flex items-center justify-between text-sm font-semibold text-foreground">
-              <span>Total</span>
-              <span className="text-lg">${total.toFixed(2)}</span>
+          <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+            <div className="space-y-1 text-sm text-muted-foreground">
+              <div className="flex items-center justify-between">
+                <span>Productos ({totalItems})</span>
+                <span className="font-semibold text-foreground">${subtotal.toFixed(2)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>IVA (16%)</span>
+                <span className="font-semibold text-foreground">${vat.toFixed(2)}</span>
+              </div>
+              <div className="flex items-center justify-between text-base font-bold text-foreground">
+                <span>Total</span>
+                <span>${total.toFixed(2)}</span>
+              </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <Button
-                variant="outline"
-                onClick={() => setTemplateModalOpen(true)}
-                className="rounded-xl border-border text-foreground/90 hover:border-primary-200 hover:text-primary-600"
+
+            <div className="flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => setClearDialogOpen(true)}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-red-200 bg-red-50 text-red-600 shadow-sm transition-colors hover:bg-red-100"
+                aria-label="Vaciar carrito"
               >
-                Plantilla
-              </Button>
-              <Button
-                onClick={handleCheckout}
-                className="rounded-xl bg-primary-600 text-white shadow-button hover:bg-primary-700 hover:shadow-button-hover"
-              >
-                Comprar
-              </Button>
+                <Trash2 className="h-4 w-4" aria-hidden="true" />
+                <span className="sr-only">Vaciar carrito</span>
+              </button>
             </div>
+
             <Button
-              variant="ghost"
-              onClick={() => setClearDialogOpen(true)}
-              className="rounded-xl text-sm text-red-600 hover:bg-red-50"
+              variant="outline"
+              onClick={() => setTemplateModalOpen(true)}
+              className="w-full rounded-xl border-border text-foreground/90 hover:border-primary-200 hover:text-primary-600"
             >
-              Vaciar carrito
+              Guardar como plantilla
+            </Button>
+
+            <Button
+              onClick={handleCheckout}
+              size="lg"
+              className="w-full rounded-2xl bg-primary-600 py-6 text-lg font-semibold text-white shadow-button hover:bg-primary-700 hover:shadow-button-hover"
+            >
+              Pedir ahora
             </Button>
           </div>
         </div>
