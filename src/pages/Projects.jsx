@@ -433,13 +433,7 @@ const ProjectsPage = () => {
             <EmptyState
               icon={FolderKanban}
               title="No hay proyectos"
-              description={canManageProjects ? "Crea tu primer proyecto para empezar." : "No estás asignado a ningún proyecto."}
-              actionButton={canManageProjects && (
-                <Button size="lg" onClick={() => setFormModal({ isOpen: true, project: null })}>
-                  <PlusCircle className="mr-2 h-5 w-5" />
-                  Crear Proyecto
-                </Button>
-              )}
+              description={canManageProjects ? "Los proyectos te ayudan a organizar tus requisiciones por departamento, cliente o categoría. Crea uno desde el botón superior." : "No estás asignado a ningún proyecto."}
             />
           )}
         </div>
