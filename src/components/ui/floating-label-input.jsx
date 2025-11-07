@@ -43,17 +43,6 @@ const FloatingLabelInput = React.forwardRef(({
     if (onBlur) onBlur(e);
   };
 
-  // Handlers que respetan props
-  const handleFocus = (e) => {
-    setIsFocused(true);
-    if (onFocus) onFocus(e);
-  };
-
-  const handleBlur = (e) => {
-    setIsFocused(false);
-    if (onBlur) onBlur(e);
-  };
-
   return (
     <div className="relative w-full group">
       {/* Input */}
