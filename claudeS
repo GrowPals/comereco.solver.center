@@ -1,0 +1,37 @@
+#!/bin/bash
+set -euo pipefail
+
+# Lightweight wrapper to run the Claude sync helper with a short command.
+# Default behaviour (no args):
+#   1. Ejecuta la rutina "morning" del script oficial.
+#   2. Fusiona automáticamente la rama integrate-claude-main en dev.
+#   3. Regresa a tu rama original y la actualiza con los cambios de dev.
+# Con argumentos, simplemente reenvía el comando al script original.
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CURRENT_BRANCH="$(git branch --show-current 2>/dev/null || true)"
+AUTO_SYNC=false
+
+if [ $# -eq 0 ]; then
+  set -- morning
+  AUTO_SYNC=true
+fi
+
+"${SCRIPT_DIR}/scripts/sync-with-claude.sh" "$@"
+
+if [ "$AUTO_SYNC" = true ]; then
+  CLAUDE_REMOTE="origin/integrate-claude-main"
+  TARGET_BRANCH="dev"
+
+  echo -e "\n🔁 Integrando cambios de Claude (${CLAUDE_REMOTE}) en ${TARGET_BRANCH}..."
+  git checkout "$TARGET_BRANCH"
+  git merge "$CLAUDE_REMOTE"
+
+  if [ -n "$CURRENT_BRANCH" ] && [ "$CURRENT_BRANCH" != "$TARGET_BRANCH" ]; then
+    echo -e "\n↩️  Regresando a $CURRENT_BRANCH y fusionando ${TARGET_BRANCH}..."
+    git checkout "$CURRENT_BRANCH"
+    git merge "$TARGET_BRANCH"
+  fi
+
+  echo -e "\n✅ Sincronización completa: los cambios de Claude ya están en ${TARGET_BRANCH}${CURRENT_BRANCH:+ y }${CURRENT_BRANCH:+$CURRENT_BRANCH}."
+fi
