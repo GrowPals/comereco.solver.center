@@ -99,7 +99,7 @@ const RequisitionCard = memo(({ requisition }) => {
     >
       <Card
         interactive
-        className="w-full group relative overflow-hidden cursor-pointer border-2 shadow-lg transition-all duration-300 hover:shadow-xl"
+        className="w-full group relative overflow-hidden cursor-pointer border-2 shadow-soft-md transition-all duration-300 hover:shadow-soft-lg"
         onClick={handleCardClick}
         onKeyDown={handleKeyDown}
         tabIndex={0}

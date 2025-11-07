@@ -204,7 +204,7 @@ export default function RelatedProducts({ products, currentProductId }) {
               transition={{ duration: 0.2 }}
             >
               <Card
-                className="h-full p-4 hover:shadow-lg hover:shadow-primary-500/10 dark:hover:shadow-primary-500/20 transition-all cursor-pointer group border-border hover:border-primary-300 dark:hover:border-primary-500/40"
+                className="h-full p-4 hover:shadow-soft-md hover:shadow-primary-500/10 dark:hover:shadow-primary-500/20 transition-all cursor-pointer group border-border hover:border-primary-300 dark:hover:border-primary-500/40"
                 onClick={() => handleProductClick(product.id)}
               >
                 <div className="aspect-[4/3] mb-4 overflow-hidden rounded-lg bg-muted/70">

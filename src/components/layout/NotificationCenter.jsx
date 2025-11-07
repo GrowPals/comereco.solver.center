@@ -206,7 +206,7 @@ const NotificationCenter = ({ variant = 'popover' }) => {
                     )}
                 </Button>
             </PopoverTrigger>
-            <PopoverContent align="end" className="w-[380px] p-0 shadow-2xl">
+            <PopoverContent align="end" className="w-[380px] p-0 shadow-soft-xl">
                 <div className="flex items-center justify-between border-b border-border bg-[var(--surface-overlay)] p-4">
                     <div className="flex items-center gap-2">
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-primary">

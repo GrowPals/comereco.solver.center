@@ -532,7 +532,7 @@ const Users = () => {
                     </div>
 
                     {/* Users Table */}
-                    <div className="hidden overflow-hidden rounded-2xl border-2 border-border bg-card shadow-lg dark:border-border dark:bg-card md:block">
+                    <div className="hidden overflow-hidden rounded-2xl border-2 border-border bg-card shadow-soft-md dark:border-border dark:bg-card md:block">
                         <Table>
                         <TableHeader>
                             <TableRow>
@@ -636,7 +636,7 @@ const Users = () => {
             </PageContainer>
 
             <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-                <DialogContent className="sm:max-w-lg border border-border bg-card shadow-2xl dark:border-border dark:bg-card">
+                <DialogContent className="sm:max-w-lg border border-border bg-card shadow-soft-xl dark:border-border dark:bg-card">
                     <DialogHeader>
                         <DialogTitle className="text-2xl font-bold">
                             {editingUser ? 'Editar Usuario' : 'Invitar Nuevo Usuario'}

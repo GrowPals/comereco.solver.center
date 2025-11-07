@@ -99,7 +99,7 @@ const RequisitionsPage = () => {
                       <Button
                         onClick={() => navigate('/requisitions/new')}
                         size="lg"
-                        className="w-full rounded-xl shadow-lg sm:w-auto"
+                        className="w-full rounded-xl shadow-soft-md sm:w-auto"
                       >
                         <Plus className="mr-2 h-5 w-5" />
                         Nueva Requisición
@@ -211,7 +211,7 @@ const RequisitionsPage = () => {
             </>
           ) : (
             <div className="flex items-center justify-center min-h-[500px]">
-              <div className="surface-card mx-auto max-w-lg p-16 shadow-xl">
+              <div className="surface-card mx-auto max-w-lg p-16 shadow-soft-lg">
                 <EmptyState
                   icon={FileText}
                   title={hasFilters ? "No se encontraron requisiciones" : "No tienes requisiciones"}

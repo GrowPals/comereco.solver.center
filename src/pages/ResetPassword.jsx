@@ -88,7 +88,7 @@ const ResetPassword = () => {
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="w-full max-w-md rounded-3xl border-2 border-border bg-background/90 p-10 text-center shadow-2xl backdrop-blur-sm dark:border-border dark:bg-card/85"
+                        className="w-full max-w-md rounded-3xl border-2 border-border bg-background/90 p-10 text-center shadow-soft-xl backdrop-blur-sm dark:border-border dark:bg-card/85"
                     >
                         <CheckCircle2 className="mx-auto mb-6 h-20 w-20 text-green-500" />
                         <h2 className="mb-3 text-3xl font-bold text-foreground">
@@ -134,7 +134,7 @@ const ResetPassword = () => {
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
                         className={cn(
-                            "rounded-3xl border-2 border-border bg-background/90 p-5 shadow-2xl backdrop-blur-sm sm:p-8 md:p-10 dark:border-border dark:bg-card/85",
+                            "rounded-3xl border-2 border-border bg-background/90 p-5 shadow-soft-xl backdrop-blur-sm sm:p-8 md:p-10 dark:border-border dark:bg-card/85",
                             isShaking && 'animate-shake'
                         )}
                     >
@@ -237,7 +237,7 @@ const ResetPassword = () => {
                             <RippleButton
                                 type="submit"
                                 size="lg"
-                                className="w-full shadow-lg hover:shadow-xl"
+                                className="w-full shadow-soft-md hover:shadow-soft-lg"
                                 isLoading={isLoading}
                                 disabled={isLoading}
                             >

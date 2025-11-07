@@ -359,7 +359,7 @@ export default function ProductDetail() {
             transition={{ duration: 0.3 }}
             className="relative"
           >
-            <div className="aspect-[16/9] lg:aspect-[4/3] rounded-2xl overflow-hidden bg-card shadow-lg">
+            <div className="aspect-[16/9] lg:aspect-[4/3] rounded-2xl overflow-hidden bg-card shadow-soft-md">
               <ProductImage
                 src={product.image_url}
                 alt={productName}

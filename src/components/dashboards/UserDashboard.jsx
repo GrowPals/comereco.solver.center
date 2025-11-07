@@ -51,7 +51,7 @@ const UserDashboard = ({ user }) => {
                         Gestiona tus requisiciones y revisa tu actividad reciente
                     </p>
                 </div>
-                <Button size="lg" className="whitespace-nowrap shadow-lg" onClick={handleNavigateToCatalog}>
+                <Button size="lg" className="whitespace-nowrap shadow-soft-md" onClick={handleNavigateToCatalog}>
                     <ShoppingCart className="mr-2 h-5 w-5" aria-hidden="true" /> Nueva Requisición
                 </Button>
             </div>

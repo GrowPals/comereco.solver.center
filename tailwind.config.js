@@ -146,6 +146,16 @@ export default {
       },
 
       boxShadow: {
+        // Sombras sutiles para modo claro
+        'soft-xs': '0 1px 2px rgba(0, 0, 0, 0.04)',
+        'soft-sm': '0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.05)',
+        'soft-md': '0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04)',
+        'soft-lg': '0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04)',
+
+        // Sombras para modo oscuro (muy sutiles)
+        'dark-sm': '0 2px 8px rgba(0, 0, 0, 0.4)',
+
+        // Mantener compatibilidad con sistema anterior
         'xs': '0 1px 2px rgba(0, 0, 0, 0.05)',
         'sm': '0 1px 3px rgba(0, 0, 0, 0.04)',
         'md': '0 2px 8px rgba(0, 0, 0, 0.06)',
@@ -154,6 +164,7 @@ export default {
         '2xl': '0 16px 48px rgba(0, 0, 0, 0.16)',
         'card': '0 1px 3px rgba(0, 0, 0, 0.1)',
         'card-hover': '0 4px 12px rgba(0, 0, 0, 0.15)',
+        'elevated': '0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04)',
       },
 
       spacing: {

@@ -84,7 +84,7 @@ const HelpPage = () => {
 
                     {/* Sección de Contacto Rápido */}
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                        <Card className="border border-border transition-shadow duration-300 hover:shadow-lg dark:border-border">
+                        <Card className="border border-border transition-shadow duration-300 hover:shadow-soft-md dark:border-border">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Mail className="h-5 w-5 text-primary-500" />
@@ -106,7 +106,7 @@ const HelpPage = () => {
                             </CardContent>
                         </Card>
 
-                        <Card className="border border-border transition-shadow duration-300 hover:shadow-lg dark:border-border">
+                        <Card className="border border-border transition-shadow duration-300 hover:shadow-soft-md dark:border-border">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <MessageCircle className="h-5 w-5 text-emerald-500" />
@@ -161,7 +161,7 @@ const HelpPage = () => {
                     </Card>
 
                     {/* Info adicional */}
-                    <div className="rounded-2xl border border-border bg-muted/40 p-6 shadow-lg transition-colors dark:border-border dark:bg-card/60">
+                    <div className="rounded-2xl border border-border bg-muted/40 p-6 shadow-soft-md transition-colors dark:border-border dark:bg-card/60">
                         <div className="flex items-start gap-4">
                             <div className="icon-badge flex h-10 w-10 flex-shrink-0 items-center justify-center">
                                 <HelpCircle className="h-5 w-5 text-primary-600 dark:text-primary-400" aria-hidden="true" />
