@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { Check, X, FileText, Clock, User, Calendar, DollarSign } from 'lucide-react';
+import { Check, X, FileText, Clock, User, Calendar, DollarSign, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -17,7 +17,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/useToast';
 import { fetchPendingApprovals, updateRequisitionStatus } from '@/services/requisitionService';
 import PageLoader from '@/components/PageLoader';
-import EmptyState from '@/components/EmptyState';
 import PageContainer from '@/components/layout/PageContainer';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -132,12 +131,23 @@ const Approvals = () => {
 
                 {requisitions?.length === 0 ? (
                     <div className="mx-auto w-full max-w-7xl">
-                        <div className="rounded-2xl border border-border bg-card p-16 shadow-lg dark:border-border dark:bg-card">
-                            <EmptyState
-                                icon={<Check className="h-16 w-16 text-green-500" />}
-                                title="¡Todo al día!"
-                                description="No tienes requisiciones pendientes de aprobación en este momento."
-                            />
+                        <div className="rounded-2xl border border-border bg-card shadow-lg dark:border-border dark:bg-card">
+                            <div className="flex flex-col items-center justify-center min-h-[360px] md:min-h-[480px] max-w-md mx-auto px-6 text-center">
+                                {/* Icon with consistent circular background */}
+                                <div className="w-20 h-20 rounded-full bg-green-50 dark:bg-neutral-800 flex items-center justify-center mb-6">
+                                    <CheckCircle className="w-12 h-12 text-green-600 dark:text-green-400 stroke-[1.5]" />
+                                </div>
+
+                                {/* Title */}
+                                <h3 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-3">
+                                    No hay aprobaciones pendientes
+                                </h3>
+
+                                {/* Description */}
+                                <p className="text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+                                    Cuando haya requisiciones esperando tu aprobación, aparecerán aquí para que puedas revisarlas
+                                </p>
+                            </div>
                         </div>
                     </div>
                 ) : (
