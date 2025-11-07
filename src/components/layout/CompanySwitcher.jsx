@@ -3,6 +3,7 @@ import { Building } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useCompanyScope } from '@/context/CompanyScopeContext';
 import { useToast } from '@/components/ui/useToast';
 import { cn } from '@/lib/utils';
@@ -96,22 +97,31 @@ const CompanySwitcher = ({ variant = 'default' }) => {
   if (variant === 'icon') {
     return (
       <>
-        <Button
-          onClick={() => setIsDialogOpen(true)}
-          className={cn(
-            'relative h-11 w-11 overflow-visible rounded-full border border-border bg-[var(--surface-contrast)] shadow-none hover:bg-[var(--surface-muted)]',
-            'transition-all duration-300',
-            isChanging && 'ring-2 ring-primary-400/50 ring-offset-2 ring-offset-background'
-          )}
-          aria-label="Selector de empresa"
-        >
-          <Building
-            className={cn(
-              'h-5 w-5 text-primary-600 transition-transform duration-300',
-              isChanging && 'scale-110'
-            )}
-          />
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={() => setIsDialogOpen(true)}
+                className={cn(
+                  'relative h-11 w-11 overflow-visible rounded-full border border-border bg-[var(--surface-contrast)] shadow-none hover:bg-[var(--surface-muted)]',
+                  'transition-all duration-300',
+                  isChanging && 'ring-2 ring-primary-400/50 ring-offset-2 ring-offset-background'
+                )}
+                aria-label="Selector de empresa"
+              >
+                <Building
+                  className={cn(
+                    'h-5 w-5 text-primary-600 transition-transform duration-300',
+                    isChanging && 'scale-110'
+                  )}
+                />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Cambiar empresa</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent className="sm:max-w-md">

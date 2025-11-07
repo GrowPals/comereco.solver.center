@@ -46,6 +46,8 @@ import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
 import { useCompanyScope } from '@/context/CompanyScopeContext';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { FloatingLabelInput } from '@/components/ui/floating-label-input';
 
 
 // Mapeo de roles según app_role_v2 enum (admin | supervisor | user | dev)
@@ -53,22 +55,26 @@ const roleMapping = {
     user: {
         label: 'Usuario',
         icon: UserIcon,
-        colors: 'text-slate-700 border-slate-200 bg-slate-50 dark:text-slate-200 dark:border-slate-700 dark:bg-slate-900/50'
+        colors: 'text-slate-700 border-slate-200 bg-slate-50 dark:text-slate-200 dark:border-slate-700 dark:bg-slate-900/50',
+        description: 'Puede crear requisiciones y ver catálogo de productos'
     },
     supervisor: {
         label: 'Supervisor',
         icon: Briefcase,
-        colors: 'text-blue-700 border-blue-200 bg-blue-50 dark:text-blue-300 dark:border-blue-700 dark:bg-blue-950/50'
+        colors: 'text-blue-700 border-blue-200 bg-blue-50 dark:text-blue-300 dark:border-blue-700 dark:bg-blue-950/50',
+        description: 'Puede aprobar requisiciones y gestionar proyectos de su equipo'
     },
     admin: {
         label: 'Admin',
         icon: Shield,
-        colors: 'text-purple-700 border-purple-200 bg-purple-50 dark:text-purple-300 dark:border-purple-700 dark:bg-purple-950/50'
+        colors: 'text-purple-700 border-purple-200 bg-purple-50 dark:text-purple-300 dark:border-purple-700 dark:bg-purple-950/50',
+        description: 'Acceso completo: gestión de usuarios, productos y toda la plataforma'
     },
     dev: {
         label: 'Developer',
         icon: Code,
-        colors: 'text-emerald-700 border-emerald-200 bg-emerald-50 dark:text-emerald-300 dark:border-emerald-700 dark:bg-emerald-950/50'
+        colors: 'text-emerald-700 border-emerald-200 bg-emerald-50 dark:text-emerald-300 dark:border-emerald-700 dark:bg-emerald-950/50',
+        description: 'Acceso de desarrollador con permisos especiales de plataforma'
     },
 };
 const UserForm = ({ user, onSave, onCancel, isLoading, approvalBypassSupported, roleOptions }) => {
@@ -123,10 +129,11 @@ const UserForm = ({ user, onSave, onCancel, isLoading, approvalBypassSupported, 
             )}
              {user && (
                  <div>
-                    <Label htmlFor="fullName">Nombre Completo</Label>
-                    <Input
+                    <FloatingLabelInput
                         id="fullName"
+                        label="Nombre Completo"
                         autoComplete="name"
+                        error={errors.full_name?.message}
                         {...register('full_name', {
                             required: 'El nombre completo es requerido',
                             minLength: {
@@ -135,7 +142,6 @@ const UserForm = ({ user, onSave, onCancel, isLoading, approvalBypassSupported, 
                             }
                         })}
                     />
-                    {errors.full_name && <p className="text-destructive text-sm mt-1">{errors.full_name.message}</p>}
                 </div>
             )}
             <div>
@@ -373,7 +379,7 @@ const Users = () => {
     const toggleStatusDialogProps = getToggleStatusMessage();
 
     return (
-        <>
+        <TooltipProvider>
             <Helmet>
                 <title>Gestión de Usuarios - ComerECO</title>
             </Helmet>
@@ -491,12 +497,19 @@ const Users = () => {
                                     </div>
                                 </div>
                                 <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-                                    <Badge variant="outline" className={`font-semibold ${roleMapping[user.role_v2]?.colors || ''}`}>
-                                        {roleMapping[user.role_v2]?.icon && (
-                                            React.createElement(roleMapping[user.role_v2].icon, { className: 'mr-1 h-4 w-4' })
-                                        )}
-                                        {roleMapping[user.role_v2]?.label || user.role_v2}
-                                    </Badge>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Badge variant="outline" className={`font-semibold cursor-help ${roleMapping[user.role_v2]?.colors || ''}`}>
+                                                {roleMapping[user.role_v2]?.icon && (
+                                                    React.createElement(roleMapping[user.role_v2].icon, { className: 'mr-1 h-4 w-4' })
+                                                )}
+                                                {roleMapping[user.role_v2]?.label || user.role_v2}
+                                            </Badge>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>{roleMapping[user.role_v2]?.description || 'Rol de usuario'}</p>
+                                        </TooltipContent>
+                                    </Tooltip>
                                     {user.can_submit_without_approval && (
                                         <Badge variant="outline" className="font-semibold text-amber-700 border-amber-200 bg-amber-50 dark:text-amber-300 dark:border-amber-700 dark:bg-amber-950/50" title="Puede enviar requisiciones sin aprobación previa">
                                             <Zap className="mr-1 h-3 w-3" />
@@ -551,12 +564,19 @@ const Users = () => {
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex flex-col gap-2">
-                                            <Badge variant="outline" className={`font-semibold shadow-sm ${roleMapping[user.role_v2]?.colors || ''}`}>
-                                                {roleMapping[user.role_v2]?.icon && (
-                                                    React.createElement(roleMapping[user.role_v2].icon, { className: "w-4 h-4 mr-2" })
-                                                )}
-                                                {roleMapping[user.role_v2]?.label || user.role_v2}
-                                            </Badge>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Badge variant="outline" className={`font-semibold shadow-sm cursor-help ${roleMapping[user.role_v2]?.colors || ''}`}>
+                                                        {roleMapping[user.role_v2]?.icon && (
+                                                            React.createElement(roleMapping[user.role_v2].icon, { className: "w-4 h-4 mr-2" })
+                                                        )}
+                                                        {roleMapping[user.role_v2]?.label || user.role_v2}
+                                                    </Badge>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>{roleMapping[user.role_v2]?.description || 'Rol de usuario'}</p>
+                                                </TooltipContent>
+                                            </Tooltip>
                                             {user.can_submit_without_approval && (
                                                 <Badge variant="outline" className="font-semibold text-amber-700 border-amber-200 bg-amber-50 dark:text-amber-300 dark:border-amber-700 dark:bg-amber-950/50 w-fit" title="Puede enviar requisiciones sin aprobación previa">
                                                     <Zap className="mr-1 h-3 w-3" />
@@ -635,7 +655,7 @@ const Users = () => {
                     />
                 </DialogContent>
             </Dialog>
-        </>
+        </TooltipProvider>
     );
 };
 

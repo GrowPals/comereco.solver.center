@@ -20,6 +20,8 @@ const FloatingLabelInput = React.forwardRef(({
   label,
   id,
   value,
+  onFocus,
+  onBlur,
   ...props
 }, ref) => {
   const [isFocused, setIsFocused] = React.useState(false);
@@ -28,6 +30,17 @@ const FloatingLabelInput = React.forwardRef(({
 
   // Generar ID único si no se proporciona
   const inputId = id || React.useId();
+
+  // Handlers que respetan props
+  const handleFocus = (e) => {
+    setIsFocused(true);
+    if (onFocus) onFocus(e);
+  };
+
+  const handleBlur = (e) => {
+    setIsFocused(false);
+    if (onBlur) onBlur(e);
+  };
 
   return (
     <div className="relative w-full group">
@@ -62,8 +75,8 @@ const FloatingLabelInput = React.forwardRef(({
           )}
           ref={ref}
           value={value}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           placeholder={label || ""}
           aria-label={label}
           aria-invalid={error ? "true" : "false"}
