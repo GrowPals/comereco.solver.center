@@ -37,20 +37,43 @@ import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import TemplateItemsEditor from '@/components/TemplateItemsEditor';
 import PageContainer from '@/components/layout/PageContainer';
+import { cn } from '@/lib/utils';
 
 const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
+  const isFrequentlyUsed = template.usage_count >= 3;
+  const isRecentlyUsed = template.last_used_at && new Date(template.last_used_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
   return (
-    <div className="surface-card group relative flex flex-col justify-between overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-      {/* Accent bar on hover */}
-      <div className="absolute inset-x-0 top-0 h-1 scale-x-0 bg-gradient-primary transition-transform duration-300 group-hover:scale-x-100" />
+    <div className={cn(
+      "surface-card group relative flex flex-col justify-between overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl",
+      isFrequentlyUsed && "ring-2 ring-primary-500/30 dark:ring-primary-400/40"
+    )}>
+      {/* Accent bar on hover - changes color based on usage */}
+      <div className={cn(
+        "absolute inset-x-0 top-0 h-1 scale-x-0 transition-transform duration-300 group-hover:scale-x-100",
+        isFrequentlyUsed ? "bg-gradient-primary" : "bg-gradient-to-r from-muted-foreground/50 to-muted-foreground/30"
+      )} />
 
       <div>
         <div className="mb-3 flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div className="icon-badge flex h-12 w-12 items-center justify-center">
-              <LayoutTemplate className="h-6 w-6" aria-hidden="true" />
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-3">
+              <div className={cn(
+                "icon-badge flex h-12 w-12 items-center justify-center",
+                isFrequentlyUsed && "ring-2 ring-primary-500/50 dark:ring-primary-400/60"
+              )}>
+                <LayoutTemplate className="h-6 w-6" aria-hidden="true" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-foreground">{template.name}</h3>
+                {isFrequentlyUsed && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-primary-100 px-2 py-0.5 text-xs font-semibold text-primary-700 dark:bg-primary-500/20 dark:text-primary-300">
+                    <Zap className="h-3 w-3" />
+                    Frecuente
+                  </span>
+                )}
+              </div>
             </div>
-            <h3 className="text-xl font-bold text-foreground">{template.name}</h3>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

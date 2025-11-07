@@ -20,6 +20,7 @@ import PageContainer from '@/components/layout/PageContainer';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { createTemplate } from '@/services/templateService';
+import { cn } from '@/lib/utils';
 
 const CheckoutPage = () => {
     const { items, subtotal, total, clearCart } = useCart();
@@ -154,14 +155,19 @@ const CheckoutPage = () => {
                             </div>
                             <div className="space-y-4 rounded-2xl border border-border bg-card p-6 shadow-md dark:border-border dark:bg-card">
                                 <div>
-                                    <Label htmlFor="projectId" className={errors.projectId ? 'text-destructive' : ''}>Proyecto *</Label>
+                                    <Label htmlFor="projectId" className={errors.projectId ? 'text-destructive font-semibold' : ''}>Proyecto *</Label>
                                     <Controller
                                         name="projectId"
                                         control={control}
                                         rules={{ required: 'Debes seleccionar un proyecto' }}
                                         render={({ field }) => (
                                             <Select onValueChange={field.onChange} value={field.value}>
-                                                <SelectTrigger id="projectId" className={errors.projectId ? 'border-destructive' : ''}>
+                                                <SelectTrigger
+                                                    id="projectId"
+                                                    className={cn(
+                                                        errors.projectId && 'border-2 border-destructive bg-destructive/5 focus:ring-destructive dark:bg-destructive/10'
+                                                    )}
+                                                >
                                                     <SelectValue placeholder="Selecciona un proyecto" />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -174,7 +180,12 @@ const CheckoutPage = () => {
                                             </Select>
                                         )}
                                     />
-                                    {errors.projectId && <p className="mt-1 text-sm text-destructive flex items-center gap-1"><AlertTriangle size={14} />{errors.projectId.message}</p>}
+                                    {errors.projectId && (
+                                        <div className="mt-2 flex items-start gap-2 rounded-lg bg-destructive/10 p-2 text-sm text-destructive dark:bg-destructive/20">
+                                            <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0" />
+                                            <span className="font-medium">{errors.projectId.message}</span>
+                                        </div>
+                                    )}
                                 </div>
                                 <div>
                                     <Label htmlFor="comments">Comentarios (Opcional)</Label>
