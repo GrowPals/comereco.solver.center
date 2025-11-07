@@ -214,7 +214,7 @@ const CheckoutPage = () => {
                         </div>
                         <div className="surface-overlay max-h-96 space-y-3 overflow-y-auto p-5">
                             {items.map(item => (
-                                <div key={item.id} className="flex items-center gap-4 rounded-xl border border-border bg-muted/60 p-3 transition-colors hover:bg-muted/80 dark:border-border dark:bg-card/60 dark:hover:bg-muted/40/70">
+                                <div key={item.id} className="flex items-center gap-4 rounded-xl border border-border bg-muted/85 p-3 transition-colors hover:bg-muted/90 dark:border-border dark:bg-card/85 dark:hover:bg-muted/70">
                                     <img className="h-16 w-16 rounded-lg border-2 border-white object-cover shadow-sm dark:border-border" alt={item.name} src={item.image_url || '/placeholder.png'} />
                                     <div className="flex-grow">
                                         <p className="line-clamp-1 font-bold text-foreground">{item.name}</p>

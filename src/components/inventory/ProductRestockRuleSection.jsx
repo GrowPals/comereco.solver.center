@@ -12,6 +12,7 @@ import { useUserPermissions } from '@/hooks/useUserPermissions';
 import { useToast } from '@/components/ui/useToast';
 import { getAllProjects } from '@/services/projectService';
 import { cn } from '@/lib/utils';
+import { formatNumber } from '@/lib/formatters';
 import {
   Select,
   SelectContent,
@@ -81,8 +82,6 @@ export const ProductRestockRuleSection = ({ product, stock }) => {
     });
   }, [rule?.updated_at]);
 
-  const numberFormatter = useMemo(() => new Intl.NumberFormat('es-MX'), []);
-
   const metrics = useMemo(() => {
     if (!rule) return [];
 
@@ -93,24 +92,24 @@ export const ProductRestockRuleSection = ({ product, stock }) => {
       },
       {
         label: 'Stock mínimo',
-        value: `${numberFormatter.format(rule.min_stock ?? 0)} u`
+        value: `${formatNumber(rule.min_stock ?? 0)} u`
       },
       {
         label: 'Cantidad a solicitar',
-        value: `${numberFormatter.format(rule.reorder_quantity ?? 0)} u`
+        value: `${formatNumber(rule.reorder_quantity ?? 0)} u`
       }
     ];
 
     if (Number.isFinite(stock)) {
       items.push({
         label: 'Stock actual',
-        value: `${numberFormatter.format(stock)} u`,
+        value: `${formatNumber(stock)} u`,
         tone: isBelowMinimum ? 'warning' : 'default'
       });
     }
 
     return items;
-  }, [isBelowMinimum, numberFormatter, rule, stock]);
+  }, [isBelowMinimum, rule, stock]);
 
   const handleSave = async (values) => {
     try {
@@ -237,7 +236,7 @@ export const ProductRestockRuleSection = ({ product, stock }) => {
             {isBelowMinimum && (
               <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50/90 p-4 text-sm text-amber-700 dark:border-amber-500/40 dark:bg-amber-500/15 dark:text-amber-200">
                 <AlertCircle className="mt-0.5 h-5 w-5" />
-                <p>El stock actual ({Number.isFinite(stock) ? numberFormatter.format(stock) : 0} u) está en o por debajo del mínimo configurado.</p>
+                <p>El stock actual ({Number.isFinite(stock) ? formatNumber(stock) : 0} u) está en o por debajo del mínimo configurado.</p>
               </div>
             )}
 

@@ -32,7 +32,7 @@ const CartItemRow = memo(({ item, onDecrease, onIncrease, onRemove }) => {
 
   return (
     <div className="surface-card grid grid-cols-[auto,1fr,auto] items-start gap-4 rounded-2xl border border-border p-4 shadow-sm transition-all duration-200 hover:border-primary-200 hover:shadow-md">
-      <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-muted/60">
+      <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-muted/85">
         <OptimizedImage
           src={item.image_url}
           alt={`Imagen de ${item.name || 'producto'}`}
@@ -56,7 +56,7 @@ const CartItemRow = memo(({ item, onDecrease, onIncrease, onRemove }) => {
             ${itemPrice.toFixed(2)} / {item.unit || 'unidad'}
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-full border border-border/70 bg-card/70 px-2 py-1 text-base font-semibold text-foreground">
+        <div className="flex items-center gap-2 rounded-full border border-border/70 bg-card/85 px-2 py-1 text-base font-semibold text-foreground">
           <button
             type="button"
             onClick={onDecrease}
@@ -342,7 +342,7 @@ const CartPage = () => {
             </header>
 
             {items.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-border bg-card/70 px-8 py-16 text-center shadow-sm sm:px-16">
+              <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-border bg-card/85 px-8 py-16 text-center shadow-sm sm:px-16">
                 <div className="flex h-24 w-24 items-center justify-center rounded-full bg-muted text-muted-foreground/70">
                   <Package className="h-12 w-12" aria-hidden="true" />
                 </div>

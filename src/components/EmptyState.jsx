@@ -29,7 +29,7 @@ const EmptyState = ({ icon, title, description, buttonText, onButtonClick, actio
           {iconElement}
         </div>
       </div>
-      <h2 className="mb-3 text-3xl font-bold text-foreground">{title}</h2>
+      <h2 className="mb-3 text-3xl font-bold text-foreground" role="heading" aria-level="2">{title}</h2>
       <p className="mx-auto max-w-md text-base leading-relaxed text-muted-foreground">{displayDescription}</p>
       {actionButton && (
         <div className="mt-8">

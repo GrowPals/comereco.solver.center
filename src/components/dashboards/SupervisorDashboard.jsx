@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getDashboardStats, getSupervisorProjectsActivity } from '@/services/dashboardService';
 import StatCard from './StatCard';
@@ -11,16 +11,20 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
-const SupervisorDashboard = ({ user }) => {
+const SupervisorDashboard = memo(({ user }) => {
     const navigate = useNavigate();
     const { data: stats, isLoading: isLoadingStats } = useQuery({
         queryKey: ['dashboardStats', user.id],
         queryFn: getDashboardStats,
+        staleTime: 1000 * 60 * 5, // 5 minutos
+        gcTime: 1000 * 60 * 30, // 30 minutos
     });
-    
+
     const { data: projects, isLoading: isLoadingProjects } = useQuery({
         queryKey: ['supervisorProjectsActivity'],
         queryFn: getSupervisorProjectsActivity,
+        staleTime: 1000 * 60 * 5, // 5 minutos
+        gcTime: 1000 * 60 * 30, // 30 minutos
     });
 
     const formatCurrency = (value) => value ? `$${Number(value).toFixed(2)}` : '$0.00';
@@ -86,6 +90,6 @@ const SupervisorDashboard = ({ user }) => {
             </div>
         </div>
     );
-};
+});
 
 export default SupervisorDashboard;

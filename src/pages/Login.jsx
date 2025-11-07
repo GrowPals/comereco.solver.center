@@ -153,7 +153,7 @@ const LoginPage = () => {
                         <img
                             src="https://i.ibb.co/HLZ06zr5/isotipo-comereco-1.png"
                             alt="ComerECO Logo"
-                            className="w-20 h-20 object-contain mx-auto drop-shadow-xl"
+                            className="w-32 h-32 object-contain mx-auto drop-shadow-2xl"
                             loading="eager"
                         />
                     </motion.div>
@@ -164,7 +164,7 @@ const LoginPage = () => {
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
                         className={cn(
-                            "rounded-3xl border-2 border-border bg-background/90 p-6 shadow-2xl backdrop-blur-sm sm:p-10 dark:border-border dark:bg-card/85",
+                            "rounded-3xl border-2 border-border bg-background/95 p-6 shadow-2xl backdrop-blur-md sm:p-10 dark:border-border/50 dark:bg-card/95",
                             isShaking && 'animate-shake'
                         )}
                     >
@@ -277,16 +277,6 @@ const LoginPage = () => {
                             </RippleButton>
                         </form>
                     </motion.div>
-
-                    {/* Footer Text */}
-                    <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.5, delay: 0.4 }}
-                        className="mt-10 text-center text-sm font-medium text-muted-foreground"
-                    >
-                        Sistema de Requisiciones · <span className="text-primary-600">ComerECO</span>
-                    </motion.p>
                 </div>
 
                 {/* Reset Password Dialog */}
@@ -302,7 +292,6 @@ const LoginPage = () => {
                             <div className="space-y-2">
                                 <Label htmlFor="reset-email">Email</Label>
                                 <div className="relative">
-                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
                                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                                     <input
                                         id="reset-email"

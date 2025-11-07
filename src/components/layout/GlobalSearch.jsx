@@ -21,20 +21,30 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
   const isMobileVariant = variant === 'mobile';
 
   useEffect(() => {
+    const abortController = new AbortController();
+
     if (debouncedSearchTerm.length >= 2) {
       setIsLoading(true);
-      performGlobalSearch(debouncedSearchTerm)
+      performGlobalSearch(debouncedSearchTerm, { signal: abortController.signal })
         .then(data => {
-          setResults(data);
-          setIsLoading(false);
+          if (!abortController.signal.aborted) {
+            setResults(data);
+            setIsLoading(false);
+          }
         })
-        .catch(() => {
-          setResults({ productos: [], requisiciones: [], usuarios: [] });
-          setIsLoading(false);
+        .catch((error) => {
+          if (error.name !== 'AbortError' && !abortController.signal.aborted) {
+            setResults({ productos: [], requisiciones: [], usuarios: [] });
+            setIsLoading(false);
+          }
         });
     } else {
       setResults({ productos: [], requisiciones: [], usuarios: [] });
     }
+
+    return () => {
+      abortController.abort();
+    };
   }, [debouncedSearchTerm]);
 
   const handleSelect = useCallback((type, id) => {

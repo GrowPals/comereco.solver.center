@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, memo, useCallback } from 'react';
 import { Bell, CheckCheck, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
@@ -20,12 +20,19 @@ const notificationIcons = {
     info: { color: 'text-primary-600 dark:text-primary-100', icon: Bell },
 };
 
+// UUID validation regex (extracted for performance)
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+const isValidUUID = (str) => {
+    if (!str) return false;
+    return UUID_REGEX.test(str);
+};
 
 // =================================================================
 // Componentes de UI
 // =================================================================
 
-const NotificationItem = ({ notification, onRead }) => {
+const NotificationItem = memo(({ notification, onRead }) => {
     const navigate = useNavigate();
     const config = notificationIcons[notification.type] || notificationIcons.info;
     const Icon = config.icon;
@@ -52,15 +59,17 @@ const NotificationItem = ({ notification, onRead }) => {
               </div>
             </div>
             <div className="flex-1 min-w-0">
-                <p className={cn("font-semibold text-sm text-neutral-900", !notification.is_read && "text-neutral-900")}>{notification.title}</p>
-                <p className="text-xs text-neutral-600 mt-0.5 line-clamp-2">{notification.message}</p>
+                <p className={cn("font-semibold text-sm text-foreground dark:text-foreground/95", !notification.is_read && "text-foreground")}>{notification.title}</p>
+                <p className="text-xs text-muted-foreground/90 dark:text-foreground/70 mt-0.5 line-clamp-2">{notification.message}</p>
                 <p className="text-xs text-neutral-500 mt-2 font-medium">
                     {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true, locale: es })}
                 </p>
             </div>
         </div>
     );
-};
+});
+
+NotificationItem.displayName = 'NotificationItem';
 
 const NotificationCenter = ({ variant = 'popover' }) => {
     const { user } = useSupabaseAuth();
@@ -72,12 +81,6 @@ const NotificationCenter = ({ variant = 'popover' }) => {
 
     useEffect(() => {
         if (!user?.id) return;
-
-        const isValidUUID = (str) => {
-            if (!str) return false;
-            const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-            return uuidRegex.test(str);
-        };
 
         if (!isValidUUID(user.id)) {
             logger.error('Invalid user ID format for notifications');
@@ -174,7 +177,7 @@ const NotificationCenter = ({ variant = 'popover' }) => {
             >
                 <Bell className="h-5 w-5" />
                 {unreadCount > 0 && (
-                    <div className="absolute -top-1.5 -right-1.5 z-20 flex h-5 min-w-[1.75rem] items-center justify-center rounded-full bg-gradient-error px-1.5 text-[10px] font-bold text-white leading-[20px] shadow-none dark:shadow-[0_20px_48px_rgba(4,12,28,0.55)]">
+                    <div className="absolute -top-1.5 -right-1.5 z-20 flex h-5 min-w-[1.75rem] items-center justify-center rounded-full bg-gradient-error px-1.5 text-xs font-bold text-white leading-tight shadow-none dark:shadow-[0_20px_48px_rgba(4,12,28,0.55)]">
                         {unreadCount > 99 ? '99+' : unreadCount}
                     </div>
                 )}
@@ -193,7 +196,7 @@ const NotificationCenter = ({ variant = 'popover' }) => {
                 >
                     <Bell className="h-5 w-5" />
                     {unreadCount > 0 && (
-                        <div className="absolute -top-1.5 -right-1.5 z-20 flex h-5 min-w-[1.75rem] items-center justify-center rounded-full bg-gradient-error px-1.5 text-[10px] font-bold text-white leading-[20px] shadow-none dark:shadow-[0_20px_48px_rgba(4,12,28,0.55)] animate-pulse">
+                        <div className="absolute -top-1.5 -right-1.5 z-20 flex h-5 min-w-[1.75rem] items-center justify-center rounded-full bg-gradient-error px-1.5 text-xs font-bold text-white leading-tight shadow-none dark:shadow-[0_20px_48px_rgba(4,12,28,0.55)] animate-pulse">
                             {unreadCount > 99 ? '99+' : unreadCount}
                         </div>
                     )}

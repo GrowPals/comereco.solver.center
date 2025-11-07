@@ -2,6 +2,7 @@
 import { supabase } from '@/lib/customSupabaseClient';
 import { getCachedSession, getScopedCompanyId } from '@/lib/supabaseHelpers';
 import logger from '@/utils/logger';
+import { PAGINATION } from '@/constants/config';
 
 /**
  * Búsqueda global en productos, requisiciones y usuarios.
@@ -40,7 +41,7 @@ export const performGlobalSearch = async (query) => {
       .from('profiles')
       .select('id, full_name, role_v2, avatar_url')
       .ilike('full_name', searchTerm)
-      .limit(5);
+      .limit(PAGINATION.SEARCH_LIMIT);
 
     if (!isGlobal && companyId) {
       profilesQuery = profilesQuery.eq('company_id', companyId);
@@ -52,12 +53,12 @@ export const performGlobalSearch = async (query) => {
         .select('id, name, sku, image_url, price')
         .or(`name.ilike.${searchTerm},sku.ilike.${searchTerm}`)
         .eq('is_active', true)
-        .limit(5),
+        .limit(PAGINATION.SEARCH_LIMIT),
       supabase
         .from('requisitions')
         .select('id, internal_folio, comments, business_status, created_at')
         .or(`internal_folio.ilike.${searchTerm},comments.ilike.${searchTerm}`)
-        .limit(5),
+        .limit(PAGINATION.SEARCH_LIMIT),
       profilesQuery,
     ]);
 

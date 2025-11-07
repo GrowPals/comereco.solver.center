@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { FloatingLabelInput } from '@/components/ui/floating-label-input';
 import { useToastNotification } from '@/components/ui/toast-notification';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/lib/customSupabaseClient';
@@ -19,31 +19,36 @@ import PageContainer from '@/components/layout/PageContainer';
 const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name, editable = false, placeholder }) => {
   const isEditableState = isEditing && editable;
 
+  // Si es editable y estamos en modo edición, usar FloatingLabelInput
+  if (isEditableState) {
+    return (
+      <div className="flex items-center gap-4 rounded-2xl border border-border/60 bg-muted/70 px-4 py-4 shadow-sm transition-colors dark:border-border/70 dark:bg-[#0f1a2d]/85">
+        <div className="icon-badge flex h-10 w-10 shrink-0 items-center justify-center">
+          <Icon className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
+        </div>
+        <div className="flex-1">
+          <FloatingLabelInput
+            name={name}
+            value={value || ''}
+            onChange={onChange}
+            label={label}
+            icon={<Icon />}
+            className="h-12"
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // Modo solo lectura
   return (
-    <div
-      className={cn(
-        'flex items-center gap-4 transition-colors',
-        isEditableState
-          ? 'rounded-2xl border border-border/60 bg-muted/40 px-4 py-4 shadow-sm dark:border-[rgba(90,150,230,0.4)] dark:bg-[#0f1a2d]'
-          : 'py-4'
-      )}
-    >
+    <div className="flex items-center gap-4 py-4 transition-colors">
       <div className="icon-badge flex h-10 w-10 items-center justify-center">
         <Icon className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
       </div>
       <div className="flex-1">
         <p className="mb-1 text-sm font-medium text-muted-foreground">{label}</p>
-        {isEditableState ? (
-          <Input
-            name={name}
-            value={value || ''}
-            onChange={onChange}
-            placeholder={placeholder}
-            className="mt-1 h-10 rounded-xl border border-border/60 bg-background/95 text-foreground shadow-inner transition-colors focus-visible:border-primary-400 focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:border-[rgba(90,150,230,0.4)] dark:bg-[#0d1624] dark:text-foreground"
-          />
-        ) : (
-          <p className="font-bold text-foreground">{value || placeholder || 'No especificado'}</p>
-        )}
+        <p className="font-bold text-foreground">{value || placeholder || 'No especificado'}</p>
       </div>
     </div>
   );
@@ -58,17 +63,20 @@ const MobileProfileInfoRow = ({ icon: Icon, label, value, placeholder, editable 
         <Icon className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
       </div>
       <div className="flex-1">
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/80">{label}</p>
         {isEditableState ? (
-          <Input
+          <FloatingLabelInput
             name={name}
             value={value || ''}
             onChange={onChange}
-            placeholder={placeholder}
-            className="mt-2 h-10 rounded-xl border border-border/60 bg-background/90 text-foreground shadow-inner focus-visible:border-primary-400 focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:border-[rgba(90,150,230,0.4)] dark:bg-[#0d1624]"
+            label={label}
+            icon={<Icon />}
+            className="h-12"
           />
         ) : (
-          <p className="mt-1 text-base font-semibold text-foreground">{value || placeholder || 'No especificado'}</p>
+          <>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/80">{label}</p>
+            <p className="mt-1 text-base font-semibold text-foreground">{value || placeholder || 'No especificado'}</p>
+          </>
         )}
       </div>
     </div>
@@ -615,8 +623,8 @@ const ProfilePage = () => {
                   {loading ? (
                     <Skeleton className="h-16 w-full rounded-xl" />
                   ) : (
-                    <div className="rounded-xl border border-primary-200 bg-white/90 p-4 shadow-inner transition-colors dark:border-white/12 dark:bg-white/6 dark:backdrop-blur-sm dark:shadow-[inset_0_1px_14px_rgba(15,35,68,0.35)]">
-                      <p className="mb-1 text-sm font-medium text-muted-foreground dark:text-muted-foreground/60">Requisiciones creadas</p>
+                    <div className="rounded-xl border border-primary-200 bg-white/90 p-4 shadow-inner transition-colors dark:border-white/12 dark:bg-white/18 dark:backdrop-blur-sm dark:shadow-[inset_0_1px_14px_rgba(15,35,68,0.35)]">
+                      <p className="mb-1 text-sm font-medium text-muted-foreground">Requisiciones creadas</p>
                       <p className="text-3xl font-bold text-foreground">{stats.created}</p>
                     </div>
                   )}

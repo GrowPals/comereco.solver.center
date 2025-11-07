@@ -167,10 +167,10 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
                 <button
                     type="button"
                     onClick={() => setMobileNavOpen(false)}
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted/60 shadow-none hover:shadow-none active:shadow-none dark:border-border dark:text-muted-foreground dark:hover:bg-muted/40 dark:shadow-[0_20px_46px_rgba(5,12,28,0.5)]"
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted/60 shadow-none hover:shadow-none active:shadow-none dark:border-border dark:text-muted-foreground dark:hover:bg-muted/40 dark:shadow-[0_20px_46px_rgba(5,12,28,0.5)]"
                     aria-label="Cerrar menú"
                 >
-                    <X className="h-4 w-4" />
+                    <X className="h-5 w-5" />
                 </button>
             </div>
             {/* Header del Sidebar - Perfil del Usuario */}
@@ -184,8 +184,8 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
                             </AvatarFallback>
                         </Avatar>
                         <div className="min-w-0 flex-1">
-                            <p className="text-base font-bold text-foreground">{primaryName}</p>
-                            <p className="truncate text-sm text-muted-foreground">{userEmail}</p>
+                            <p className="text-base font-bold text-foreground truncate" title={primaryName}>{primaryName}</p>
+                            <p className="truncate text-sm text-muted-foreground" title={userEmail}>{userEmail}</p>
                             <span className="mt-1 inline-block rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary-600 dark:bg-primary/20 dark:text-primary-100">
                                 {isAdmin ? 'Administrador' : isSupervisor ? 'Supervisor' : 'Usuario'}
                             </span>

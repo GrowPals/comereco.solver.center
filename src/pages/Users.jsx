@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm, Controller } from 'react-hook-form';
-import { Plus, MoreHorizontal, User as UserIcon, Shield, Briefcase, Trash2, Code } from 'lucide-react';
+import { Plus, MoreHorizontal, User as UserIcon, Shield, Briefcase, Trash2, Code, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -50,10 +50,26 @@ import { useCompanyScope } from '@/context/CompanyScopeContext';
 
 // Mapeo de roles según app_role_v2 enum (admin | supervisor | user | dev)
 const roleMapping = {
-    user: { label: 'Usuario', icon: UserIcon },
-    supervisor: { label: 'Supervisor', icon: Briefcase },
-    admin: { label: 'Admin', icon: Shield },
-    dev: { label: 'Developer', icon: Code },
+    user: {
+        label: 'Usuario',
+        icon: UserIcon,
+        colors: 'text-slate-700 border-slate-200 bg-slate-50 dark:text-slate-200 dark:border-slate-700 dark:bg-slate-900/50'
+    },
+    supervisor: {
+        label: 'Supervisor',
+        icon: Briefcase,
+        colors: 'text-blue-700 border-blue-200 bg-blue-50 dark:text-blue-300 dark:border-blue-700 dark:bg-blue-950/50'
+    },
+    admin: {
+        label: 'Admin',
+        icon: Shield,
+        colors: 'text-purple-700 border-purple-200 bg-purple-50 dark:text-purple-300 dark:border-purple-700 dark:bg-purple-950/50'
+    },
+    dev: {
+        label: 'Developer',
+        icon: Code,
+        colors: 'text-emerald-700 border-emerald-200 bg-emerald-50 dark:text-emerald-300 dark:border-emerald-700 dark:bg-emerald-950/50'
+    },
 };
 const UserForm = ({ user, onSave, onCancel, isLoading, approvalBypassSupported, roleOptions }) => {
     const { register, handleSubmit, watch, setValue, control, formState: { errors } } = useForm({
@@ -134,7 +150,7 @@ const UserForm = ({ user, onSave, onCancel, isLoading, approvalBypassSupported, 
                 </Select>
             </div>
             {showApprovalToggle && (
-              <div className="flex items-center justify-between rounded-xl border border-border bg-muted/60 px-4 py-3 dark:border-border dark:bg-card/60">
+              <div className="flex items-center justify-between rounded-xl border border-border bg-muted/85 px-4 py-3 dark:border-border dark:bg-card/85">
                 <div className="pr-4">
                   <Label className="text-sm font-medium text-foreground">Envío directo de requisiciones</Label>
                   <p className="text-xs text-muted-foreground">Permite que este usuario envíe requisiciones sin aprobación previa del supervisor.</p>
@@ -175,6 +191,8 @@ const Users = () => {
     const [editingUser, setEditingUser] = useState(null);
     const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
+    const [isToggleStatusDialogOpen, setToggleStatusDialogOpen] = useState(false);
+    const [userToToggle, setUserToToggle] = useState(null);
     const { toast } = useToast();
     const queryClient = useQueryClient();
 
@@ -289,18 +307,19 @@ const Users = () => {
     };
 
     const handleToggleUserStatus = (user) => {
-        // El usuario está activo por defecto, si is_active no está definido
-        const currentStatus = user.is_active !== false;
-        const action = currentStatus ? 'desactivar' : 'activar';
-        const actionCap = currentStatus ? 'Desactivar' : 'Activar';
+        setUserToToggle(user);
+        setToggleStatusDialogOpen(true);
+    };
 
-        const confirmMessage = `¿Estás seguro de ${action} a ${resolveUserLabel(user)}?`;
-
-        if (window.confirm(confirmMessage)) {
+    const confirmToggleStatus = () => {
+        if (userToToggle) {
+            const currentStatus = userToToggle.is_active !== false;
             toggleStatusMutation.mutate({
-                userId: user.id,
+                userId: userToToggle.id,
                 isActive: !currentStatus
             });
+            setToggleStatusDialogOpen(false);
+            setUserToToggle(null);
         }
     };
 
@@ -333,11 +352,43 @@ const Users = () => {
 
     const roleOptions = Object.entries(roleMapping).filter(([key]) => (key === 'dev' ? isDev : true));
 
+    const getToggleStatusMessage = () => {
+        if (!userToToggle) return { title: '', description: '', confirmText: '', variant: 'default' };
+        const currentStatus = userToToggle.is_active !== false;
+        const action = currentStatus ? 'desactivar' : 'activar';
+        return {
+            title: currentStatus ? '¿Desactivar usuario?' : '¿Activar usuario?',
+            description: `¿Estás seguro de ${action} a ${resolveUserLabel(userToToggle)}? ${
+                currentStatus
+                    ? 'El usuario no podrá acceder al sistema hasta que sea reactivado.'
+                    : 'El usuario recuperará acceso completo al sistema.'
+            }`,
+            confirmText: currentStatus ? 'Desactivar usuario' : 'Activar usuario',
+            variant: currentStatus ? 'warning' : 'default'
+        };
+    };
+
+    const toggleStatusDialogProps = getToggleStatusMessage();
+
     return (
         <>
             <Helmet>
                 <title>Gestión de Usuarios - ComerECO</title>
             </Helmet>
+
+            {/* Dialog para cambiar estado */}
+            <ConfirmDialog
+                open={isToggleStatusDialogOpen}
+                onOpenChange={setToggleStatusDialogOpen}
+                title={toggleStatusDialogProps.title}
+                description={toggleStatusDialogProps.description}
+                confirmText={toggleStatusDialogProps.confirmText}
+                cancelText="Cancelar"
+                variant={toggleStatusDialogProps.variant}
+                onConfirm={confirmToggleStatus}
+            />
+
+            {/* Dialog para eliminar */}
             <ConfirmDialog
                 open={isDeleteDialogOpen}
                 onOpenChange={setDeleteDialogOpen}
@@ -410,10 +461,10 @@ const Users = () => {
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="h-9 w-9 rounded-xl border border-border text-muted-foreground transition-colors hover:bg-muted/70 dark:border-border dark:hover:bg-muted/40"
+                                                        className="h-11 w-11 rounded-xl border border-border text-muted-foreground transition-colors hover:bg-muted/85 dark:border-border dark:hover:bg-muted/70"
                                                         aria-label={`Acciones para ${resolveUserLabel(user)}`}
                                                     >
-                                                        <MoreHorizontal className="h-4 w-4" />
+                                                        <MoreHorizontal className="h-5 w-5" />
                                                     </Button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end" className="rounded-xl surface-card p-2">
@@ -438,12 +489,18 @@ const Users = () => {
                                     </div>
                                 </div>
                                 <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-                                    <Badge variant="outline" className="font-semibold">
+                                    <Badge variant="outline" className={`font-semibold ${roleMapping[user.role_v2]?.colors || ''}`}>
                                         {roleMapping[user.role_v2]?.icon && (
                                             React.createElement(roleMapping[user.role_v2].icon, { className: 'mr-1 h-4 w-4' })
                                         )}
                                         {roleMapping[user.role_v2]?.label || user.role_v2}
                                     </Badge>
+                                    {user.can_submit_without_approval && (
+                                        <Badge variant="outline" className="font-semibold text-amber-700 border-amber-200 bg-amber-50 dark:text-amber-300 dark:border-amber-700 dark:bg-amber-950/50" title="Puede enviar requisiciones sin aprobación previa">
+                                            <Zap className="mr-1 h-3 w-3" />
+                                            Envío Directo
+                                        </Badge>
+                                    )}
                                     <Badge variant={user.is_active !== false ? 'success' : 'destructive'}>
                                         {user.is_active !== false ? 'Activo' : 'Inactivo'}
                                     </Badge>
@@ -473,7 +530,7 @@ const Users = () => {
                         </TableHeader>
                         <TableBody>
                             {users?.map((user) => (
-                                <TableRow key={user.id} className="transition-colors hover:bg-muted/70 dark:hover:bg-muted/40/60">
+                                <TableRow key={user.id} className="transition-colors hover:bg-muted/85 dark:hover:bg-muted/70">
                                     <TableCell>
                                         <div className="flex items-center space-x-3">
                                             <Avatar className="h-11 w-11 border-2 border-border dark:border-border">
@@ -491,12 +548,20 @@ const Users = () => {
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <Badge variant="outline" className="font-semibold shadow-sm">
-                                            {roleMapping[user.role_v2]?.icon && (
-                                                React.createElement(roleMapping[user.role_v2].icon, { className: "w-4 h-4 mr-2" })
+                                        <div className="flex flex-col gap-2">
+                                            <Badge variant="outline" className={`font-semibold shadow-sm ${roleMapping[user.role_v2]?.colors || ''}`}>
+                                                {roleMapping[user.role_v2]?.icon && (
+                                                    React.createElement(roleMapping[user.role_v2].icon, { className: "w-4 h-4 mr-2" })
+                                                )}
+                                                {roleMapping[user.role_v2]?.label || user.role_v2}
+                                            </Badge>
+                                            {user.can_submit_without_approval && (
+                                                <Badge variant="outline" className="font-semibold text-amber-700 border-amber-200 bg-amber-50 dark:text-amber-300 dark:border-amber-700 dark:bg-amber-950/50 w-fit" title="Puede enviar requisiciones sin aprobación previa">
+                                                    <Zap className="mr-1 h-3 w-3" />
+                                                    Envío Directo
+                                                </Badge>
                                             )}
-                                            {roleMapping[user.role_v2]?.label || user.role_v2}
-                                        </Badge>
+                                        </div>
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant={user.is_active !== false ? 'success' : 'destructive'} className="shadow-sm">
@@ -515,7 +580,7 @@ const Users = () => {
                                             <DropdownMenuTrigger asChild>
                                                 <Button
                                                     variant="ghost"
-                                                    className="h-9 w-9 rounded-xl p-0 transition-colors hover:bg-muted/70 dark:hover:bg-muted/40"
+                                                    className="h-9 w-9 rounded-xl p-0 transition-colors hover:bg-muted/85 dark:hover:bg-muted/70"
                                                     aria-label={`Acciones para ${resolveUserLabel(user)}`}
                                                 >
                                                     <MoreHorizontal className="h-5 w-5" aria-hidden="true" />

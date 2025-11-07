@@ -12,7 +12,7 @@ import { RequisitionProvider, useRequisition } from '@/context/RequisitionContex
 import { createRequisition } from '@/services/requisitionService';
 import { createTemplate } from '@/services/templateService';
 import { useToast } from '@/components/ui/useToast';
-import { useCart } from '@/hooks/useCart';
+import { useCart } from '@/context/CartContext';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';

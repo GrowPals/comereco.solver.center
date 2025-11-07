@@ -182,7 +182,7 @@ const ProductCard = memo(({ product }) => {
               )}
             </button>
           ) : (
-            <div className="flex w-full items-center justify-between gap-3 rounded-2xl surface-card p-2">
+            <div className="flex w-full h-[52px] items-center justify-between gap-3 rounded-2xl surface-card p-2">
               <button
                 type="button"
                 onClick={handleDecrease}
@@ -200,7 +200,7 @@ const ProductCard = memo(({ product }) => {
                 )}
               </button>
               <span
-                className="min-w-[3.25rem] rounded-xl bg-card px-3 py-2 text-center text-base font-semibold text-foreground"
+                className="flex h-11 min-w-[3.25rem] items-center justify-center rounded-xl bg-card px-3 text-center text-base font-semibold text-foreground"
                 aria-label={`Cantidad seleccionada: ${currentQuantity}`}
               >
                 {currentQuantity}
