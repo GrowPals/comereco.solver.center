@@ -13,6 +13,7 @@ import { useToastNotification } from '@/components/ui/toast-notification';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import PageContainer from '@/components/layout/PageContainer';
+import { IconWrapper, SectionIcon } from '@/components/ui/icon-wrapper';
 import { useTheme } from '@/context/ThemeContext';
 
 const TABS = [
@@ -75,9 +76,7 @@ const SettingsPage = () => {
                     <aside className="order-2 w-full overflow-hidden rounded-2xl border border-border bg-card shadow-soft-md lg:order-1 lg:sticky lg:top-24 lg:h-fit">
                     <div className="hidden border-b border-border p-6 lg:block">
                         <div className="flex items-center gap-3">
-                            <div className="icon-badge flex h-12 w-12 items-center justify-center">
-                                <Settings className="h-6 w-6 text-primary-600 dark:text-primary-100" aria-hidden="true" />
-                            </div>
+                            <SectionIcon icon={Settings} />
                             <h2 className="text-2xl font-bold text-foreground">Configuración</h2>
                         </div>
                     </div>
@@ -187,9 +186,7 @@ const SecuritySettings = () => (
             <p className="text-sm text-muted-foreground mb-4">Estas son las sesiones activas en tu cuenta.</p>
             <div className="flex items-center justify-between rounded-xl border-2 border-border bg-muted/40 p-4 dark:border-[#264675] dark:bg-[#10203c]/70">
                 <div className="flex items-center gap-3">
-                    <div className="icon-badge flex h-10 w-10 items-center justify-center">
-                        <Monitor className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
-                    </div>
+                    <IconWrapper icon={Monitor} variant="neutral" size="md" />
                     <div>
                         <p className="font-bold text-foreground">Chrome en Windows</p>
                         <p className="text-xs text-muted-foreground">Este dispositivo</p>

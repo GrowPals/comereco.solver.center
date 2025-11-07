@@ -10,6 +10,7 @@ import { ArrowRight, Calendar, Hash, User, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/formatters';
+import { IconWrapper } from '@/components/ui/icon-wrapper';
 
 const statusAccents = {
   draft: 'bg-muted/90 dark:bg-muted/85',
@@ -83,9 +84,7 @@ const RequisitionCard = memo(({ requisition }) => {
           <div className="flex flex-col md:flex-row md:items-center gap-6">
             {/* Folio Section */}
             <div className="flex items-center gap-4 md:min-w-[200px]">
-              <div className="icon-badge flex h-14 w-14 items-center justify-center">
-                <Hash className="h-7 w-7 text-primary-600 dark:text-primary-100" aria-hidden="true" />
-              </div>
+              <IconWrapper icon={Hash} variant="subtle" size="lg" />
               <div>
                 <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Folio</p>
                 <p className="text-xl font-bold text-foreground">{requisition.internal_folio || 'N/A'}</p>
@@ -96,10 +95,8 @@ const RequisitionCard = memo(({ requisition }) => {
             <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-4">
               {/* Solicitante */}
               <div className="flex items-center gap-3">
-                <div className="icon-badge flex h-10 w-10 items-center justify-center text-muted-foreground">
-                  <User className="h-5 w-5" aria-hidden="true" />
-                </div>
-                <div>
+                <IconWrapper icon={User} variant="neutral" size="sm" />
+                <div className="min-w-0">
                   <p className="mb-0.5 text-xs font-medium text-muted-foreground">Solicitante</p>
                   <p className="truncate text-sm font-semibold text-foreground">{requisition.creator?.full_name || 'No disponible'}</p>
                 </div>
@@ -107,10 +104,8 @@ const RequisitionCard = memo(({ requisition }) => {
 
               {/* Fecha */}
               <div className="flex items-center gap-3">
-                <div className="icon-badge flex h-10 w-10 items-center justify-center text-muted-foreground">
-                  <Calendar className="h-5 w-5" aria-hidden="true" />
-                </div>
-                <div>
+                <IconWrapper icon={Calendar} variant="neutral" size="sm" />
+                <div className="min-w-0">
                   <p className="mb-0.5 text-xs font-medium text-muted-foreground">Fecha</p>
                   <p className="text-sm font-semibold text-foreground">{formattedDate}</p>
                 </div>
@@ -118,10 +113,8 @@ const RequisitionCard = memo(({ requisition }) => {
 
               {/* Monto */}
               <div className="flex items-center gap-3">
-              <div className="icon-badge flex h-10 w-10 items-center justify-center text-success dark:text-success-light">
-                  <DollarSign className="h-5 w-5" aria-hidden="true" />
-                </div>
-                <div>
+                <IconWrapper icon={DollarSign} variant="neutral" size="sm" />
+                <div className="min-w-0">
                   <p className="mb-0.5 text-xs font-medium text-muted-foreground">Monto Total</p>
                   <p className="text-lg font-bold tracking-tight text-foreground">{formattedAmount}</p>
                 </div>

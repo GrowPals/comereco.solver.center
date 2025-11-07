@@ -28,6 +28,7 @@ import { useRequisitionDetails } from '@/hooks/useRequisitions';
 import { useRequisitionActions } from '@/hooks/useRequisitionActions';
 import logger from '@/utils/logger';
 import PageContainer from '@/components/layout/PageContainer';
+import { SectionIcon } from '@/components/ui/icon-wrapper';
 
 
 const RequisitionDetail = () => {
@@ -207,9 +208,7 @@ const RequisitionDetail = () => {
                             <Card className="shadow-md border-2">
                                 <CardHeader className="pb-4">
                                     <div className="flex items-center gap-3">
-                                        <div className="icon-badge flex h-12 w-12 items-center justify-center">
-                                            <FileText className="h-6 w-6 text-primary-600 dark:text-primary-100" aria-hidden="true" />
-                                        </div>
+                                        <SectionIcon icon={FileText} />
                                         <CardTitle className="text-2xl font-bold text-foreground">Ítems de la Requisición</CardTitle>
                                     </div>
                                 </CardHeader>
@@ -263,9 +262,7 @@ const RequisitionDetail = () => {
                                 <Card className="shadow-md border-2">
                                     <CardHeader className="pb-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="icon-badge flex h-12 w-12 items-center justify-center">
-                                                <MessageSquare className="h-6 w-6 text-primary-600 dark:text-primary-100" aria-hidden="true" />
-                                            </div>
+                                            <SectionIcon icon={MessageSquare} />
                                             <CardTitle className="text-2xl font-bold text-foreground">Comentarios</CardTitle>
                                         </div>
                                     </CardHeader>

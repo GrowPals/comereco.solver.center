@@ -11,6 +11,7 @@ import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Clock } from 'lucide-react';
 import { formatPrice } from '@/lib/formatters';
+import { SectionIcon } from '@/components/ui/icon-wrapper';
 
 // Funciones helper movidas fuera del componente para evitar recreación
 const getStatusVariant = (status) => {
@@ -67,9 +68,7 @@ const RecentRequisitions = memo(() => {
         <Card className="dashboard-panel surface-panel">
             <CardHeader className="pb-6">
                 <div className="flex items-center gap-3">
-                    <div className="metric-icon flex h-10 w-10 items-center justify-center rounded-xl shadow-md">
-                        <Clock className="h-5 w-5" />
-                    </div>
+                    <SectionIcon icon={Clock} />
                     <CardTitle className="text-xl font-bold text-foreground">Actividad Reciente</CardTitle>
                 </div>
             </CardHeader>
