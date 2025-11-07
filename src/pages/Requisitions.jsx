@@ -79,9 +79,9 @@ const RequisitionsPage = () => {
                   size="icon"
                   onClick={() => refetch()}
                   disabled={isFetching}
-                  className="h-12 w-12 rounded-xl border border-border bg-card shadow-sm hover:bg-muted"
+                  className="h-10 w-10 rounded-xl border border-border bg-card shadow-sm hover:bg-muted"
                 >
-                  <RefreshCw className={`h-5 w-5 ${isFetching ? 'animate-spin text-primary-500' : 'text-muted-foreground'}`} />
+                  <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin text-primary-500' : 'text-muted-foreground'}`} />
                 </Button>
                 <Button
                   onClick={() => navigate('/requisitions/new')}
