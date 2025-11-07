@@ -197,7 +197,7 @@ const CatalogPage = () => {
                     <p>
                       <span className="font-semibold text-foreground">{totalCount}</span> productos disponibles
                       {debouncedSearchTerm && (
-                        <span className="ml-2 text-muted-foreground">"{debouncedSearchTerm}"</span>
+                        <span className="ml-2 text-muted-foreground">&ldquo;{debouncedSearchTerm}&rdquo;</span>
                       )}
                       {category !== 'all' && (
                         <span className="ml-2 text-muted-foreground">· {category}</span>

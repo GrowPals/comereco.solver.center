@@ -58,4 +58,6 @@ const AdminDashboard = memo(({ user }) => {
     );
 });
 
+AdminDashboard.displayName = 'AdminDashboard';
+
 export default AdminDashboard;

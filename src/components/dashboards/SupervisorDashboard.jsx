@@ -92,4 +92,6 @@ const SupervisorDashboard = memo(({ user }) => {
     );
 });
 
+SupervisorDashboard.displayName = 'SupervisorDashboard';
+
 export default SupervisorDashboard;

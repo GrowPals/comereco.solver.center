@@ -1,3 +1,4 @@
+import React from 'react';
 import { X, Info, AlertTriangle, AlertCircle, CheckCircle } from 'lucide-react';
 
 /**

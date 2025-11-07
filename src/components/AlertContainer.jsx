@@ -1,3 +1,4 @@
+import React from 'react';
 import { useAlerts } from '@/context/AlertContext';
 import { AlertBanner } from '@/components/AlertBanner';
 
