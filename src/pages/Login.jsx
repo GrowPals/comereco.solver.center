@@ -252,7 +252,7 @@ const LoginPage = () => {
                                     />
                                     <Label
                                         htmlFor="remember"
-                                        className="cursor-pointer select-none text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                        className="cursor-pointer select-none text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-neutral-100"
                                     >
                                         Recordarme
                                     </Label>
@@ -260,7 +260,7 @@ const LoginPage = () => {
                                 <button
                                     type="button"
                                     onClick={handleForgotPassword}
-                                    className="text-sm font-semibold text-primary-600 transition-all duration-200 hover:text-primary-700 hover:underline"
+                                    className="text-sm font-semibold text-blue-600 underline underline-offset-2 transition-all duration-200 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                                 >
                                     ¿Olvidaste tu contraseña?
                                 </button>

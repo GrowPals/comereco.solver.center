@@ -18,8 +18,8 @@ const FloatingInput = React.forwardRef(({ className, type, label, icon, error, .
       {icon && (
         <div
           className={cn(
-            "pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-neutral-400 transition-colors duration-200",
-            isFloating && "text-primary-500",
+            "pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-neutral-500 transition-colors duration-200 dark:text-neutral-400",
+            isFloating && "text-primary-500 dark:text-primary-400",
             error && "text-red-500 dark:text-red-400"
           )}
         >
@@ -48,11 +48,11 @@ const FloatingInput = React.forwardRef(({ className, type, label, icon, error, .
       {label && (
         <label
           className={cn(
-            "pointer-events-none absolute left-4 font-medium text-neutral-500 transition-all duration-200 dark:text-neutral-400",
+            "pointer-events-none absolute left-4 font-medium text-neutral-600 transition-all duration-200 dark:text-neutral-300",
             icon && "left-12",
             isFloating
               ? "top-2 text-xs text-primary-600 dark:text-primary-300"
-              : "top-1/2 -translate-y-1/2 text-base text-neutral-500 dark:text-neutral-400",
+              : "top-1/2 -translate-y-1/2 text-base text-neutral-600 dark:text-neutral-300",
             error && isFloating && "text-red-600 dark:text-red-400"
           )}
         >
