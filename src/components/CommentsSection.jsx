@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import React, { useState, memo } from 'react';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -10,8 +10,8 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const CommentsSection = ({ requisitionId, comments = [], onAddComment, onDeleteComment }) => {
-  const { user } = useAuth();
+const CommentsSection = memo(({ requisitionId, comments = [], onAddComment, onDeleteComment }) => {
+  const { user } = useSupabaseAuth();
   const { toast } = useToast();
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -77,7 +77,7 @@ const CommentsSection = ({ requisitionId, comments = [], onAddComment, onDeleteC
             onChange={(e) => setNewComment(e.target.value)}
             className="flex-1"
           />
-          <Button type="submit" disabled={!newComment.trim() || isSubmitting} size="icon">
+          <Button type="submit" disabled={!newComment.trim() || isSubmitting} size="icon" aria-label="Enviar comentario">
             <Send className="h-4 w-4" />
           </Button>
         </div>
@@ -118,8 +118,9 @@ const CommentsSection = ({ requisitionId, comments = [], onAddComment, onDeleteC
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7"
+                        className="h-7 w-7 hover:bg-destructive/10 focus:ring-2 focus:ring-destructive"
                         onClick={() => handleDelete(comment.id)}
+                        aria-label={`Eliminar comentario de ${comment.userName}`}
                       >
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
@@ -136,7 +137,9 @@ const CommentsSection = ({ requisitionId, comments = [], onAddComment, onDeleteC
       </div>
     </div>
   );
-};
+});
+
+CommentsSection.displayName = 'CommentsSection';
 
 export default CommentsSection;
 
