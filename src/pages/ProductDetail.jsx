@@ -448,29 +448,32 @@ export default function ProductDetail() {
                     onClick={() => handleQuantityChange(-1)}
                     disabled={quantity <= 1}
                     className={cn(
-                      "w-10 h-10 rounded-full flex items-center justify-center transition-all",
-                      "border-2 hover:scale-110",
+                      "w-11 h-11 rounded-full flex items-center justify-center transition-all touch-manipulation",
+                      "border-2 hover:scale-110 active:scale-95",
                       quantity <= 1
                         ? "border-border text-muted-foreground/50 cursor-not-allowed"
-                        : "border-border/80 text-foreground/90 hover:border-emerald-500 hover:bg-emerald-50"
+                        : "border-border/80 text-foreground/90 hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-500/10"
                     )}
+                    aria-label="Disminuir cantidad"
                   >
-                    <Minus className="w-4 h-4" />
+                    <Minus className="w-5 h-5" />
                   </button>
 
                   <input
                     type="number"
                     value={quantity}
                     onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                    className="w-20 h-10 text-center font-bold text-lg border-2 border-border rounded-lg focus:border-emerald-500 focus:outline-none"
+                    className="w-20 h-11 text-center font-bold text-lg border-2 border-border rounded-lg focus:border-emerald-500 focus:outline-none touch-manipulation"
+                    aria-label="Cantidad"
                   />
 
                   <button
                     onClick={() => handleQuantityChange(1)}
-                    className="w-10 h-10 rounded-full flex items-center justify-center transition-all
-                             border-2 border-border/80 text-foreground/90 hover:border-emerald-500 hover:bg-emerald-50 hover:scale-110"
+                    className="w-11 h-11 rounded-full flex items-center justify-center transition-all touch-manipulation
+                             border-2 border-border/80 text-foreground/90 hover:border-emerald-500 hover:bg-emerald-50 hover:scale-110 active:scale-95 dark:hover:bg-emerald-500/10"
+                    aria-label="Aumentar cantidad"
                   >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="w-5 h-5" />
                   </button>
                 </div>
               </div>
@@ -596,23 +599,25 @@ export default function ProductDetail() {
       {/* Botón flotante en móvil - mejorado */}
       <div className="surface-sticky fixed bottom-0 left-0 right-0 p-3 lg:hidden">
         <div className="max-w-md mx-auto flex gap-3">
-          <div className="flex items-center gap-1 bg-muted rounded-lg px-2 flex-shrink-0">
+          <div className="flex items-center gap-1 bg-muted rounded-xl px-2 py-1 flex-shrink-0">
             <button
               onClick={() => handleQuantityChange(-1)}
               disabled={quantity <= 1}
               className={cn(
-                "p-1.5",
-                quantity <= 1 ? "text-muted-foreground/50" : "text-foreground/90"
+                "p-2 touch-manipulation rounded-lg transition-colors active:scale-95",
+                quantity <= 1 ? "text-muted-foreground/50" : "text-foreground/90 hover:bg-background/60"
               )}
+              aria-label="Disminuir cantidad"
             >
-              <Minus className="w-4 h-4" />
+              <Minus className="w-5 h-5" />
             </button>
-            <span className="font-bold text-base px-2 min-w-[2rem] text-center">{quantity}</span>
+            <span className="font-bold text-base px-3 min-w-[2.5rem] text-center">{quantity}</span>
             <button
               onClick={() => handleQuantityChange(1)}
-              className="p-1.5 text-foreground/90"
+              className="p-2 touch-manipulation rounded-lg transition-colors text-foreground/90 hover:bg-background/60 active:scale-95"
+              aria-label="Aumentar cantidad"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-5 h-5" />
             </button>
           </div>
 
