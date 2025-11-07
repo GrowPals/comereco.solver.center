@@ -25,15 +25,16 @@ export const useUserPermissions = () => {
     // Según REFERENCIA_TECNICA_BD_SUPABASE.md
     const userRole = user?.role_v2;
 
-    // Roles directos según role_v2 (admin | supervisor | user)
-    const isAdmin = userRole === 'admin';
+    // Roles directos según app_role_v2 (admin | supervisor | user | dev)
+    const isDev = userRole === 'dev';
+    const isAdmin = userRole === 'admin' || isDev;
     const isSupervisor = userRole === 'supervisor';
     const isUser = userRole === 'user';
     
     // Capacidades basadas en roles
     // FIX: Eliminado isSuperAdmin ya que 'super_admin' no existe en role_v2
     // Si necesitas funcionalidad de super admin, debe manejarse vía políticas RLS o campo adicional
-    const canManageUsers = isAdmin;
+    const canManageUsers = isAdmin || isDev;
     const canManageProjects = isAdmin || isSupervisor;
     const canApproveRequisitions = isAdmin || isSupervisor;
     const canManageRestockRules = isAdmin || isSupervisor;
@@ -42,6 +43,7 @@ export const useUserPermissions = () => {
 
     return {
         userRole,
+        isDev,
         isAdmin,
         isSupervisor,
         isUser,

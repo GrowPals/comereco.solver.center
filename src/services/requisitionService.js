@@ -2,6 +2,7 @@
 import { supabase } from '@/lib/customSupabaseClient';
 import { getCachedSession } from '@/lib/supabaseHelpers';
 import { getUserAccessContext, getRequiresApprovalFromContext } from '@/lib/accessControl';
+import { scopeToCompany } from '@/lib/companyScope';
 import { formatErrorMessage } from '@/utils/errorHandler';
 import logger from '@/utils/logger';
 
@@ -71,7 +72,8 @@ export const fetchRequisitions = async (page = 1, pageSize = 10, sortBy = 'creat
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 
-    let query = supabase
+    let query = scopeToCompany(
+        supabase
         .from('requisitions')
         .select(`
             id,
@@ -85,9 +87,10 @@ export const fetchRequisitions = async (page = 1, pageSize = 10, sortBy = 'creat
             approved_by,
             company_id
         `, { count: 'exact' })
-        .eq('company_id', access.companyId)
         .order(sortBy, { ascending })
-        .range(from, to);
+        .range(from, to),
+        access
+    );
 
     if (!access.isAdmin) {
         if (access.isSupervisor) {
@@ -131,11 +134,13 @@ export const fetchRequisitionDetails = async (id) => {
     // FIX: Evitar embeds ambiguos - consultas separadas según REFERENCIA_TECNICA_BD_SUPABASE.md
   const access = await getUserAccessContext();
 
-  let requisitionQuery = supabase
-    .from('requisitions')
-    .select('id, internal_folio, created_at, updated_at, total_amount, comments, business_status, integration_status, project_id, created_by, approved_by, company_id, bind_folio, bind_synced_at, bind_error_message, bind_sync_attempts, approved_at, rejected_at, rejection_reason')
-    .eq('id', id)
-    .eq('company_id', access.companyId);
+  let requisitionQuery = scopeToCompany(
+    supabase
+      .from('requisitions')
+      .select('id, internal_folio, created_at, updated_at, total_amount, comments, business_status, integration_status, project_id, created_by, approved_by, company_id, bind_folio, bind_synced_at, bind_error_message, bind_sync_attempts, approved_at, rejected_at, rejection_reason')
+      .eq('id', id),
+    access
+  );
 
   if (!access.isAdmin) {
     if (access.isSupervisor) {
@@ -397,12 +402,14 @@ export const fetchPendingApprovals = async () => {
         return [];
     }
 
-    let query = supabase
-        .from('requisitions')
-        .select('id, internal_folio, created_at, total_amount, project_id, created_by, company_id')
-        .eq('business_status', 'submitted')
-        .eq('company_id', access.companyId)
-        .order('created_at', { ascending: true });
+    let query = scopeToCompany(
+        supabase
+            .from('requisitions')
+            .select('id, internal_folio, created_at, total_amount, project_id, created_by, company_id')
+            .eq('business_status', 'submitted')
+            .order('created_at', { ascending: true }),
+        access
+    );
 
     if (!access.isAdmin) {
         const projectIds = access.accessibleProjectIds || [];

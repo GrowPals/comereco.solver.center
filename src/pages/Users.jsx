@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm, Controller } from 'react-hook-form';
-import { Plus, MoreHorizontal, User as UserIcon, Shield, Briefcase, Trash2 } from 'lucide-react';
+import { Plus, MoreHorizontal, User as UserIcon, Shield, Briefcase, Trash2, Code } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -44,16 +44,17 @@ import { useToast } from '@/components/ui/useToast';
 import PageLoader from '@/components/PageLoader';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useUserPermissions } from '@/hooks/useUserPermissions';
 
 
-// Mapeo de roles según app_role_v2 enum (admin | supervisor | user)
+// Mapeo de roles según app_role_v2 enum (admin | supervisor | user | dev)
 const roleMapping = {
     user: { label: 'Usuario', icon: UserIcon },
     supervisor: { label: 'Supervisor', icon: Briefcase },
     admin: { label: 'Admin', icon: Shield },
+    dev: { label: 'Developer', icon: Code },
 };
-
-const UserForm = ({ user, onSave, onCancel, isLoading, approvalBypassSupported }) => {
+const UserForm = ({ user, onSave, onCancel, isLoading, approvalBypassSupported, roleOptions }) => {
     const { register, handleSubmit, watch, setValue, control, formState: { errors } } = useForm({
         mode: 'onBlur',
         defaultValues: {
@@ -65,6 +66,12 @@ const UserForm = ({ user, onSave, onCancel, isLoading, approvalBypassSupported }
     });
 
     const role = watch('role');
+    const selectableRoles = React.useMemo(() => {
+        if (role && !roleOptions.some(([value]) => value === role) && roleMapping[role]) {
+            return [...roleOptions, [role, roleMapping[role]]];
+        }
+        return roleOptions;
+    }, [roleOptions, role]);
     const showApprovalToggle = Boolean(user && approvalBypassSupported);
 
     const onSubmit = (data) => {
@@ -119,7 +126,7 @@ const UserForm = ({ user, onSave, onCancel, isLoading, approvalBypassSupported }
                         <SelectValue placeholder="Selecciona un rol" />
                     </SelectTrigger>
                     <SelectContent>
-                        {Object.entries(roleMapping).map(([key, { label }]) => (
+                        {selectableRoles.map(([key, { label }]) => (
                             <SelectItem key={key} value={key}>{label}</SelectItem>
                         ))}
                     </SelectContent>
@@ -169,6 +176,8 @@ const Users = () => {
     const [userToDelete, setUserToDelete] = useState(null);
     const { toast } = useToast();
     const queryClient = useQueryClient();
+
+    const { isDev } = useUserPermissions();
 
     const { data: users, isLoading, isError, error } = useQuery({
         queryKey: ['users'],
@@ -316,6 +325,8 @@ const Users = () => {
             </div>
         );
     }
+
+    const roleOptions = Object.entries(roleMapping).filter(([key]) => (key === 'dev' ? isDev : true));
 
     return (
         <>
@@ -548,6 +559,7 @@ const Users = () => {
                         onCancel={() => setIsFormOpen(false)}
                         isLoading={inviteMutation.isPending || updateMutation.isPending}
                         approvalBypassSupported={approvalBypassSupported}
+                        roleOptions={roleOptions}
                     />
                 </DialogContent>
             </Dialog>

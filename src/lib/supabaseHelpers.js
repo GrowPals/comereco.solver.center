@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/customSupabaseClient';
+import { getCompanyScopeOverride, COMPANY_SCOPE_GLOBAL } from '@/lib/companyScopeStore';
 
 // Cache simple para sesión (evita múltiples llamadas en el mismo tick)
 let sessionCache = null;
@@ -105,3 +106,38 @@ if (typeof window !== 'undefined') {
   });
 }
 
+export const getScopedCompanyId = async ({ allowGlobal = false } = {}) => {
+  const override = getCompanyScopeOverride();
+
+  if (override === COMPANY_SCOPE_GLOBAL) {
+    if (allowGlobal) {
+      return { companyId: null, error: null, isGlobal: true };
+    }
+    return { ...(await getCachedCompanyId()), isGlobal: false };
+  }
+
+  if (override) {
+    return { companyId: override, error: null, isGlobal: false };
+  }
+
+  const fallback = await getCachedCompanyId();
+  return { ...fallback, isGlobal: false };
+};
+
+export const ensureScopedCompanyId = async () => {
+  const override = getCompanyScopeOverride();
+  if (override === COMPANY_SCOPE_GLOBAL) {
+    return {
+      companyId: null,
+      error: {
+        message: 'Selecciona una empresa específica para continuar.'
+      }
+    };
+  }
+
+  if (override) {
+    return { companyId: override, error: null };
+  }
+
+  return getCachedCompanyId();
+};

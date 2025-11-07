@@ -1,7 +1,8 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
-import { getCachedSession, getCachedCompanyId } from '@/lib/supabaseHelpers';
+import { getCachedSession, ensureScopedCompanyId } from '@/lib/supabaseHelpers';
 import { getUserAccessContext, invalidateAccessContext } from '@/lib/accessControl';
+import { scopeToCompany } from '@/lib/companyScope';
 import logger from '@/utils/logger';
 import { formatErrorMessage } from '@/utils/errorHandler';
 
@@ -45,8 +46,9 @@ export const getAllProjects = async () => {
 
   let query = supabase
     .from('projects')
-    .select('id, company_id, name, description, status, supervisor_id, created_by, created_at, updated_at')
-    .eq('company_id', access.companyId);
+    .select('id, company_id, name, description, status, supervisor_id, created_by, created_at, updated_at');
+
+  query = scopeToCompany(query, access);
 
   if (!access.allProjects) {
     const projectIds = access.accessibleProjectIds || [];
@@ -99,11 +101,12 @@ export const getMyProjects = async () => {
     return [];
   }
 
-  const { data: projects, error } = await supabase
+  const projectsQuery = supabase
     .from('projects')
     .select('id, company_id, name, description, status, supervisor_id, created_by, created_at, updated_at')
-    .in('id', projectIds)
-    .eq('company_id', access.companyId);
+    .in('id', projectIds);
+
+  const { data: projects, error } = await scopeToCompany(projectsQuery, access);
 
   if (error) {
     logger.error('Error fetching accessible projects:', error);
@@ -138,9 +141,9 @@ export const createProject = async (projectData) => {
     throw new Error('Usuario no autenticado.');
   }
 
-  const companyId = access.companyId;
-  if (!companyId) {
-    throw new Error('No se pudo determinar la empresa del usuario.');
+  const { companyId, error: companyError } = await ensureScopedCompanyId();
+  if (companyError || !companyId) {
+    throw new Error(companyError?.message || 'Selecciona una empresa para crear proyectos.');
   }
   
   // Limpiar y normalizar datos
@@ -522,12 +525,15 @@ export const getProjectDetails = async (projectId) => {
   }
 
   // Obtener proyecto
-  const { data: project, error: projectError } = await supabase
-    .from('projects')
-    .select('id, company_id, name, description, status, supervisor_id, created_by, created_at, updated_at')
-    .eq('id', projectId)
-    .eq('company_id', access.companyId)
-    .single();
+  const projectQuery = scopeToCompany(
+    supabase
+      .from('projects')
+      .select('id, company_id, name, description, status, supervisor_id, created_by, created_at, updated_at')
+      .eq('id', projectId),
+    access
+  );
+
+  const { data: project, error: projectError } = await projectQuery.single();
 
   if (projectError) {
     logger.error('Error fetching project:', projectError);

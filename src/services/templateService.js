@@ -1,6 +1,6 @@
 
 import { supabase } from '@/lib/customSupabaseClient';
-import { getCachedSession, getCachedCompanyId } from '@/lib/supabaseHelpers';
+import { getCachedSession, ensureScopedCompanyId } from '@/lib/supabaseHelpers';
 import logger from '@/utils/logger';
 import { formatErrorMessage } from '@/utils/errorHandler';
 
@@ -59,9 +59,9 @@ export const createTemplate = async (templateData) => {
         throw new Error('Usuario no autenticado.');
     }
     
-    const { companyId, error: companyError } = await getCachedCompanyId();
+    const { companyId, error: companyError } = await ensureScopedCompanyId();
     if (companyError || !companyId) {
-        throw new Error('Perfil de usuario no encontrado.');
+        throw new Error(companyError?.message || 'Selecciona una empresa para guardar la plantilla.');
     }
 
     // Validar estructura de items JSONB según PROMPT 7
