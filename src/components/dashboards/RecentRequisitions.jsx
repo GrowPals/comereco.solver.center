@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getRecentRequisitions } from '@/services/dashboardService';
@@ -10,40 +10,44 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Clock } from 'lucide-react';
+import { formatPrice } from '@/lib/formatters';
+
+// Funciones helper movidas fuera del componente para evitar recreación
+const getStatusVariant = (status) => {
+    switch (status) {
+        case 'approved': return 'success';
+        case 'rejected': return 'destructive';
+        case 'submitted': return 'warning';
+        case 'cancelled': return 'destructive';
+        case 'draft': return 'secondary';
+        default: return 'default';
+    }
+};
+
+const getStatusLabel = (status) => {
+    switch (status) {
+        case 'approved': return 'Aprobada';
+        case 'rejected': return 'Rechazada';
+        case 'submitted': return 'Enviada';
+        case 'cancelled': return 'Cancelada';
+        case 'draft': return 'Borrador';
+        default: return status;
+    }
+};
 
 const RecentRequisitions = () => {
     const navigate = useNavigate();
     const { data: requisitions, isLoading, isError } = useQuery({
         queryKey: ['recentRequisitions'],
         queryFn: getRecentRequisitions,
-        retry: false, // No reintentar si falla
-        refetchOnWindowFocus: false, // No reintentar al enfocar ventana
+        staleTime: 1000 * 60 * 2, // 2 minutos
+        gcTime: 1000 * 60 * 10, // 10 minutos
+        retry: false,
+        refetchOnWindowFocus: false,
     });
 
     // Asegurar que requisitions sea un array
     const safeRequisitions = Array.isArray(requisitions) ? requisitions : [];
-
-    const getStatusVariant = (status) => {
-        switch (status) {
-            case 'approved': return 'success';
-            case 'rejected': return 'destructive';
-            case 'submitted': return 'warning';
-            case 'cancelled': return 'destructive';
-            case 'draft': return 'secondary';
-            default: return 'default';
-        }
-    };
-
-    const getStatusLabel = (status) => {
-        switch (status) {
-            case 'approved': return 'Aprobada';
-            case 'rejected': return 'Rechazada';
-            case 'submitted': return 'Enviada';
-            case 'cancelled': return 'Cancelada';
-            case 'draft': return 'Borrador';
-            default: return status;
-        }
-    };
 
     return (
         <Card className="dashboard-panel surface-panel">
@@ -100,7 +104,7 @@ const RecentRequisitions = () => {
                                             {format(parseISO(req.created_at), 'dd MMM yyyy', { locale: es })}
                                         </TableCell>
                                         <TableCell className="font-semibold text-foreground">
-                                            ${req.total_amount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                                            ${formatPrice(req.total_amount)}
                                         </TableCell>
                                         <TableCell className="text-right">
                                             <Badge

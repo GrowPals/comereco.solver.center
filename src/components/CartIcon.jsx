@@ -42,7 +42,7 @@ export function CartIcon({ variant = 'default' }) {
       {totalItems > 0 && (
         <span
           className={cn(
-            'absolute -top-1.5 -right-1.5 z-20 flex h-5 min-w-[1.75rem] items-center justify-center rounded-full bg-destructive px-1.5 text-[10px] font-bold text-destructive-foreground leading-[20px]',
+            'absolute -top-1.5 -right-1.5 z-20 flex h-5 min-w-[1.75rem] items-center justify-center rounded-full bg-destructive px-1.5 text-xs font-bold text-destructive-foreground leading-tight',
             'shadow-none dark:shadow-[0_20px_48px_rgba(4,12,28,0.55)]',
             totalItems > 99 && 'px-2'
           )}
