@@ -8,9 +8,19 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/components/ui/useToast';
 import { cn } from '@/lib/utils';
 
-const MenuItem = memo(({ to, icon: Icon, children, onClick, badge }) => {
+const MenuItem = memo(({ to, icon: Icon, children, onClick, badge, iconVariant = 'default' }) => {
     const location = useLocation();
     const isActive = location.pathname === to || (to !== '/dashboard' && location.pathname.startsWith(to));
+
+    const isFavoriteVariant = iconVariant === 'favorite';
+
+    const activeIconClasses = isFavoriteVariant
+        ? 'favorite-icon-badge ring-2 ring-[rgba(255,193,120,0.45)] shadow-lg dark:ring-[rgba(255,214,150,0.5)]'
+        : 'bg-gradient-to-b from-[rgba(66,165,255,0.25)] to-[rgba(66,165,255,0.05)] text-primary-600 ring-2 ring-primary/30 dark:bg-[rgba(80,150,255,0.18)] dark:text-primary-50 dark:ring-[rgba(110,190,255,0.28)]';
+
+    const inactiveIconClasses = isFavoriteVariant
+        ? 'favorite-icon-badge ring-1 ring-[rgba(255,193,120,0.25)] dark:ring-[rgba(255,214,150,0.35)] opacity-95'
+        : 'bg-[var(--surface-contrast)] text-foreground/65 shadow-sm ring-1 ring-border/70 group-hover:text-foreground group-hover:ring-primary-200/50 dark:bg-[rgba(20,38,68,0.55)] dark:text-muted-foreground dark:ring-[rgba(32,64,110,0.65)] dark:group-hover:bg-[rgba(26,50,88,0.75)] dark:group-hover:text-primary-50 dark:group-hover:ring-[rgba(110,190,255,0.35)]';
 
     return (
         <NavLink to={to} onClick={onClick}>
@@ -26,12 +36,10 @@ const MenuItem = memo(({ to, icon: Icon, children, onClick, badge }) => {
                 <div
                     className={cn(
                         'flex h-10 w-10 items-center justify-center rounded-lg transition-all',
-                        isActive
-                                ? 'bg-gradient-to-b from-[rgba(66,165,255,0.25)] to-[rgba(66,165,255,0.05)] text-primary-600 ring-2 ring-primary/30 dark:bg-[rgba(80,150,255,0.18)] dark:text-primary-50 dark:ring-[rgba(110,190,255,0.28)]'
-                                : 'bg-[var(--surface-contrast)] text-foreground/65 shadow-sm ring-1 ring-border/70 group-hover:text-foreground group-hover:ring-primary-200/50 dark:bg-[rgba(20,38,68,0.55)] dark:text-muted-foreground dark:ring-[rgba(32,64,110,0.65)] dark:group-hover:bg-[rgba(26,50,88,0.75)] dark:group-hover:text-primary-50 dark:group-hover:ring-[rgba(110,190,255,0.35)]'
+                        isActive ? activeIconClasses : inactiveIconClasses
                     )}
                 >
-                    <Icon className="h-5 w-5" />
+                    <Icon className={cn('h-5 w-5', isFavoriteVariant && 'favorite-icon')} />
                 </div>
                     <span className="text-[15px] font-medium text-foreground">{children}</span>
                 </div>
@@ -100,7 +108,7 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
             title: 'Mis Herramientas',
             items: [
                 { to: '/templates', icon: LayoutTemplate, text: 'Plantillas' },
-                { to: '/favorites', icon: Star, text: 'Favoritos' },
+                { to: '/favorites', icon: Star, text: 'Favoritos', iconVariant: 'favorite' },
             ]
         });
 
@@ -205,6 +213,7 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
                                     key={item.to}
                                     to={item.to}
                                     icon={item.icon}
+                                    iconVariant={item.iconVariant}
                                     onClick={handleNavClick}
                                     badge={item.badge}
                                 >
