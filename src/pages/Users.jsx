@@ -178,7 +178,7 @@ const UserForm = ({ user, onSave, onCancel, isLoading, approvalBypassSupported, 
               </div>
             )}
             {user && !approvalBypassSupported && (
-              <Alert className="border-amber-200 bg-amber-50 dark:border-amber-400/60 dark:bg-amber-500/15">
+              <Alert variant="warning">
                 <AlertTitle>Actualiza la base de datos</AlertTitle>
                 <AlertDescription>
                   Para permitir envíos sin aprobación ejecuta las migraciones más recientes y recarga la página.
@@ -348,7 +348,7 @@ const Users = () => {
     if (isError) {
         return (
             <div className="p-8">
-                <Alert className="border-destructive/40 bg-red-50 text-destructive">
+                <Alert variant="error">
                     <AlertTitle>Error al cargar usuarios</AlertTitle>
                     <AlertDescription>
                         {error?.message || 'Intenta recargar la página en unos segundos.'}
@@ -435,12 +435,12 @@ const Users = () => {
                     </header>
 
                     {setupWarnings.length > 0 && (
-                        <Alert className="border-amber-200 bg-amber-50 dark:border-amber-400/60 dark:bg-amber-500/15">
+                        <Alert variant="warning">
                             <AlertTitle>Migraciones pendientes</AlertTitle>
                             <AlertDescription>
                                 <ul className="list-disc space-y-1 pl-5">
                                     {setupWarnings.map((warning, index) => (
-                                        <li key={index} className="text-sm text-muted-foreground">{warning}</li>
+                                        <li key={index} className="text-sm">{warning}</li>
                                     ))}
                                 </ul>
                             </AlertDescription>
