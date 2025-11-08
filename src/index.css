@@ -74,10 +74,10 @@
     --warning-50: #F59E0B;
     --info-50: #3B82F6;
 
-    /* ============ TEXT COLORS - Mejora de contraste ============ */
-    --text-primary: var(--neutral-900);
-    --text-secondary: var(--neutral-600);
-    --text-tertiary: var(--neutral-600);
+    /* ============ TEXT COLORS - WCAG AA Compliant ============ */
+    --text-primary: var(--neutral-900);     /* Contrast ratio: 16:1 */
+    --text-secondary: var(--neutral-700);   /* Contrast ratio: 11:1 - WCAG AAA */
+    --text-tertiary: var(--neutral-600);    /* Contrast ratio: 7:1 - WCAG AA */
 
     /* ============ GRADIENTS ============ */
     --gradient-primary: linear-gradient(135deg, #2d9bff 0%, #3d6dff 100%);
@@ -120,7 +120,7 @@
     --destructive-foreground: #FFFFFF;
 
     --muted: var(--neutral-100);
-    --muted-foreground: var(--neutral-600);
+    --muted-foreground: var(--neutral-700);  /* Improved contrast: 11:1 */
 
     --accent: var(--primary-50);
     --accent-foreground: var(--primary-700);
@@ -177,6 +177,15 @@
     --shadow-elevated: 0 6px 16px rgba(15, 23, 42, 0.09);
     --shadow-button: 0 2px 6px rgba(15, 23, 42, 0.08);
     --shadow-button-hover: 0 4px 12px rgba(15, 23, 42, 0.12);
+
+    /* ============ ELEVATION SYSTEM - Light Mode ============ */
+    /* Sistema de elevación consistente usando sombras */
+    --elevation-0: none; /* Flush - Sin elevación */
+    --elevation-1: 0 1px 2px rgba(15, 23, 42, 0.04); /* Subtle - Mínima separación */
+    --elevation-2: 0 2px 6px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.04); /* Card - Elevación estándar */
+    --elevation-3: 0 6px 16px rgba(15, 23, 42, 0.09); /* Elevated - Destacado */
+    --elevation-4: 0 8px 20px rgba(15, 23, 42, 0.10); /* Floating - Elementos flotantes */
+    --elevation-5: 0 20px 40px rgba(15, 23, 42, 0.14); /* Modal - Máxima elevación */
 
     /* Colores de íconos - Light Mode */
     --icon-color-primary: var(--primary-700);
@@ -254,15 +263,15 @@
     --info-light: rgba(79, 140, 255, 0.22);
 
     --muted: rgba(20, 38, 62, 0.85);
-    --muted-foreground: rgba(210, 224, 250, 0.95);
+    --muted-foreground: #E2E8F0;  /* Improved contrast: 8:1+ - WCAG AAA */
 
     --accent: rgba(85, 158, 255, 0.32);
     --accent-foreground: var(--card-foreground);
 
-    /* Borders más sutiles y consistentes */
-    --border: rgba(100, 145, 220, 0.30);
-    --input: rgba(100, 145, 220, 0.32);
-    --ring: rgba(105, 170, 255, 0.40);
+    /* Borders más sutiles y consistentes - SUAVIZADOS para dark mode */
+    --border: rgba(110, 180, 245, 0.16);
+    --input: rgba(110, 180, 245, 0.18);
+    --ring: rgba(120, 190, 255, 0.35);
 
     /* ============ SHADOW & SURFACE TOKENS - Dark Mode ============ */
     /* Sombras sutiles sin capas excesivas */
@@ -279,21 +288,21 @@
     --surface-subtle: rgba(20, 33, 61, 0.85);
 
     --sidebar-surface: linear-gradient(160deg, #0f1d31 0%, #061023 100%);
-    --sidebar-border: rgba(90, 150, 230, 0.24);
+    --sidebar-border: rgba(110, 180, 245, 0.18);
     --sidebar-shadow: 0 2px 12px rgba(0, 0, 0, 0.28);
 
     --nav-surface: linear-gradient(155deg, #0c182c, #070e1c);
-    --nav-border: rgba(102, 162, 240, 0.26);
+    --nav-border: rgba(110, 180, 245, 0.18);
     --nav-shadow: 0 1px 6px rgba(0, 0, 0, 0.26);
     --nav-backdrop-blur: 0px;
 
     --bottom-nav-surface: #070e1c;
-    --bottom-nav-border: rgba(100, 164, 240, 0.28);
+    --bottom-nav-border: rgba(110, 180, 245, 0.18);
     --bottom-nav-shadow: 0 -2px 10px rgba(0, 0, 0, 0.28);
 
     --nav-label-muted: rgba(190, 210, 242, 0.72);
     --nav-label-active: #f4f8ff;
-    --nav-chip-border: rgba(102, 168, 255, 0.48);
+    --nav-chip-border: rgba(120, 190, 255, 0.28);
     --nav-chip-glow: none; /* Sin glow innecesario */
     --nav-icon-active-glow: none; /* Sin glow innecesario */
 
@@ -312,6 +321,23 @@
     --shadow-elevated: 0 6px 18px rgba(0, 0, 0, 0.30);
     --shadow-button: 0 2px 6px rgba(0, 0, 0, 0.24);
     --shadow-button-hover: 0 4px 12px rgba(0, 0, 0, 0.30);
+
+    /* ============ ELEVATION SYSTEM - Dark Mode ============ */
+    /* Sistema de elevación usando sombras + bordes sutiles con highlights */
+    --elevation-0: none; /* Flush - Sin elevación */
+    --elevation-1: 0 1px 3px rgba(0, 0, 0, 0.20); /* Subtle - Mínima separación */
+    --elevation-2: 0 3px 8px rgba(0, 0, 0, 0.22); /* Card - Elevación estándar */
+    --elevation-3: 0 6px 18px rgba(0, 0, 0, 0.30); /* Elevated - Destacado */
+    --elevation-4: 0 8px 20px rgba(0, 0, 0, 0.32); /* Floating - Elementos flotantes */
+    --elevation-5: 0 16px 40px rgba(0, 0, 0, 0.38); /* Modal - Máxima elevación */
+
+    /* Bordes de elevación para dark mode - crean highlights sutiles */
+    --elevation-border-0: transparent;
+    --elevation-border-1: rgba(110, 180, 245, 0.12);
+    --elevation-border-2: rgba(110, 180, 245, 0.16);
+    --elevation-border-3: rgba(120, 190, 250, 0.20);
+    --elevation-border-4: rgba(130, 200, 255, 0.24);
+    --elevation-border-5: rgba(140, 210, 255, 0.28);
 
     /* Colores de íconos - Dark Mode */
     --icon-color-primary: var(--primary-300);
@@ -595,7 +621,7 @@
   /* Ensure sidebar has solid background in dark mode for better readability */
   .dark .sidebar-shell {
     background: linear-gradient(160deg, #0f1d31 0%, #061023 100%);
-    border-right: 1px solid rgba(90, 150, 230, 0.28);
+    border-right: 1px solid rgba(110, 180, 245, 0.18);
   }
 
   @media (min-width: 1024px) {
@@ -630,13 +656,13 @@
 
   .dark .nav-link-base {
     background: linear-gradient(150deg, rgba(14, 28, 52, 0.82), rgba(8, 16, 30, 0.88));
-    border-color: rgba(104, 168, 240, 0.28);
+    border-color: rgba(110, 180, 245, 0.18);
     box-shadow: var(--shadow-sm);
   }
 
   .dark .nav-link-base:hover {
     background: linear-gradient(150deg, rgba(22, 42, 72, 0.9), rgba(12, 26, 48, 0.95));
-    border-color: rgba(128, 192, 255, 0.4);
+    border-color: rgba(130, 200, 255, 0.25);
     box-shadow: var(--shadow-md);
   }
 
@@ -701,7 +727,7 @@
   }
 
   .dark .surface-overlay {
-    border-color: rgba(120, 192, 255, 0.28);
+    border-color: rgba(110, 180, 245, 0.18);
     box-shadow: var(--shadow-floating);
   }
 
@@ -712,7 +738,7 @@
   }
 
   .dark .surface-sticky {
-    border-color: rgba(122, 196, 255, 0.28);
+    border-color: rgba(110, 180, 245, 0.18);
     box-shadow: 0 -16px 36px rgba(0, 0, 0, 0.32);
   }
 
@@ -722,18 +748,18 @@
 
   .dark .surface-card {
     background: linear-gradient(160deg, rgba(17, 30, 52, 0.94) 0%, rgba(9, 18, 34, 0.90) 100%);
-    border: 1px solid rgba(110, 180, 250, 0.22);
+    border: 1px solid rgba(110, 180, 245, 0.16);
     box-shadow: var(--shadow-soft-md);
   }
 
   .dark .surface-card:hover {
     box-shadow: var(--shadow-soft-lg);
-    border-color: rgba(140, 208, 255, 0.28);
+    border-color: rgba(130, 200, 255, 0.22);
   }
 
   .dark .surface-panel {
     background: linear-gradient(158deg, rgba(14, 28, 52, 0.94) 0%, rgba(8, 18, 36, 0.92) 100%);
-    border: 1px solid rgba(116, 190, 255, 0.26);
+    border: 1px solid rgba(110, 180, 245, 0.18);
     box-shadow: var(--shadow-soft-lg);
   }
 
@@ -853,7 +879,7 @@
 
   .dark .surface-chip {
     background: linear-gradient(150deg, rgba(24, 42, 74, 0.85), rgba(14, 28, 54, 0.88));
-    border: 1px solid rgba(124, 198, 255, 0.26);
+    border: 1px solid rgba(110, 180, 245, 0.18);
     box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
     color: #f4f8ff;
   }
@@ -864,31 +890,31 @@
   .dark .bg-muted\/70,
   .dark .bg-muted\/60 {
     background: rgba(18, 32, 54, 0.86) !important;
-    border-color: rgba(124, 198, 255, 0.24) !important;
+    border-color: rgba(110, 180, 245, 0.16) !important;
   }
 
   .dark .dashboard-panel,
   .dark .stat-card {
     background: linear-gradient(152deg, rgba(16, 30, 54, 0.88) 0%, rgba(10, 20, 38, 0.88) 100%) !important;
-    border: 1px solid rgba(120, 190, 255, 0.28) !important;
+    border: 1px solid rgba(110, 180, 245, 0.16) !important;
     box-shadow: var(--shadow-soft-md);
   }
 
   .dark .dashboard-panel:hover,
   .dark .stat-card:hover {
-    border-color: rgba(148, 208, 255, 0.32) !important;
+    border-color: rgba(130, 200, 255, 0.22) !important;
     box-shadow: var(--shadow-soft-lg);
   }
 
   .dark .dashboard-action {
     background: linear-gradient(148deg, rgba(18, 34, 60, 0.86), rgba(10, 22, 42, 0.88));
-    border: 1px solid rgba(128, 198, 255, 0.24) !important;
+    border: 1px solid rgba(110, 180, 245, 0.16) !important;
     box-shadow: var(--shadow-md);
   }
 
   .dark .dashboard-action:hover {
     background: linear-gradient(148deg, rgba(24, 44, 76, 0.92), rgba(14, 28, 54, 0.92));
-    border-color: rgba(156, 216, 255, 0.32) !important;
+    border-color: rgba(130, 200, 255, 0.22) !important;
     box-shadow: var(--shadow-lg);
   }
 
@@ -916,7 +942,7 @@
   .dark .from-primary-50.to-primary-100,
   .dark .bg-gradient-to-br.from-primary-50.to-primary-100 {
     background: rgba(90, 150, 255, 0.11) !important;
-    border: 1px solid rgba(120, 190, 255, 0.14) !important;
+    border: 1px solid rgba(110, 180, 245, 0.12) !important;
     box-shadow: none !important;
   }
 
@@ -1224,7 +1250,55 @@
 
 @layer utilities {
   /* ============ UTILITY CLASSES ============ */
-  
+
+  /* ============ ELEVATION UTILITIES ============ */
+  /* Sistema de elevación unificado - funciona en light y dark mode */
+  .elevation-0 {
+    box-shadow: var(--elevation-0);
+    border-color: transparent;
+  }
+
+  .elevation-1 {
+    box-shadow: var(--elevation-1);
+  }
+
+  .elevation-2 {
+    box-shadow: var(--elevation-2);
+  }
+
+  .elevation-3 {
+    box-shadow: var(--elevation-3);
+  }
+
+  .elevation-4 {
+    box-shadow: var(--elevation-4);
+  }
+
+  .elevation-5 {
+    box-shadow: var(--elevation-5);
+  }
+
+  /* En dark mode, agregar bordes sutiles para reforzar la jerarquía */
+  .dark .elevation-1 {
+    border-color: var(--elevation-border-1);
+  }
+
+  .dark .elevation-2 {
+    border-color: var(--elevation-border-2);
+  }
+
+  .dark .elevation-3 {
+    border-color: var(--elevation-border-3);
+  }
+
+  .dark .elevation-4 {
+    border-color: var(--elevation-border-4);
+  }
+
+  .dark .elevation-5 {
+    border-color: var(--elevation-border-5);
+  }
+
   /* Screen reader only - Accesibilidad */
   .sr-only {
     position: absolute;
@@ -1273,7 +1347,7 @@
 
   .dark .scope-indicator-banner {
     background: linear-gradient(135deg, rgba(20, 33, 61, 0.94) 0%, rgba(14, 28, 52, 0.92) 100%);
-    border: 1px solid rgba(125, 211, 252, 0.30);
+    border: 1px solid rgba(110, 180, 245, 0.20);
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32);
   }
 
@@ -1445,13 +1519,13 @@
 
   .dark .company-switcher-icon {
     background: rgba(18, 32, 56, 0.85);
-    border: 1px solid rgba(100, 145, 220, 0.22);
+    border: 1px solid rgba(110, 180, 245, 0.16);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.24);
   }
 
   .dark .company-switcher-icon:hover {
     background: rgba(24, 40, 68, 0.9);
-    border-color: rgba(120, 180, 255, 0.32);
+    border-color: rgba(130, 200, 255, 0.22);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
   }
 
@@ -1484,19 +1558,19 @@
 
   .dark .header-action-btn {
     background: rgba(18, 32, 56, 0.85);
-    border: 1px solid rgba(100, 145, 220, 0.22);
+    border: 1px solid rgba(110, 180, 245, 0.16);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.24);
     color: rgba(214, 230, 255, 0.85);
   }
 
   .dark .header-action-btn:hover {
     background: rgba(24, 40, 68, 0.9);
-    border-color: rgba(120, 180, 255, 0.32);
+    border-color: rgba(130, 200, 255, 0.22);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
     color: #f4f8ff;
   }
 
-  /* Badge de notificaciones/carrito */
+  /* Badge de notificaciones - rojo para atención urgente */
   .header-badge {
     position: absolute;
     top: -0.375rem;
@@ -1525,6 +1599,37 @@
   .dark .header-badge {
     background: linear-gradient(135deg, #FF6B6B 0%, #EF4444 100%);
     box-shadow: 0 3px 8px rgba(255, 107, 107, 0.40);
+  }
+
+  /* Badge de carrito - azul primario para información */
+  .cart-badge {
+    position: absolute;
+    top: -0.375rem;
+    right: -0.375rem;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.25rem;
+    height: 1.25rem;
+    padding: 0 0.375rem;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+    color: #ffffff;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    line-height: 1;
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.35);
+    transition: transform 200ms ease;
+  }
+
+  .cart-badge:empty {
+    display: none;
+  }
+
+  .dark .cart-badge {
+    background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%);
+    box-shadow: 0 3px 8px rgba(96, 165, 250, 0.40);
   }
 
   /* Badge icon interno del company switcher - MÁS PROMINENTE */

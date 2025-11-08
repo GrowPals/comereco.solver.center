@@ -29,10 +29,10 @@ const StatCard = memo(({ title, value, icon: Icon, isLoading, format = val => va
                 )}
             </CardHeader>
             <CardContent className="relative z-10">
-                <CardTitle className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                <CardTitle className="caption mb-2">
                     {title}
                 </CardTitle>
-                <div className="mb-2 text-3xl font-extrabold tracking-tight text-foreground">
+                <div className="mb-2 display-number">
                     {format(value)}
                 </div>
                 <div className="mt-3 h-1 w-16 rounded-full bg-gradient-primary transition-all duration-300 group-hover:w-full"></div>
