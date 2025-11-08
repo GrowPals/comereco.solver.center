@@ -7,6 +7,7 @@ import { useUserPermissions } from '@/hooks/useUserPermissions';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/components/ui/useToast';
 import { cn } from '@/lib/utils';
+import { ROUTES } from '@/config/routes.config';
 
 const MenuItem = memo(({ to, icon: Icon, children, onClick, badge, isSidebarOpen }) => {
     const location = useLocation();
@@ -97,9 +98,9 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
         sections.push({
             title: 'Principal',
             items: [
-                { to: '/dashboard', icon: Home, text: 'Inicio' },
-                { to: '/catalog', icon: ShoppingBag, text: 'Catálogo' },
-                { to: '/requisitions', icon: List, text: 'Requisiciones' },
+                { to: ROUTES.DASHBOARD, icon: Home, text: 'Inicio' },
+                { to: ROUTES.CATALOG, icon: ShoppingBag, text: 'Catálogo' },
+                { to: ROUTES.REQUISITIONS, icon: List, text: 'Requisiciones' },
             ]
         });
 
@@ -107,8 +108,8 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
         sections.push({
             title: 'Mis Herramientas',
             items: [
-                { to: '/templates', icon: LayoutTemplate, text: 'Plantillas' },
-                { to: '/favorites', icon: Star, text: 'Favoritos' },
+                { to: ROUTES.TEMPLATES, icon: LayoutTemplate, text: 'Plantillas' },
+                { to: ROUTES.FAVORITES, icon: Star, text: 'Favoritos' },
             ]
         });
 
@@ -118,17 +119,17 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
 
             if (isAdmin) {
                 adminItems.push(
-                    { to: '/users', icon: Users, text: 'Gestión de Usuarios' },
-                    { to: '/products/manage', icon: ShoppingBag, text: 'Gestión de Productos' },
-                    { to: '/reports', icon: BarChart, text: 'Reportes y Analíticas' },
+                    { to: ROUTES.USERS, icon: Users, text: 'Gestión de Usuarios' },
+                    { to: ROUTES.PRODUCTS_MANAGE, icon: ShoppingBag, text: 'Gestión de Productos' },
+                    { to: ROUTES.REPORTS, icon: BarChart, text: 'Reportes y Analíticas' },
                 );
             }
 
             if (isSupervisor || isAdmin) {
                 adminItems.push(
-                    { to: '/approvals', icon: CheckSquare, text: 'Aprobaciones', badge: null },
-                    { to: '/projects', icon: FolderKanban, text: 'Proyectos' },
-                    { to: '/inventory/restock-rules', icon: RefreshCw, text: 'Reabastecimiento' },
+                    { to: ROUTES.APPROVALS, icon: CheckSquare, text: 'Aprobaciones', badge: null },
+                    { to: ROUTES.PROJECTS, icon: FolderKanban, text: 'Proyectos' },
+                    { to: ROUTES.INVENTORY_RESTOCK_RULES, icon: RefreshCw, text: 'Reabastecimiento' },
                 );
             }
 

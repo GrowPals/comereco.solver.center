@@ -138,7 +138,7 @@ export default function RelatedProducts({ products, currentProductId }) {
   const handleProductClick = (productId) => {
     // Evitar navegación si se está arrastrando
     if (isDragging) return;
-    navigate(`/producto/${productId}`);
+    navigate(`/products/${productId}`);
   };
 
   return (

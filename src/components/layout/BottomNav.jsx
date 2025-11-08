@@ -3,21 +3,22 @@ import React, { useMemo, memo } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Home, ClipboardList, Menu, Layers, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ROUTES } from '@/config/routes.config';
 
 const BottomNav = memo(({ onMenuClick, isMenuOpen = false }) => {
     const location = useLocation();
     const navigate = useNavigate();
 
     const navItemsLeft = useMemo(() => [
-        { path: '/dashboard', icon: Home, label: 'Inicio' },
-        { path: '/templates', icon: Layers, label: 'Plantillas' },
+        { path: ROUTES.DASHBOARD, icon: Home, label: 'Inicio' },
+        { path: ROUTES.TEMPLATES, icon: Layers, label: 'Plantillas' },
     ], []);
 
     const navItemsRight = useMemo(() => [
-        { path: '/requisitions', icon: ClipboardList, label: 'Pedidos' },
+        { path: ROUTES.REQUISITIONS, icon: ClipboardList, label: 'Pedidos' },
     ], []);
 
-    const isActive = (path) => location.pathname === path || (path !== '/dashboard' && location.pathname.startsWith(path));
+    const isActive = (path) => location.pathname === path || (path !== ROUTES.DASHBOARD && location.pathname.startsWith(path));
 
     // Función para manejar click en tab - scroll to top si ya está activo
     const handleNavClick = (e, path) => {
@@ -81,7 +82,7 @@ const BottomNav = memo(({ onMenuClick, isMenuOpen = false }) => {
 
                 {/* Botón de acción rápida - Catálogo */}
                 <button
-                    onClick={() => navigate('/catalog')}
+                    onClick={() => navigate(ROUTES.CATALOG)}
                     className="group inline-flex flex-col items-center justify-center gap-1 transition-all duration-200 px-2"
                     aria-label="Ir al catálogo de productos"
                 >

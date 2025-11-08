@@ -8,6 +8,7 @@ import RecentRequisitions from './RecentRequisitions';
 import CompanyContextIndicator from '@/components/layout/CompanyContextIndicator';
 import { FileText, Hourglass, CheckCircle, XCircle, ShoppingCart, LayoutTemplate, History, Sparkles, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ROUTES } from '@/config/routes.config';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 
@@ -59,7 +60,7 @@ const UserDashboard = ({ user }) => {
         { label: 'Mi Historial', icon: History, path: '/requisitions', variant: 'outline' },
     ], []);
 
-    const handleNavigateToCatalog = useMemo(() => () => navigate('/catalog'), [navigate]);
+    const handleNavigateToCatalog = useMemo(() => () => navigate(ROUTES.CATALOG), [navigate]);
 
     return (
         <div className="mx-auto max-w-7xl space-y-10">
@@ -192,7 +193,7 @@ const UserDashboard = ({ user }) => {
                                 <Button
                                     size="lg"
                                     variant="outline"
-                                    onClick={() => navigate('/templates')}
+                                    onClick={() => navigate(ROUTES.TEMPLATES)}
                                 >
                                     <LayoutTemplate className="mr-2 h-5 w-5" />
                                     Ver plantillas

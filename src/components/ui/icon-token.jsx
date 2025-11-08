@@ -1,3 +1,12 @@
+/**
+ * @deprecated This component is deprecated. Use <Icon> from './icon.jsx' instead.
+ *
+ * This file and icon-presets.js are kept for reference only.
+ * The new unified icon system uses:
+ * - Icon component (icon.jsx) with 3 variants: default, soft, solid
+ * - IconWrapper (icon-wrapper.jsx) for backwards compatibility
+ */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { cn } from '@/lib/utils';

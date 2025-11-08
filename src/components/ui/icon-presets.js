@@ -1,3 +1,15 @@
+/**
+ * @deprecated This file is deprecated. Use Icon component from './icon.jsx' instead.
+ *
+ * This file contains the old complex icon system with gradients, glows, and multiple tones.
+ * The new unified icon system is simpler and uses semantic Tailwind classes that adapt to dark mode.
+ *
+ * Migration guide:
+ * - Use <Icon icon={YourIcon} variant="default" /> instead of IconToken with simple variant
+ * - Use <Icon icon={YourIcon} variant="soft" /> instead of IconToken with soft/neutral variants
+ * - Use <Icon icon={YourIcon} variant="solid" /> instead of IconToken with solid variant
+ */
+
 import { cn } from '@/lib/utils';
 
 export const ICON_SIZE_MAP = {

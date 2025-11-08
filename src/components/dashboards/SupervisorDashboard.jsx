@@ -8,6 +8,7 @@ import RecentRequisitions from './RecentRequisitions';
 import CompanyContextIndicator from '@/components/layout/CompanyContextIndicator';
 import { CheckSquare, FolderKanban, History, Hourglass, CheckCircle, XCircle } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { ROUTES } from '@/config/routes.config';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -135,7 +136,7 @@ const SupervisorDashboard = memo(({ user }) => {
                                 </div>
                             ))
                         )}
-                        <Button variant="link" size="sm" className="w-full mt-2" onClick={() => navigate('/projects')}>
+                        <Button variant="link" size="sm" className="w-full mt-2" onClick={() => navigate(ROUTES.PROJECTS)}>
                             Ver todos los proyectos →
                         </Button>
                     </CardContent>

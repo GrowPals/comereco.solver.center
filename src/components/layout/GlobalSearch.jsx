@@ -52,7 +52,7 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
     setSearchTerm('');
     setIsInteracting(false);
     if (type === 'product') {
-      navigate(`/producto/${id}`);
+      navigate(`/products/${id}`);
     } else if (type === 'requisition') {
       navigate(`/requisitions/${id}`);
     } else if (type === 'user') {

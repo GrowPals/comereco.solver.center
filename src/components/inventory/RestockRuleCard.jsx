@@ -174,7 +174,7 @@ export const RestockRuleCard = ({ rule, projects }) => {
         <Button
           variant="outline"
           className="h-10 w-full rounded-2xl border-border text-sm font-semibold text-foreground transition-colors hover:border-primary-400 hover:text-primary-500 dark:border-border"
-          onClick={() => navigate(`/producto/${rule.product_id}`)}
+          onClick={() => navigate(`/products/${rule.product_id}`)}
         >
           <ExternalLink className="mr-2 h-4 w-4" />
           Ver producto

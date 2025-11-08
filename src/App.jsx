@@ -19,6 +19,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import { AlertContainer } from '@/components/AlertContainer';
 import { cn } from '@/lib/utils';
 import lazyWithRetry from '@/utils/lazyWithRetry';
+import { ROUTES, ROUTES_WITHOUT_NAV, ROUTES_WITHOUT_BOTTOM_NAV, getPermissionCheck } from '@/config/routes.config';
 
 // Lazy loading de las páginas
 const Dashboard = lazyWithRetry(() => import('@/pages/Dashboard'));
@@ -63,13 +64,13 @@ function PrivateRoute({ children, permissionCheck }) {
 
   if (!session) {
     // Guardar la ruta a la que intentó acceder para redirigir después del login
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to={ROUTES.LOGIN} state={{ from: location }} replace />;
   }
   
   if (permissionCheck && !permissionCheck(permissions)) {
     // Si el chequeo de permisos falla, redirige al dashboard con mensaje.
     // El usuario verá el dashboard apropiado para su rol.
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to={ROUTES.DASHBOARD} replace />;
   }
 
   return children;
@@ -91,7 +92,7 @@ const AppLayout = () => {
     if (!session) return;
 
     // Prefetch requisiciones si está en dashboard
-    if (location.pathname === '/dashboard') {
+    if (location.pathname === ROUTES.DASHBOARD) {
       queryClient.prefetchQuery({
         queryKey: ['requisitions', { page: 1, pageSize: 10 }],
         queryFn: async () => {
@@ -107,7 +108,7 @@ const AppLayout = () => {
     }
 
     // Prefetch productos si está cerca de catalog
-    if (location.pathname === '/dashboard' || location.pathname === '/catalog') {
+    if (location.pathname === ROUTES.DASHBOARD || location.pathname === ROUTES.CATALOG) {
       queryClient.prefetchQuery({
         queryKey: ['products', { page: 1, pageSize: 12, searchTerm: '', category: '' }],
         queryFn: () => getProducts({ page: 1, pageSize: 12, searchTerm: '', category: '' }),
@@ -137,10 +138,8 @@ const AppLayout = () => {
     };
   }, [isMobileNavOpen]);
 
-  const pathsWithoutNav = ['/checkout', '/reset-password'];
-  const pathsWithoutBottomNav = ['/cart'];
-  const showNav = !pathsWithoutNav.some(path => location.pathname.startsWith(path));
-  const showBottomNav = showNav && !pathsWithoutBottomNav.some(path => location.pathname.startsWith(path));
+  const showNav = !ROUTES_WITHOUT_NAV.some(path => location.pathname.startsWith(path));
+  const showBottomNav = showNav && !ROUTES_WITHOUT_BOTTOM_NAV.some(path => location.pathname.startsWith(path));
 
   return (
     <div className="min-h-screen bg-background transition-colors duration-200">
@@ -184,23 +183,37 @@ const AppLayout = () => {
                 </div>
               }>
                 <Routes location={location}>
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/requisitions" element={<RequisitionsPage />} />
-                        <Route path="/requisitions/new" element={<NewRequisitionPage />} />
-                        <Route path="/requisitions/:id" element={<RequisitionDetail />} />
-                        <Route path="/profile" element={<ProfilePage />} />
+                        {/* Rutas principales */}
+                        <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
+                        <Route path={ROUTES.CATALOG} element={<CatalogPage />} />
+                        <Route path={ROUTES.PROFILE} element={<ProfilePage />} />
+                        <Route path={ROUTES.SETTINGS} element={<SettingsPage />} />
+                        <Route path={ROUTES.HELP} element={<HelpPage />} />
                         
-                        <Route path="/approvals" element={
-                          <PrivateRoute permissionCheck={(p) => p.canApproveRequisitions}>
-                            <ApprovalsPage />
+                        {/* Requisiciones */}
+                        <Route path={ROUTES.REQUISITIONS} element={<RequisitionsPage />} />
+                        <Route path={ROUTES.REQUISITIONS_NEW} element={<NewRequisitionPage />} />
+                        <Route path="/requisitions/:id" element={<RequisitionDetail />} />
+                        
+                        {/* Productos */}
+                        <Route path="/products/:id" element={<ProductDetail />} />
+                        <Route path={ROUTES.PRODUCTS_MANAGE} element={
+                          <PrivateRoute permissionCheck={getPermissionCheck(ROUTES.PRODUCTS_MANAGE)}>
+                            <ManageProductsPage />
                           </PrivateRoute>
                         } />
-                        <Route path="/users" element={
-                          <PrivateRoute permissionCheck={(p) => p.canManageUsers}>
-                            <UsersPage />
-                          </PrivateRoute>
-                        } />
-                        <Route path="/projects" element={
+                        
+                        {/* Carrito y compra */}
+                        <Route path={ROUTES.CART} element={<CartPage />} />
+                        <Route path={ROUTES.CHECKOUT} element={<CheckoutPage />} />
+                        
+                        {/* Herramientas del usuario */}
+                        <Route path={ROUTES.TEMPLATES} element={<TemplatesPage />} />
+                        <Route path={ROUTES.FAVORITES} element={<FavoritesPage />} />
+                        <Route path={ROUTES.NOTIFICATIONS} element={<NotificationsPage />} />
+                        
+                        {/* Proyectos */}
+                        <Route path={ROUTES.PROJECTS} element={
                           <PrivateRoute>
                             <ProjectsPage />
                           </PrivateRoute>
@@ -210,34 +223,34 @@ const AppLayout = () => {
                             <ProjectDetail />
                           </PrivateRoute>
                         } />
-                        <Route path="/products/manage" element={
-                          <PrivateRoute permissionCheck={(p) => p.isAdmin}>
-                            <ManageProductsPage />
+                        
+                        {/* Administración */}
+                        <Route path={ROUTES.APPROVALS} element={
+                          <PrivateRoute permissionCheck={getPermissionCheck(ROUTES.APPROVALS)}>
+                            <ApprovalsPage />
                           </PrivateRoute>
                         } />
-                        <Route path="/inventory/restock-rules" element={
-                          <PrivateRoute permissionCheck={(p) => p.canManageRestockRules}>
-                            <InventoryRestockRulesPage />
+                        <Route path={ROUTES.USERS} element={
+                          <PrivateRoute permissionCheck={getPermissionCheck(ROUTES.USERS)}>
+                            <UsersPage />
                           </PrivateRoute>
                         } />
-                        <Route path="/reports" element={
-                          <PrivateRoute permissionCheck={(p) => p.isAdmin}>
+                        <Route path={ROUTES.REPORTS} element={
+                          <PrivateRoute permissionCheck={getPermissionCheck(ROUTES.REPORTS)}>
                             <ReportsPage />
                           </PrivateRoute>
                         } />
-
-                        <Route path="/settings" element={<SettingsPage />} />
-                        <Route path="/catalog" element={<CatalogPage />} />
-                        <Route path="/producto/:id" element={<ProductDetail />} />
-                        <Route path="/notifications" element={<NotificationsPage />} />
-                        <Route path="/cart" element={<CartPage />} />
-                        <Route path="/checkout" element={<CheckoutPage />} />
-                        <Route path="/templates" element={<TemplatesPage />} />
-                        <Route path="/favorites" element={<FavoritesPage />} />
-                        <Route path="/help" element={<HelpPage />} />
-                        <Route path="/reset-password" element={<ResetPasswordPage />} />
-
-                        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                        
+                        {/* Inventario */}
+                        <Route path={ROUTES.INVENTORY_RESTOCK_RULES} element={
+                          <PrivateRoute permissionCheck={getPermissionCheck(ROUTES.INVENTORY_RESTOCK_RULES)}>
+                            <InventoryRestockRulesPage />
+                          </PrivateRoute>
+                        } />
+                        
+                        {/* Utilidades */}
+                        <Route path={ROUTES.RESET_PASSWORD} element={<ResetPasswordPage />} />
+                        <Route path={ROUTES.HOME} element={<Navigate to={ROUTES.DASHBOARD} replace />} />
                         <Route path="*" element={<NotFoundPage />} />
                     </Routes>
               </Suspense>
@@ -269,7 +282,7 @@ const App = () => (
           </div>
         }>
           <Routes>
-            <Route path="/login" element={<LoginPage />} />
+            <Route path={ROUTES.LOGIN} element={<LoginPage />} />
             <Route
               path="/*"
               element={

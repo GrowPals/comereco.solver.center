@@ -3,6 +3,7 @@ import { ShoppingCart } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '@/context/CartContext';
 import { cn } from '@/lib/utils';
+import { ROUTES } from '@/config/routes.config';
 
 export function CartIcon({ variant = 'default' }) {
   const { totalItems } = useCart();
@@ -22,15 +23,15 @@ export function CartIcon({ variant = 'default' }) {
   }, [totalItems]);
 
   const handleClick = () => {
-    if (location.pathname.startsWith('/cart')) {
-      const fallback = location.state?.from && location.state.from !== '/cart'
+    if (location.pathname.startsWith(ROUTES.CART)) {
+      const fallback = location.state?.from && location.state.from !== ROUTES.CART
         ? location.state.from
-        : '/catalog';
+        : ROUTES.CATALOG;
       navigate(fallback, { replace: false });
       return;
     }
 
-    navigate('/cart', {
+    navigate(ROUTES.CART, {
       state: {
         from: location.pathname,
       },
