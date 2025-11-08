@@ -1,32 +1,51 @@
-
 import React from 'react';
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+/**
+ * Select Component - Modern Pastel Design System
+ *
+ * Selects limpios sin sombras pesadas
+ * Usa gradientes pastel para estados activos
+ */
+
 const Select = SelectPrimitive.Root;
-
 const SelectGroup = SelectPrimitive.Group;
-
 const SelectValue = SelectPrimitive.Value;
 
 const SelectTrigger = React.forwardRef(({ className, children, ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      'flex h-12 w-full items-center justify-between rounded-xl border border-border/80 bg-[var(--surface-contrast)] px-4 py-3 text-base text-foreground ring-offset-background placeholder:text-neutral-500 shadow-xs transition-all',
-      'hover:border-neutral-300 dark:hover:border-[rgba(120,186,255,0.5)]',
-      'focus:outline-none focus:shadow-[var(--focus-glow)] focus:ring-0 focus:border-primary-500 dark:focus:border-[rgba(124,188,255,0.7)]',
-      'data-[state=open]:border-primary-500 data-[state=open]:shadow-[var(--focus-glow)] dark:data-[state=open]:border-[rgba(124,188,255,0.7)]',
-      'dark:border-[rgba(90,150,230,0.35)] dark:bg-[#0f1a2d] dark:text-neutral-50',
-      'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-neutral-50 dark:disabled:bg-[rgba(16,32,60,0.8)]',
+      // Base styles
+      "flex h-12 w-full items-center justify-between",
+      "rounded-xl px-4 py-3",
+      "text-base font-medium",
+      "bg-muted/30 backdrop-blur-sm",
+      "border-2 border-border",
+      "text-foreground placeholder:text-muted-foreground",
+      // Transitions
+      "transition-all duration-200",
+      // Hover state
+      "hover:border-slate-300 dark:hover:border-slate-600",
+      "hover:bg-muted/40",
+      // Focus state - sin sombras, solo color
+      "focus:outline-none",
+      "focus:border-blue-400 dark:focus:border-blue-500",
+      "focus:bg-card/50",
+      // Open state
+      "data-[state=open]:border-blue-400 dark:data-[state=open]:border-blue-500",
+      "data-[state=open]:bg-card/50",
+      // Disabled state
+      "disabled:cursor-not-allowed disabled:opacity-50",
       className
     )}
     {...props}
   >
-    <span className="truncate flex-1 text-left font-medium">{children}</span>
+    <span className="truncate flex-1 text-left">{children}</span>
     <SelectPrimitive.Icon asChild>
-      <ChevronDown className="ml-2 h-5 w-5 flex-shrink-0 text-neutral-500 transition-transform data-[state=open]:rotate-180 dark:text-neutral-400" />
+      <ChevronDown className="ml-2 h-5 w-5 flex-shrink-0 text-muted-foreground transition-transform duration-200 data-[state=open]:rotate-180" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ));
@@ -59,7 +78,14 @@ const SelectContent = React.forwardRef(({ className, children, position = 'poppe
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        'relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-2xl border border-border bg-card text-foreground shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 dark:border-[rgba(90,150,230,0.35)] dark:bg-[#0e1829] dark:shadow-[0_20px_50px_rgba(8,15,32,0.7)]',
+        'relative z-50 max-h-96 min-w-[8rem]',
+        'overflow-hidden rounded-xl',
+        'border-2 border-border',
+        'bg-card/95 backdrop-blur-xl',
+        'text-foreground',
+        // Animations - sin sombras
+        'data-[state=open]:animate-scale-in',
+        'data-[state=closed]:animate-fade-out',
         position === 'popper' &&
           'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
         className
@@ -80,7 +106,11 @@ const SelectContent = React.forwardRef(({ className, children, position = 'poppe
 SelectContent.displayName = SelectPrimitive.Content.displayName;
 
 const SelectLabel = React.forwardRef(({ className, ...props }, ref) => (
-  <SelectPrimitive.Label ref={ref} className={cn('py-1.5 pl-8 pr-2 text-sm font-semibold text-muted-foreground', className)} {...props} />
+  <SelectPrimitive.Label
+    ref={ref}
+    className={cn('py-2 pl-8 pr-2 text-sm font-semibold text-muted-foreground', className)}
+    {...props}
+  />
 ));
 SelectLabel.displayName = SelectPrimitive.Label.displayName;
 
@@ -88,28 +118,41 @@ const SelectItem = React.forwardRef(({ className, children, ...props }, ref) => 
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex w-full cursor-pointer select-none items-center rounded-lg py-2.5 pl-8 pr-2 text-sm text-foreground/90 outline-none transition-colors',
-      'hover:bg-muted/70 hover:text-foreground dark:hover:bg-[rgba(30,60,110,0.5)]',
-      'focus:bg-muted/70 focus:text-foreground dark:focus:bg-[rgba(30,60,110,0.5)]',
-      'data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary-600 data-[state=checked]:font-semibold dark:data-[state=checked]:text-primary-100 dark:data-[state=checked]:bg-primary/25',
+      // Base styles
+      'relative flex w-full cursor-pointer select-none items-center',
+      'rounded-lg py-2.5 pl-8 pr-2',
+      'text-sm text-foreground/90',
+      'outline-none transition-all duration-200',
+      // Hover/focus state
+      'hover:bg-muted/70 hover:text-foreground',
+      'focus:bg-muted/70 focus:text-foreground',
+      // Selected state - con gradiente pastel sutil
+      'data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-blue-100 data-[state=checked]:to-blue-50',
+      'data-[state=checked]:text-blue-900 data-[state=checked]:font-semibold',
+      'dark:data-[state=checked]:from-blue-500/20 dark:data-[state=checked]:to-blue-400/10',
+      'dark:data-[state=checked]:text-blue-200',
+      // Disabled state
       'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className
     )}
     {...props}
   >
-    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center flex-shrink-0">
+    <span className="absolute left-2 flex h-4 w-4 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
-        <Check className="h-4 w-4 stroke-[2.5] text-primary-600 dark:text-primary-200" />
+        <Check className="h-4 w-4 stroke-[2.5]" />
       </SelectPrimitive.ItemIndicator>
     </span>
-
     <SelectPrimitive.ItemText className="truncate">{children}</SelectPrimitive.ItemText>
   </SelectPrimitive.Item>
 ));
 SelectItem.displayName = SelectPrimitive.Item.displayName;
 
 const SelectSeparator = React.forwardRef(({ className, ...props }, ref) => (
-  <SelectPrimitive.Separator ref={ref} className={cn('-mx-1 my-1 h-px bg-muted', className)} {...props} />
+  <SelectPrimitive.Separator
+    ref={ref}
+    className={cn('my-1 h-px bg-border', className)}
+    {...props}
+  />
 ));
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
 

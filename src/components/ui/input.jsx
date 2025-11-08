@@ -1,6 +1,12 @@
 import * as React from "react"
-
 import { cn } from "@/lib/utils"
+
+/**
+ * Input Component - Modern Pastel Design System
+ *
+ * Inputs limpios sin sombras, con transiciones suaves
+ * Usa color y contraste para estados de foco/error/success
+ */
 
 const Input = React.forwardRef(({ className, type, icon, error, success, ...props }, ref) => {
   const [isFocused, setIsFocused] = React.useState(false);
@@ -10,8 +16,8 @@ const Input = React.forwardRef(({ className, type, icon, error, success, ...prop
       {icon && (
         <div
           className={cn(
-            "absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground transition-all duration-200",
-            isFocused ? "scale-110 text-primary-600" : "text-muted-foreground",
+            "absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-200",
+            isFocused ? "text-blue-500 dark:text-blue-400" : "text-muted-foreground",
             error && "text-red-500 dark:text-red-400",
             success && "text-green-500 dark:text-green-400"
           )}
@@ -19,17 +25,39 @@ const Input = React.forwardRef(({ className, type, icon, error, success, ...prop
           {React.cloneElement(icon, { className: "h-5 w-5" })}
         </div>
       )}
+
       <input
         type={type}
         className={cn(
-          "flex h-12 w-full rounded-xl border border-border/80 bg-[var(--surface-contrast)] px-4 py-3 text-base text-foreground shadow-xs ring-offset-background transition-all duration-200 file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-500",
-          "focus-visible:outline-none focus-visible:border-primary-500 focus-visible:shadow-[var(--focus-glow)] focus-visible:ring-0 dark:focus-visible:border-[rgba(124,188,255,0.55)]",
-          "hover:border-neutral-300 dark:hover:border-[rgba(120,186,255,0.40)]",
-          "dark:border-[rgba(90,150,230,0.28)] dark:bg-[#0f1a2d] dark:text-neutral-50 dark:placeholder:text-neutral-500",
-          "disabled:cursor-not-allowed disabled:bg-neutral-50 disabled:opacity-60 dark:disabled:bg-[rgba(16,32,60,0.8)]",
+          // Base styles
+          "flex h-12 w-full rounded-xl",
+          "px-4 py-3 text-base",
+          "bg-muted/30 backdrop-blur-sm",
+          "border-2 border-border",
+          "text-foreground placeholder:text-muted-foreground",
+          // Transitions
+          "transition-all duration-200",
+          // Focus state - sin sombras, solo color
+          "focus-visible:outline-none",
+          "focus-visible:border-blue-400 dark:focus-visible:border-blue-500",
+          "focus-visible:bg-card/50",
+          // Hover state
+          "hover:border-slate-300 dark:hover:border-slate-600",
+          "hover:bg-muted/40",
+          // Disabled state
+          "disabled:cursor-not-allowed disabled:opacity-50",
+          // Icon spacing
           icon ? "pl-12" : "px-4",
-          error && "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-200/30 focus-visible:shadow-none dark:border-red-600 dark:focus-visible:ring-red-500/25",
-          success && "border-green-500 focus-visible:border-green-500 focus-visible:ring-green-200/30 dark:border-green-500 dark:focus-visible:ring-green-500/25",
+          // Error state
+          error && [
+            "border-red-400 dark:border-red-500",
+            "focus-visible:border-red-500 dark:focus-visible:border-red-400",
+          ].join(' '),
+          // Success state
+          success && [
+            "border-green-400 dark:border-green-500",
+            "focus-visible:border-green-500 dark:focus-visible:border-green-400",
+          ].join(' '),
           className
         )}
         ref={ref}
@@ -38,16 +66,10 @@ const Input = React.forwardRef(({ className, type, icon, error, success, ...prop
         {...props}
       />
 
-      <div
-        className={cn(
-          "pointer-events-none absolute bottom-0 left-0 h-0.5 bg-primary-500/70 transition-all duration-300 dark:bg-primary-400/50",
-          isFocused ? "w-full opacity-100" : "w-0 opacity-0"
-        )}
-      />
-
+      {/* Error message */}
       {error && (
-        <p className="mt-2 flex items-center gap-1.5 text-sm text-red-600 animate-in slide-in-from-top-1 dark:text-red-400">
-          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+        <p className="mt-2 flex items-center gap-1.5 text-sm text-red-600 dark:text-red-400 animate-fade-in">
+          <svg className="h-4 w-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"
               d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
@@ -58,9 +80,10 @@ const Input = React.forwardRef(({ className, type, icon, error, success, ...prop
         </p>
       )}
 
+      {/* Success message */}
       {success && (
-        <p className="mt-2 flex items-center gap-1.5 text-sm text-green-600 animate-in slide-in-from-top-1 dark:text-green-400">
-          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+        <p className="mt-2 flex items-center gap-1.5 text-sm text-green-600 dark:text-green-400 animate-fade-in">
+          <svg className="h-4 w-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"
               d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"

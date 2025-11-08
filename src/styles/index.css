@@ -1,1 +1,459 @@
+/**
+ * ComerECO Design System - Modern Pastel UI
+ * Sistema de diseño minimalista con paleta pastel y gradientes sutiles
+ * Sin sombras, sin bordes duros, sin efectos decorativos innecesarios
+ */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   PALETA DE COLORES PASTEL - LIGHT MODE
+   Colores suaves y sutiles para una interfaz moderna
+   ============================================ */
+:root {
+  /* Background & Foreground */
+  --background: 248 250 252;           /* Gris muy claro casi blanco */
+  --foreground: 30 41 59;              /* Gris oscuro para texto */
+
+  /* Muted (fondos sutiles) */
+  --muted: 241 245 249;                /* Gris claro para fondos */
+  --muted-foreground: 100 116 139;     /* Gris medio para texto secundario */
+
+  /* Card */
+  --card: 255 255 255;                 /* Blanco puro para tarjetas */
+  --card-foreground: 30 41 59;
+
+  /* Borders */
+  --border: 226 232 240;               /* Borde sutil gris claro */
+  --input: 226 232 240;
+  --ring: 209 213 219;
+
+  /* Popover */
+  --popover: 255 255 255;
+  --popover-foreground: 30 41 59;
+
+  /* ============================================
+     COLORES SEMÁNTICOS PASTEL - LIGHT MODE
+     ============================================ */
+
+  /* Primary - Azul cielo pastel */
+  --primary-50: 239 246 255;
+  --primary-100: 219 234 254;
+  --primary-200: 191 219 254;
+  --primary-300: 147 197 253;
+  --primary-400: 96 165 250;
+  --primary-500: 59 130 246;           /* Base azul cielo */
+  --primary-600: 37 99 235;
+  --primary-700: 29 78 216;
+  --primary-800: 30 64 175;
+  --primary-900: 30 58 138;
+  --primary-950: 23 37 84;
+  --primary-foreground: 255 255 255;
+
+  /* Accent - Verde menta pastel */
+  --accent: 167 243 208;               /* Verde menta claro */
+  --accent-foreground: 6 78 59;
+
+  /* Secondary - Gris lavanda */
+  --secondary: 226 232 240;
+  --secondary-foreground: 30 41 59;
+
+  /* Success - Verde menta degradado */
+  --success: 134 239 172;              /* Verde pastel suave */
+  --success-foreground: 20 83 45;
+
+  /* Warning - Amarillo mostaza suave */
+  --warning: 253 224 71;               /* Amarillo pastel */
+  --warning-foreground: 113 63 18;
+
+  /* Error - Rojo coral pastel */
+  --error: 252 165 165;                /* Rojo coral suave */
+  --error-foreground: 127 29 29;
+
+  /* Info - Azul cielo */
+  --info: 147 197 253;                 /* Azul pastel */
+  --info-foreground: 30 58 138;
+
+  /* Destructive */
+  --destructive: 252 165 165;
+  --destructive-foreground: 255 255 255;
+
+  /* ============================================
+     GRADIENTES FUNCIONALES PASTEL
+     ============================================ */
+
+  /* Primary gradients - Azul cielo degradado */
+  --gradient-primary-start: 147 197 253;    /* blue-300 */
+  --gradient-primary-end: 96 165 250;       /* blue-400 */
+
+  /* Success gradients - Verde menta */
+  --gradient-success-start: 167 243 208;    /* green-300 */
+  --gradient-success-end: 134 239 172;      /* green-400 */
+
+  /* Warning gradients - Amarillo mostaza */
+  --gradient-warning-start: 254 240 138;    /* yellow-300 */
+  --gradient-warning-end: 253 224 71;       /* yellow-400 */
+
+  /* Error gradients - Rojo coral */
+  --gradient-error-start: 254 202 202;      /* red-300 */
+  --gradient-error-end: 252 165 165;        /* red-400 */
+
+  /* Neutral gradients - Gris lavanda */
+  --gradient-neutral-start: 241 245 249;    /* slate-100 */
+  --gradient-neutral-end: 226 232 240;      /* slate-200 */
+}
+
+/* ============================================
+   PALETA DE COLORES PASTEL - DARK MODE
+   Colores adaptados con contraste suave
+   ============================================ */
+.dark {
+  /* Background & Foreground */
+  --background: 15 23 42;              /* Slate-900 oscuro profundo */
+  --foreground: 248 250 252;           /* Blanco suave */
+
+  /* Muted */
+  --muted: 30 41 59;                   /* Slate-800 */
+  --muted-foreground: 148 163 184;     /* Slate-400 */
+
+  /* Card */
+  --card: 30 41 59;                    /* Slate-800 */
+  --card-foreground: 248 250 252;
+
+  /* Borders */
+  --border: 51 65 85;                  /* Slate-700 */
+  --input: 51 65 85;
+  --ring: 71 85 105;
+
+  /* Popover */
+  --popover: 30 41 59;
+  --popover-foreground: 248 250 252;
+
+  /* ============================================
+     COLORES SEMÁNTICOS PASTEL - DARK MODE
+     ============================================ */
+
+  /* Primary - Azul cielo más brillante */
+  --primary-50: 23 37 84;
+  --primary-100: 30 58 138;
+  --primary-200: 30 64 175;
+  --primary-300: 29 78 216;
+  --primary-400: 59 130 246;
+  --primary-500: 96 165 250;           /* Base más claro para dark */
+  --primary-600: 147 197 253;
+  --primary-700: 191 219 254;
+  --primary-800: 219 234 254;
+  --primary-900: 239 246 255;
+  --primary-950: 245 251 255;
+  --primary-foreground: 15 23 42;
+
+  /* Accent - Verde menta adaptado */
+  --accent: 134 239 172;
+  --accent-foreground: 15 23 42;
+
+  /* Secondary - Gris lavanda oscuro */
+  --secondary: 51 65 85;
+  --secondary-foreground: 248 250 252;
+
+  /* Success - Verde menta más brillante */
+  --success: 167 243 208;
+  --success-foreground: 6 78 59;
+
+  /* Warning - Amarillo mostaza más brillante */
+  --warning: 254 240 138;
+  --warning-foreground: 113 63 18;
+
+  /* Error - Rojo coral más brillante */
+  --error: 254 202 202;
+  --error-foreground: 127 29 29;
+
+  /* Info - Azul cielo más brillante */
+  --info: 191 219 254;
+  --info-foreground: 30 58 138;
+
+  /* Destructive */
+  --destructive: 254 202 202;
+  --destructive-foreground: 15 23 42;
+
+  /* ============================================
+     GRADIENTES FUNCIONALES PASTEL - DARK MODE
+     ============================================ */
+
+  /* Primary gradients - Azul más vibrante */
+  --gradient-primary-start: 96 165 250;
+  --gradient-primary-end: 147 197 253;
+
+  /* Success gradients - Verde menta más vibrante */
+  --gradient-success-start: 134 239 172;
+  --gradient-success-end: 167 243 208;
+
+  /* Warning gradients - Amarillo más vibrante */
+  --gradient-warning-start: 253 224 71;
+  --gradient-warning-end: 254 240 138;
+
+  /* Error gradients - Rojo coral más vibrante */
+  --gradient-error-start: 252 165 165;
+  --gradient-error-end: 254 202 202;
+
+  /* Neutral gradients - Gris más contraste */
+  --gradient-neutral-start: 30 41 59;
+  --gradient-neutral-end: 51 65 85;
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Focus visible only for keyboard navigation */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-offset-2 ring-offset-background;
+    ring-color: rgb(var(--primary-400));
+  }
+}
+
+/* ============================================
+   UTILITIES
+   ============================================ */
+@layer utilities {
+  /* Gradient backgrounds - functional, subtle */
+  .bg-gradient-primary {
+    background: linear-gradient(135deg,
+      rgb(var(--gradient-primary-start)) 0%,
+      rgb(var(--gradient-primary-end)) 100%);
+  }
+
+  .bg-gradient-success {
+    background: linear-gradient(135deg,
+      rgb(var(--gradient-success-start)) 0%,
+      rgb(var(--gradient-success-end)) 100%);
+  }
+
+  .bg-gradient-warning {
+    background: linear-gradient(135deg,
+      rgb(var(--gradient-warning-start)) 0%,
+      rgb(var(--gradient-warning-end)) 100%);
+  }
+
+  .bg-gradient-error {
+    background: linear-gradient(135deg,
+      rgb(var(--gradient-error-start)) 0%,
+      rgb(var(--gradient-error-end)) 100%);
+  }
+
+  .bg-gradient-neutral {
+    background: linear-gradient(135deg,
+      rgb(var(--gradient-neutral-start)) 0%,
+      rgb(var(--gradient-neutral-end)) 100%);
+  }
+
+  /* Semi-translucent backgrounds */
+  .bg-muted-subtle {
+    background-color: rgb(var(--muted) / 0.3);
+  }
+
+  .bg-card-subtle {
+    background-color: rgb(var(--card) / 0.5);
+  }
+
+  /* Text gradients */
+  .text-gradient-primary {
+    @apply bg-gradient-to-r from-blue-400 to-blue-500 bg-clip-text text-transparent;
+  }
+
+  /* Hover transitions (smooth, no shadows) */
+  .hover-lift {
+    @apply transition-transform duration-200 ease-out hover:scale-[1.02];
+  }
+
+  .hover-opacity {
+    @apply transition-opacity duration-200 ease-out hover:opacity-80;
+  }
+}
+
+/* ============================================
+   LAYOUT COMPONENTS - MODERN PASTEL REDESIGN
+   Sobrescribe estilos de nav, sidebar, bottom-nav
+   ============================================ */
+@layer components {
+  /* Header/Nav - Sin sombras, borde sutil */
+  .nav-shell {
+    background: rgba(var(--background) / 0.95) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border-bottom: 1px solid rgb(var(--border)) !important;
+    box-shadow: none !important;
+  }
+
+  /* Bottom Navigation - Sin sombras */
+  .bottom-nav-shell {
+    background: rgba(var(--card) / 0.98) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-top: 1px solid rgb(var(--border)) !important;
+    box-shadow: none !important;
+  }
+
+  /* Sidebar - Sin sombras, fondo limpio */
+  .sidebar-shell {
+    background: rgb(var(--card)) !important;
+    box-shadow: none !important;
+    border-right: 1px solid rgb(var(--border)) !important;
+  }
+
+  .dark .sidebar-shell {
+    background: rgb(var(--card)) !important;
+    border-right: 1px solid rgb(var(--border)) !important;
+  }
+
+  /* Nav Links - Gradientes pastel, sin sombras */
+  .nav-link-base {
+    background: rgb(var(--muted) / 0.3) !important;
+    border: 1px solid rgb(var(--border)) !important;
+    box-shadow: none !important;
+    border-radius: 1rem !important;
+    transition: all 200ms ease-out !important;
+  }
+
+  .nav-link-base:hover {
+    background: rgb(var(--muted) / 0.5) !important;
+    border-color: rgb(var(--primary-400)) !important;
+    box-shadow: none !important;
+    transform: scale(1.02) !important;
+  }
+
+  .nav-link-inactive {
+    background: rgb(var(--muted) / 0.2) !important;
+    box-shadow: none !important;
+  }
+
+  .dark .nav-link-base {
+    background: rgb(var(--muted) / 0.3) !important;
+    border-color: rgb(var(--border)) !important;
+    box-shadow: none !important;
+  }
+
+  .dark .nav-link-base:hover {
+    background: rgb(var(--muted) / 0.5) !important;
+    border-color: rgb(var(--primary-500)) !important;
+    box-shadow: none !important;
+  }
+
+  .dark .nav-link-inactive {
+    background: rgb(var(--muted) / 0.2) !important;
+    box-shadow: none !important;
+  }
+
+  /* Active nav links - Gradiente pastel azul */
+  .nav-link-active {
+    background: linear-gradient(135deg, rgb(var(--gradient-primary-start)) 0%, rgb(var(--gradient-primary-end)) 100%) !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .dark .nav-link-active {
+    background: linear-gradient(135deg, rgb(var(--gradient-primary-start)) 0%, rgb(var(--gradient-primary-end)) 100%) !important;
+    box-shadow: none !important;
+  }
+
+  /* Surface utilities - Sin sombras */
+  .surface-card {
+    background: rgb(var(--card)) !important;
+    border: 1px solid rgb(var(--border)) !important;
+    box-shadow: none !important;
+    border-radius: 1.5rem !important;
+  }
+
+  .surface-card:hover {
+    border-color: rgb(var(--primary-300)) !important;
+    transform: scale(1.01) !important;
+    box-shadow: none !important;
+  }
+
+  .surface-panel {
+    background: rgb(var(--card) / 0.5) !important;
+    backdrop-blur: 8px !important;
+    border: 1px solid rgb(var(--border)) !important;
+    box-shadow: none !important;
+    border-radius: 1.75rem !important;
+  }
+
+  .surface-overlay {
+    background: rgb(var(--card) / 0.95) !important;
+    backdrop-filter: blur(12px) !important;
+    border: 1px solid rgb(var(--border)) !important;
+    box-shadow: none !important;
+    border-radius: 1.5rem !important;
+  }
+
+  .surface-sticky {
+    background: rgb(var(--card) / 0.98) !important;
+    border-top: 1px solid rgb(var(--border)) !important;
+    box-shadow: none !important;
+  }
+
+  .dark .surface-card {
+    background: rgb(var(--card)) !important;
+    border: 1px solid rgb(var(--border)) !important;
+    box-shadow: none !important;
+  }
+
+  .dark .surface-card:hover {
+    border-color: rgb(var(--primary-500)) !important;
+    box-shadow: none !important;
+  }
+
+  .dark .surface-panel {
+    background: rgb(var(--card) / 0.5) !important;
+    border: 1px solid rgb(var(--border)) !important;
+    box-shadow: none !important;
+  }
+
+  .dark .surface-overlay {
+    background: rgb(var(--card) / 0.95) !important;
+    border-color: rgb(var(--border)) !important;
+    box-shadow: none !important;
+  }
+
+  .dark .surface-sticky {
+    background: rgb(var(--card) / 0.98) !important;
+    border-color: rgb(var(--border)) !important;
+    box-shadow: none !important;
+  }
+
+  /* Icon badges - Limpios sin sombras */
+  .icon-badge,
+  .metric-icon,
+  .stat-icon {
+    background: rgb(var(--muted) / 0.5) !important;
+    border: 1px solid rgb(var(--border)) !important;
+    box-shadow: none !important;
+    border-radius: 999px !important;
+  }
+
+  .dark .icon-badge,
+  .dark .metric-icon,
+  .dark .stat-icon {
+    background: rgb(var(--muted) / 0.4) !important;
+    border: 1px solid rgb(var(--border)) !important;
+    box-shadow: none !important;
+  }
+}

@@ -4,6 +4,7 @@
 /* Import design tokens - Sistema centralizado de tokens */
 @import './styles/design-tokens.css';
 @import './styles/dark-surfaces.css';
+@import './styles/index.css'; /* Modern Pastel Design System */
 
 @tailwind base;
 @tailwind components;
