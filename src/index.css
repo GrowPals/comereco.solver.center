@@ -204,6 +204,18 @@
     --spacing-section: 3rem; /* 48px - Espacio entre secciones */
     --spacing-element: 0.75rem; /* 12px - Espacio entre elementos relacionados */
 
+    /* ============ SISTEMA DE ESPACIADO VERTICAL (Base 8px) ============ */
+    /* Para consistencia entre secciones y respiración visual */
+    --section-spacing-compact: 16px;   /* 2 × 8px - Espaciado reducido entre elementos relacionados */
+    --section-spacing-standard: 24px;  /* 3 × 8px - Espaciado estándar entre secciones */
+    --section-spacing-wide: 40px;      /* 5 × 8px - Espaciado amplio entre secciones principales */
+
+    /* ============ RESPIRACIÓN EN CARDS CON INFORMACIÓN DENSA ============ */
+    --card-padding-dense: 32px;        /* Padding aumentado para cards densas (antes 24px) */
+    --card-gap-group: 20px;            /* Espacio entre grupos de información dentro de una card */
+    --card-gap-items: 12px;            /* Espacio entre items individuales */
+    --card-separator-opacity: 0.1;     /* Opacidad para separadores visuales sutiles */
+
     /* ============ BORDER RADIUS ============ */
     --radius-sm: 8px;
     --radius-md: 12px;

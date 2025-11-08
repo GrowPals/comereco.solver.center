@@ -66,8 +66,8 @@ const RecentRequisitions = memo(() => {
 
     return (
         <Card className="dashboard-panel surface-panel">
-            <CardHeader className="pb-6">
-                <div className="flex items-center gap-3">
+            <CardHeader className="pb-7">
+                <div className="flex items-center gap-3.5">
                     <SectionIcon icon={Clock} />
                     <CardTitle className="text-xl font-bold text-foreground">Actividad Reciente</CardTitle>
                 </div>

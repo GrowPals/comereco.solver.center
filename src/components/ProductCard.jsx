@@ -159,7 +159,7 @@ const ProductCard = memo(({ product }) => {
         </button>
       </div>
 
-      <div className="flex flex-1 flex-col gap-4 p-4">
+      <div className="flex flex-1 flex-col gap-4 p-5">
         <button
           type="button"
           onClick={handleNavigate}
@@ -182,11 +182,11 @@ const ProductCard = memo(({ product }) => {
         </p>
 
         <div className="flex flex-1 flex-col justify-between gap-4">
-          <div className="rounded-xl bg-muted/40 p-3 dark:bg-muted/20">
+          <div className="rounded-xl bg-muted/40 p-3.5 dark:bg-muted/20">
             <span className="caption">
               Precio
             </span>
-            <div className="mt-1 flex items-baseline justify-between gap-2">
+            <div className="mt-1.5 flex items-baseline justify-between gap-2">
               <p className="price-large text-emerald-600 dark:text-emerald-400">
                 ${productPrice}
               </p>

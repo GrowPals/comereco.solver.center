@@ -21,14 +21,14 @@ const QuickAccess = memo(({ actions = [] }) => {
 
     return (
         <Card className="dashboard-panel surface-panel">
-            <CardHeader className="pb-4">
-                <div className="flex items-center gap-3">
+            <CardHeader className="pb-5">
+                <div className="flex items-center gap-3.5">
                     <SectionIcon icon={Zap} />
                     <CardTitle className="text-xl font-bold text-foreground">Acceso Rápido</CardTitle>
                 </div>
             </CardHeader>
             <CardContent className="p-6 pt-0">
-                <div className="grid grid-cols-1 gap-3">
+                <div className="grid grid-cols-1 gap-4">
                     {actions.map((action) => {
                         if (!action) return null;
                         const ActionIcon = action.icon;
@@ -37,7 +37,7 @@ const QuickAccess = memo(({ actions = [] }) => {
                             <button
                                 key={uniqueKey}
                                 onClick={() => handleActionClick(action.path)}
-                                className="group dashboard-action surface-card flex items-center gap-4 rounded-xl border-2 border-border p-4 transition-all duration-200 hover:border-primary/40 hover:shadow-md"
+                                className="group dashboard-action surface-card flex items-center gap-4 rounded-xl border-2 border-border p-5 transition-all duration-200 hover:border-primary/40 hover:shadow-md"
                                 aria-label={action.label || 'Acción rápida'}
                             >
                                 {ActionIcon && (

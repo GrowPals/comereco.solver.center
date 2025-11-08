@@ -65,9 +65,9 @@ const RequisitionsPage = () => {
       <PageContainer>
         <div className="mx-auto w-full max-w-7xl">
           {/* Header */}
-          <header className="mb-6 border-b border-border pb-4 sm:mb-8 sm:pb-6">
+          <header className="mb-8 border-b border-border pb-6 sm:mb-10 sm:pb-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="space-y-2">
+              <div className="space-y-2.5">
                 <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
                   Mis Requisiciones
                 </h1>
@@ -116,7 +116,7 @@ const RequisitionsPage = () => {
           </header>
 
           {/* Filters - Sticky on scroll */}
-          <div className="sticky top-0 z-10 mb-6 flex flex-col gap-4 surface-card p-4 sm:flex-row sm:flex-wrap sm:items-center backdrop-blur-md shadow-sm">
+          <div className="sticky top-0 z-10 mb-8 flex flex-col gap-4 surface-card p-5 sm:flex-row sm:flex-wrap sm:items-center backdrop-blur-md shadow-sm">
             <div className="flex items-center gap-2 text-sm">
               <Filter className="h-5 w-5 text-muted-foreground" />
               <span className="font-semibold text-foreground">Filtros:</span>
@@ -180,7 +180,7 @@ const RequisitionsPage = () => {
           ) : filteredRequisitions.length > 0 ? (
             <>
               {/* Requisitions Count */}
-              <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <IconWrapper icon={FileText} variant="neutral" size="md" />
                 <p className="text-sm text-muted-foreground sm:text-base">
                   <span className="mr-1 text-2xl font-bold text-foreground sm:text-3xl">

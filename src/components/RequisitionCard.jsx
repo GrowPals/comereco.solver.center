@@ -80,8 +80,8 @@ const RequisitionCard = memo(({ requisition }) => {
         {/* Accent Bar */}
         <div className={cn('absolute top-0 left-0 right-0 h-1 transition-transform duration-300', statusAccent)} />
 
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row md:items-center gap-6">
+        <CardContent className="p-8">
+          <div className="flex flex-col md:flex-row md:items-center gap-8">
             {/* Folio Section */}
             <div className="flex items-center gap-4 md:min-w-[200px]">
               <IconWrapper icon={Hash} variant="subtle" size="lg" />
@@ -91,31 +91,34 @@ const RequisitionCard = memo(({ requisition }) => {
               </div>
             </div>
 
+            {/* Visual Separator */}
+            <div className="hidden md:block w-px h-16 bg-gradient-to-b from-transparent via-border/40 to-transparent" aria-hidden="true" />
+
             {/* Info Grid */}
-            <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-5">
               {/* Solicitante */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3.5">
                 <IconWrapper icon={User} variant="neutral" size="sm" />
                 <div className="min-w-0">
-                  <p className="mb-0.5 text-muted-xs">Solicitante</p>
+                  <p className="mb-1 text-muted-xs">Solicitante</p>
                   <p className="truncate text-secondary-sm font-semibold">{requisition.creator?.full_name || 'No disponible'}</p>
                 </div>
               </div>
 
               {/* Fecha */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3.5">
                 <IconWrapper icon={Calendar} variant="neutral" size="sm" />
                 <div className="min-w-0">
-                  <p className="mb-0.5 text-muted-xs">Fecha</p>
+                  <p className="mb-1 text-muted-xs">Fecha</p>
                   <p className="text-secondary-sm font-semibold">{formattedDate}</p>
                 </div>
               </div>
 
               {/* Monto */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3.5">
                 <IconWrapper icon={DollarSign} variant="neutral" size="sm" />
                 <div className="min-w-0">
-                  <p className="mb-0.5 text-muted-xs">Monto Total</p>
+                  <p className="mb-1 text-muted-xs">Monto Total</p>
                   <p className="price-medium">{formattedAmount}</p>
                 </div>
               </div>
