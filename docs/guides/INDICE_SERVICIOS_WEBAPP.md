@@ -278,7 +278,7 @@ Hook para permisos de usuario.
 - ✅ `broadcast_to_company` - `databaseFunctionsService.js`
 
 ### ⚠️ Pendiente de Integración:
-- `folio_counters` - Tabla de backend, no necesita servicio frontend (se usa automáticamente)
+- `folio_sequences` - Tabla de backend, no necesita servicio frontend (se usa automáticamente)
 
 ---
 
@@ -292,4 +292,3 @@ Hook para permisos de usuario.
 ---
 
 **Estado:** ✅ **Todas las tablas y funciones de Supabase están disponibles en la webapp**
-

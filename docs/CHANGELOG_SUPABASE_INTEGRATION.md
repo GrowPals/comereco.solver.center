@@ -232,7 +232,7 @@ Todas las tablas tienen **RLS habilitado** ✅:
 | user_cart_items | 0 | ✅ | Carrito de compras |
 | user_favorites | 0 | ✅ | Favoritos |
 | requisition_templates | 0 | ✅ | Plantillas |
-| folio_counters | 0 | ✅ | Contadores de folios |
+| folio_sequences | 0 | ✅ | Contadores de folios multi-entidad |
 | bind_mappings | 0 | ✅ | Mappings con Bind ERP |
 | bind_sync_logs | 0 | ✅ | Logs de sincronización |
 

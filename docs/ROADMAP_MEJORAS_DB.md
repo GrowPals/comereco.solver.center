@@ -33,7 +33,7 @@
 1. **Política SELECT products inactivos** ✅  
    - Añadida `products_select_admin_all` con visibilidad ampliada para admins y `platform_admin`.
 2. **Rol Global** ✅  
-   - `platform_admins` + helper `is_platform_admin()`; políticas actualizadas en `companies`, `audit_log`, `bind_*`, `folio_counters`.
+   - `platform_admins` + helper `is_platform_admin()`; políticas actualizadas en `companies`, `audit_log`, `bind_*`, `folio_sequences`.
 3. **Trigger post-invite** ✅  
    - Trigger `create_profile_after_signup` + tabla `user_invitations` con RLS y auditoría completa.
 

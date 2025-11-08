@@ -35,7 +35,7 @@ BEGIN;
 -- TRUNCATE TABLE public.products CASCADE;
 -- TRUNCATE TABLE public.profiles CASCADE;
 -- TRUNCATE TABLE public.companies CASCADE;
--- TRUNCATE TABLE public.folio_counters CASCADE;
+-- TRUNCATE TABLE public.folio_sequences CASCADE;
 
 -- =====================================================
 -- HELPER FUNCTIONS
@@ -356,14 +356,14 @@ VALUES
 ON CONFLICT (id) DO NOTHING;
 
 -- =====================================================
--- Folio counters initialization
+-- Folio sequences initialization
 -- =====================================================
 
-INSERT INTO public.folio_counters (company_id, year, last_folio_number)
+INSERT INTO public.folio_sequences (company_id, entity_type, year, prefix, last_value)
 VALUES
-    ('11111111-1111-1111-1111-111111111111', EXTRACT(YEAR FROM NOW())::INTEGER, 45),
-    ('11111111-1111-1111-1111-111111111111', EXTRACT(YEAR FROM NOW() - INTERVAL '1 year')::INTEGER, 128)
-ON CONFLICT (company_id, year) DO NOTHING;
+    ('11111111-1111-1111-1111-111111111111', 'requisition', EXTRACT(YEAR FROM NOW())::INTEGER, 'REQ-', 45),
+    ('11111111-1111-1111-1111-111111111111', 'requisition', EXTRACT(YEAR FROM NOW() - INTERVAL '1 year')::INTEGER, 'REQ-', 128)
+ON CONFLICT (company_id, entity_type, year) DO NOTHING;
 
 -- =====================================================
 -- This is part 1 of the seed file.

@@ -36,7 +36,7 @@ Todas las tablas necesarias están creadas y operativas:
 | `user_cart_items` | ✅ | ✅ | Carrito de compras |
 | `requisition_templates` | ✅ | ✅ | Plantillas de requisiciones |
 | `audit_log` | ✅ | ✅ | Logs de auditoría |
-| `folio_counters` | ✅ | ✅ | Contadores de folios |
+| `folio_sequences` | ✅ | ✅ | Contadores de folios |
 | `bind_mappings` | ✅ | ✅ | Mapeos con Bind ERP |
 | `bind_sync_logs` | ✅ | ✅ | Logs de sincronización Bind |
 
@@ -73,8 +73,8 @@ Todas las tablas necesarias están creadas y operativas:
 
 ##### ❌ **PROBLEMA 5: Sistema de folios no podía crear/actualizar contadores**
 **Solución aplicada:**
-- ✅ Política `system_insert_folio_counters` - Permite crear contadores
-- ✅ Política `system_update_folio_counters` - Permite actualizar contadores
+- ✅ Política `system_insert_folio_sequences` - Permite crear contadores
+- ✅ Política `system_update_folio_sequences` - Permite actualizar contadores
 
 ##### ❌ **PROBLEMA 6: Sistema no podía crear logs de auditoría**
 **Solución aplicada:**

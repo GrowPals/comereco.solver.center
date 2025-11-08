@@ -50,7 +50,7 @@ created_at            timestamptz DEFAULT now()
 - `requisitions.company_id`
 - `requisition_templates.company_id`
 - `notifications.company_id`
-- `folio_counters.company_id`
+- `folio_sequences.company_id`
 - `audit_log.company_id`
 
 **RLS/Políticas**:
@@ -311,19 +311,23 @@ updated_at            timestamptz DEFAULT now()
 
 ---
 
-### `folio_counters`
-**Propósito**: Folio incremental por empresa y año.
+### `folio_sequences`
+**Propósito**: Folios incrementales multi-entidad por empresa y año.
 
 **Campos**:
 ```sql
 company_id            uuid FK companies.id (PK compuesta)
+entity_type           text (PK compuesta)
 year                  int (PK compuesta)
-last_folio_number     int DEFAULT 0
+prefix                text DEFAULT 'SEQ-'
+last_value            int DEFAULT 0
+created_at            timestamptz DEFAULT now()
+updated_at            timestamptz DEFAULT now()
 ```
 
 **RLS/Políticas**:
-- `folio_counters_select`: admins ven los contadores de su empresa
-- `folio_counters_insert` / `update`: admins gestionan folios propios; `platform_admin` opera sobre cualquier tenant
+- `folio_sequences_select`: admins ven los contadores de su empresa
+- `folio_sequences_insert` / `update`: admins gestionan folios propios; `platform_admin` opera sobre cualquier tenant
 
 ---
 
