@@ -188,6 +188,14 @@ export default function ProductDetail() {
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [showAddedFeedback, setShowAddedFeedback] = useState(false);
 
+  // Cleanup del feedback después de 2 segundos
+  useEffect(() => {
+    if (showAddedFeedback) {
+      const timer = setTimeout(() => setShowAddedFeedback(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [showAddedFeedback]);
+
   // Query para obtener el producto
   const {
     data: product,
@@ -260,7 +268,6 @@ export default function ProductDetail() {
       }
 
       setShowAddedFeedback(true);
-      setTimeout(() => setShowAddedFeedback(false), 2000);
     } catch (error) {
       logger.error('Error updating cart:', error);
     } finally {
@@ -332,7 +339,7 @@ export default function ProductDetail() {
 
   // Lógica de stock - igual que en ProductCard
   const stock = Number.isFinite(product.stock) ? product.stock : product.existencias;
-  const isInStock = stock === undefined || stock === null ? true : stock > 0;
+  const isInStock = stock != null ? stock > 0 : true;
 
   return (
     <motion.div

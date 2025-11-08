@@ -55,46 +55,46 @@ const ProjectDetail = () => {
                     <Skeleton className="h-6 w-20" />
                     <Skeleton className="h-6 w-24" />
                     <Skeleton className="h-6 w-32" />
-                  
-                
-              
-            
-          
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* Statistics Cards Skeleton */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="rounded-2xl border-2 border-border bg-card p-6 shadow-soft-md">
+              <div key={`skeleton-${i}`} className="rounded-2xl border-2 border-border bg-card p-6 shadow-soft-md">
                 <div className="flex items-center justify-between">
                   <div className="space-y-2">
                     <Skeleton className="h-4 w-32" />
                     <Skeleton className="h-9 w-16" />
-                  
+                  </div>
                   <Skeleton className="h-8 w-8 rounded-lg" />
-                
-              
+                </div>
+              </div>
             ))}
-          
+          </div>
 
           {/* Content Grid Skeleton */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {[...Array(2)].map((_, i) => (
-              <div key={i} className="rounded-2xl border-2 border-border bg-card shadow-soft-md">
+              <div key={`skeleton-${i}`} className="rounded-2xl border-2 border-border bg-card shadow-soft-md">
                 <div className="p-6 border-b border-border">
                   <div className="flex items-center gap-3">
                     <Skeleton className="h-12 w-12 rounded-xl" />
                     <Skeleton className="h-7 w-48" />
-                  
-                
+                  </div>
+                </div>
                 <div className="p-6 space-y-3">
                   {[...Array(3)].map((_, j) => (
-                    <Skeleton key={j} className="h-20 w-full rounded-xl" />
+                    <Skeleton key={`skeleton-${j}`} className="h-20 w-full rounded-xl" />
                   ))}
-                
-              
+                </div>
+              </div>
             ))}
-          
-        
+          </div>
+        </div>
       </PageContainer>
     );
   }
@@ -109,8 +109,8 @@ const ProjectDetail = () => {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Volver a Proyectos
           </Button>
-        
-      
+        </div>
+      </div>
     );
   }
 
@@ -147,7 +147,7 @@ const ProjectDetail = () => {
           {/* Header */}
           <header className="relative overflow-hidden rounded-2xl border-2 border-border bg-card p-5 shadow-soft-md transition-shadow duration-300 hover:shadow-soft-lg sm:p-8">
             <div className={`absolute top-0 left-0 right-0 h-1.5 ${currentStatus.accent}`} />
-            
+
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex w-full items-start gap-3 sm:gap-4 sm:w-auto">
                 <Button
@@ -178,16 +178,16 @@ const ProjectDetail = () => {
                         <Shield className="h-4 w-4" />
                         <span className="font-semibold">Supervisor:</span>
                         <span>{project.supervisor.full_name}</span>
-                      
+                      </div>
                     )}
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Calendar className="h-4 w-4" />
                       <span>Creado: {format(new Date(project.created_at), 'dd MMM, yyyy', { locale: es })}</span>
-                    
-                  
-                
-              
-            
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </header>
 
           {/* Statistics Cards */}
@@ -198,9 +198,9 @@ const ProjectDetail = () => {
                   <div>
                     <p className="text-sm font-medium text-muted-foreground mb-1">Total Requisiciones</p>
                     <p className="text-3xl font-bold text-foreground">{totalRequisitions}</p>
-                  
+                  </div>
                   <FileText className="h-8 w-8 text-primary-600" />
-                
+                </div>
               </CardContent>
             </Card>
             <Card className="shadow-soft-md border-2 transition-shadow duration-300 hover:shadow-soft-lg">
@@ -209,9 +209,9 @@ const ProjectDetail = () => {
                   <div>
                     <p className="text-sm font-medium text-muted-foreground mb-1">Aprobadas</p>
                     <p className="text-3xl font-bold text-green-600">{approvedRequisitions}</p>
-                  
+                  </div>
                   <CheckCircle2 className="h-8 w-8 text-green-600" />
-                
+                </div>
               </CardContent>
             </Card>
             <Card className="shadow-soft-md border-2 transition-shadow duration-300 hover:shadow-soft-lg">
@@ -220,9 +220,9 @@ const ProjectDetail = () => {
                   <div>
                     <p className="text-sm font-medium text-muted-foreground mb-1">Pendientes</p>
                     <p className="text-3xl font-bold text-amber-600">{pendingRequisitions}</p>
-                  
+                  </div>
                   <Clock className="h-8 w-8 text-amber-600" />
-                
+                </div>
               </CardContent>
             </Card>
             <Card className="shadow-soft-md border-2 transition-shadow duration-300 hover:shadow-soft-lg">
@@ -231,23 +231,21 @@ const ProjectDetail = () => {
                   <div>
                     <p className="text-sm font-medium text-muted-foreground mb-1">Total Invertido</p>
                     <p className="text-3xl font-bold text-foreground">${totalAmount.toFixed(2)}</p>
-                  
+                  </div>
                   <TrendingUp className="h-8 w-8 text-primary-600" />
-                
+                </div>
               </CardContent>
             </Card>
-          
+          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Members Card */}
             <Card className="shadow-soft-md border-2 transition-shadow duration-300 hover:shadow-soft-lg">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">
-                  <SectionIcon icon={FolderKanban} />
-                    <Users className="h-6 w-6 text-primary-600 dark:text-primary-100" />
-                  
+                  <Users className="h-6 w-6 text-primary-600 dark:text-primary-100" />
                   <CardTitle className="text-2xl font-bold text-foreground">Miembros del Proyecto</CardTitle>
-                
+                </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 {project.members && project.members.length > 0 ? (
@@ -259,34 +257,34 @@ const ProjectDetail = () => {
                           key={member.membership_id || member.user_id}
                           className="flex items-center justify-between p-4 bg-muted/70 rounded-xl border-2 border-border hover:border-primary-200 transition-colors"
                         >
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-10 w-10">
-                            <AvatarImage src={memberProfile?.avatar_url} />
-                            <AvatarFallback>
-                              {memberProfile?.full_name?.charAt(0)?.toUpperCase() || 'U'}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="font-semibold text-foreground">
-                              {memberProfile?.full_name || 'Usuario Desconocido'}
-                            </p>
-                            <p className="text-sm text-muted-foreground">{memberProfile?.email}</p>
-                          
-                        
-                        <div className="flex flex-col items-end gap-1">
-                          <Badge variant="outline" className="text-xs">
-                            {member.role_in_project || 'Miembro'}
-                          </Badge>
-                          {member.requires_approval && (
-                            <Badge variant="warning" className="text-xs">
-                              Requiere Aprobación
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-10 w-10">
+                              <AvatarImage src={memberProfile?.avatar_url} />
+                              <AvatarFallback>
+                                {memberProfile?.full_name?.charAt(0)?.toUpperCase() || 'U'}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="font-semibold text-foreground">
+                                {memberProfile?.full_name || 'Usuario Desconocido'}
+                              </p>
+                              <p className="text-sm text-muted-foreground">{memberProfile?.email}</p>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-end gap-1">
+                            <Badge variant="outline" className="text-xs">
+                              {member.role_in_project || 'Miembro'}
                             </Badge>
-                          )}
-                        
-                        
+                            {member.requires_approval && (
+                              <Badge variant="warning" className="text-xs">
+                                Requiere Aprobación
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
                       );
                     })}
-                  
+                  </div>
                 ) : (
                   <EmptyState
                     icon={Users}
@@ -301,11 +299,9 @@ const ProjectDetail = () => {
             <Card className="shadow-soft-md border-2 transition-shadow duration-300 hover:shadow-soft-lg">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">
-                  <SectionIcon icon={FolderKanban} />
-                    <FileText className="h-6 w-6 text-primary-600 dark:text-primary-100" />
-                  
+                  <FileText className="h-6 w-6 text-primary-600 dark:text-primary-100" />
                   <CardTitle className="text-2xl font-bold text-foreground">Requisiciones Recientes</CardTitle>
-                
+                </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 {project.requisitions && project.requisitions.length > 0 ? (
@@ -324,11 +320,11 @@ const ProjectDetail = () => {
                               <span className="font-mono font-semibold text-foreground">
                                 #{requisition.internal_folio}
                               </span>
-                            
+                            </div>
                             <Badge variant={status.variant} className="text-xs">
                               {status.text}
                             </Badge>
-                          
+                          </div>
                           <div className="flex items-center justify-between text-sm">
                             <span className="text-muted-foreground">
                               {requisition.creator?.full_name || 'Desconocido'}
@@ -336,11 +332,11 @@ const ProjectDetail = () => {
                             <span className="font-semibold text-foreground">
                               ${(Number(requisition.total_amount) || 0).toFixed(2)}
                             </span>
-                          
+                          </div>
                           <p className="text-xs text-muted-foreground/80 mt-1">
                             {format(new Date(requisition.created_at), 'dd MMM, yyyy HH:mm', { locale: es })}
                           </p>
-                        
+                        </div>
                       );
                     })}
                     {project.requisitions.length > 10 && (
@@ -352,7 +348,7 @@ const ProjectDetail = () => {
                         Ver todas las requisiciones ({project.requisitions.length})
                       </Button>
                     )}
-                  
+                  </div>
                 ) : (
                   <EmptyState
                     icon={FileText}
@@ -362,8 +358,8 @@ const ProjectDetail = () => {
                 )}
               </CardContent>
             </Card>
-          
-        
+          </div>
+        </div>
       </PageContainer>
     </>
   );

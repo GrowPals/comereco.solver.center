@@ -26,6 +26,8 @@ const ResetPassword = () => {
 
     const password = watch('password');
 
+    const [showInvalidToken, setShowInvalidToken] = useState(false);
+
     // Verificar si hay un token de recuperación válido
     useEffect(() => {
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
@@ -37,9 +39,17 @@ const ResetPassword = () => {
                 'Enlace inválido',
                 'El enlace de recuperación no es válido o ha expirado'
             );
-            setTimeout(() => navigate('/login'), 3000);
+            setShowInvalidToken(true);
         }
     }, [navigate, toast]);
+
+    // Redirigir cuando el token sea inválido
+    useEffect(() => {
+        if (showInvalidToken) {
+            const timer = setTimeout(() => navigate('/login'), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [showInvalidToken, navigate]);
 
     const onSubmit = async (formData) => {
         setIsLoading(true);
@@ -60,25 +70,35 @@ const ResetPassword = () => {
                 'Tu contraseña ha sido cambiada exitosamente'
             );
 
-            // Redirigir al inicio después de 2 segundos
-            setTimeout(() => {
-                navigate('/dashboard');
-            }, 2000);
-
         } catch (err) {
             logger.error('Error updating password:', err);
             const errorMessage = err.message?.includes('same password')
                 ? 'La nueva contraseña debe ser diferente a la anterior.'
-                : 'No se pudo actualizar la contraseña. Por favor, inténtalo de nuevo.';
+                : 'No se pude actualizar la contraseña. Por favor, inténtalo de nuevo.';
 
             setResetError(errorMessage);
             setIsShaking(true);
-            setTimeout(() => setIsShaking(false), 500);
             toast.error('Error', errorMessage);
         } finally {
             setIsLoading(false);
         }
     };
+
+    // Remover animación de shake después de 500ms
+    useEffect(() => {
+        if (isShaking) {
+            const timer = setTimeout(() => setIsShaking(false), 500);
+            return () => clearTimeout(timer);
+        }
+    }, [isShaking]);
+
+    // Redirigir al dashboard después de éxito
+    useEffect(() => {
+        if (isSuccess) {
+            const timer = setTimeout(() => navigate('/dashboard'), 2000);
+            return () => clearTimeout(timer);
+        }
+    }, [isSuccess, navigate]);
 
     if (isSuccess) {
         return (

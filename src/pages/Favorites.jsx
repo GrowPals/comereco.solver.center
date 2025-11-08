@@ -79,7 +79,7 @@ const FavoritesPage = () => {
                         {/* Grid Skeleton */}
                         <div className="grid grid-cols-1 justify-items-start gap-4 sm:justify-items-center md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                             {[...Array(10)].map((_, i) => (
-                                <ProductCardSkeleton key={i} />
+                                <ProductCardSkeleton key={`skeleton-${i}`} />
                             ))}
                         </div>
                     </div>

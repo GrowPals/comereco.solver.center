@@ -43,6 +43,7 @@ const RequisitionDetail = () => {
 
     const [rejectionReason, setRejectionReason] = useState('');
     const [approvalDialogOpen, setApprovalDialogOpen] = useState(false);
+    const [shouldRedirect, setShouldRedirect] = useState(false);
 
     const handleNavigateBack = useCallback(() => {
         navigate(-1);
@@ -55,12 +56,19 @@ const RequisitionDetail = () => {
     useEffect(() => {
         if (isError) {
             toast({ variant: 'destructive', title: 'Error', description: 'No se pudo cargar la requisición.' });
-            // Redirigir después de un breve delay para que el usuario vea el mensaje
-            setTimeout(() => {
+            setShouldRedirect(true);
+        }
+    }, [isError, toast]);
+
+    // Redirigir después de 2 segundos cuando hay error
+    useEffect(() => {
+        if (shouldRedirect) {
+            const timer = setTimeout(() => {
                 navigate('/requisitions');
             }, 2000);
+            return () => clearTimeout(timer);
         }
-    }, [isError, navigate, toast]);
+    }, [shouldRedirect, navigate]);
     
     useEffect(() => {
         if (!requisitionId) return;

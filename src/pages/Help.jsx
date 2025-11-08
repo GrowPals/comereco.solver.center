@@ -138,13 +138,13 @@ const HelpPage = () => {
                         <CardContent>
                             <Accordion type="multiple" className="w-full">
                                 {faqData.map((section, index) => (
-                                    <div key={index} className="mb-4 last:mb-0">
+                                    <div key={`section-${index}`} className="mb-4 last:mb-0">
                                         <h3 className="mb-2 flex items-center gap-2 text-lg font-semibold text-foreground">
                                             <section.icon className={`h-5 w-5 ${section.color}`} />
                                             {section.role}
                                         </h3>
                                         {section.questions.map((faq, qIndex) => (
-                                            <AccordionItem key={qIndex} value={`item-${index}-${qIndex}`}>
+                                            <AccordionItem key={`item-${index}-${qIndex}`} value={`item-${index}-${qIndex}`}>
                                                 <AccordionTrigger className="text-left font-medium text-foreground hover:no-underline">
                                                     {faq.q}
                                                 </AccordionTrigger>

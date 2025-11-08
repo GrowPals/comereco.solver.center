@@ -39,6 +39,14 @@ const LoginPage = () => {
     const [isResetting, setIsResetting] = useState(false);
     const [hasPreloadedEmail] = useState(() => !!localStorage.getItem('rememberMeEmail'));
 
+    // Remover animación de shake después de 500ms
+    useEffect(() => {
+        if (isShaking) {
+            const timer = setTimeout(() => setIsShaking(false), 500);
+            return () => clearTimeout(timer);
+        }
+    }, [isShaking]);
+
     useEffect(() => {
       if (session) {
         navigate(from, { replace: true });
@@ -63,14 +71,12 @@ const LoginPage = () => {
                   : 'Ha ocurrido un error. Por favor, inténtalo de nuevo.';
                 setAuthError(errorMessage);
                 setIsShaking(true);
-                setTimeout(() => setIsShaking(false), 500);
                 toast.error('Error al iniciar sesión', errorMessage);
             }
         } catch (err) {
             logger.error('Error during login:', err);
             setAuthError('Ha ocurrido un error. Por favor, inténtalo de nuevo.');
             setIsShaking(true);
-            setTimeout(() => setIsShaking(false), 500);
         } finally {
             setIsLoading(false);
         }
