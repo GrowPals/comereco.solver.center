@@ -64,7 +64,7 @@ const ProjectDetail = () => {
           {/* Statistics Cards Skeleton */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="rounded-2xl border-2 border-border bg-card p-6 shadow-soft-md">
+              <div key={`skeleton-${i}`} className="rounded-2xl border-2 border-border bg-card p-6 shadow-soft-md">
                 <div className="flex items-center justify-between">
                   <div className="space-y-2">
                     <Skeleton className="h-4 w-32" />
@@ -79,7 +79,7 @@ const ProjectDetail = () => {
           {/* Content Grid Skeleton */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {[...Array(2)].map((_, i) => (
-              <div key={i} className="rounded-2xl border-2 border-border bg-card shadow-soft-md">
+              <div key={`skeleton-${i}`} className="rounded-2xl border-2 border-border bg-card shadow-soft-md">
                 <div className="p-6 border-b border-border">
                   <div className="flex items-center gap-3">
                     <Skeleton className="h-12 w-12 rounded-xl" />
@@ -88,7 +88,7 @@ const ProjectDetail = () => {
                 </div>
                 <div className="p-6 space-y-3">
                   {[...Array(3)].map((_, j) => (
-                    <Skeleton key={j} className="h-20 w-full rounded-xl" />
+                    <Skeleton key={`skeleton-${j}`} className="h-20 w-full rounded-xl" />
                   ))}
                 </div>
               </div>
@@ -147,7 +147,7 @@ const ProjectDetail = () => {
           {/* Header */}
           <header className="relative overflow-hidden rounded-2xl border-2 border-border bg-card p-5 shadow-soft-md transition-shadow duration-300 hover:shadow-soft-lg sm:p-8">
             <div className={`absolute top-0 left-0 right-0 h-1.5 ${currentStatus.accent}`} />
-            
+
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex w-full items-start gap-3 sm:gap-4 sm:w-auto">
                 <Button
@@ -257,30 +257,30 @@ const ProjectDetail = () => {
                           key={member.membership_id || member.user_id}
                           className="flex items-center justify-between p-4 bg-muted/70 rounded-xl border-2 border-border hover:border-primary-200 transition-colors"
                         >
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-10 w-10">
-                            <AvatarImage src={memberProfile?.avatar_url} />
-                            <AvatarFallback>
-                              {memberProfile?.full_name?.charAt(0)?.toUpperCase() || 'U'}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="font-semibold text-foreground">
-                              {memberProfile?.full_name || 'Usuario Desconocido'}
-                            </p>
-                            <p className="text-sm text-muted-foreground">{memberProfile?.email}</p>
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-10 w-10">
+                              <AvatarImage src={memberProfile?.avatar_url} />
+                              <AvatarFallback>
+                                {memberProfile?.full_name?.charAt(0)?.toUpperCase() || 'U'}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="font-semibold text-foreground">
+                                {memberProfile?.full_name || 'Usuario Desconocido'}
+                              </p>
+                              <p className="text-sm text-muted-foreground">{memberProfile?.email}</p>
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex flex-col items-end gap-1">
-                          <Badge variant="outline" className="text-xs">
-                            {member.role_in_project || 'Miembro'}
-                          </Badge>
-                          {member.requires_approval && (
-                            <Badge variant="warning" className="text-xs">
-                              Requiere Aprobación
+                          <div className="flex flex-col items-end gap-1">
+                            <Badge variant="outline" className="text-xs">
+                              {member.role_in_project || 'Miembro'}
                             </Badge>
-                          )}
-                        </div>
+                            {member.requires_approval && (
+                              <Badge variant="warning" className="text-xs">
+                                Requiere Aprobación
+                              </Badge>
+                            )}
+                          </div>
                         </div>
                       );
                     })}

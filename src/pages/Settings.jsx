@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Settings, Bell, Lock, Palette, Eye, Monitor, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -47,15 +47,25 @@ const SettingsCard = ({ title, description, children, onSave, isSaving }) => (
 const SettingsPage = () => {
     const [activeTab, setActiveTab] = useState('general');
     const [isSaving, setIsSaving] = useState(false);
+    const [savingSection, setSavingSection] = useState(null);
     const toast = useToastNotification();
 
     const handleSave = (section) => {
         setIsSaving(true);
-        setTimeout(() => {
-            toast.success('Configuración Guardada', `Tus preferencias de ${section} han sido actualizadas.`);
-            setIsSaving(false);
-        }, 1000);
+        setSavingSection(section);
     };
+
+    // Completar guardado después de 1 segundo
+    useEffect(() => {
+        if (isSaving && savingSection) {
+            const timer = setTimeout(() => {
+                toast.success('Configuración Guardada', `Tus preferencias de ${savingSection} han sido actualizadas.`);
+                setIsSaving(false);
+                setSavingSection(null);
+            }, 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [isSaving, savingSection, toast]);
 
     const renderContent = () => {
         switch (activeTab) {
