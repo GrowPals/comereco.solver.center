@@ -274,20 +274,44 @@ export const useCart = () => {
         }
     });
 
-    const totalItems = useMemo(() => items.reduce((sum, item) => sum + item.quantity, 0), [items]);
-    const subtotal = useMemo(() => items.reduce((sum, item) => sum + item.price * item.quantity, 0), [items]);
+    const totalItems = useMemo(() => {
+        return items.reduce((sum, item) => {
+            const quantity = Number(item.quantity) || 0;
+            return sum + quantity;
+        }, 0);
+    }, [items]);
+
+    const subtotal = useMemo(() => {
+        return items.reduce((sum, item) => {
+            const price = Number(item.price) || 0;
+            const quantity = Number(item.quantity) || 0;
+            return sum + (price * quantity);
+        }, 0);
+    }, [items]);
+
     const vat = useMemo(() => subtotal * 0.16, [subtotal]);
     const total = useMemo(() => subtotal + vat, [subtotal, vat]);
 
     const getItemQuantity = useCallback((productId) => {
         const item = items.find(item => item.id === productId);
-        return item?.quantity || 0;
+        return Number(item?.quantity) || 0;
     }, [items]);
 
-    const addToCartHandler = (product, quantity = 1) => addToCartMutation.mutate({ product, quantity });
-    const updateQuantityHandler = (productId, quantity) => updateQuantityMutation.mutate({ productId, quantity });
-    const removeFromCartHandler = (productId) => removeFromCartMutation.mutate(productId);
-    const clearCartHandler = () => clearCartMutation.mutate();
+    const addToCartHandler = useCallback((product, quantity = 1) => {
+        addToCartMutation.mutate({ product, quantity });
+    }, [addToCartMutation]);
+
+    const updateQuantityHandler = useCallback((productId, quantity) => {
+        updateQuantityMutation.mutate({ productId, quantity });
+    }, [updateQuantityMutation]);
+
+    const removeFromCartHandler = useCallback((productId) => {
+        removeFromCartMutation.mutate(productId);
+    }, [removeFromCartMutation]);
+
+    const clearCartHandler = useCallback(() => {
+        clearCartMutation.mutate();
+    }, [clearCartMutation]);
 
     return {
         items,

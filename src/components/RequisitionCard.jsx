@@ -1,5 +1,5 @@
 
-import React, { memo, useCallback, useMemo, useState, useEffect } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -11,8 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/formatters';
 import { IconWrapper } from '@/components/ui/icon-wrapper';
-
-const MOBILE_BREAKPOINT = 1024;
+import useViewport from '@/hooks/useViewport';
 
 const statusAccents = {
   draft: 'bg-muted/90 dark:bg-muted/85',
@@ -26,10 +25,7 @@ const statusAccents = {
 
 const RequisitionCard = memo(({ requisition }) => {
   const navigate = useNavigate();
-  const [isMobile, setIsMobile] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return window.innerWidth < MOBILE_BREAKPOINT;
-  });
+  const { width, isMobile, isTablet } = useViewport();
   const [showDetails, setShowDetails] = useState(false);
 
   // Memoizar accent de estado para la barra superior
@@ -37,18 +33,6 @@ const RequisitionCard = memo(({ requisition }) => {
     statusAccents[requisition?.business_status] || statusAccents.default,
     [requisition?.business_status]
   );
-
-  // Detectar cambios de viewport
-  useEffect(() => {
-    if (typeof window === 'undefined') return undefined;
-
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   // Memoizar fecha formateada
   const formattedDate = useMemo(() => {
