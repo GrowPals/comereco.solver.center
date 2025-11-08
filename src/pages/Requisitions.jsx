@@ -181,7 +181,7 @@ const RequisitionsPage = () => {
           {isLoading ? (
             <div className="space-y-6">
               {[...Array(5)].map((_, i) => (
-                <Skeleton key={i} className="h-40 w-full rounded-2xl" />
+                <Skeleton key={`skeleton-${i}`} className="h-40 w-full rounded-2xl" />
               ))}
             </div>
           ) : filteredRequisitions.length > 0 ? (

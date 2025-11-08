@@ -98,7 +98,7 @@ const SimpleBarChart = ({ data, title, subtitle, dataKey, nameKey }) => {
                         const percentage = maxValue > 0 ? (value / maxValue) * 100 : 0;
 
                         return (
-                            <div key={index} className="space-y-3">
+                            <div key={`item-${index}`} className="space-y-3">
                                 <div className="flex items-baseline justify-between text-sm">
                                     <span className="font-medium text-foreground/90 leading-tight">{item[nameKey]}</span>
                                     <span className="font-semibold text-foreground">{value}</span>
@@ -167,7 +167,7 @@ const MonthlyTrendChart = ({ data }) => {
                             const pendingPercentage = maxValue > 0 ? (pendingValue / maxValue) * 100 : 0;
 
                             return (
-                                <div key={index} className="space-y-2">
+                                <div key={`item-${index}`} className="space-y-2">
                                     <div className="flex items-center justify-between text-sm">
                                         <span className="font-bold text-foreground w-16">{item.mes}</span>
                                         <div className="flex gap-4 text-xs">
@@ -240,7 +240,7 @@ const SimplePieChart = ({ data }) => {
                         const percentage = total > 0 ? ((item.value / total) * 100).toFixed(1) : 0;
 
                         return (
-                            <div key={index} className="space-y-2">
+                            <div key={`item-${index}`} className="space-y-2">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                         <div

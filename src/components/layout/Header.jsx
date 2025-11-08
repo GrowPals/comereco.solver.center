@@ -35,7 +35,7 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
 
     const userName = useMemo(() => user?.full_name || 'Usuario', [user?.full_name]);
     const userInitials = useMemo(() => {
-        return userName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        return (userName || 'U').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
     }, [userName]);
 
     useEffect(() => {

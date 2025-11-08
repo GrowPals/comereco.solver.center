@@ -2,6 +2,7 @@ import React, {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -17,6 +18,14 @@ export const AlertProvider = ({ children }) => {
   const [alerts, setAlerts] = useState([]);
   // Almacenar referencias a los timeouts para poder limpiarlos
   const timeoutsRef = useRef(new Map());
+
+  // Limpiar todos los timers al desmontar
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach((timeoutId) => clearTimeout(timeoutId));
+      timeoutsRef.current.clear();
+    };
+  }, []);
 
   /**
    * Remueve una alerta por su ID

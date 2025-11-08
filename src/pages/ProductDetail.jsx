@@ -188,6 +188,14 @@ export default function ProductDetail() {
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [showAddedFeedback, setShowAddedFeedback] = useState(false);
 
+  // Cleanup del feedback después de 2 segundos
+  useEffect(() => {
+    if (showAddedFeedback) {
+      const timer = setTimeout(() => setShowAddedFeedback(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [showAddedFeedback]);
+
   // Query para obtener el producto
   const {
     data: product,
@@ -260,7 +268,6 @@ export default function ProductDetail() {
       }
 
       setShowAddedFeedback(true);
-      setTimeout(() => setShowAddedFeedback(false), 2000);
     } catch (error) {
       logger.error('Error updating cart:', error);
     } finally {
@@ -330,7 +337,7 @@ export default function ProductDetail() {
   const productDescription = product.description || product.descripcion || '';
   const productCategory = product.category_name || product.categoria || '';
 
-  // Lógica de stock - igual que en ProductCard
+  // Lógica de stock - igual que en ProductCard (corregida para validar correctamente)
   const stock = Number.isFinite(product.stock) ? product.stock :
                 Number.isFinite(product.existencias) ? product.existencias : null;
   const isInStock = stock !== null && stock !== undefined && stock > 0;

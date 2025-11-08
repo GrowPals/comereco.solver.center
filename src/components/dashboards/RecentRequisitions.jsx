@@ -77,7 +77,7 @@ const RecentRequisitions = memo(() => {
                 <div className="space-y-3 px-4 md:hidden">
                     {isLoading ? (
                         Array.from({ length: 5 }).map((_, i) => (
-                            <div key={i} className="rounded-xl border border-border bg-card p-4 shadow-sm">
+                            <div key={`skeleton-${i}`} className="rounded-xl border border-border bg-card p-4 shadow-sm">
                                 <div className="flex items-start justify-between gap-3">
                                     <div className="flex-1 space-y-2">
                                         <Skeleton className="h-5 w-24" />
@@ -154,7 +154,7 @@ const RecentRequisitions = memo(() => {
                         <TableBody>
                             {isLoading ? (
                                 Array.from({ length: 5 }).map((_, i) => (
-                                    <TableRow key={i} className="border-border/70">
+                                    <TableRow key={`skeleton-${i}`} className="border-border/70">
                                         <TableCell><Skeleton className="h-4 w-20 rounded" /></TableCell>
                                         <TableCell className="hidden sm:table-cell"><Skeleton className="h-4 w-24 rounded" /></TableCell>
                                         <TableCell className="hidden md:table-cell"><Skeleton className="h-4 w-20 rounded" /></TableCell>

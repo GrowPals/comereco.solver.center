@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -36,6 +36,7 @@ const Approvals = () => {
     const [rejectionReason, setRejectionReason] = useState('');
     const [approvalModal, setApprovalModal] = useState({ isOpen: false, requisitionId: null, folio: '', amount: 0 });
     const [dismissingIds, setDismissingIds] = useState([]);
+    const [pendingRefetch, setPendingRefetch] = useState(false);
 
     const { data: requisitions, isLoading } = useQuery({
         queryKey: ['pendingApprovals'],
@@ -58,11 +59,7 @@ const Approvals = () => {
     const mutation = useMutation({
         mutationFn: ({ requisitionId, status, reason }) => updateRequisitionStatus(requisitionId, status, reason),
         onSuccess: (data, variables) => {
-            setTimeout(() => {
-                queryClient.invalidateQueries(['pendingApprovals']);
-                queryClient.invalidateQueries(['requisitions']);
-                clearDismiss(variables.requisitionId);
-            }, 220);
+            setPendingRefetch(true);
             toast({
                 title: 'Éxito',
                 description: `La requisición ha sido ${variables.status === 'approved' ? 'aprobada' : 'rechazada'}.`,
@@ -76,6 +73,22 @@ const Approvals = () => {
             toast({ variant: 'destructive', title: 'Error', description: error.message });
         },
     });
+
+    // Refetch después de 220ms del éxito
+    useEffect(() => {
+        if (pendingRefetch) {
+            const timer = setTimeout(() => {
+                queryClient.invalidateQueries(['pendingApprovals']);
+                queryClient.invalidateQueries(['requisitions']);
+                const lastMutatedId = dismissingIds[dismissingIds.length - 1];
+                if (lastMutatedId) {
+                    clearDismiss(lastMutatedId);
+                }
+                setPendingRefetch(false);
+            }, 220);
+            return () => clearTimeout(timer);
+        }
+    }, [pendingRefetch, queryClient, dismissingIds]);
 
     const handleOpenApprovalModal = (requisitionId, folio, amount) => {
         setApprovalModal({ isOpen: true, requisitionId, folio, amount });

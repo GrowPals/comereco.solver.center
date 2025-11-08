@@ -26,10 +26,7 @@ const statusAccents = {
 
 const RequisitionCard = memo(({ requisition }) => {
   const navigate = useNavigate();
-  const [isMobile, setIsMobile] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return window.innerWidth < MOBILE_BREAKPOINT;
-  });
+  const [isMobile, setIsMobile] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
 
   // Memoizar accent de estado para la barra superior
@@ -49,6 +46,9 @@ const RequisitionCard = memo(({ requisition }) => {
         setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
       }, 250);
     };
+
+    // Inicializar estado basado en viewport
+    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
 
     window.addEventListener('resize', handleResize);
     return () => {
