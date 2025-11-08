@@ -5,60 +5,66 @@ import { cn } from '@/lib/utils';
 import { Loader2, CheckCircle } from 'lucide-react';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap text-base font-semibold ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-200 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden active:scale-[0.98] dark:ring-offset-background',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]',
   {
     variants: {
       variant: {
-        // Default - CTA Primario con glow muy sutil en dark mode
-        default: 'border border-primary-500/30 bg-gradient-primary text-white shadow-button hover:shadow-button-hover rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/8 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border-primary-400/35 dark:bg-[linear-gradient(135deg,rgba(79,140,255,0.95)_0%,rgba(45,99,235,0.92)_100%)] dark:shadow-button dark:hover:shadow-[0_4px_14px_rgba(0,0,0,0.32),0_0_10px_rgba(79,140,255,0.18)]',
+        // Primary - Gradiente Azul Pastel
+        primary: 'bg-gradient-to-r from-primary-200 to-primary-300 text-primary-foreground hover:from-primary-300 hover:to-primary-400 dark:from-primary-500 dark:to-primary-600 dark:hover:from-primary-400 dark:hover:to-primary-500',
 
-        // Primary - CTA Destacado con glow muy sutil en dark mode
-        primary: 'border border-primary-600/35 bg-gradient-primary-intense text-white shadow-button hover:shadow-button-hover rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/8 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border-primary-400/40 dark:bg-[linear-gradient(135deg,rgba(59,130,246,0.96)_0%,rgba(37,99,235,0.93)_100%)] dark:shadow-button dark:hover:shadow-[0_5px_16px_rgba(0,0,0,0.34),0_0_12px_rgba(59,130,246,0.20)]',
+        // Secondary - Gradiente Púrpura Pastel
+        secondary: 'bg-gradient-to-r from-secondary-200 to-secondary-300 text-secondary-foreground hover:from-secondary-300 hover:to-secondary-400 dark:from-secondary-500 dark:to-secondary-600 dark:hover:from-secondary-400 dark:hover:to-secondary-500',
 
-        // Accent - ComerECO Green (sin glow innecesario)
-        accent: 'border border-emerald-500/30 bg-gradient-accent text-white shadow-button hover:shadow-button-hover rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/8 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border-emerald-400/35 dark:bg-[linear-gradient(135deg,rgba(16,185,129,0.92)_0%,rgba(5,150,105,0.88)_100%)] dark:shadow-button dark:hover:shadow-elevated',
+        // Accent - Gradiente Rosa Pastel
+        accent: 'bg-gradient-to-r from-accent-200 to-accent-300 text-accent-foreground hover:from-accent-300 hover:to-accent-400 dark:from-accent-500 dark:to-accent-600 dark:hover:from-accent-400 dark:hover:to-accent-500',
 
-        // Success - Sin glow, solo sombras
-        success: 'border border-emerald-500/30 bg-gradient-success text-white shadow-button hover:shadow-button-hover rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/8 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border-emerald-400/35 dark:bg-[linear-gradient(135deg,rgba(16,185,129,0.9)_0%,rgba(5,150,105,0.86)_100%)] dark:shadow-button dark:hover:shadow-elevated',
+        // Success - Gradiente Verde Menta Pastel
+        success: 'bg-gradient-to-r from-success-200 to-success-300 text-success-foreground hover:from-success-300 hover:to-success-400 dark:from-success-500 dark:to-success-600 dark:hover:from-success-400 dark:hover:to-success-500',
 
-        // Destructive - Sin glow excesivo
-        destructive: 'border border-red-500/35 bg-gradient-error text-white shadow-button hover:shadow-button-hover rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/8 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border-red-400/35 dark:bg-[linear-gradient(135deg,rgba(239,68,68,0.92)_0%,rgba(220,38,38,0.88)_100%)] dark:shadow-button dark:hover:shadow-elevated',
+        // Danger - Gradiente Coral Pastel
+        danger: 'bg-gradient-to-r from-error-200 to-error-300 text-error-foreground hover:from-error-300 hover:to-error-400 dark:from-error-500 dark:to-error-600 dark:hover:from-error-400 dark:hover:to-error-500',
 
-        // Outline - Limpio y sutil
-        outline: 'border-2 border-primary-500/65 bg-transparent text-primary-600 hover:bg-primary-50 hover:border-primary-600 rounded-xl transition-all dark:text-primary-100 dark:border-primary-400/40 dark:bg-card/30 dark:hover:bg-primary-900/16 dark:hover:border-primary-400/55 dark:hover:text-primary-50',
+        // Warning - Gradiente Amarillo Pastel
+        warning: 'bg-gradient-to-r from-warning-200 to-warning-300 text-warning-foreground hover:from-warning-300 hover:to-warning-400 dark:from-warning-500 dark:to-warning-600 dark:hover:from-warning-400 dark:hover:to-warning-500',
 
-        // Secondary - Sutil y profesional
-        secondary: 'bg-card border border-border text-foreground/85 shadow-sm hover:shadow-md hover:border-border/60 rounded-xl hover:bg-muted/50 dark:border-border dark:bg-card/80 dark:text-foreground dark:hover:bg-card dark:hover:border-border/40',
+        // Ghost - Sin fondo, solo texto
+        ghost: 'bg-transparent text-foreground hover:bg-muted/20 dark:hover:bg-muted/10',
 
-        // Ghost - Minimalista
-        ghost: 'border border-transparent bg-transparent text-foreground/80 hover:bg-muted/50 hover:text-foreground rounded-xl active:bg-primary/10 dark:text-foreground/85 dark:hover:bg-card/50 dark:hover:text-foreground',
+        // Outline - Solo borde pastel
+        outline: 'border-2 border-primary-300 bg-transparent text-primary-600 hover:bg-primary-50 dark:border-primary-500 dark:text-primary-400 dark:hover:bg-primary-500/10',
 
-        // Link - Simple
-        link: 'text-primary-600 underline-offset-4 hover:underline hover:text-primary-700 active:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300',
+        // Link - Estilo de enlace
+        link: 'text-primary-600 underline-offset-4 hover:underline dark:text-primary-400',
       },
       size: {
-        default: 'h-11 px-6 py-3',
-        sm: 'h-9 px-4 py-2 text-sm rounded-lg',
-        lg: 'h-14 px-8 py-4 text-lg rounded-2xl',
+        sm: 'h-9 px-4 text-sm rounded-lg',
+        md: 'h-11 px-6 text-base rounded-xl',
+        lg: 'h-14 px-8 text-lg rounded-xl',
         icon: 'h-11 w-11 rounded-xl',
-        fab: 'h-14 w-14 rounded-full shadow-button hover:shadow-button-hover hover:scale-105 active:scale-100 dark:shadow-button dark:hover:shadow-[0_6px_16px_rgba(0,0,0,0.34),0_0_10px_rgba(79,140,255,0.18)]',
       },
     },
     defaultVariants: {
-      variant: 'default',
-      size: 'default',
+      variant: 'primary',
+      size: 'md',
     },
   }
 );
 
-const Button = React.forwardRef(({ className, variant, size, asChild = false, isLoading, isSuccess, children, ...props }, ref) => {
+const Button = React.forwardRef(({
+  className,
+  variant,
+  size,
+  asChild = false,
+  isLoading,
+  isSuccess,
+  children,
+  ...props
+}, ref) => {
   const Comp = asChild ? Slot : 'button';
+
   return (
     <Comp
-      className={cn(
-        buttonVariants({ variant, size, className }),
-        isSuccess && 'bg-success hover:bg-success/90'
-      )}
+      className={cn(buttonVariants({ variant, size, className }))}
       ref={ref}
       disabled={isLoading || props.disabled}
       aria-disabled={isLoading || props.disabled}
@@ -66,20 +72,20 @@ const Button = React.forwardRef(({ className, variant, size, asChild = false, is
     >
       {isLoading && (
         <>
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+          <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
           <span className="sr-only">Cargando...</span>
         </>
       )}
       {isSuccess && !isLoading && (
         <>
-          <CheckCircle className="mr-2 h-4 w-4" aria-hidden="true" />
-          <span className="sr-only">Completado</span>
+          <CheckCircle className="h-4 w-4" aria-hidden="true" />
         </>
       )}
-      {!isLoading && !isSuccess && children}
+      {!isLoading && children}
     </Comp>
   );
 });
+
 Button.displayName = "Button";
 
 export { Button, buttonVariants };

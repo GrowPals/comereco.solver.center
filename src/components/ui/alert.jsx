@@ -3,35 +3,19 @@ import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const alertVariants = cva(
-  "relative w-full rounded-lg p-4",
+  "relative w-full rounded-xl p-4 border-l-4",
   {
     variants: {
       variant: {
-        default: "bg-slate-50 text-slate-900 dark:bg-slate-800 dark:text-slate-100",
+        default: "bg-neutral-100 border-neutral-300 text-neutral-900 dark:bg-neutral-800/50 dark:border-neutral-600 dark:text-neutral-100",
 
-        warning: cn(
-          "bg-amber-50 dark:bg-amber-900/15",
-          "border-l-4 border-amber-400 dark:border-amber-500",
-          "text-amber-900 dark:text-amber-200"
-        ),
+        warning: "bg-warning-100 border-warning-400 text-warning-900 dark:bg-warning-500/20 dark:border-warning-500 dark:text-warning-200",
 
-        error: cn(
-          "bg-red-50 dark:bg-red-900/15",
-          "border-l-4 border-red-400 dark:border-red-500",
-          "text-red-900 dark:text-red-200"
-        ),
+        error: "bg-error-100 border-error-400 text-error-900 dark:bg-error-500/20 dark:border-error-500 dark:text-error-200",
 
-        success: cn(
-          "bg-emerald-50 dark:bg-emerald-900/15",
-          "border-l-4 border-emerald-400 dark:border-emerald-500",
-          "text-emerald-900 dark:text-emerald-200"
-        ),
+        success: "bg-success-100 border-success-400 text-success-900 dark:bg-success-500/20 dark:border-success-500 dark:text-success-200",
 
-        info: cn(
-          "bg-blue-50 dark:bg-blue-900/15",
-          "border-l-4 border-blue-400 dark:border-blue-500",
-          "text-blue-900 dark:text-blue-200"
-        ),
+        info: "bg-info-100 border-info-400 text-info-900 dark:bg-info-500/20 dark:border-info-500 dark:text-info-200",
       },
     },
     defaultVariants: {

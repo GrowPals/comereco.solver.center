@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
@@ -14,29 +13,49 @@ import {
 } from 'lucide-react';
 
 const badgeVariants = cva(
-  'inline-flex items-center gap-1.5 font-medium px-3 py-1 rounded-full text-sm transition-colors duration-200',
+  'inline-flex items-center gap-1.5 font-medium px-3 py-1.5 rounded-full text-sm transition-colors duration-200',
   {
     variants: {
       variant: {
-        // Estados de requisiciones - mejorado contraste WCAG AA en modo dark
-        ordered: 'bg-blue-50 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300',
-        approved: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300',
-        sent: 'bg-amber-50 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300',
-        rejected: 'bg-red-50 text-red-700 dark:bg-red-500/20 dark:text-red-300',
-        draft: 'bg-slate-100 text-slate-700 dark:bg-slate-700/60 dark:text-slate-200',
-        in_process: 'bg-cyan-50 text-cyan-700 dark:bg-cyan-500/20 dark:text-cyan-300',
-        completed: 'bg-violet-50 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300',
+        // Primary - Azul Pastel
+        primary: 'bg-primary-100 text-primary-700 dark:bg-primary-500/20 dark:text-primary-300',
 
-        // Variantes genéricas - mejorado contraste
-        default: 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300',
-        success: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300',
-        warning: 'bg-amber-50 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300',
-        danger: 'bg-red-50 text-red-700 dark:bg-red-500/20 dark:text-red-300',
-        destructive: 'bg-red-50 text-red-700 dark:bg-red-500/20 dark:text-red-300',
-        info: 'bg-blue-50 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300',
-        secondary: 'bg-slate-100 text-slate-700 dark:bg-slate-700/60 dark:text-slate-200',
-        muted: 'bg-slate-100 text-slate-600 dark:bg-slate-700/60 dark:text-slate-300',
-        outline: 'bg-transparent text-slate-700 dark:text-slate-300',
+        // Secondary - Púrpura Pastel
+        secondary: 'bg-secondary-100 text-secondary-700 dark:bg-secondary-500/20 dark:text-secondary-300',
+
+        // Accent - Rosa Pastel
+        accent: 'bg-accent-100 text-accent-600 dark:bg-accent-500/20 dark:text-accent-300',
+
+        // Success - Verde Menta Pastel
+        success: 'bg-success-100 text-success-600 dark:bg-success-500/20 dark:text-success-300',
+        approved: 'bg-success-100 text-success-600 dark:bg-success-500/20 dark:text-success-300',
+
+        // Warning - Amarillo Pastel
+        warning: 'bg-warning-100 text-warning-700 dark:bg-warning-500/20 dark:text-warning-300',
+        sent: 'bg-warning-100 text-warning-700 dark:bg-warning-500/20 dark:text-warning-300',
+
+        // Danger/Error - Coral Pastel
+        danger: 'bg-error-100 text-error-700 dark:bg-error-500/20 dark:text-error-300',
+        destructive: 'bg-error-100 text-error-700 dark:bg-error-500/20 dark:text-error-300',
+        rejected: 'bg-error-100 text-error-700 dark:bg-error-500/20 dark:text-error-300',
+
+        // Info - Azul Cielo Pastel
+        info: 'bg-info-100 text-info-700 dark:bg-info-500/20 dark:text-info-300',
+        ordered: 'bg-info-100 text-info-700 dark:bg-info-500/20 dark:text-info-300',
+        in_review: 'bg-info-100 text-info-700 dark:bg-info-500/20 dark:text-info-300',
+
+        // Neutral/Muted
+        default: 'bg-neutral-100 text-neutral-700 dark:bg-neutral-700/60 dark:text-neutral-300',
+        muted: 'bg-neutral-100 text-neutral-600 dark:bg-neutral-700/60 dark:text-neutral-300',
+        draft: 'bg-neutral-100 text-neutral-700 dark:bg-neutral-700/60 dark:text-neutral-300',
+        cancelled: 'bg-neutral-100 text-neutral-600 dark:bg-neutral-700/60 dark:text-neutral-300',
+
+        // Process states - Cyan Pastel
+        in_process: 'bg-info-100 text-info-700 dark:bg-info-500/20 dark:text-info-300',
+        completed: 'bg-secondary-100 text-secondary-700 dark:bg-secondary-500/20 dark:text-secondary-300',
+
+        // Outline
+        outline: 'border-2 border-neutral-300 bg-transparent text-neutral-700 dark:border-neutral-600 dark:text-neutral-300',
       },
     },
     defaultVariants: {
@@ -46,7 +65,7 @@ const badgeVariants = cva(
 );
 
 const statusConfig = {
-  // Estados de requisiciones con iconos para mejor accesibilidad
+  // Estados de requisiciones con iconos
   ordered: { label: 'Ordenada', variant: 'ordered', icon: ShoppingCart },
   approved: { label: 'Aprobada', variant: 'approved', icon: CheckCircle },
   sent: { label: 'Enviada', variant: 'sent', icon: Send },
@@ -54,7 +73,7 @@ const statusConfig = {
   rejected: { label: 'Rechazada', variant: 'rejected', icon: XCircle },
   draft: { label: 'Borrador', variant: 'draft', icon: FileText },
   borrador: { label: 'Borrador', variant: 'draft', icon: FileText },
-  cancelled: { label: 'Cancelada', variant: 'muted', icon: XCircle },
+  cancelled: { label: 'Cancelada', variant: 'cancelled', icon: XCircle },
   in_process: { label: 'En Proceso', variant: 'in_process', icon: Clock },
   en_proceso: { label: 'En Proceso', variant: 'in_process', icon: Clock },
   completed: { label: 'Completada', variant: 'completed', icon: PackageCheck },
@@ -62,7 +81,7 @@ const statusConfig = {
 
   // Otros estados
   pending: { label: 'Pendiente', variant: 'warning', icon: Clock },
-  in_review: { label: 'En Revisión', variant: 'info', icon: Eye },
+  in_review: { label: 'En Revisión', variant: 'in_review', icon: Eye },
 
   // User statuses
   activo: { label: 'Activo', variant: 'success', icon: CheckCircle },
