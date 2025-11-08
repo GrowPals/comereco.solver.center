@@ -85,7 +85,7 @@ const ProductCard = memo(({ product }) => {
   return (
     <article
       className={cn(
-        'group relative flex w-full flex-col overflow-hidden rounded-3xl surface-card transition-all duration-300 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:hover:shadow-elevated',
+        'group relative flex w-full flex-col overflow-hidden rounded-3xl surface-card transition-all duration-base ease-smooth-out hover:shadow-elevated hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:hover:shadow-elevated',
         !isInStock && 'opacity-70 grayscale-[0.3]'
       )}
       role="article"
@@ -103,7 +103,7 @@ const ProductCard = memo(({ product }) => {
             alt={`Imagen de ${productName}`}
             fallback="/placeholder.svg"
             loading="lazy"
-            className="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-105 bg-neutral-100 dark:bg-[#0e1f3c]"
+            className="aspect-video w-full object-cover transition-transform duration-slow ease-smooth-out group-hover:scale-105 bg-neutral-100 dark:bg-[#0e1f3c]"
           />
         </button>
 
@@ -118,9 +118,9 @@ const ProductCard = memo(({ product }) => {
           type="button"
           onClick={handleToggleFavorite}
           className={cn(
-            "absolute right-4 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-border bg-white text-muted-foreground shadow-sm transition-all duration-200 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 dark:border-border dark:bg-card/90",
+            "absolute right-4 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-border bg-white text-muted-foreground shadow-sm transition-all duration-base ease-smooth-out hover:shadow-md hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 dark:border-border dark:bg-card/90",
             isFavorite
-              ? "text-red-500 hover:scale-110"
+              ? "text-red-500"
               : "hover:text-red-500"
           )}
           aria-label={
@@ -132,7 +132,7 @@ const ProductCard = memo(({ product }) => {
         >
           <Heart
             className={cn(
-              'h-4 w-4 transition-all duration-300',
+              'h-4 w-4 transition-all duration-base ease-smooth-out',
               isFavorite && 'animate-[heartBeat_0.3s_ease-in-out] fill-current scale-110'
             )}
             aria-hidden="true"
@@ -183,7 +183,7 @@ const ProductCard = memo(({ product }) => {
               onClick={handleAddToCart}
               disabled={isAdding || !isInStock}
               className={cn(
-                'flex w-full items-center justify-center gap-2 rounded-2xl py-3 text-base font-semibold text-white transition-all active:scale-[0.98]',
+                'flex w-full items-center justify-center gap-2 rounded-2xl py-3 text-base font-semibold text-white transition-all duration-base ease-smooth-out active:scale-[0.98]',
                 showSuccess
                   ? 'bg-success hover:bg-success/90'
                   : isInStock
