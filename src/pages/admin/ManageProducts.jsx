@@ -1,12 +1,12 @@
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Helmet } from 'react-helmet';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getAdminProducts, createProduct, updateProduct, deleteProduct } from '@/services/productService';
 import { useProductCategories } from '@/hooks/useProducts';
 import { uploadProductImage, deleteProductImage } from '@/services/imageService';
 import { useForm } from 'react-hook-form';
-import { PlusCircle, MoreHorizontal, Edit, ToggleLeft, ToggleRight, ShoppingBag, Trash2, Upload, X, Image as ImageIcon } from 'lucide-react';
+import { PlusCircle, MoreHorizontal, Edit, ToggleLeft, ToggleRight, ShoppingBag, Trash2, Upload, X, Image as ImageIcon, ArrowUpDown, ArrowUp, ArrowDown, Copy } from 'lucide-react';
 import OptimizedImage from '@/components/OptimizedImage';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/useToast';
@@ -23,6 +23,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import FormStatusFeedback from '@/components/ui/form-status-feedback';
+import { SectionIcon } from '@/components/ui/icon-wrapper';
 
 const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
     const { toast } = useToast();
@@ -126,7 +127,7 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-2xl border border-border bg-card shadow-2xl p-0">
+            <DialogContent className="sm:max-w-2xl border border-border bg-card shadow-soft-xl p-0">
                 <form onSubmit={handleSubmit(onSubmit)} className="flex max-h-[calc(100dvh-3.5rem)] flex-col">
                     <DialogHeader className="px-6 pt-6">
                         <DialogTitle className="text-2xl font-bold">
@@ -278,6 +279,12 @@ const ManageProductsPage = () => {
     const queryClient = useQueryClient();
     const { toast } = useToast();
     const [formModal, setFormModal] = useState({ isOpen: false, product: null });
+    const [sortConfig, setSortConfig] = useState(() => {
+        // Restore sorting from localStorage
+        const saved = localStorage.getItem('productTableSort');
+        return saved ? JSON.parse(saved) : { column: null, direction: null };
+    });
+    const [hoveredRow, setHoveredRow] = useState(null);
     const { data: products, isLoading } = useQuery({ queryKey: ['adminProducts'], queryFn: getAdminProducts });
 
     const mutationOptions = {
@@ -320,16 +327,84 @@ const ManageProductsPage = () => {
             await createMutation.mutateAsync(data);
         }
     };
-    
+
     const handleToggleActive = (product) => {
         updateMutation.mutate({ ...product, is_active: !product.is_active });
     };
-    
+
+    const handleDuplicate = (product) => {
+        const duplicatedProduct = {
+            ...product,
+            id: undefined,
+            name: `${product.name} (Copia)`,
+            sku: `${product.sku}-COPY-${Date.now().toString().slice(-6)}`,
+        };
+        setFormModal({ isOpen: true, product: duplicatedProduct });
+    };
+
     const handleDelete = async (product) => {
         if (!confirm(`¿Estás seguro de que deseas eliminar el producto "${product.name}"? Esta acción no se puede deshacer.`)) {
             return;
         }
         deleteMutation.mutate(product.id);
+    };
+
+    // Sorting logic
+    const handleSort = (column) => {
+        let direction = 'asc';
+
+        if (sortConfig.column === column) {
+            if (sortConfig.direction === 'asc') {
+                direction = 'desc';
+            } else if (sortConfig.direction === 'desc') {
+                // Remove sorting
+                setSortConfig({ column: null, direction: null });
+                localStorage.removeItem('productTableSort');
+                return;
+            }
+        }
+
+        const newSortConfig = { column, direction };
+        setSortConfig(newSortConfig);
+        localStorage.setItem('productTableSort', JSON.stringify(newSortConfig));
+    };
+
+    // Sorted products
+    const sortedProducts = useMemo(() => {
+        if (!products || !sortConfig.column) return products;
+
+        const sorted = [...products].sort((a, b) => {
+            let aValue = a[sortConfig.column];
+            let bValue = b[sortConfig.column];
+
+            // Handle different data types
+            if (sortConfig.column === 'price' || sortConfig.column === 'stock') {
+                aValue = Number(aValue);
+                bValue = Number(bValue);
+            } else if (sortConfig.column === 'is_active') {
+                aValue = aValue ? 1 : 0;
+                bValue = bValue ? 1 : 0;
+            } else {
+                aValue = String(aValue || '').toLowerCase();
+                bValue = String(bValue || '').toLowerCase();
+            }
+
+            if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+            if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+        return sorted;
+    }, [products, sortConfig]);
+
+    const getSortIcon = (column) => {
+        if (sortConfig.column !== column) {
+            return <ArrowUpDown className="ml-1.5 h-4 w-4 opacity-40" />;
+        }
+        if (sortConfig.direction === 'asc') {
+            return <ArrowUp className="ml-1.5 h-4 w-4" />;
+        }
+        return <ArrowDown className="ml-1.5 h-4 w-4" />;
     };
 
     if (isLoading) return <PageLoader />;
@@ -342,9 +417,7 @@ const ManageProductsPage = () => {
                     {/* Header */}
                     <header className="flex flex-col items-start gap-5 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:pb-6">
                         <div className="flex items-center gap-4 sm:gap-5">
-                            <div className="icon-badge flex h-14 w-14 items-center justify-center">
-                                <ShoppingBag className="h-7 w-7 text-primary-600 dark:text-primary-100" aria-hidden="true" />
-                            </div>
+                            <SectionIcon icon={ShoppingBag} className="h-7 w-7" />
                             <div>
                                 <h1 className="text-3xl font-bold tracking-tight text-foreground mb-1 sm:text-4xl">
                                     Gestionar <span className="bg-gradient-primary bg-clip-text text-transparent">Productos</span>
@@ -363,24 +436,89 @@ const ManageProductsPage = () => {
                     </header>
 
                     {products?.length > 0 ? (
-                        <div className="overflow-hidden rounded-2xl border-2 border-border bg-card shadow-lg">
+                        <div className="overflow-hidden rounded-2xl border-2 border-border bg-card shadow-soft-md">
                             <div className="w-full overflow-x-auto">
                             <Table className="min-w-[720px] md:min-w-full">
                             <TableHeader>
                                 <TableRow>
                                     <TableHead className="w-16 whitespace-nowrap">Imagen</TableHead>
-                                    <TableHead className="whitespace-nowrap">SKU</TableHead>
-                                    <TableHead className="whitespace-nowrap">Nombre</TableHead>
-                                    <TableHead>Categoría</TableHead>
-                                    <TableHead className="whitespace-nowrap">Precio</TableHead>
-                                    <TableHead className="whitespace-nowrap">Stock</TableHead>
-                                    <TableHead className="whitespace-nowrap">Estado</TableHead>
-                                    <TableHead><span className="sr-only">Acciones</span></TableHead>
+                                    <TableHead
+                                        className={`cursor-pointer select-none whitespace-nowrap transition-colors hover:bg-muted/60 ${
+                                            sortConfig.column === 'sku' ? 'bg-muted/40 font-bold' : ''
+                                        }`}
+                                        onClick={() => handleSort('sku')}
+                                    >
+                                        <div className="flex items-center">
+                                            SKU
+                                            {getSortIcon('sku')}
+                                        </div>
+                                    </TableHead>
+                                    <TableHead
+                                        className={`cursor-pointer select-none whitespace-nowrap transition-colors hover:bg-muted/60 ${
+                                            sortConfig.column === 'name' ? 'bg-muted/40 font-bold' : ''
+                                        }`}
+                                        onClick={() => handleSort('name')}
+                                    >
+                                        <div className="flex items-center">
+                                            Nombre
+                                            {getSortIcon('name')}
+                                        </div>
+                                    </TableHead>
+                                    <TableHead
+                                        className={`cursor-pointer select-none transition-colors hover:bg-muted/60 ${
+                                            sortConfig.column === 'category' ? 'bg-muted/40 font-bold' : ''
+                                        }`}
+                                        onClick={() => handleSort('category')}
+                                    >
+                                        <div className="flex items-center">
+                                            Categoría
+                                            {getSortIcon('category')}
+                                        </div>
+                                    </TableHead>
+                                    <TableHead
+                                        className={`cursor-pointer select-none whitespace-nowrap transition-colors hover:bg-muted/60 ${
+                                            sortConfig.column === 'price' ? 'bg-muted/40 font-bold' : ''
+                                        }`}
+                                        onClick={() => handleSort('price')}
+                                    >
+                                        <div className="flex items-center">
+                                            Precio
+                                            {getSortIcon('price')}
+                                        </div>
+                                    </TableHead>
+                                    <TableHead
+                                        className={`cursor-pointer select-none whitespace-nowrap transition-colors hover:bg-muted/60 ${
+                                            sortConfig.column === 'stock' ? 'bg-muted/40 font-bold' : ''
+                                        }`}
+                                        onClick={() => handleSort('stock')}
+                                    >
+                                        <div className="flex items-center">
+                                            Stock
+                                            {getSortIcon('stock')}
+                                        </div>
+                                    </TableHead>
+                                    <TableHead
+                                        className={`cursor-pointer select-none whitespace-nowrap transition-colors hover:bg-muted/60 ${
+                                            sortConfig.column === 'is_active' ? 'bg-muted/40 font-bold' : ''
+                                        }`}
+                                        onClick={() => handleSort('is_active')}
+                                    >
+                                        <div className="flex items-center">
+                                            Estado
+                                            {getSortIcon('is_active')}
+                                        </div>
+                                    </TableHead>
+                                    <TableHead className="w-[200px]"><span className="sr-only">Acciones</span></TableHead>
                                 </TableRow>
                             </TableHeader>
                                 <TableBody>
-                                    {products.map(p => (
-                                        <TableRow key={p.id} className="hover:bg-muted/70 transition-colors">
+                                    {sortedProducts.map(p => (
+                                        <TableRow
+                                            key={p.id}
+                                            className="group hover:bg-muted/70 transition-colors relative"
+                                            onMouseEnter={() => setHoveredRow(p.id)}
+                                            onMouseLeave={() => setHoveredRow(null)}
+                                        >
                                             <TableCell>
                                                 <div className="w-12 h-12 rounded-lg bg-muted overflow-hidden flex items-center justify-center">
                                                     {p.image_url ? (
@@ -414,25 +552,71 @@ const ManageProductsPage = () => {
                                                 </Badge>
                                             </TableCell>
                                             <TableCell>
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button variant="ghost" className="h-9 w-9 p-0 hover:bg-muted rounded-xl">
-                                                            <MoreHorizontal className="h-5 w-5" />
+                                                <div className="flex items-center gap-1">
+                                                    {/* Hover actions - visible on row hover */}
+                                                    <div className={`flex items-center gap-1 transition-all duration-200 ${
+                                                        hoveredRow === p.id ? 'opacity-100 visible' : 'opacity-0 invisible'
+                                                    }`}>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            className="h-8 px-2.5 hover:bg-muted rounded-xl"
+                                                            onClick={() => setFormModal({ isOpen: true, product: p })}
+                                                            title="Editar producto"
+                                                        >
+                                                            <Edit className="h-4 w-4" />
                                                         </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end" className="rounded-xl">
-                                                        <DropdownMenuItem onClick={() => setFormModal({ isOpen: true, product: p })}>
-                                                            <Edit className="mr-2 h-4 w-4" /> Editar
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem onClick={() => handleToggleActive(p)}>
-                                                            {p.is_active ? <ToggleLeft className="mr-2 h-4 w-4" /> : <ToggleRight className="mr-2 h-4 w-4" />}
-                                                            {p.is_active ? 'Desactivar' : 'Activar'}
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem onClick={() => handleDelete(p)} className="text-destructive focus:text-destructive">
-                                                            <Trash2 className="mr-2 h-4 w-4" /> Eliminar
-                                                        </DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            className="h-8 px-2.5 hover:bg-muted rounded-xl"
+                                                            onClick={() => handleDuplicate(p)}
+                                                            title="Duplicar producto"
+                                                        >
+                                                            <Copy className="h-4 w-4" />
+                                                        </Button>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            className="h-8 px-2.5 hover:bg-muted rounded-xl"
+                                                            onClick={() => handleToggleActive(p)}
+                                                            title={p.is_active ? 'Desactivar' : 'Activar'}
+                                                        >
+                                                            {p.is_active ? (
+                                                                <ToggleLeft className="h-4 w-4" />
+                                                            ) : (
+                                                                <ToggleRight className="h-4 w-4" />
+                                                            )}
+                                                        </Button>
+                                                    </div>
+
+                                                    {/* Overflow menu - always visible */}
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button
+                                                                variant="ghost"
+                                                                className="h-8 w-8 p-0 hover:bg-muted rounded-xl"
+                                                            >
+                                                                <MoreHorizontal className="h-5 w-5" />
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end" className="rounded-xl">
+                                                            <DropdownMenuItem onClick={() => setFormModal({ isOpen: true, product: p })}>
+                                                                <Edit className="mr-2 h-4 w-4" /> Editar
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem onClick={() => handleDuplicate(p)}>
+                                                                <Copy className="mr-2 h-4 w-4" /> Duplicar
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem onClick={() => handleToggleActive(p)}>
+                                                                {p.is_active ? <ToggleLeft className="mr-2 h-4 w-4" /> : <ToggleRight className="mr-2 h-4 w-4" />}
+                                                                {p.is_active ? 'Desactivar' : 'Activar'}
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem onClick={() => handleDelete(p)} className="text-destructive focus:text-destructive">
+                                                                <Trash2 className="mr-2 h-4 w-4" /> Eliminar
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                </div>
                                             </TableCell>
                                         </TableRow>
                                     ))}

@@ -146,6 +146,16 @@ export default {
       },
 
       boxShadow: {
+        // Sombras sutiles para modo claro
+        'soft-xs': '0 1px 2px rgba(0, 0, 0, 0.04)',
+        'soft-sm': '0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.05)',
+        'soft-md': '0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04)',
+        'soft-lg': '0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04)',
+
+        // Sombras para modo oscuro (muy sutiles)
+        'dark-sm': '0 2px 8px rgba(0, 0, 0, 0.4)',
+
+        // Mantener compatibilidad con sistema anterior
         'xs': '0 1px 2px rgba(0, 0, 0, 0.05)',
         'sm': '0 1px 3px rgba(0, 0, 0, 0.04)',
         'md': '0 2px 8px rgba(0, 0, 0, 0.06)',
@@ -154,6 +164,7 @@ export default {
         '2xl': '0 16px 48px rgba(0, 0, 0, 0.16)',
         'card': '0 1px 3px rgba(0, 0, 0, 0.1)',
         'card-hover': '0 4px 12px rgba(0, 0, 0, 0.15)',
+        'elevated': '0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04)',
       },
 
       spacing: {
@@ -168,13 +179,7 @@ export default {
         '10': 'var(--space-10)',    // 40px
         '12': 'var(--space-12)',    // 48px
         '16': 'var(--space-16)',    // 64px
-        '18': '4.5rem',             // 72px
         '20': 'var(--space-20)',    // 80px
-        '88': '22rem',              // 352px
-      },
-
-      maxWidth: {
-        '8xl': '88rem',
       },
 
       backgroundImage: {
@@ -190,21 +195,63 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: 0 },
         },
-        'slide-in': {
-          '0%': { transform: 'translateX(-100%)' },
-          '100%': { transform: 'translateX(0)' },
+        "shimmer": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
         },
-        'fade-in': {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
+        "fade-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        "fade-out": {
+          "0%": { opacity: "1" },
+          "100%": { opacity: "0" },
+        },
+        "slide-in-up": {
+          "0%": { transform: "translateY(10px)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
+        },
+        "slide-in-down": {
+          "0%": { transform: "translateY(-10px)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
+        },
+        "scale-in": {
+          "0%": { transform: "scale(0.95)", opacity: "0" },
+          "100%": { transform: "scale(1)", opacity: "1" },
+        },
+        // Animación de corazón favorito - bounce suave
+        "heart-bounce": {
+          "0%": { transform: "scale(1)" },
+          "25%": { transform: "scale(1.25)" },
+          "50%": { transform: "scale(0.9)" },
+          "75%": { transform: "scale(1.1)" },
+          "100%": { transform: "scale(1)" },
+        },
+        // Animación de pulso sutil para favorito activo
+        "heart-pulse": {
+          "0%, 100%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.05)" },
+        },
+        // Animación de check para botón agregar
+        "check-bounce": {
+          "0%": { transform: "scale(0) rotate(-45deg)", opacity: "0" },
+          "50%": { transform: "scale(1.2) rotate(-45deg)", opacity: "1" },
+          "100%": { transform: "scale(1) rotate(0deg)", opacity: "1" },
         },
       },
 
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        'slide-in': 'slide-in 0.3s ease-out',
-        'fade-in': 'fade-in 0.2s ease-out',
+        "shimmer": "shimmer 2s infinite",
+        "fade-in": "fade-in 0.2s ease-out",
+        "fade-out": "fade-out 0.15s ease-in",
+        "slide-in-up": "slide-in-up 0.2s ease-out",
+        "slide-in-down": "slide-in-down 0.2s ease-out",
+        "scale-in": "scale-in 0.15s ease-out",
+        "heart-bounce": "heart-bounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "heart-pulse": "heart-pulse 1.5s ease-in-out infinite",
+        "check-bounce": "check-bounce 0.5s ease-out",
       },
 
       transitionDuration: {
@@ -212,42 +259,111 @@ export default {
         'base': '200ms',
         'slow': '300ms',
       },
+
+      transitionTimingFunction: {
+        'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',
+        'smooth-in': 'cubic-bezier(0.4, 0, 1, 1)',
+        'smooth-out': 'cubic-bezier(0, 0, 0.2, 1)',
+        'bounce': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+      },
     },
   },
   plugins: [
     tailwindcssAnimate,
-    // Plugin para clases semánticas de tipografía
+    // Plugin para clases semánticas de tipografía - Sistema unificado
     function({ addComponents }) {
       addComponents({
+        // ============ HEADINGS ============
+        // H1 - Hero titles, main page headings
         '.heading-1': {
           '@apply text-4xl md:text-5xl font-bold tracking-tight leading-tight text-foreground': {},
         },
+        // H2 - Section titles, major divisions
         '.heading-2': {
           '@apply text-3xl md:text-4xl font-bold tracking-tight leading-tight text-foreground': {},
         },
+        // H3 - Subsection titles, card titles
         '.heading-3': {
           '@apply text-2xl md:text-3xl font-semibold leading-tight text-foreground': {},
         },
+        // H4 - Component titles, smaller headers
         '.heading-4': {
           '@apply text-xl md:text-2xl font-semibold leading-normal text-foreground': {},
         },
+        // H5 - Minor headings, list headers
         '.heading-5': {
           '@apply text-lg md:text-xl font-semibold leading-normal text-foreground': {},
         },
+
+        // ============ BODY TEXT ============
+        // Body Large - Introductory text, emphasis paragraphs
         '.body-large': {
-          '@apply text-lg leading-relaxed text-foreground text-opacity-80': {},
+          '@apply text-lg leading-relaxed text-foreground': {},
         },
+        // Body Base - Standard body text, default reading
         '.body-base': {
-          '@apply text-base leading-normal text-foreground text-opacity-80': {},
+          '@apply text-base leading-normal text-foreground': {},
         },
+        // Body Small - Compact text, secondary information
         '.body-small': {
-          '@apply text-sm leading-normal text-muted-foreground': {},
+          '@apply text-sm leading-normal text-foreground': {},
         },
+
+        // ============ SECONDARY TEXT ============
+        // Secondary Large - Large auxiliary text with improved contrast
+        '.text-secondary-lg': {
+          '@apply text-lg leading-relaxed text-neutral-700 dark:text-neutral-200': {},
+        },
+        // Secondary Base - Standard auxiliary text with improved contrast
+        '.text-secondary': {
+          '@apply text-base leading-normal text-neutral-700 dark:text-neutral-200': {},
+        },
+        // Secondary Small - Small auxiliary text with improved contrast
+        '.text-secondary-sm': {
+          '@apply text-sm leading-normal text-neutral-700 dark:text-neutral-200': {},
+        },
+
+        // ============ MUTED/TERTIARY TEXT ============
+        // Muted text for less important information
+        '.text-muted': {
+          '@apply text-sm leading-normal text-neutral-600 dark:text-neutral-300': {},
+        },
+        // Muted extra small
+        '.text-muted-xs': {
+          '@apply text-xs leading-normal text-neutral-600 dark:text-neutral-300': {},
+        },
+
+        // ============ LABELS & METADATA ============
+        // Caption - Uppercase labels, tags, badges
         '.caption': {
-          '@apply text-xs leading-normal uppercase tracking-wide text-muted-foreground': {},
+          '@apply text-xs leading-normal uppercase tracking-wide font-semibold text-neutral-600 dark:text-neutral-300': {},
         },
+        // Label - Form labels, input labels
         '.label': {
-          '@apply text-sm font-medium leading-none text-foreground text-opacity-90': {},
+          '@apply text-sm font-medium leading-none text-foreground': {},
+        },
+        // Small text - Fine print, helper text
+        '.text-small': {
+          '@apply text-xs leading-normal text-neutral-600 dark:text-neutral-300': {},
+        },
+
+        // ============ NUMERIC/DISPLAY TEXT ============
+        // Large numbers for stats, metrics
+        '.display-number': {
+          '@apply text-3xl md:text-4xl font-bold tabular-nums tracking-tight text-foreground': {},
+        },
+        // Price display
+        '.price-large': {
+          '@apply text-2xl font-bold tabular-nums text-foreground': {},
+        },
+        '.price-medium': {
+          '@apply text-xl font-bold tabular-nums text-foreground': {},
+        },
+
+        // ============ INTERACTIVE TEXT ============
+        // Link style
+        '.text-link': {
+          '@apply text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 underline-offset-2 hover:underline transition-colors': {},
         },
       })
     }

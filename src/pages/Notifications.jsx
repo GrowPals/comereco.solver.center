@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format, isToday, isYesterday, isThisWeek, startOfDay } from 'date-fns';
@@ -22,13 +22,14 @@ import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import PageLoader from '@/components/PageLoader';
 import PageContainer from '@/components/layout/PageContainer';
+import { IconWrapper, SectionIcon } from '@/components/ui/icon-wrapper';
 
 const notificationIcons = {
-    success: { icon: CheckCheck, badgeClass: 'text-emerald-600 dark:text-emerald-200 ring-1 ring-emerald-300/45 dark:ring-emerald-500/40' },
-    warning: { icon: Bell, badgeClass: 'text-amber-500 dark:text-amber-200 ring-1 ring-amber-300/45 dark:ring-amber-500/35' },
-    danger: { icon: X, badgeClass: 'text-red-500 dark:text-red-200 ring-1 ring-red-300/50 dark:ring-red-500/40' },
-    info: { icon: Bell, badgeClass: 'text-primary-600 dark:text-primary-100 ring-1 ring-primary-300/45 dark:ring-primary-400/35' },
-    default: { icon: Bell, badgeClass: 'text-muted-foreground ring-1 ring-border/70 dark:text-primary-200/70 dark:ring-[#31537f]/50' },
+    success: { icon: CheckCheck, badgeClass: 'text-emerald-600 dark:text-emerald-200 ring-1 ring-emerald-300/25 dark:ring-emerald-500/40' },
+    warning: { icon: Bell, badgeClass: 'text-amber-600 dark:text-amber-200 ring-1 ring-amber-300/25 dark:ring-amber-500/35' },
+    danger: { icon: X, badgeClass: 'text-red-600 dark:text-red-200 ring-1 ring-red-300/30 dark:ring-red-500/40' },
+    info: { icon: Bell, badgeClass: 'text-primary-600 dark:text-primary-100 ring-1 ring-primary-300/20 dark:ring-primary-400/35' },
+    default: { icon: Bell, badgeClass: 'text-muted-foreground ring-1 ring-border/40 dark:text-primary-200/70 dark:ring-[#31537f]/50' },
 };
 
 const groupNotificationsByDate = (notifications) => {
@@ -111,7 +112,7 @@ const NotificationsPage = () => {
         return (
             <Card
                 className={cn(
-                    "surface-card flex items-start gap-4 p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-xl cursor-pointer",
+                    "surface-card flex items-start gap-4 p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-soft-lg cursor-pointer",
                     isUnread && "ring-1 ring-primary-300/45 dark:ring-primary-400/40",
                     isSelected && "ring-2 ring-primary-500 border-primary-400/80 dark:ring-primary-300 dark:border-primary-400/50"
                 )}
@@ -127,15 +128,13 @@ const NotificationsPage = () => {
                     className="mt-1"
                     onClick={(e) => e.stopPropagation()}
                 />
-                <div className={cn("icon-badge flex h-12 w-12 shrink-0 items-center justify-center", badgeClass)}>
-                    <Icon className="h-6 w-6" aria-hidden="true" />
-                </div>
+                <IconWrapper icon={Icon} variant="neutral" size="lg" className={badgeClass} />
                 <div className="flex-1">
                     <p className={cn("text-base", notification.is_read ? "font-semibold text-foreground" : "font-bold text-foreground")}>{notification.title}</p>
                     <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{notification.message}</p>
                     <p className="mt-2 text-xs text-muted-foreground/80">{format(new Date(notification.created_at), 'dd MMM, HH:mm', { locale: es })}</p>
                 </div>
-                <DropdownMenu onOpenChange={(e) => e.stopPropagation()}>
+                <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()} className="rounded-xl h-9 w-9">
                             <MoreVertical className="h-5 w-5" />
@@ -161,9 +160,7 @@ const NotificationsPage = () => {
                 <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
                     <header className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:pb-6 dark:border-border">
                         <div className="flex items-center gap-3 sm:gap-4">
-                            <div className="icon-badge flex h-12 w-12 items-center justify-center sm:h-14 sm:w-14">
-                                <Bell className="h-6 w-6 text-primary-600 dark:text-primary-100 sm:h-7 sm:w-7" aria-hidden="true" />
-                            </div>
+                            <SectionIcon icon={Bell} className="sm:h-7 sm:w-7" />
                             <div className="space-y-1">
                                 <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Notificaciones</h1>
                                 {unreadCount > 0 && (
@@ -181,7 +178,7 @@ const NotificationsPage = () => {
                         </Button>
                     </header>
 
-                    <Card className="surface-card p-4 shadow-lg sm:p-6">
+                    <Card className="surface-card p-4 shadow-soft-md sm:p-6">
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
                             <div className="relative w-full sm:max-w-xs">
                                 <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
@@ -242,7 +239,7 @@ const NotificationsPage = () => {
                                 initial={{ y: -50, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
                                 exit={{ y: -50, opacity: 0 }}
-                                className="sticky top-2 z-10 flex items-center justify-between surface-card border border-primary/30 p-4 shadow-xl ring-1 ring-primary-300/35 backdrop-blur dark:border-primary/40 dark:ring-primary-400/30"
+                                className="sticky top-2 z-10 flex items-center justify-between surface-card border border-primary/30 p-4 shadow-soft-lg ring-1 ring-primary-300/35 backdrop-blur dark:border-primary/40 dark:ring-primary-400/30"
                             >
                                 <p className="font-bold text-foreground">{selectedIds.length} seleccionada(s)</p>
                                 <div className="flex gap-2">
@@ -269,10 +266,8 @@ const NotificationsPage = () => {
                             ))}
                         </div>
                     ) : (
-                        <div className="surface-card p-20 text-center shadow-lg">
-                            <div className="icon-badge mx-auto mb-6 flex h-20 w-20 items-center justify-center text-muted-foreground">
-                                <Search className="h-10 w-10" aria-hidden="true" />
-                            </div>
+                        <div className="surface-card p-20 text-center shadow-soft-md">
+                            <IconWrapper icon={Search} variant="neutral" size="xl" className="mx-auto mb-6 text-muted-foreground" />
                             <h3 className="mb-2 text-2xl font-bold text-foreground">No se encontraron notificaciones</h3>
                             <p className="text-base text-muted-foreground">Intenta ajustar tus filtros de búsqueda.</p>
                         </div>
@@ -281,7 +276,7 @@ const NotificationsPage = () => {
             </PageContainer>
             
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <DialogContent className="sm:max-w-md border border-border bg-card shadow-2xl dark:border-border dark:bg-card">
+                <DialogContent className="sm:max-w-md border border-border bg-card shadow-soft-xl dark:border-border dark:bg-card">
                     <DialogHeader>
                         <DialogTitle className="text-2xl font-bold">Confirmar Acción</DialogTitle>
                     </DialogHeader>

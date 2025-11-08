@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { Search, Filter, X, Loader2 } from 'lucide-react';
 
@@ -15,6 +15,7 @@ import ErrorState from '@/components/ErrorState';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import PageContainer from '@/components/layout/PageContainer';
+import ScrollToTopButton from '@/components/ScrollToTopButton';
 import {
   Select,
   SelectContent,
@@ -162,6 +163,8 @@ const CatalogPage = () => {
         />
       </Helmet>
 
+      <ScrollToTopButton />
+
       <PageContainer className={cn(isDesktop ? 'pb-16' : 'pb-28')}>
         <div className="mx-auto w-full max-w-7xl">
           <div className={cn(isDesktop ? 'pt-6' : 'pt-2')}>
@@ -180,7 +183,7 @@ const CatalogPage = () => {
                     <Input
                       value={searchTerm}
                       onChange={handleSearchChange}
-                      placeholder="Buscar productos por nombre o SKU"
+                      placeholder="Buscar por nombre o SKU"
                       className="h-12 rounded-2xl border border-border/80 bg-[var(--surface-contrast)] pl-12 pr-12 text-base shadow-sm transition-all focus:border-primary-500 focus:bg-[var(--surface-contrast)] focus:shadow-[var(--focus-glow)] dark:border-border dark:bg-muted/70 dark:shadow-none dark:focus:bg-card"
                     />
                     {searchTerm && (
@@ -211,20 +214,20 @@ const CatalogPage = () => {
                 </div>
 
                 <div className="flex flex-col items-end gap-3">
-                  <div className="flex w-full items-center justify-between rounded-2xl border border-border/80 bg-white/95 px-4 py-3 text-sm shadow-sm transition-colors dark:border-border dark:bg-card">
-                    <Label
-                      htmlFor="availability-toggle-desktop"
-                      className="cursor-pointer text-xs font-semibold uppercase tracking-wide text-foreground/80"
-                    >
+                  <Label
+                    htmlFor="availability-toggle-desktop"
+                    className="flex w-full cursor-pointer items-center justify-between gap-3 rounded-2xl border border-border/80 bg-white/95 px-4 py-3 text-sm shadow-sm transition-colors hover:bg-white dark:border-border dark:bg-card dark:hover:bg-card/80"
+                  >
+                    <span className="text-sm font-medium text-foreground">
                       Incluir productos sin stock
-                    </Label>
+                    </span>
                     <Switch
                       id="availability-toggle-desktop"
                       checked={includeOutOfStock}
                       onCheckedChange={handleAvailabilityChange}
                       aria-label="Incluir productos sin stock"
                     />
-                  </div>
+                  </Label>
 
                   <Select value={category} onValueChange={handleCategoryChange}>
                     <SelectTrigger className="h-12 w-full rounded-2xl border border-border/80 bg-[var(--surface-contrast)] text-left font-medium shadow-sm transition-colors hover:border-primary-200 focus:outline-none focus:ring-2 focus:ring-primary-200/50 dark:border-border dark:bg-card dark:shadow-none">
@@ -304,20 +307,20 @@ const CatalogPage = () => {
                     </Select>
                   </div>
 
-                  <div className="mt-3 flex items-center justify-between rounded-2xl border border-border/80 bg-[var(--surface-overlay-strong)] px-4 py-3 text-xs font-semibold uppercase tracking-wide shadow-sm transition-colors dark:border-border/70 dark:bg-[var(--surface-overlay)]">
-                    <Label
-                      htmlFor="availability-toggle-mobile"
-                      className="cursor-pointer text-xs font-semibold uppercase tracking-wide text-foreground/80"
-                    >
-                      Incluir sin stock
-                    </Label>
+                  <Label
+                    htmlFor="availability-toggle-mobile"
+                    className="mt-3 flex cursor-pointer items-center justify-between gap-3 rounded-2xl border border-border/80 bg-[var(--surface-overlay-strong)] px-4 py-3 shadow-sm transition-colors hover:bg-[var(--surface-overlay)] active:scale-[0.98] dark:border-border/70 dark:bg-[var(--surface-overlay)] dark:hover:bg-[var(--surface-overlay-strong)]"
+                  >
+                    <span className="text-sm font-medium text-foreground">
+                      Incluir productos sin stock
+                    </span>
                     <Switch
                       id="availability-toggle-mobile"
                       checked={includeOutOfStock}
                       onCheckedChange={handleAvailabilityChange}
                       aria-label="Incluir productos sin stock"
                     />
-                  </div>
+                  </Label>
                 </div>
 
                 <div className="flex items-center justify-between text-[11px] uppercase tracking-wide text-muted-foreground">

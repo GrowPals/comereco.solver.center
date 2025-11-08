@@ -80,6 +80,8 @@
   /* ============================================
      SHADOWS
      Sistema de sombras sutiles y escalables
+     NOTA: Estos tokens base serán sobrescritos por
+     index.css según el modo (light/dark)
      ============================================ */
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
@@ -89,6 +91,28 @@
   --shadow-2xl: 0 16px 48px rgba(0, 0, 0, 0.16);
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.1);
   --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+  /* ============================================
+     ICON SYSTEM
+     Tamaños y colores consistentes para íconos
+     ============================================ */
+
+  /* Tamaños de íconos */
+  --icon-size-xs: 0.875rem;   /* 14px - Muy pequeños, uso mínimo */
+  --icon-size-sm: 1rem;       /* 16px - Estándar para UI compacta */
+  --icon-size-md: 1.25rem;    /* 20px - Estándar para navegación */
+  --icon-size-lg: 1.5rem;     /* 24px - Mobile y elementos destacados */
+  --icon-size-xl: 2rem;       /* 32px - Iconos hero o decorativos */
+  --icon-size-2xl: 2.5rem;    /* 40px - Iconos grandes en estados vacíos */
+
+  /* Colores de íconos - Se adaptan al tema en index.css */
+  --icon-color-primary: var(--primary-600);
+  --icon-color-secondary: var(--neutral-500);
+  --icon-color-tertiary: var(--neutral-400);
+  --icon-color-success: var(--success);
+  --icon-color-warning: var(--warning);
+  --icon-color-error: var(--error);
+  --icon-color-info: var(--info);
 
   /* ============================================
      TRANSITIONS
@@ -174,4 +198,48 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+/* ============================================
+   ICON UTILITY CLASSES
+   Clases semánticas para íconos
+   ============================================ */
+
+/* Tamaños de íconos */
+.icon-xs { width: var(--icon-size-xs); height: var(--icon-size-xs); }
+.icon-sm { width: var(--icon-size-sm); height: var(--icon-size-sm); }
+.icon-md { width: var(--icon-size-md); height: var(--icon-size-md); }
+.icon-lg { width: var(--icon-size-lg); height: var(--icon-size-lg); }
+.icon-xl { width: var(--icon-size-xl); height: var(--icon-size-xl); }
+.icon-2xl { width: var(--icon-size-2xl); height: var(--icon-size-2xl); }
+
+/* Colores semánticos para íconos */
+.icon-primary { color: var(--icon-color-primary); }
+.icon-secondary { color: var(--icon-color-secondary); }
+.icon-tertiary { color: var(--icon-color-tertiary); }
+.icon-success { color: var(--icon-color-success); }
+.icon-warning { color: var(--icon-color-warning); }
+.icon-error { color: var(--icon-color-error); }
+.icon-info { color: var(--icon-color-info); }
+
+/* Estados interactivos para íconos */
+.icon-interactive {
+  @apply transition-colors duration-base cursor-pointer;
+}
+
+.icon-interactive:hover {
+  @apply text-primary-600 dark:text-primary-400;
+}
+
+/* Iconos en badges o contenedores circulares */
+.icon-badge {
+  @apply inline-flex items-center justify-center rounded-lg p-2 transition-all duration-base;
+}
+
+.icon-badge-sm {
+  @apply inline-flex items-center justify-center rounded-lg p-1.5;
+}
+
+.icon-badge-lg {
+  @apply inline-flex items-center justify-center rounded-xl p-3;
 }

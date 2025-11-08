@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm, Controller } from 'react-hook-form';
@@ -21,6 +21,7 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { createTemplate } from '@/services/templateService';
 import { cn } from '@/lib/utils';
+import { SectionIcon } from '@/components/ui/icon-wrapper';
 
 const CheckoutPage = () => {
     const { items, subtotal, total, clearCart } = useCart();
@@ -129,9 +130,7 @@ const CheckoutPage = () => {
                     {/* Header */}
                     <header className="border-b border-border pb-5 sm:pb-6 dark:border-border">
                         <div className="flex items-center gap-3 sm:gap-4">
-                            <div className="icon-badge flex h-12 w-12 items-center justify-center sm:h-14 sm:w-14">
-                                <ShoppingCart className="h-6 w-6 text-primary-600 dark:text-primary-100 sm:h-7 sm:w-7" aria-hidden="true" />
-                            </div>
+                            <SectionIcon icon={ShoppingCart} className="sm:h-7 sm:w-7" />
                             <div>
                                 <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
                                     Finalizar <span className="bg-gradient-primary bg-clip-text text-transparent">Compra</span>
@@ -148,9 +147,7 @@ const CheckoutPage = () => {
                     <div className="space-y-6">
                         <div>
                             <div className="mb-4 flex items-center gap-3">
-                                <div className="icon-badge flex h-10 w-10 items-center justify-center">
-                                    <CreditCard className="h-5 w-5 text-primary-600 dark:text-primary-100" />
-                                </div>
+                                <SectionIcon icon={CreditCard} />
                                 <h2 className="text-2xl font-bold text-foreground">Detalles de la Requisición</h2>
                             </div>
                             <div className="space-y-4 rounded-2xl border border-border bg-card p-6 shadow-md dark:border-border dark:bg-card">
@@ -195,9 +192,7 @@ const CheckoutPage = () => {
                         </div>
                         <div>
                             <div className="mb-4 flex items-center gap-3">
-                                <div className="icon-badge flex h-10 w-10 items-center justify-center">
-                                    <Save className="h-5 w-5 text-primary-600 dark:text-primary-100" />
-                                </div>
+                                <SectionIcon icon={Save} />
                                 <h2 className="text-2xl font-bold text-foreground">Acciones Adicionales</h2>
                             </div>
                             <div className="rounded-2xl border border-border bg-card p-6 shadow-md dark:border-border dark:bg-card">
@@ -218,9 +213,7 @@ const CheckoutPage = () => {
                     {/* Columna Derecha: Resumen de Pedido */}
                     <div className="space-y-6">
                         <div className="mb-4 flex items-center gap-3">
-                            <div className="icon-badge flex h-10 w-10 items-center justify-center">
-                                <ShoppingCart className="h-5 w-5 text-primary-600 dark:text-primary-100" />
-                            </div>
+                            <SectionIcon icon={ShoppingCart} />
                             <h2 className="text-2xl font-bold text-foreground">Resumen del Pedido</h2>
                         </div>
                         <div className="surface-overlay max-h-96 space-y-3 overflow-y-auto p-5">
@@ -254,7 +247,7 @@ const CheckoutPage = () => {
                         <Button
                             type="submit"
                             size="lg"
-                            className="w-full shadow-lg hover:shadow-xl"
+                            className="w-full shadow-soft-md hover:shadow-soft-lg"
                             isLoading={createRequisitionMutation.isPending}
                         >
                             Crear Requisición

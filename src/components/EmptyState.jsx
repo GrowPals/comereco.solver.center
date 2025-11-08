@@ -29,8 +29,8 @@ const EmptyState = ({ icon, title, description, buttonText, onButtonClick, actio
           {iconElement}
         </div>
       </div>
-      <h2 className="mb-3 text-3xl font-bold text-foreground" role="heading" aria-level="2">{title}</h2>
-      <p className="mx-auto max-w-md text-base leading-relaxed text-muted-foreground">{displayDescription}</p>
+      <h2 className="mb-3 heading-3" role="heading" aria-level="2">{title}</h2>
+      <p className="mx-auto max-w-md text-secondary">{displayDescription}</p>
       {actionButton && (
         <div className="mt-8">
           {actionButton}
@@ -40,7 +40,7 @@ const EmptyState = ({ icon, title, description, buttonText, onButtonClick, actio
         <Button
           onClick={onButtonClick}
           variant="secondary"
-          className="mt-8 rounded-xl shadow-lg hover:shadow-xl"
+          className="mt-8 rounded-xl shadow-soft-md hover:shadow-soft-lg"
           size="lg"
         >
           <Plus className="w-5 h-5 mr-2" aria-hidden="true" /> {buttonText}

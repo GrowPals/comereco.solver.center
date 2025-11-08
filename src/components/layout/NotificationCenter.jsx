@@ -54,14 +54,14 @@ const NotificationItem = memo(({ notification, onRead }) => {
         >
             <div className="flex-shrink-0 flex items-center pt-1">
               {!notification.is_read && <div className="w-2.5 h-2.5 rounded-full bg-gradient-primary mr-2 animate-pulse" />}
-              <div className={cn("icon-badge flex items-center justify-center w-10 h-10 rounded-xl transition-transform duration-200 group-hover:scale-105", config.color)}>
-                  <Icon className="w-5 h-5" />
+              <div className="flex items-center justify-center transition-transform duration-200 group-hover:scale-105">
+                  <Icon className={cn("w-5 h-5", config.color)} />
               </div>
             </div>
             <div className="flex-1 min-w-0">
                 <p className={cn("font-semibold text-sm text-foreground dark:text-foreground/95", !notification.is_read && "text-foreground")}>{notification.title}</p>
                 <p className="text-xs text-muted-foreground/90 dark:text-foreground/70 mt-0.5 line-clamp-2">{notification.message}</p>
-                <p className="text-xs text-neutral-500 mt-2 font-medium">
+                <p className="text-xs text-muted-foreground mt-2 font-medium">
                     {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true, locale: es })}
                 </p>
             </div>
@@ -125,16 +125,19 @@ const NotificationCenter = ({ variant = 'popover' }) => {
                 filter: `user_id=eq.${user.id}` // Filtro explícito por user_id
             }, (payload) => {
                 logger.info('Notification updated:', payload.new);
-                const oldNotification = notifications.find(n => n.id === payload.new.id);
-                setNotifications(prev =>
-                    prev.map(n => n.id === payload.new.id ? payload.new : n)
-                );
-                // Actualizar contador si cambió el estado de lectura
-                if (oldNotification && !oldNotification.is_read && payload.new.is_read) {
-                    setUnreadCount(prev => Math.max(0, prev - 1));
-                } else if (oldNotification && oldNotification.is_read && !payload.new.is_read) {
-                    setUnreadCount(prev => prev + 1);
-                }
+                setNotifications(prev => {
+                    // Buscar la notificación anterior en el estado actual
+                    const oldNotification = prev.find(n => n.id === payload.new.id);
+
+                    // Actualizar contador si cambió el estado de lectura
+                    if (oldNotification && !oldNotification.is_read && payload.new.is_read) {
+                        setUnreadCount(c => Math.max(0, c - 1));
+                    } else if (oldNotification && oldNotification.is_read && !payload.new.is_read) {
+                        setUnreadCount(c => c + 1);
+                    }
+
+                    return prev.map(n => n.id === payload.new.id ? payload.new : n);
+                });
             })
             .subscribe((status, err) => {
                 if (status === 'SUBSCRIBED') {
@@ -169,41 +172,37 @@ const NotificationCenter = ({ variant = 'popover' }) => {
 
     if (variant === 'icon') {
         return (
-            <Button
-                variant="ghost"
-                size="icon"
-                className="relative h-11 w-11 overflow-visible rounded-full border border-border bg-[var(--surface-contrast)] text-foreground shadow-none transition-colors hover:bg-[var(--surface-muted)] hover:shadow-none active:shadow-none dark:border-[#1a2f4f] dark:bg-[rgba(12,26,52,0.72)] dark:text-primary-50 dark:hover:bg-[rgba(16,32,62,0.85)] dark:hover:border-[#4678d4] dark:shadow-[0_22px_48px_rgba(5,12,28,0.52)] dark:hover:shadow-[0_28px_60px_rgba(6,14,30,0.6)]"
+            <button
+                className="header-action-btn focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
                 aria-label={`Ver notificaciones${unreadCount > 0 ? `, ${unreadCount} sin leer` : ''}`}
                 onClick={() => navigate('/notifications')}
             >
                 <Bell className="h-5 w-5" />
                 {unreadCount > 0 && (
-                    <div className="absolute -top-1.5 -right-1.5 z-20 flex h-5 min-w-[1.75rem] items-center justify-center rounded-full bg-gradient-error px-1.5 text-xs font-bold text-white leading-tight shadow-none dark:shadow-[0_20px_48px_rgba(4,12,28,0.55)]">
+                    <span className={cn('header-badge', unreadCount > 0 && 'animate-pulse')}>
                         {unreadCount > 99 ? '99+' : unreadCount}
-                    </div>
+                    </span>
                 )}
-            </Button>
+            </button>
         );
     }
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="relative overflow-visible rounded-full border border-border bg-[var(--surface-contrast)] text-foreground shadow-none transition-colors hover:bg-[var(--surface-muted)] hover:shadow-none active:shadow-none dark:border-[#1a2f4f] dark:bg-[rgba(12,26,52,0.72)] dark:text-primary-50 dark:hover:bg-[rgba(16,32,62,0.85)] dark:hover:border-[#4678d4] dark:shadow-[0_22px_48px_rgba(5,12,28,0.52)] dark:hover:shadow-[0_28px_60px_rgba(6,14,30,0.6)]"
+                <button
+                    className="header-action-btn focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
                     aria-label={`Ver notificaciones, ${unreadCount} no leídas`}
                 >
                     <Bell className="h-5 w-5" />
                     {unreadCount > 0 && (
-                        <div className="absolute -top-1.5 -right-1.5 z-20 flex h-5 min-w-[1.75rem] items-center justify-center rounded-full bg-gradient-error px-1.5 text-xs font-bold text-white leading-tight shadow-none dark:shadow-[0_20px_48px_rgba(4,12,28,0.55)] animate-pulse">
+                        <span className={cn('header-badge', unreadCount > 0 && 'animate-pulse')}>
                             {unreadCount > 99 ? '99+' : unreadCount}
-                        </div>
+                        </span>
                     )}
-                </Button>
+                </button>
             </PopoverTrigger>
-            <PopoverContent align="end" className="w-[380px] p-0 shadow-2xl">
+            <PopoverContent align="end" className="w-[380px] p-0 shadow-soft-xl">
                 <div className="flex items-center justify-between border-b border-border bg-[var(--surface-overlay)] p-4">
                     <div className="flex items-center gap-2">
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-primary">
@@ -224,8 +223,8 @@ const NotificationCenter = ({ variant = 'popover' }) => {
                         notifications.map(n => <NotificationItem key={n.id} notification={n} onRead={handleMarkAsRead} />)
                     ) : (
                         <div className="p-12 text-center">
-                            <div className="icon-badge mx-auto mb-4 flex h-16 w-16 items-center justify-center text-primary-600 dark:text-primary-100">
-                                <CheckCheck className="h-8 w-8" />
+                            <div className="mx-auto mb-4 flex items-center justify-center">
+                                <CheckCheck className="h-12 w-12 text-blue-600 dark:text-blue-400" />
                             </div>
                             <p className="text-base font-bold text-foreground">Todo al día</p>
                             <p className="mt-1 text-sm text-muted-foreground">No tienes notificaciones nuevas.</p>

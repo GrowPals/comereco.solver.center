@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { PlusCircle, MoreHorizontal, Edit, Trash2, Users, FolderKanban, UserPlus, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
+import { PlusCircle, MoreHorizontal, Edit, Trash2, Users, FolderKanban, UserPlus, CheckCircle2, XCircle, ArrowRight, Calendar, Hash, AlertCircle, UserCog } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/useToast';
@@ -24,6 +24,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { SectionIcon } from '@/components/ui/icon-wrapper';
 import {
   getAllProjects,
   createProject,
@@ -42,22 +43,29 @@ import EmptyState from '@/components/EmptyState';
 import PageContainer from '@/components/layout/PageContainer';
 
 const ProjectCard = ({ project, onEdit, onDelete, onManageMembers, onView }) => {
-  const { canManageProjects } = useUserPermissions();
+  const { canManageProjects, isAdmin } = useUserPermissions();
   const isActive = project.status === 'active';
+  const hasNoSupervisor = !project.supervisor?.full_name;
+
+  // Format creation date
+  const formattedDate = project.created_at
+    ? new Date(project.created_at).toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      })
+    : 'N/A';
+
   return (
-    <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border-2 border-border bg-card p-6 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-border dark:bg-card">
+    <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border-2 border-border bg-card p-6 shadow-soft-md transition-all duration-300 hover:-translate-y-1 hover:shadow-soft-lg dark:border-border dark:bg-card">
       {/* Accent bar on hover */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
 
       <div>
         <div className="mb-3 flex items-start justify-between">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="icon-badge flex h-12 w-12 flex-shrink-0 items-center justify-center">
-              <FolderKanban className="h-6 w-6 text-primary-600 dark:text-primary-100" />
-            </div>
-            <h3 className="text-xl font-bold leading-snug text-foreground break-words">
-              {project.name}
-            </h3>
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <SectionIcon icon={FolderKanban} />
+            <h3 className="text-xl font-bold text-foreground break-words min-w-0 flex-1">{project.name}</h3>
           </div>
           {canManageProjects && (
             <DropdownMenu>
@@ -85,15 +93,54 @@ const ProjectCard = ({ project, onEdit, onDelete, onManageMembers, onView }) => 
           )}
         </div>
         <p className="min-h-[3rem] text-base leading-relaxed text-muted-foreground">{project.description}</p>
+
+        {/* Project Metadata - helps differentiate duplicates */}
+        <div className="mt-4 flex flex-wrap gap-3 rounded-lg border border-border/50 bg-muted/30 px-3 py-2 text-xs dark:border-border/50 dark:bg-muted/20">
+          <div className="flex items-center gap-1.5 text-muted-foreground">
+            <Hash className="h-3.5 w-3.5" />
+            <span className="font-mono font-medium">ID: {project.id}</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-muted-foreground">
+            <Calendar className="h-3.5 w-3.5" />
+            <span>Creado: {formattedDate}</span>
+          </div>
+        </div>
       </div>
 
       <div className="mt-6 flex flex-col gap-3 border-t border-border pt-4 dark:border-border">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <Badge variant={isActive ? 'success' : 'muted'} className="shadow-sm">
             {isActive ? 'Activo' : 'Archivado'}
           </Badge>
-          <div className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">{project.supervisor?.full_name || 'Sin asignar'}</span>
+
+          {/* Supervisor assignment - with actionable state for unassigned */}
+          <div className="flex items-center gap-2">
+            {hasNoSupervisor ? (
+              <>
+                <div className="flex items-center gap-1.5 rounded-lg border border-warning/40 bg-warning/10 px-2.5 py-1 dark:border-warning/30 dark:bg-warning/5">
+                  <AlertCircle className="h-3.5 w-3.5 text-warning dark:text-warning" />
+                  <span className="text-xs font-medium text-warning dark:text-warning">Sin asignar</span>
+                </div>
+                {isAdmin && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 rounded-lg text-warning hover:bg-warning/10 hover:text-warning dark:text-warning dark:hover:bg-warning/5"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEdit(project);
+                    }}
+                    title="Asignar supervisor"
+                  >
+                    <UserCog className="h-4 w-4" />
+                  </Button>
+                )}
+              </>
+            ) : (
+              <div className="text-sm text-muted-foreground">
+                <span className="font-medium text-foreground">{project.supervisor.full_name}</span>
+              </div>
+            )}
           </div>
         </div>
         <Button
@@ -148,7 +195,7 @@ const ProjectFormModal = ({ project, isOpen, onClose, onSave, supervisors, isAdm
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg p-0 shadow-2xl">
+      <DialogContent className="sm:max-w-lg p-0 shadow-soft-xl">
         <div className="flex max-h-[calc(100dvh-4rem)] flex-col">
           <DialogHeader className="px-6 pt-6">
             <DialogTitle className="text-2xl font-bold">
@@ -231,8 +278,10 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
 
     const addMemberMutation = useMutation({
         mutationFn: ({ projectId, userId }) => addProjectMember(projectId, userId),
-        onSuccess: () => {
-            queryClient.invalidateQueries(['projectMembers', project.id]);
+        onSuccess: (_data, variables) => {
+            // Usar el projectId de las variables de mutación en lugar del prop
+            if (!variables.projectId) return;
+            queryClient.invalidateQueries(['projectMembers', variables.projectId]);
             toast({ title: 'Miembro agregado' });
             setSelectedUser(MANAGE_MEMBERS_PLACEHOLDER);
         },
@@ -241,8 +290,10 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
 
     const removeMemberMutation = useMutation({
         mutationFn: ({ projectId, userId }) => removeProjectMember(projectId, userId),
-        onSuccess: () => {
-            queryClient.invalidateQueries(['projectMembers', project.id]);
+        onSuccess: (_data, variables) => {
+            // Usar el projectId de las variables de mutación en lugar del prop
+            if (!variables.projectId) return;
+            queryClient.invalidateQueries(['projectMembers', variables.projectId]);
             toast({ title: 'Miembro eliminado' });
         },
         onError: (error) => toast({ variant: 'destructive', title: 'Error', description: error.message }),
@@ -251,8 +302,10 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
     const toggleApprovalMutation = useMutation({
         mutationFn: ({ projectId, userId, requiresApproval }) =>
             updateProjectMemberApproval(projectId, userId, requiresApproval),
-        onSuccess: () => {
-            queryClient.invalidateQueries(['projectMembers', project.id]);
+        onSuccess: (_data, variables) => {
+            // Usar el projectId de las variables de mutación en lugar del prop
+            if (!variables.projectId) return;
+            queryClient.invalidateQueries(['projectMembers', variables.projectId]);
             toast({ title: 'Configuración actualizada' });
         },
         onError: (error) => toast({ variant: 'destructive', title: 'Error', description: error.message }),
@@ -263,7 +316,7 @@ const ManageMembersModal = ({ project, isOpen, onClose }) => {
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-2xl p-0 shadow-2xl">
+            <DialogContent className="max-w-2xl p-0 shadow-soft-xl">
                 <div className="flex max-h-[calc(100dvh-4rem)] flex-col">
                     <DialogHeader className="px-6 pt-6">
                         <DialogTitle>Gestionar Miembros de &quot;{project?.name}&quot;</DialogTitle>
@@ -397,12 +450,10 @@ const ProjectsPage = () => {
         <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
           {/* Header */}
           <header className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
-            <div className="flex items-center gap-3 sm:gap-4">
-              <div className="icon-badge flex h-12 w-12 items-center justify-center sm:h-14 sm:w-14">
-                <FolderKanban className="h-6 w-6 text-primary-600 dark:text-primary-100 sm:h-7 sm:w-7" aria-hidden="true" />
-              </div>
-              <div className="space-y-1">
-                <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+              <SectionIcon icon={FolderKanban} className="sm:h-7 sm:w-7" />
+              <div className="space-y-1 min-w-0 flex-1">
+                <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl break-words">
                   <span className="bg-gradient-primary bg-clip-text text-transparent">Proyectos</span>
                 </h1>
                 <p className="text-sm text-muted-foreground sm:text-base">
@@ -414,7 +465,7 @@ const ProjectsPage = () => {
               <Button
                 size="lg"
                 onClick={() => setFormModal({ isOpen: true, project: null })}
-                className="w-full rounded-xl shadow-lg hover:shadow-xl sm:w-auto"
+                className="w-full rounded-xl shadow-soft-md hover:shadow-soft-lg sm:w-auto"
               >
                 <PlusCircle className="mr-2 h-5 w-5" />
                 Crear Proyecto

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { IconWrapper } from '@/components/ui/icon-wrapper';
 
 const EmptyState = ({
   icon: Icon,
@@ -15,8 +16,8 @@ const EmptyState = ({
   return (
     <div className={cn("flex flex-col items-center justify-center p-12 text-center", className)}>
       {Icon && (
-        <div className="icon-badge mb-6 flex h-20 w-20 items-center justify-center text-primary-600 dark:text-primary-100">
-          <Icon className="h-10 w-10" />
+        <div className="mb-6">
+          <IconWrapper icon={Icon} variant="subtle" size="xl" />
         </div>
       )}
 

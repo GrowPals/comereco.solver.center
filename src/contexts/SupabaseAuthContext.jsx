@@ -218,7 +218,11 @@ export const SupabaseAuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {loading ? <PageLoader /> : children}
+      {loading ? (
+        <div className="flex items-center justify-center h-screen bg-background">
+          <PageLoader />
+        </div>
+      ) : children}
     </AuthContext.Provider>
   );
 };

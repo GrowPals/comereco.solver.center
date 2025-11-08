@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useLocation, useNavigate } from 'react-router-dom';
 import MultiStepProgressBar from '@/components/MultiStepProgressBar';
 import GeneralDataStep from '@/components/requisition-steps/GeneralDataStep';

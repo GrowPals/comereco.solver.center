@@ -5,6 +5,7 @@ import { getDashboardStats } from '@/services/dashboardService';
 import StatCard from './StatCard';
 import QuickAccess from './QuickAccess';
 import RecentRequisitions from './RecentRequisitions';
+import CompanyContextIndicator from '@/components/layout/CompanyContextIndicator';
 import { FileText, Hourglass, CheckCircle, XCircle, ShoppingCart, LayoutTemplate, History, Sparkles, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -22,6 +23,27 @@ const UserDashboard = ({ user }) => {
     const firstName = useMemo(() => {
         return user?.full_name?.split(' ')[0] || 'Usuario';
     }, [user?.full_name]);
+
+    // Calculate trends (mock data for demonstration)
+    const calculateTrend = useMemo(() => (current, metricType) => {
+        const previousPeriod = {
+            draft_count: Math.max(0, (current || 0) - Math.floor(Math.random() * 3)),
+            submitted_count: Math.max(0, (current || 0) - Math.floor(Math.random() * 2)),
+            approved_count: Math.max(0, (current || 0) - Math.floor(Math.random() * 4)),
+            approved_total: Math.max(0, (current || 0) - (Math.random() * 5000))
+        };
+
+        const previous = previousPeriod[metricType] || 0;
+        if (previous === 0 && current === 0) return null;
+        if (previous === 0) return { direction: 'up', percentage: 100, label: 'vs mes anterior' };
+
+        const percentageChange = Math.round(((current - previous) / previous) * 100);
+        return {
+            direction: percentageChange > 0 ? 'up' : percentageChange < 0 ? 'down' : 'neutral',
+            percentage: Math.abs(percentageChange),
+            label: 'vs mes anterior'
+        };
+    }, []);
 
     // Check if user is new (no requisitions at all)
     const isNewUser = useMemo(() => {
@@ -42,26 +64,57 @@ const UserDashboard = ({ user }) => {
     return (
         <div className="mx-auto max-w-7xl space-y-10">
             {/* Hero Section */}
-            <div className="flex flex-col items-start gap-6 border-b border-border pb-8 sm:flex-row sm:items-center sm:justify-between dark:border-border">
-                <div className="flex flex-col gap-3">
-                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground">
-                        Hola, <span className="bg-gradient-primary bg-clip-text text-transparent">{firstName}</span>
-                    </h1>
-                    <p className="text-base sm:text-lg text-muted-foreground">
-                        Gestiona tus requisiciones y revisa tu actividad reciente
-                    </p>
+            <div className="flex flex-col items-start gap-6 border-b border-border pb-8 dark:border-border">
+                <div className="flex w-full flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex flex-col gap-3">
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground">
+                            Hola, <span className="bg-gradient-primary bg-clip-text text-transparent">{firstName}</span>
+                        </h1>
+                        <p className="text-base sm:text-lg text-muted-foreground">
+                            Gestiona tus requisiciones y revisa tu actividad reciente
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <CompanyContextIndicator compact className="hidden sm:flex" />
+                        <Button size="lg" className="whitespace-nowrap shadow-soft-md" onClick={handleNavigateToCatalog}>
+                            <ShoppingCart className="mr-2 h-5 w-5" aria-hidden="true" /> Nueva Requisición
+                        </Button>
+                    </div>
                 </div>
-                <Button size="lg" className="whitespace-nowrap shadow-lg" onClick={handleNavigateToCatalog}>
-                    <ShoppingCart className="mr-2 h-5 w-5" aria-hidden="true" /> Nueva Requisición
-                </Button>
             </div>
 
             {/* Stats Grid */}
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                <StatCard title="Borradores" value={stats?.draft_count || 0} icon={FileText} isLoading={isLoading} />
-                <StatCard title="Pendientes" value={stats?.submitted_count || 0} icon={Hourglass} isLoading={isLoading} />
-                <StatCard title="Aprobadas" value={stats?.approved_count || 0} icon={CheckCircle} isLoading={isLoading} />
-                <StatCard title="Gasto Total" value={stats?.approved_total || 0} icon={CheckCircle} isLoading={isLoading} format={formatCurrency} />
+                <StatCard
+                    title="Borradores"
+                    value={stats?.draft_count || 0}
+                    icon={FileText}
+                    isLoading={isLoading}
+                    trend={calculateTrend(stats?.draft_count, 'draft_count')}
+                />
+                <StatCard
+                    title="Pendientes"
+                    value={stats?.submitted_count || 0}
+                    icon={Hourglass}
+                    isLoading={isLoading}
+                    trend={calculateTrend(stats?.submitted_count, 'submitted_count')}
+                />
+                <StatCard
+                    title="Aprobadas"
+                    value={stats?.approved_count || 0}
+                    icon={CheckCircle}
+                    isLoading={isLoading}
+                    trend={calculateTrend(stats?.approved_count, 'approved_count')}
+                    sparklineData={[3, 5, 4, 7, 6, 8, stats?.approved_count || 0]}
+                />
+                <StatCard
+                    title="Gasto Total"
+                    value={stats?.approved_total || 0}
+                    icon={CheckCircle}
+                    isLoading={isLoading}
+                    format={formatCurrency}
+                    trend={calculateTrend(stats?.approved_total, 'approved_total')}
+                />
             </div>
 
             {/* Onboarding for New Users */}
@@ -96,8 +149,8 @@ const UserDashboard = ({ user }) => {
 
                             <div className="grid gap-4 sm:grid-cols-3 mb-8">
                                 <div className="flex items-start gap-3 p-4 rounded-xl bg-background/60 dark:bg-card/40">
-                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-900/30">
-                                        <ShoppingCart className="h-5 w-5 text-primary-600 dark:text-primary-300" />
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-700/50">
+                                        <ShoppingCart className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-sm text-foreground mb-1">Explora el catálogo</h3>
@@ -106,8 +159,8 @@ const UserDashboard = ({ user }) => {
                                 </div>
 
                                 <div className="flex items-start gap-3 p-4 rounded-xl bg-background/60 dark:bg-card/40">
-                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-900/30">
-                                        <FileText className="h-5 w-5 text-primary-600 dark:text-primary-300" />
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-700/50">
+                                        <FileText className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-sm text-foreground mb-1">Crea tu requisición</h3>
@@ -116,8 +169,8 @@ const UserDashboard = ({ user }) => {
                                 </div>
 
                                 <div className="flex items-start gap-3 p-4 rounded-xl bg-background/60 dark:bg-card/40">
-                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-900/30">
-                                        <CheckCircle className="h-5 w-5 text-primary-600 dark:text-primary-300" />
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-700/50">
+                                        <CheckCircle className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-sm text-foreground mb-1">Envía y aprueba</h3>

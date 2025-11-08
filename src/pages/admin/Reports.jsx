@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
 import {
     BarChart2,
@@ -34,7 +34,7 @@ import logger from '@/utils/logger';
 import { useToast } from '@/components/ui/useToast';
 import { cn } from '@/lib/utils';
 import { formatNumber } from '@/lib/formatters';
-import { IconToken } from '@/components/ui/icon-token';
+import { StatIcon, SectionIcon } from '@/components/ui/icon-wrapper';
 
 // Componente de tarjeta de estadística
 const StatCard = ({ icon: Icon, title, value, subtitle, color = 'blue', trend }) => {
@@ -56,12 +56,7 @@ const StatCard = ({ icon: Icon, title, value, subtitle, color = 'blue', trend })
                             <p className="text-xs text-muted-foreground/80">{subtitle}</p>
                         )}
                     </div>
-                    <IconToken
-                        icon={Icon}
-                        size="md"
-                        className={colorClasses[color]}
-                        aria-hidden="true"
-                    />
+                    <StatIcon icon={Icon} />
                 </div>
             </CardContent>
         </Card>
@@ -69,7 +64,10 @@ const StatCard = ({ icon: Icon, title, value, subtitle, color = 'blue', trend })
 };
 
 // Componente de gráfico de barras simple (sin dependencias externas)
-// Usando variables CSS theme-aware para gradientes
+const APPROVED_GRADIENT = 'linear-gradient(90deg, #4f8b72 0%, #2f6650 100%)';
+const PENDING_GRADIENT = 'linear-gradient(90deg, #f1b567 0%, #d58a2a 100%)';
+const BAR_GRADIENT = 'linear-gradient(90deg, #6c7bd0 0%, #3f4f99 100%)';
+
 const SimpleBarChart = ({ data, title, subtitle, dataKey, nameKey }) => {
     if (!data || data.length === 0) {
         return (
@@ -108,7 +106,7 @@ const SimpleBarChart = ({ data, title, subtitle, dataKey, nameKey }) => {
                                 <div className="w-full h-3.5 rounded-full bg-muted/80">
                                     <div
                                         className="h-full rounded-full transition-all duration-500"
-                                        style={{ width: `${percentage}%`, background: 'var(--gradient-chart-bar)' }}
+                                        style={{ width: `${percentage}%`, background: BAR_GRADIENT }}
                                     />
                                 </div>
                             </div>
@@ -152,11 +150,11 @@ const MonthlyTrendChart = ({ data }) => {
                 <div className="space-y-6">
                     <div className="flex justify-end gap-4">
                         <div className="flex items-center gap-2">
-                            <div className="h-3 w-3 rounded-full" style={{ background: 'var(--gradient-chart-approved)' }} />
+                            <div className="h-3 w-3 rounded-full" style={{ background: APPROVED_GRADIENT }} />
                             <span className="text-xs font-medium text-muted-foreground">Aprobadas</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <div className="h-3 w-3 rounded-full" style={{ background: 'var(--gradient-chart-pending)' }} />
+                            <div className="h-3 w-3 rounded-full" style={{ background: PENDING_GRADIENT }} />
                             <span className="text-xs font-medium text-muted-foreground">Pendientes</span>
                         </div>
                     </div>
@@ -184,7 +182,7 @@ const MonthlyTrendChart = ({ data }) => {
                                     <div className="flex h-8 gap-1">
                                         <div
                                             className="flex items-center justify-center rounded-lg px-2 text-xs font-semibold text-white transition-all duration-500"
-                                            style={{ width: `${approvedPercentage}%`, background: 'var(--gradient-chart-approved)' }}
+                                            style={{ width: `${approvedPercentage}%`, background: APPROVED_GRADIENT }}
                                         >
                                             {approvedPercentage > 15 && (
                                                 <span>
@@ -194,7 +192,7 @@ const MonthlyTrendChart = ({ data }) => {
                                         </div>
                                         <div
                                             className="flex items-center justify-center rounded-lg px-2 text-xs font-semibold text-white transition-all duration-500"
-                                            style={{ width: `${pendingPercentage}%`, background: 'var(--gradient-chart-pending)' }}
+                                            style={{ width: `${pendingPercentage}%`, background: PENDING_GRADIENT }}
                                         >
                                             {pendingPercentage > 15 && (
                                                 <span>
@@ -430,7 +428,7 @@ const ReportsPage = () => {
                     {/* Header */}
                     <header className="flex flex-col items-start gap-5 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:pb-6">
                         <div className="flex items-center gap-4 sm:gap-5">
-                            <IconToken icon={BarChart2} size="lg" aria-hidden="true" />
+                            <SectionIcon icon={BarChart2} className="h-7 w-7" />
                             <div>
                                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-1">
                                     Reportes y <span className="bg-gradient-primary bg-clip-text text-transparent">Analíticas</span>

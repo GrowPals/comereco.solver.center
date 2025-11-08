@@ -1,62 +1,81 @@
-import React, { useEffect, useState } from 'react';
-import { Building2, Globe } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Building, Globe, X } from 'lucide-react';
 import { useCompanyScope } from '@/context/CompanyScopeContext';
 import { cn } from '@/lib/utils';
 
-const DISPLAY_DURATION = 1600;
-
+/**
+ * CompanyScopeIndicator - Floating banner that shows active company scope
+ *
+ * Displays a transient "Mostrando: [company name]" chip when a specific company
+ * is selected (not global view). Features clean gradient + crisp edge with
+ * solid shadow (no blurry glows).
+ */
 const CompanyScopeIndicator = () => {
-  const { activeCompany, isGlobalView, isLoading } = useCompanyScope();
-  const [indicator, setIndicator] = useState({ label: '', mode: 'company', visible: false, key: 0 });
+  const { companies, activeCompanyId, isGlobalView } = useCompanyScope();
+  const [isVisible, setIsVisible] = useState(false);
+  const [isDismissed, setIsDismissed] = useState(false);
 
+  // Get active company name
+  const activeCompany = companies.find(c => c.id === activeCompanyId);
+  const shouldShow = !isGlobalView && activeCompany && !isDismissed;
+
+  // Animación de entrada/salida
   useEffect(() => {
-    if (isLoading) return;
+    if (shouldShow) {
+      // Pequeño delay para la animación de entrada
+      const timer = setTimeout(() => setIsVisible(true), 100);
+      return () => clearTimeout(timer);
+    } else {
+      setIsVisible(false);
+    }
+  }, [shouldShow]);
 
-    const label = isGlobalView
-      ? 'Todas las empresas'
-      : activeCompany?.name || 'Empresa seleccionada';
-
-    setIndicator({
-      label,
-      mode: isGlobalView ? 'global' : 'company',
-      visible: true,
-      key: Date.now(),
-    });
-  }, [activeCompany?.id, activeCompany?.name, isGlobalView, isLoading]);
-
+  // Reset dismissed state when company changes
   useEffect(() => {
-    if (!indicator.visible) return;
+    setIsDismissed(false);
+  }, [activeCompanyId, isGlobalView]);
 
-    const timeout = setTimeout(() => {
-      setIndicator((prev) => ({ ...prev, visible: false }));
-    }, DISPLAY_DURATION);
+  const handleDismiss = () => {
+    setIsVisible(false);
+    setTimeout(() => setIsDismissed(true), 300); // Wait for exit animation
+  };
 
-    return () => clearTimeout(timeout);
-  }, [indicator.key, indicator.visible]);
-
-  if (!indicator.label) {
-    return null;
-  }
-
-  const Icon = indicator.mode === 'global' ? Globe : Building2;
+  if (!shouldShow) return null;
 
   return (
     <div
       className={cn(
-        'pointer-events-none fixed top-24 left-1/2 z-[60] -translate-x-1/2 transform transition-all duration-300',
-        indicator.visible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-3'
+        'fixed left-1/2 top-20 z-30 -translate-x-1/2 transition-all duration-300 lg:top-24',
+        isVisible ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'
       )}
     >
-      <div className="flex items-center gap-2 rounded-2xl border border-border/70 bg-background/95 px-4 py-2 text-sm font-medium text-foreground shadow-2xl backdrop-blur dark:border-border/60 dark:bg-background/80">
-        <Icon className="h-4 w-4 text-primary-500" />
-        <span>
-          Mostrando: <span className="font-semibold">{indicator.label}</span>
-        </span>
+      <div className="scope-indicator-banner flex items-center gap-3 px-5 py-3">
+        {/* Compact badge icon with clean gradient, no inner shadows */}
+        <div className="scope-indicator-badge">
+          <Building className="h-4 w-4" />
+        </div>
+
+        {/* Typography in Spanish */}
+        <div className="flex flex-col">
+          <span className="text-[0.625rem] font-semibold uppercase tracking-wider text-primary-600/80 dark:text-primary-300/80">
+            Mostrando
+          </span>
+          <span className="text-sm font-bold text-foreground">
+            {activeCompany.name}
+          </span>
+        </div>
+
+        {/* Dismiss button */}
+        <button
+          onClick={handleDismiss}
+          className="ml-2 rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-primary-100/50 hover:text-primary-700 dark:hover:bg-primary-900/30 dark:hover:text-primary-300"
+          aria-label="Cerrar indicador"
+        >
+          <X className="h-4 w-4" />
+        </button>
       </div>
     </div>
   );
 };
-
-CompanyScopeIndicator.displayName = 'CompanyScopeIndicator';
 
 export default CompanyScopeIndicator;

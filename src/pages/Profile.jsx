@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { User, Mail, Phone, Edit, Save, X, Shield, Upload, Loader2, Trash2 } from 'lucide-react';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { cn } from '@/lib/utils';
@@ -15,6 +15,7 @@ import { uploadProfileAvatar } from '@/services/imageService';
 import logger from '@/utils/logger';
 import RequisitionCard from '@/components/RequisitionCard';
 import PageContainer from '@/components/layout/PageContainer';
+import { IconWrapper, SectionIcon } from '@/components/ui/icon-wrapper';
 
 const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name, editable = false, placeholder }) => {
   const isEditableState = isEditing && editable;
@@ -23,9 +24,7 @@ const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name, e
   if (isEditableState) {
     return (
       <div className="flex items-center gap-4 rounded-2xl border border-border/60 bg-muted/70 px-4 py-4 shadow-sm transition-colors dark:border-border/70 dark:bg-[#0f1a2d]/85">
-        <div className="icon-badge flex h-10 w-10 shrink-0 items-center justify-center">
-          <Icon className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
-        </div>
+        <IconWrapper icon={Icon} variant="neutral" size="md" />
         <div className="flex-1">
           <FloatingLabelInput
             name={name}
@@ -43,9 +42,7 @@ const ProfileInfoRow = ({ icon: Icon, label, value, isEditing, onChange, name, e
   // Modo solo lectura
   return (
     <div className="flex items-center gap-4 py-4 transition-colors">
-      <div className="icon-badge flex h-10 w-10 items-center justify-center">
-        <Icon className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
-      </div>
+      <IconWrapper icon={Icon} variant="neutral" size="md" />
       <div className="flex-1">
         <p className="mb-1 text-sm font-medium text-muted-foreground">{label}</p>
         <p className="font-bold text-foreground">{value || placeholder || 'No especificado'}</p>
@@ -59,9 +56,7 @@ const MobileProfileInfoRow = ({ icon: Icon, label, value, placeholder, editable 
 
   return (
     <div className="flex items-start gap-4 rounded-2xl border border-border/50 bg-card/80 p-4 shadow-sm dark:border-[rgba(90,150,230,0.35)] dark:bg-[#0e1829]">
-      <div className="icon-badge flex h-11 w-11 shrink-0 items-center justify-center">
-        <Icon className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
-      </div>
+      <IconWrapper icon={Icon} variant="neutral" size="lg" />
       <div className="flex-1">
         {isEditableState ? (
           <FloatingLabelInput
@@ -279,7 +274,7 @@ const ProfilePage = () => {
           <section className="rounded-3xl bg-gradient-to-br from-primary-500 via-primary-500 to-primary-700 p-7 text-white shadow-[0_18px_45px_-18px_rgba(33,58,140,0.55)]">
             <div className="flex flex-col items-center gap-5 text-center">
               <div className="relative">
-                <Avatar className="h-28 w-28 border-4 border-white/90 shadow-2xl ring-4 ring-white/20">
+                <Avatar className="h-28 w-28 border-4 border-white/90 shadow-soft-xl ring-4 ring-white/20">
                   <AvatarImage src={avatarUrl ?? undefined} alt={profileData.full_name || full_name} />
                   <AvatarFallback className="text-3xl font-semibold text-white">
                     {initials}
@@ -307,7 +302,7 @@ const ProfilePage = () => {
                   size="sm"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isUploadingAvatar}
-                  className="h-11 rounded-full bg-white/95 px-5 text-primary-700 shadow-md hover:-translate-y-0.5 hover:shadow-lg dark:bg-white/85"
+                  className="h-11 rounded-full bg-white/95 px-5 text-primary-700 shadow-md hover:-translate-y-0.5 hover:shadow-soft-md dark:bg-white/85"
                 >
                   {isUploadingAvatar ? (
                     <>
@@ -359,7 +354,7 @@ const ProfilePage = () => {
             </div>
           </section>
 
-          <section className="surface-panel p-5 shadow-lg">
+          <section className="surface-panel p-5 shadow-soft-md">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-lg font-semibold text-foreground">Información personal</h2>
@@ -447,7 +442,7 @@ const ProfilePage = () => {
             </div>
           </section>
 
-          <section className="surface-panel p-5 shadow-lg">
+          <section className="surface-panel p-5 shadow-soft-md">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-foreground">Actividad reciente</h2>
               <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Últimas 3</span>
@@ -477,13 +472,13 @@ const ProfilePage = () => {
 
         <div className="hidden lg:block">
           <div className="mx-auto w-full max-w-5xl space-y-8">
-            <Card className="overflow-hidden surface-card shadow-xl dark:shadow-[0_28px_60px_rgba(4,10,24,0.45)]">
+            <Card className="overflow-hidden surface-card shadow-soft-lg dark:shadow-[0_28px_60px_rgba(4,10,24,0.45)]">
               <div className="h-32 bg-gradient-to-br from-primary-50 via-primary-100 to-primary-50 dark:from-[#1b2640] dark:via-[#151f34] dark:to-[#101827] dark:border-b dark:border-border/70" />
               <CardContent className="p-8 pt-0">
                 <div className="flex -mt-16 flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
                   <div className="flex items-start gap-4">
                     <div className="relative">
-                      <Avatar className="h-32 w-32 border-4 border-white shadow-lg ring-4 ring-primary/10 dark:border-[#1f2b43] dark:ring-primary/35 dark:shadow-[0_16px_34px_rgba(12,22,41,0.45)]">
+                      <Avatar className="h-32 w-32 border-4 border-white shadow-soft-md ring-4 ring-primary/10 dark:border-[#1f2b43] dark:ring-primary/35 dark:shadow-[0_16px_34px_rgba(12,22,41,0.45)]">
                         <AvatarImage src={avatarUrl ?? undefined} alt={profileData.full_name || full_name} />
                         <AvatarFallback className="text-4xl font-bold text-white">
                           {initials}
@@ -556,7 +551,7 @@ const ProfilePage = () => {
                         size="icon"
                         onClick={handleSave}
                         disabled={isSaving}
-                        className="h-11 w-11 rounded-xl shadow-lg hover:shadow-xl"
+                        className="h-11 w-11 rounded-xl shadow-soft-md hover:shadow-soft-lg"
                       >
                         <Save className={`h-5 w-5 ${isSaving ? 'animate-pulse' : ''}`} />
                       </Button>
@@ -610,12 +605,10 @@ const ProfilePage = () => {
             </Card>
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-              <Card className="rounded-2xl border border-border shadow-lg dark:border-border">
+              <Card className="rounded-2xl border border-border shadow-soft-md dark:border-border">
                 <CardHeader className="pb-4">
                   <div className="mb-2 flex items-center gap-3">
-                    <div className="icon-badge flex h-10 w-10 items-center justify-center">
-                      <User className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
-                    </div>
+                    <SectionIcon icon={User} />
                     <CardTitle className="text-2xl font-bold text-foreground">Estadísticas</CardTitle>
                   </div>
                 </CardHeader>
@@ -638,12 +631,10 @@ const ProfilePage = () => {
                   )}
                 </CardContent>
               </Card>
-              <Card className="rounded-2xl border border-border shadow-lg lg:col-span-2 dark:border-border">
+              <Card className="rounded-2xl border border-border shadow-soft-md lg:col-span-2 dark:border-border">
                 <CardHeader className="pb-4">
                   <div className="mb-2 flex items-center gap-3">
-                    <div className="icon-badge flex h-10 w-10 items-center justify-center">
-                      <User className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
-                    </div>
+                    <SectionIcon icon={User} />
                     <CardTitle className="text-2xl font-bold text-foreground">Actividad Reciente</CardTitle>
                   </div>
                 </CardHeader>
@@ -654,9 +645,7 @@ const ProfilePage = () => {
                     recentRequisitions.map(req => <RequisitionCard key={req.id} requisition={req} />)
                   ) : (
                     <div className="py-12 text-center">
-                      <div className="icon-badge mx-auto mb-4 flex h-16 w-16 items-center justify-center text-muted-foreground">
-                        <User className="h-8 w-8" aria-hidden="true" />
-                      </div>
+                      <IconWrapper icon={User} variant="neutral" size="xl" className="mx-auto mb-4 text-muted-foreground" />
                       <p className="font-medium text-muted-foreground">No tienes actividad reciente</p>
                     </div>
                   )}

@@ -11,6 +11,7 @@ import { useSessionExpirationHandler } from '@/hooks/useSessionExpirationHandler
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
 import BottomNav from '@/components/layout/BottomNav';
+import CompanyScopeIndicator from '@/components/layout/CompanyScopeIndicator';
 import PageLoader from '@/components/PageLoader';
 import SkipLinks from '@/components/SkipLinks';
 import AppProviders from '@/context/AppProviders';
@@ -168,17 +169,25 @@ const AppLayout = () => {
         {showNav && <Header setSidebarOpen={handleToggleSidebar} />}
         {showNav && <CompanyScopeIndicator />}
 
+        {/* Floating company scope indicator */}
+        {showNav && <CompanyScopeIndicator />}
+
         {/* Zona de alertas globales */}
         <AlertContainer />
 
         <main
           className="app-main-shell relative w-full flex-1 overflow-x-hidden pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-[calc(env(safe-area-inset-top)+1rem)] transition-all duration-300 sm:pt-[calc(env(safe-area-inset-top)+1.5rem)] lg:pb-10 lg:pt-10"
           id="main-content"
+          tabIndex="-1"
           role="main"
         >
           <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
             <ErrorBoundary level="page">
-              <Suspense fallback={<div className="h-full"><PageLoader /></div>}>
+              <Suspense fallback={
+                <div className="flex items-center justify-center min-h-[calc(100vh-12rem)]">
+                  <PageLoader />
+                </div>
+              }>
                 <Routes location={location}>
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/requisitions" element={<RequisitionsPage />} />

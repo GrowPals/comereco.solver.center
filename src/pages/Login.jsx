@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -152,7 +152,7 @@ const LoginPage = () => {
                         className="text-center mb-10"
                     >
                         <img
-                            src="https://i.ibb.co/HLZ06zr5/isotipo-comereco-1.png"
+                            src="/logo.png"
                             alt="ComerECO Logo"
                             className="w-32 h-32 object-contain mx-auto drop-shadow-2xl"
                             loading="eager"
@@ -165,7 +165,7 @@ const LoginPage = () => {
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
                         className={cn(
-                            "rounded-3xl border-2 border-border bg-background/95 p-5 shadow-2xl backdrop-blur-md sm:p-8 md:p-10 dark:border-border/50 dark:bg-card/95",
+                            "rounded-3xl border-2 border-border bg-background/95 p-5 shadow-soft-xl backdrop-blur-md sm:p-8 md:p-10 dark:border-border/50 dark:bg-card/95",
                             isShaking && 'animate-shake'
                         )}
                     >
@@ -284,7 +284,7 @@ const LoginPage = () => {
                             <RippleButton
                                 type="submit"
                                 size="lg"
-                                className="w-full shadow-lg hover:shadow-xl"
+                                className="w-full shadow-soft-md hover:shadow-soft-lg"
                                 isLoading={isLoading}
                                 disabled={isLoading}
                             >

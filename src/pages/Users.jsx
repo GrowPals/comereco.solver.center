@@ -1,9 +1,9 @@
 
 import React, { useEffect, useState } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm, Controller } from 'react-hook-form';
-import { Plus, MoreHorizontal, User as UserIcon, Shield, Briefcase, Trash2, Code, Zap } from 'lucide-react';
+import { Plus, MoreHorizontal, User as UserIcon, Shield, Briefcase, Trash2, Code, Zap, X, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -37,17 +37,20 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import PageContainer from '@/components/layout/PageContainer';
+import CompanyContextIndicator from '@/components/layout/CompanyContextIndicator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { fetchUsersInCompany, inviteUser, updateUserProfile, toggleUserStatus, deleteUser, isApprovalBypassSupported, isProfileEmailSupported } from '@/services/userService';
 import { useToast } from '@/components/ui/useToast';
 import PageLoader from '@/components/PageLoader';
+import { getAvatarGradient, getInitials } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
 import { useCompanyScope } from '@/context/CompanyScopeContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { FloatingLabelInput } from '@/components/ui/floating-label-input';
+import { SectionIcon } from '@/components/ui/icon-wrapper';
 
 
 // Mapeo de roles según app_role_v2 enum (admin | supervisor | user | dev)
@@ -55,25 +58,25 @@ const roleMapping = {
     user: {
         label: 'Usuario',
         icon: UserIcon,
-        colors: 'text-slate-700 border-slate-200 bg-slate-50 dark:text-slate-200 dark:border-slate-700 dark:bg-slate-900/50',
+        colors: 'bg-slate-100 text-slate-700 dark:bg-slate-700/50 dark:text-slate-300',
         description: 'Puede crear requisiciones y ver catálogo de productos'
     },
     supervisor: {
         label: 'Supervisor',
         icon: Briefcase,
-        colors: 'text-blue-700 border-blue-200 bg-blue-50 dark:text-blue-300 dark:border-blue-700 dark:bg-blue-950/50',
+        colors: 'bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400',
         description: 'Puede aprobar requisiciones y gestionar proyectos de su equipo'
     },
     admin: {
         label: 'Admin',
         icon: Shield,
-        colors: 'text-purple-700 border-purple-200 bg-purple-50 dark:text-purple-300 dark:border-purple-700 dark:bg-purple-950/50',
+        colors: 'bg-purple-50 text-purple-700 dark:bg-purple-500/15 dark:text-purple-400',
         description: 'Acceso completo: gestión de usuarios, productos y toda la plataforma'
     },
     dev: {
         label: 'Developer',
         icon: Code,
-        colors: 'text-emerald-700 border-emerald-200 bg-emerald-50 dark:text-emerald-300 dark:border-emerald-700 dark:bg-emerald-950/50',
+        colors: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400',
         description: 'Acceso de desarrollador con permisos especiales de plataforma'
     },
 };
@@ -178,7 +181,7 @@ const UserForm = ({ user, onSave, onCancel, isLoading, approvalBypassSupported, 
               </div>
             )}
             {user && !approvalBypassSupported && (
-              <Alert className="border-amber-200 bg-amber-50 dark:border-amber-400/60 dark:bg-amber-500/15">
+              <Alert variant="warning">
                 <AlertTitle>Actualiza la base de datos</AlertTitle>
                 <AlertDescription>
                   Para permitir envíos sin aprobación ejecuta las migraciones más recientes y recarga la página.
@@ -201,6 +204,11 @@ const Users = () => {
     const [userToDelete, setUserToDelete] = useState(null);
     const [isToggleStatusDialogOpen, setToggleStatusDialogOpen] = useState(false);
     const [userToToggle, setUserToToggle] = useState(null);
+    const [migrationAlertDismissed, setMigrationAlertDismissed] = useState(() => {
+        const dismissed = localStorage.getItem('migration_alert_dismissed');
+        return dismissed === 'true';
+    });
+    const [migrationAlertCollapsed, setMigrationAlertCollapsed] = useState(true);
     const { toast } = useToast();
     const queryClient = useQueryClient();
 
@@ -348,7 +356,7 @@ const Users = () => {
     if (isError) {
         return (
             <div className="p-8">
-                <Alert className="border-destructive/40 bg-red-50 text-destructive">
+                <Alert variant="error">
                     <AlertTitle>Error al cargar usuarios</AlertTitle>
                     <AlertDescription>
                         {error?.message || 'Intenta recargar la página en unos segundos.'}
@@ -410,52 +418,116 @@ const Users = () => {
             <PageContainer>
                 <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
                     {/* Header */}
-                    <header className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
-                        <div className="flex items-center gap-3 sm:gap-4">
-                            <div className="icon-badge flex h-12 w-12 items-center justify-center sm:h-14 sm:w-14">
-                                <UserIcon className="h-6 w-6 text-primary-600 dark:text-primary-100 sm:h-7 sm:w-7" aria-hidden="true" />
+                    <header className="flex flex-col gap-4 border-b border-border pb-5 sm:pb-6">
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                            <div className="flex items-center gap-3 sm:gap-4">
+                                <SectionIcon icon={UserIcon} className="sm:h-7 sm:w-7" />
+                                <div className="space-y-1">
+                                    <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                                        Gestión de <span className="bg-gradient-primary bg-clip-text text-transparent">Usuarios</span>
+                                    </h1>
+                                    <p className="text-sm text-muted-foreground sm:text-base">
+                                        {users?.length || 0} {users?.length === 1 ? 'usuario' : 'usuarios'} en tu organización
+                                    </p>
+                                </div>
                             </div>
-                            <div className="space-y-1">
-                                <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                                    Gestión de <span className="bg-gradient-primary bg-clip-text text-transparent">Usuarios</span>
-                                </h1>
-                                <p className="text-sm text-muted-foreground sm:text-base">
-                                    {users?.length || 0} {users?.length === 1 ? 'usuario' : 'usuarios'} en tu organización
-                                </p>
+                            <div className="flex items-center gap-3">
+                                <CompanyContextIndicator compact className="hidden sm:flex" />
+                                <Button
+                                    size="lg"
+                                    onClick={() => handleOpenForm()}
+                                    className="w-full rounded-xl shadow-button hover:shadow-button-hover sm:w-auto"
+                                >
+                                    <Plus className="mr-2 h-5 w-5" />
+                                    Invitar Usuario
+                                </Button>
                             </div>
                         </div>
-                        <Button
-                            size="lg"
-                            onClick={() => handleOpenForm()}
-                            className="w-full rounded-xl shadow-button hover:shadow-button-hover sm:w-auto"
-                        >
-                            <Plus className="mr-2 h-5 w-5" />
-                            Invitar Usuario
-                        </Button>
                     </header>
 
-                    {setupWarnings.length > 0 && (
-                        <Alert className="border-amber-200 bg-amber-50 dark:border-amber-400/60 dark:bg-amber-500/15">
-                            <AlertTitle>Migraciones pendientes</AlertTitle>
-                            <AlertDescription>
-                                <ul className="list-disc space-y-1 pl-5">
-                                    {setupWarnings.map((warning, index) => (
-                                        <li key={index} className="text-sm text-muted-foreground">{warning}</li>
-                                    ))}
-                                </ul>
-                            </AlertDescription>
-                        </Alert>
+                    {setupWarnings.length > 0 && !migrationAlertDismissed && (
+                        <div className="relative overflow-hidden rounded-xl border border-blue-200 bg-blue-50/50 dark:border-blue-800/50 dark:bg-blue-950/30">
+                            <div className="flex items-start gap-3 p-4">
+                                <div className="flex-shrink-0 mt-0.5">
+                                    <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between gap-2">
+                                        <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-100">
+                                            Configuración pendiente
+                                        </h3>
+                                        <div className="flex items-center gap-1">
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-7 w-7 p-0 text-blue-600 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-900/50"
+                                                onClick={() => setMigrationAlertCollapsed(!migrationAlertCollapsed)}
+                                                aria-label={migrationAlertCollapsed ? "Expandir detalles" : "Colapsar detalles"}
+                                            >
+                                                {migrationAlertCollapsed ? (
+                                                    <ChevronDown className="h-4 w-4" />
+                                                ) : (
+                                                    <ChevronUp className="h-4 w-4" />
+                                                )}
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-7 w-7 p-0 text-blue-600 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-900/50"
+                                                onClick={() => {
+                                                    setMigrationAlertDismissed(true);
+                                                    localStorage.setItem('migration_alert_dismissed', 'true');
+                                                }}
+                                                aria-label="Cerrar notificación"
+                                            >
+                                                <X className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    <p className="mt-1 text-sm text-blue-800 dark:text-blue-200">
+                                        Algunas funciones avanzadas requieren actualizar la base de datos.
+                                    </p>
+                                    {!migrationAlertCollapsed && (
+                                        <div className="mt-3 space-y-2">
+                                            <ul className="space-y-1.5 text-sm text-blue-700 dark:text-blue-300">
+                                                {setupWarnings.map((warning, index) => (
+                                                    <li key={index} className="flex items-start gap-2">
+                                                        <span className="text-blue-400 dark:text-blue-500 mt-1">•</span>
+                                                        <span className="flex-1">{warning}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                            <div className="pt-2">
+                                                <p className="text-xs text-blue-600 dark:text-blue-400">
+                                                    <strong>Nota:</strong> Estas configuraciones son opcionales y no afectan las funcionalidades principales.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
                     )}
 
                     {/* Users mobile list */}
                     <div className="space-y-4 md:hidden">
-                        {users?.map((user) => (
+                        {users?.map((user) => {
+                            const gradient = getAvatarGradient(user.full_name);
+                            const initials = getInitials(user.full_name);
+
+                            return (
                             <div key={user.id} className="rounded-2xl border border-border bg-card p-4 shadow-sm dark:border-border dark:bg-card">
                                 <div className="flex items-start gap-3">
-                                        <Avatar className="h-11 w-11 border border-border dark:border-border">
-                                            <AvatarImage src={user.avatar_url} />
-                                        <AvatarFallback className="text-white font-semibold">
-                                            {user.full_name?.charAt(0) || 'U'}
+                                    <Avatar className="h-11 w-11 border border-border dark:border-border">
+                                        <AvatarImage src={user.avatar_url} />
+                                        <AvatarFallback
+                                            className="text-white font-bold text-sm"
+                                            style={{
+                                                background: `linear-gradient(135deg, ${gradient.from} 0%, ${gradient.via} 50%, ${gradient.to} 100%)`,
+                                                boxShadow: `0 4px 12px ${gradient.shadow}`
+                                            }}
+                                        >
+                                            {initials}
                                         </AvatarFallback>
                                     </Avatar>
                                     <div className="flex-1 min-w-0">
@@ -499,7 +571,7 @@ const Users = () => {
                                 <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                                     <Tooltip>
                                         <TooltipTrigger asChild>
-                                            <Badge variant="outline" className={`font-semibold cursor-help ${roleMapping[user.role_v2]?.colors || ''}`}>
+                                            <Badge className={`font-semibold cursor-help rounded-full ${roleMapping[user.role_v2]?.colors || ''}`}>
                                                 {roleMapping[user.role_v2]?.icon && (
                                                     React.createElement(roleMapping[user.role_v2].icon, { className: 'mr-1 h-4 w-4' })
                                                 )}
@@ -511,7 +583,7 @@ const Users = () => {
                                         </TooltipContent>
                                     </Tooltip>
                                     {user.can_submit_without_approval && (
-                                        <Badge variant="outline" className="font-semibold text-amber-700 border-amber-200 bg-amber-50 dark:text-amber-300 dark:border-amber-700 dark:bg-amber-950/50" title="Puede enviar requisiciones sin aprobación previa">
+                                        <Badge className="font-semibold rounded-full bg-amber-50 text-amber-800 dark:bg-amber-500/15 dark:text-amber-400" title="Puede enviar requisiciones sin aprobación previa">
                                             <Zap className="mr-1 h-3 w-3" />
                                             Envío Directo
                                         </Badge>
@@ -528,11 +600,12 @@ const Users = () => {
                                     </span>
                                 </div>
                             </div>
-                        ))}
+                            );
+                        })}
                     </div>
 
                     {/* Users Table */}
-                    <div className="hidden overflow-hidden rounded-2xl border-2 border-border bg-card shadow-lg dark:border-border dark:bg-card md:block">
+                    <div className="hidden overflow-hidden rounded-2xl border-2 border-border bg-card shadow-soft-md dark:border-border dark:bg-card md:block">
                         <Table>
                         <TableHeader>
                             <TableRow>
@@ -544,14 +617,24 @@ const Users = () => {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {users?.map((user) => (
+                            {users?.map((user) => {
+                                const gradient = getAvatarGradient(user.full_name);
+                                const initials = getInitials(user.full_name);
+
+                                return (
                                 <TableRow key={user.id} className="transition-colors hover:bg-muted/85 dark:hover:bg-muted/70">
                                     <TableCell>
                                         <div className="flex items-center space-x-3">
                                             <Avatar className="h-11 w-11 border-2 border-border dark:border-border">
                                                 <AvatarImage src={user.avatar_url} />
-                                                <AvatarFallback className="text-white font-semibold">
-                                                    {user.full_name?.charAt(0) || 'U'}
+                                                <AvatarFallback
+                                                    className="text-white font-bold text-sm"
+                                                    style={{
+                                                        background: `linear-gradient(135deg, ${gradient.from} 0%, ${gradient.via} 50%, ${gradient.to} 100%)`,
+                                                        boxShadow: `0 4px 12px ${gradient.shadow}`
+                                                    }}
+                                                >
+                                                    {initials}
                                                 </AvatarFallback>
                                             </Avatar>
                                             <div className="flex-1">
@@ -578,7 +661,7 @@ const Users = () => {
                                                 </TooltipContent>
                                             </Tooltip>
                                             {user.can_submit_without_approval && (
-                                                <Badge variant="outline" className="font-semibold text-amber-700 border-amber-200 bg-amber-50 dark:text-amber-300 dark:border-amber-700 dark:bg-amber-950/50 w-fit" title="Puede enviar requisiciones sin aprobación previa">
+                                                <Badge className="font-semibold rounded-full bg-amber-50 text-amber-800 dark:bg-amber-500/15 dark:text-amber-400 w-fit" title="Puede enviar requisiciones sin aprobación previa">
                                                     <Zap className="mr-1 h-3 w-3" />
                                                     Envío Directo
                                                 </Badge>
@@ -628,7 +711,8 @@ const Users = () => {
                                         </DropdownMenu>
                                     </TableCell>
                                 </TableRow>
-                            ))}
+                                );
+                            })}
                         </TableBody>
                     </Table>
                     </div>
@@ -636,7 +720,7 @@ const Users = () => {
             </PageContainer>
 
             <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-                <DialogContent className="sm:max-w-lg border border-border bg-card shadow-2xl dark:border-border dark:bg-card">
+                <DialogContent className="sm:max-w-lg border border-border bg-card shadow-soft-xl dark:border-border dark:bg-card">
                     <DialogHeader>
                         <DialogTitle className="text-2xl font-bold">
                             {editingUser ? 'Editar Usuario' : 'Invitar Nuevo Usuario'}

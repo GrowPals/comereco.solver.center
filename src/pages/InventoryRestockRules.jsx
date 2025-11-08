@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
 import { Search, Filter, RefreshCw, Layers, ShieldCheck, PauseCircle } from 'lucide-react';
 import PageContainer from '@/components/layout/PageContainer';
@@ -21,6 +21,7 @@ import Pagination from '@/components/ui/pagination';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RestockRuleCard, EmptyRulesPlaceholder } from '@/components/inventory/RestockRuleCard';
 import { cn } from '@/lib/utils';
+import { IconWrapper } from '@/components/ui/icon-wrapper';
 
 const STATUS_OPTIONS = [
   { value: 'all', label: 'Todos los estados' },
@@ -47,9 +48,7 @@ const buildQueryFilters = (filters, searchTerm) => ({
 const SummaryStat = ({ icon: Icon, title, value }) => (
   <div className="surface-card flex items-center justify-between rounded-2xl px-5 py-4">
     <div className="flex items-center gap-3">
-      <span className="icon-badge flex h-11 w-11 items-center justify-center">
-        <Icon className="h-5 w-5" />
-      </span>
+      <IconWrapper icon={Icon} variant="neutral" size="lg" />
       <div className="leading-tight">
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/80">{title}</p>
         <p className="text-2xl font-semibold text-foreground">{value}</p>

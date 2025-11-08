@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PlusCircle, MoreHorizontal, Edit, Trash2, LayoutTemplate, FilePlus, Bot, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -38,7 +38,7 @@ import { es } from 'date-fns/locale';
 import TemplateItemsEditor from '@/components/TemplateItemsEditor';
 import PageContainer from '@/components/layout/PageContainer';
 import { cn } from '@/lib/utils';
-import { IconToken } from '@/components/ui/icon-token';
+import { IconWrapper, SectionIcon } from '@/components/ui/icon-wrapper';
 
 const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
   const isFrequentlyUsed = template.usage_count >= 3;
@@ -46,7 +46,7 @@ const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
 
   return (
     <div className={cn(
-      "surface-card group relative flex flex-col justify-between overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl",
+      "surface-card group relative flex flex-col justify-between overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-soft-lg",
       isFrequentlyUsed && "ring-2 ring-primary-500/30 dark:ring-primary-400/40"
     )}>
       {/* Accent bar on hover - changes color based on usage */}
@@ -57,17 +57,16 @@ const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
 
       <div>
         <div className="mb-3 flex items-start justify-between">
-          <div className="flex flex-col gap-2 min-w-0">
+          <div className="flex flex-col gap-2 min-w-0 flex-1">
             <div className="flex items-center gap-3">
-              <IconToken
+              <IconWrapper
                 icon={LayoutTemplate}
-                size="md"
-                tone={isFrequentlyUsed ? 'primary' : 'neutral'}
-                className={cn('flex-shrink-0', isFrequentlyUsed && 'ring-2 ring-primary-500/50 dark:ring-primary-400/60')}
-                aria-hidden="true"
+                variant="neutral"
+                size="lg"
+                className={cn(isFrequentlyUsed && "ring-2 ring-primary-500/50 dark:ring-primary-400/60")}
               />
-              <div className="min-w-0">
-                <h3 className="text-xl font-bold leading-snug text-foreground break-words">{template.name}</h3>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-xl font-bold text-foreground break-words">{template.name}</h3>
                 {isFrequentlyUsed && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-primary-100 px-2 py-0.5 text-xs font-semibold text-primary-700 dark:bg-primary-500/20 dark:text-primary-300">
                     <Zap className="h-3 w-3" />
@@ -249,10 +248,10 @@ const TemplatesPage = () => {
       <PageContainer className="pb-24 sm:pb-16">
         <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
           <header className="flex flex-col gap-6 border-b border-border pb-6 sm:flex-row sm:items-center sm:justify-between sm:pb-8 dark:border-border">
-            <div className="flex w-full items-start gap-3 sm:items-center sm:gap-4">
-            <IconToken icon={LayoutTemplate} size="lg" className="flex-shrink-0" aria-hidden="true" />
-              <div className="min-w-0">
-                <h1 className="mb-1 text-xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
+            <div className="flex w-full items-start gap-3 sm:items-center sm:gap-4 min-w-0">
+              <SectionIcon icon={LayoutTemplate} className="sm:h-7 sm:w-7" />
+              <div className="min-w-0 flex-1">
+                <h1 className="mb-1 text-xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl break-words">
                   Plantillas de <span className="bg-gradient-primary bg-clip-text text-transparent">Requisición</span>
                 </h1>
                 <p className="text-sm text-muted-foreground sm:text-lg">Reutiliza tus pedidos frecuentes con un solo clic.</p>
@@ -284,7 +283,7 @@ const TemplatesPage = () => {
               ))}
             </div>
           ) : (
-            <div className="rounded-2xl border border-border bg-card p-8 shadow-lg dark:border-border dark:bg-card sm:p-12 lg:p-16">
+            <div className="rounded-2xl border border-border bg-card p-8 shadow-soft-md dark:border-border dark:bg-card sm:p-12 lg:p-16">
               <EmptyState
                 icon={Bot}
                 title="Aún no tienes plantillas"
@@ -299,7 +298,7 @@ const TemplatesPage = () => {
       {formModal.isOpen && <TemplateFormModal isOpen={formModal.isOpen} onClose={() => setFormModal({ isOpen: false, template: null })} template={formModal.template} onSave={handleSave} />}
       
       <Dialog open={deleteModal.isOpen} onOpenChange={() => setDeleteModal({ isOpen: false, template: null })}>
-        <DialogContent className="sm:max-w-md border border-border bg-card shadow-2xl dark:border-border dark:bg-card">
+        <DialogContent className="sm:max-w-md border border-border bg-card shadow-soft-xl dark:border-border dark:bg-card">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold">¿Eliminar plantilla &quot;{deleteModal.template?.name}&quot;?</DialogTitle>
             <DialogDescription className="text-base">Esta acción no se puede deshacer.</DialogDescription>

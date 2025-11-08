@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Settings, Bell, Lock, Palette, Eye, Monitor, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ import { useToastNotification } from '@/components/ui/toast-notification';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import PageContainer from '@/components/layout/PageContainer';
+import { IconWrapper, SectionIcon } from '@/components/ui/icon-wrapper';
 import { useTheme } from '@/context/ThemeContext';
 
 const TABS = [
@@ -24,7 +25,7 @@ const TABS = [
 ];
 
 const SettingsCard = ({ title, description, children, onSave, isSaving }) => (
-    <Card className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-border surface-overlay shadow-lg">
+    <Card className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-border surface-overlay shadow-soft-md">
         <CardHeader className="space-y-3 pb-4">
             <CardTitle className="text-2xl font-bold text-foreground">{title}</CardTitle>
             {description && <CardDescription className="text-base text-muted-foreground">{description}</CardDescription>}
@@ -34,7 +35,7 @@ const SettingsCard = ({ title, description, children, onSave, isSaving }) => (
         </CardContent>
         {onSave && (
             <div className="surface-sticky sticky bottom-0 left-0 right-0 z-10 mt-auto rounded-b-2xl px-6 py-4">
-                <Button onClick={onSave} disabled={isSaving} className="w-full rounded-xl shadow-lg hover:shadow-xl" size="lg">
+                <Button onClick={onSave} disabled={isSaving} className="w-full rounded-xl shadow-soft-md hover:shadow-soft-lg" size="lg">
                     {isSaving ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : null}
                     Guardar Cambios
                 </Button>
@@ -72,12 +73,10 @@ const SettingsPage = () => {
             <Helmet><title>Configuración - ComerECO</title></Helmet>
             <PageContainer>
                 <div className="mx-auto flex w-full max-w-7xl flex-col-reverse gap-6 pb-6 pt-2 lg:grid lg:grid-cols-[22rem,minmax(0,1fr)] lg:items-start lg:gap-10">
-                    <aside className="order-2 w-full overflow-hidden rounded-2xl border border-border bg-card shadow-lg lg:order-1 lg:sticky lg:top-24 lg:h-fit">
+                    <aside className="order-2 w-full overflow-hidden rounded-2xl border border-border bg-card shadow-soft-md lg:order-1 lg:sticky lg:top-24 lg:h-fit">
                     <div className="hidden border-b border-border p-6 lg:block">
                         <div className="flex items-center gap-3">
-                            <div className="icon-badge flex h-12 w-12 items-center justify-center">
-                                <Settings className="h-6 w-6 text-primary-600 dark:text-primary-100" aria-hidden="true" />
-                            </div>
+                            <SectionIcon icon={Settings} />
                             <h2 className="text-2xl font-bold text-foreground">Configuración</h2>
                         </div>
                     </div>
@@ -187,9 +186,7 @@ const SecuritySettings = () => (
             <p className="text-sm text-muted-foreground mb-4">Estas son las sesiones activas en tu cuenta.</p>
             <div className="flex items-center justify-between rounded-xl border-2 border-border bg-muted/40 p-4 dark:border-[#264675] dark:bg-[#10203c]/70">
                 <div className="flex items-center gap-3">
-                    <div className="icon-badge flex h-10 w-10 items-center justify-center">
-                        <Monitor className="h-5 w-5 text-primary-600 dark:text-primary-100" aria-hidden="true" />
-                    </div>
+                    <IconWrapper icon={Monitor} variant="neutral" size="md" />
                     <div>
                         <p className="font-bold text-foreground">Chrome en Windows</p>
                         <p className="text-xs text-muted-foreground">Este dispositivo</p>

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { Home, ArrowLeft, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -22,7 +22,7 @@ const NotFoundPage = () => {
           transition={{ duration: 0.5 }}
           className="max-w-md w-full"
         >
-          <Card className="border border-border shadow-xl dark:border-border">
+          <Card className="border border-border shadow-soft-lg dark:border-border">
             <CardContent className="p-8 text-center">
               <motion.div
                 initial={{ scale: 0 }}
@@ -51,7 +51,7 @@ const NotFoundPage = () => {
                 <Button
                   onClick={() => navigate('/dashboard')}
                   size="lg"
-                  className="shadow-md hover:shadow-lg"
+                  className="shadow-md hover:shadow-soft-md"
                 >
                   <Home className="mr-2 h-5 w-5" />
                   Ir al inicio
