@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/customSupabaseClient';
 import { useCart } from '@/context/CartContext';
-import { useFavorites } from '@/hooks/useFavorites';
+import { useFavorites } from '@/context/FavoritesContext';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
