@@ -450,7 +450,7 @@ const ProjectsPage = () => {
           {/* Header */}
           <header className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
             <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
-              <SectionIcon icon={FolderKanban} className="sm:h-7 sm:w-7" />
+              <SectionIcon icon={FolderKanban} size="lg" />
               <div className="space-y-1 min-w-0 flex-1">
                 <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl break-words">
                   <span className="bg-gradient-primary bg-clip-text text-transparent">Proyectos</span>

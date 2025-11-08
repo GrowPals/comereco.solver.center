@@ -417,7 +417,7 @@ const ManageProductsPage = () => {
                     {/* Header */}
                     <header className="flex flex-col items-start gap-5 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:pb-6">
                         <div className="flex items-center gap-4 sm:gap-5">
-                            <SectionIcon icon={ShoppingBag} className="h-7 w-7" />
+                            <SectionIcon icon={ShoppingBag} size="lg" />
                             <div>
                                 <h1 className="text-3xl font-bold tracking-tight text-foreground mb-1 sm:text-4xl">
                                     Gestionar <span className="bg-gradient-primary bg-clip-text text-transparent">Productos</span>

@@ -322,3 +322,57 @@ export const getProducts = async (filters = {}) => {
 export const getProductById = fetchProductById;
 
 export const getUniqueProductCategories = fetchProductCategories;
+
+export const quickSearchProducts = async ({ searchTerm = '', page = 1, pageSize = 15 } = {}) => {
+    const { session, error: sessionError } = await getCachedSession();
+    if (sessionError || !session) {
+        throw new Error('Sesión no válida. Por favor, inicia sesión nuevamente.');
+    }
+
+    try {
+        const { companyId, isGlobal, error: scopeError } = await getScopedCompanyId({ allowGlobal: true });
+        if (scopeError) {
+            logger.error('Error getting company scope for quick search:', scopeError);
+            throw new Error('No se pudo determinar la empresa activa.');
+        }
+
+        const sanitizedTerm = searchTerm.trim();
+        const safePageSize = Math.max(5, Math.min(pageSize, 30));
+        const currentPage = Math.max(1, page);
+        const from = (currentPage - 1) * safePageSize;
+        const to = from + safePageSize - 1;
+
+        let query = supabase
+            .from('products')
+            .select('id, name, sku, stock', { count: 'off' })
+            .eq('is_active', true)
+            .range(from, to);
+
+        if (!isGlobal && companyId) {
+            query = query.eq('company_id', companyId);
+        }
+
+        if (sanitizedTerm) {
+            query = query.or(`name.ilike.%${sanitizedTerm}%,sku.ilike.%${sanitizedTerm}%`);
+            query = query.order('name', { ascending: true });
+        } else {
+            query = query.order('updated_at', { ascending: false });
+        }
+
+        const { data, error } = await query;
+
+        if (error) {
+            logger.error('Error performing quick product search:', error);
+            throw new Error(formatErrorMessage(error));
+        }
+
+        const items = data ?? [];
+        return {
+            items,
+            hasMore: items.length === safePageSize
+        };
+    } catch (err) {
+        logger.error('Unexpected error in quickSearchProducts:', err);
+        throw err;
+    }
+};

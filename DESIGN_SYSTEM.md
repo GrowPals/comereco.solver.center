@@ -154,6 +154,32 @@ transition-shadow duration-200
 - **En empty states**: `w-12 h-12`
 - **Librería**: lucide-react
 
+#### SectionIcon (insignias hero)
+
+- Usa `<SectionIcon>` para encabezados o bloques principales; aporta presencia y refuerza jerarquía.
+- Tamaños disponibles: `sm`, `md` (default) y `lg`.
+- Tonos disponibles: `primary`, `sky`, `amber`, `violet`, `slate`.
+- Incluye degradado, halo y badge; no necesita wrappers adicionales.
+
+```tsx
+import { User } from 'lucide-react';
+import { SectionIcon } from '@/components/ui/icon-wrapper';
+
+<SectionIcon icon={User} tone="violet" size="lg" />;
+```
+
+#### StatIcon (métricas y accesos)
+
+- Usa `<StatIcon>` en KPI cards y accesos rápidos para iconos compactos pero expresivos.
+- Props clave: `tone` (mismos tonos que SectionIcon + `rose`, `slate`), `size` (`sm`, `md`, `lg`) y `glow` para activar/desactivar el halo.
+
+```tsx
+import { FileText } from 'lucide-react';
+import { StatIcon } from '@/components/ui/icon-wrapper';
+
+<StatIcon icon={FileText} tone="amber" size="sm" glow={false} />;
+```
+
 ## Checklist de Implementación
 
 - [ ] Todos los colores definidos en tokens

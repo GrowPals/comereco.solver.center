@@ -421,7 +421,7 @@ const Users = () => {
                     <header className="flex flex-col gap-4 border-b border-border pb-5 sm:pb-6">
                         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                             <div className="flex items-center gap-3 sm:gap-4">
-                                <SectionIcon icon={UserIcon} className="sm:h-7 sm:w-7" />
+                                <SectionIcon icon={UserIcon} size="lg" />
                                 <div className="space-y-1">
                                     <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
                                         Gestión de <span className="bg-gradient-primary bg-clip-text text-transparent">Usuarios</span>

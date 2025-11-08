@@ -55,9 +55,9 @@ const UserDashboard = ({ user }) => {
     }, [stats, isLoading]);
 
     const quickActions = useMemo(() => [
-        { label: 'Nueva Requisición', icon: ShoppingCart, path: '/catalog' },
-        { label: 'Mis Plantillas', icon: LayoutTemplate, path: '/templates' },
-        { label: 'Mi Historial', icon: History, path: '/requisitions', variant: 'outline' },
+        { label: 'Nueva Requisición', icon: ShoppingCart, path: '/catalog', tone: 'primary' },
+        { label: 'Mis Plantillas', icon: LayoutTemplate, path: '/templates', tone: 'violet' },
+        { label: 'Mi Historial', icon: History, path: '/requisitions', variant: 'outline', tone: 'sky' },
     ], []);
 
     const handleNavigateToCatalog = useMemo(() => () => navigate(ROUTES.CATALOG), [navigate]);
@@ -90,6 +90,7 @@ const UserDashboard = ({ user }) => {
                     title="Borradores"
                     value={stats?.draft_count || 0}
                     icon={FileText}
+                    iconTone="slate"
                     isLoading={isLoading}
                     trend={calculateTrend(stats?.draft_count, 'draft_count')}
                 />
@@ -97,6 +98,7 @@ const UserDashboard = ({ user }) => {
                     title="Pendientes"
                     value={stats?.submitted_count || 0}
                     icon={Hourglass}
+                    iconTone="amber"
                     isLoading={isLoading}
                     trend={calculateTrend(stats?.submitted_count, 'submitted_count')}
                 />
@@ -104,6 +106,7 @@ const UserDashboard = ({ user }) => {
                     title="Aprobadas"
                     value={stats?.approved_count || 0}
                     icon={CheckCircle}
+                    iconTone="primary"
                     isLoading={isLoading}
                     trend={calculateTrend(stats?.approved_count, 'approved_count')}
                     sparklineData={[3, 5, 4, 7, 6, 8, stats?.approved_count || 0]}
@@ -111,7 +114,8 @@ const UserDashboard = ({ user }) => {
                 <StatCard
                     title="Gasto Total"
                     value={stats?.approved_total || 0}
-                    icon={CheckCircle}
+                    icon={Sparkles}
+                    iconTone="violet"
                     isLoading={isLoading}
                     format={formatCurrency}
                     trend={calculateTrend(stats?.approved_total, 'approved_total')}

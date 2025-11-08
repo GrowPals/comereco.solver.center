@@ -12,7 +12,7 @@ import ProductCardSkeleton from '@/components/skeletons/ProductCardSkeleton';
 import EmptyState from '@/components/EmptyState';
 import PageContainer from '@/components/layout/PageContainer';
 import logger from '@/utils/logger';
-import { SectionIcon } from '@/components/ui/icon-wrapper';
+import { cn } from '@/lib/utils';
 
 // Función para obtener productos favoritos por IDs
 const fetchFavoriteProducts = async (productIds) => {
@@ -33,6 +33,56 @@ const fetchFavoriteProducts = async (productIds) => {
     }
 
     return data || [];
+};
+
+const favoriteIconSizes = {
+    md: {
+        wrapper: 'h-12 w-12 rounded-2xl',
+        icon: 'h-6 w-6',
+    },
+    lg: {
+        wrapper: 'h-14 w-14 rounded-[1.65rem]',
+        icon: 'h-7 w-7',
+    },
+};
+
+const FavoriteHeroIcon = ({ size = 'lg', className }) => {
+    const sizeConfig = favoriteIconSizes[size] || favoriteIconSizes.lg;
+
+    return (
+        <span
+            className={cn(
+                'relative inline-flex shrink-0 items-center justify-center overflow-hidden transition-all duration-300',
+                sizeConfig.wrapper,
+                'bg-gradient-to-br from-[#FFE8C5] via-[#FFD395] to-[#FFB665]',
+                'ring-1 ring-[#FFD8A0] shadow-[0_16px_36px_rgba(255,182,101,0.35)]',
+                'dark:bg-gradient-to-br dark:from-[#2C1607] dark:via-[#5D2A09] dark:to-[#B86C1C]',
+                'dark:ring-[#FFC487]/60 dark:shadow-[0_22px_55px_rgba(0,0,0,0.65)]',
+                className
+            )}
+        >
+            <span
+                className="pointer-events-none absolute inset-0 rounded-[inherit] border border-white/40 opacity-60 dark:border-white/10"
+                aria-hidden="true"
+            />
+            <span
+                className="pointer-events-none absolute inset-[20%] rounded-[inherit] bg-white/55 blur-lg opacity-80 dark:hidden"
+                aria-hidden="true"
+            />
+            <span
+                className="pointer-events-none absolute inset-[-45%] rounded-full bg-[#FFB55C]/40 blur-3xl opacity-0 dark:opacity-70"
+                aria-hidden="true"
+            />
+            <Star
+                className={cn(
+                    'relative drop-shadow-[0_6px_14px_rgba(255,210,160,0.65)] text-[#C36404]',
+                    'dark:text-[#FFE6C7] dark:drop-shadow-[0_0_18px_rgba(255,214,170,0.85)]',
+                    sizeConfig.icon
+                )}
+                aria-hidden="true"
+            />
+        </span>
+    );
 };
 
 const FavoritesPage = () => {
@@ -63,7 +113,7 @@ const FavoritesPage = () => {
                         {/* Header Skeleton */}
                         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-border">
                             <div className="flex items-center gap-4">
-                                <SectionIcon icon={Star} className="favorite-icon h-7 w-7" />
+                                <FavoriteHeroIcon size="lg" />
                                 <div>
                                     <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-1">
                                         Mis <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">Favoritos</span>
@@ -144,7 +194,7 @@ const FavoritesPage = () => {
                     {/* Header */}
                     <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-border">
                         <div className="flex items-center gap-4">
-                            <SectionIcon icon={Star} className="favorite-icon h-7 w-7" />
+                            <FavoriteHeroIcon size="lg" className="shadow-soft-md" />
                             <div>
                                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-1">
                                     Mis <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">Favoritos</span>
@@ -168,7 +218,7 @@ const FavoritesPage = () => {
                     {/* Info Card */}
                     <div className="favorite-spotlight hidden rounded-2xl p-6 md:block">
                         <div className="flex items-start gap-4">
-                            <SectionIcon icon={Star} className="favorite-icon" />
+                            <FavoriteHeroIcon size="md" />
                             <div>
                                 <h3 className="font-bold text-foreground mb-1">Tus productos favoritos</h3>
                                 <p className="text-sm text-muted-foreground">

@@ -53,9 +53,9 @@ const SupervisorDashboard = memo(({ user }) => {
     };
 
     const quickActions = [
-        { label: 'Bandeja de Aprobación', icon: CheckSquare, path: '/approvals', variant: 'default' },
-        { label: 'Mis Proyectos', icon: FolderKanban, path: '/projects', variant: 'outline' },
-        { label: 'Historial', icon: History, path: '/requisitions', variant: 'outline' },
+        { label: 'Bandeja de Aprobación', icon: CheckSquare, path: '/approvals', variant: 'default', tone: 'amber' },
+        { label: 'Mis Proyectos', icon: FolderKanban, path: '/projects', variant: 'outline', tone: 'sky' },
+        { label: 'Historial', icon: History, path: '/requisitions', variant: 'outline', tone: 'violet' },
     ];
 
     return (
@@ -79,6 +79,7 @@ const SupervisorDashboard = memo(({ user }) => {
                     title="Pendientes de Aprobación"
                     value={stats?.pending_approvals_count || 0}
                     icon={Hourglass}
+                    iconTone="amber"
                     isLoading={isLoadingStats}
                     trend={calculateTrend(stats?.pending_approvals_count, 'pending_approvals_count')}
                 />
@@ -86,6 +87,7 @@ const SupervisorDashboard = memo(({ user }) => {
                     title="Aprobadas (mes)"
                     value={stats?.approved_count || 0}
                     icon={CheckCircle}
+                    iconTone="primary"
                     isLoading={isLoadingStats}
                     trend={calculateTrend(stats?.approved_count, 'approved_count')}
                     sparklineData={[8, 10, 12, 9, 15, 11, stats?.approved_count || 0]}
@@ -94,6 +96,7 @@ const SupervisorDashboard = memo(({ user }) => {
                     title="Rechazadas (mes)"
                     value={stats?.rejected_count || 0}
                     icon={XCircle}
+                    iconTone="rose"
                     isLoading={isLoadingStats}
                     trend={calculateTrend(stats?.rejected_count, 'rejected_count')}
                 />
@@ -101,6 +104,7 @@ const SupervisorDashboard = memo(({ user }) => {
                     title="Monto Aprobado (mes)"
                     value={stats?.approved_total || 0}
                     icon={CheckCircle}
+                    iconTone="violet"
                     isLoading={isLoadingStats}
                     format={formatCurrency}
                     trend={calculateTrend(stats?.approved_total, 'approved_total')}

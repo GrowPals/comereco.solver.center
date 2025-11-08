@@ -1,13 +1,14 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useQuery } from '@tanstack/react-query';
-import { Search, Filter, RefreshCw, Layers, ShieldCheck, PauseCircle } from 'lucide-react';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { Search, Filter, RefreshCw, Layers, ShieldCheck, PauseCircle, Plus } from 'lucide-react';
 import PageContainer from '@/components/layout/PageContainer';
 import { useDebounce } from '@/hooks/useDebounce';
-import { useRestockRulesList } from '@/hooks/useRestockRules';
+import { useRestockRuleMutations, useRestockRulesList } from '@/hooks/useRestockRules';
 import { useProductCategories } from '@/hooks/useProducts';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
 import { getAllProjects } from '@/services/projectService';
+import { quickSearchProducts } from '@/services/productService';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -22,6 +23,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { RestockRuleCard, EmptyRulesPlaceholder } from '@/components/inventory/RestockRuleCard';
 import { cn } from '@/lib/utils';
 import { IconWrapper } from '@/components/ui/icon-wrapper';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useToast } from '@/components/ui/useToast';
+import { RestockRuleForm } from '@/components/inventory/RestockRuleForm';
+import { formatNumber } from '@/lib/formatters';
 
 const STATUS_OPTIONS = [
   { value: 'all', label: 'Todos los estados' },
@@ -87,7 +93,7 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
               placeholder="Nombre, SKU o notas"
               value={filters.searchTerm}
               onChange={(event) => handleUpdate('searchTerm', event.target.value)}
-              className="h-11 rounded-2xl border-2 border-border bg-background/80 pl-12 text-sm font-medium text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20 dark:border-border dark:bg-card/80 dark:text-foreground"
+              className="h-11 rounded-2xl border-2 border-border pl-12 text-sm font-medium text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20 dark:border-border dark:text-foreground"
             />
           </div>
         </div>
@@ -97,7 +103,7 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
             <Filter className="h-4 w-4" /> Estado
           </label>
           <Select value={filters.status} onValueChange={(value) => handleUpdate('status', value)}>
-            <SelectTrigger className="mt-2 h-11 rounded-2xl border-2 border-border bg-background/80 text-sm font-medium text-foreground dark:border-border dark:bg-card/80 dark:text-foreground">
+            <SelectTrigger className="mt-2 h-11 rounded-2xl border-2 border-border text-sm font-medium text-foreground dark:border-border dark:text-foreground">
               <SelectValue placeholder="Estado" />
             </SelectTrigger>
             <SelectContent>
@@ -113,7 +119,7 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
         <div className="flex flex-col justify-end">
           <label className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/80">Proyecto</label>
           <Select value={filters.projectId} onValueChange={(value) => handleUpdate('projectId', value)}>
-            <SelectTrigger className="mt-2 h-11 rounded-2xl border-2 border-border bg-background/80 text-sm font-medium text-foreground dark:border-border dark:bg-card/80 dark:text-foreground">
+            <SelectTrigger className="mt-2 h-11 rounded-2xl border-2 border-border text-sm font-medium text-foreground dark:border-border dark:text-foreground">
               <SelectValue placeholder="Proyecto" />
             </SelectTrigger>
             <SelectContent>
@@ -131,7 +137,7 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
         <div className="flex flex-col justify-end">
           <label className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/80">Categoría</label>
           <Select value={filters.category} onValueChange={(value) => handleUpdate('category', value)}>
-            <SelectTrigger className="mt-2 h-11 rounded-2xl border-2 border-border bg-background/80 text-sm font-medium text-foreground dark:border-border dark:bg-card/80 dark:text-foreground">
+            <SelectTrigger className="mt-2 h-11 rounded-2xl border-2 border-border text-sm font-medium text-foreground dark:border-border dark:text-foreground">
               <SelectValue placeholder="Categoría" />
             </SelectTrigger>
             <SelectContent>
@@ -171,6 +177,217 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
   );
 };
 
+const CreateRuleDialog = ({ open, onOpenChange, projects }) => {
+  const { toast } = useToast();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const debouncedSearch = useDebounce(searchTerm, 400);
+
+  const {
+    data: productSearchPages,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isFetching: isFetchingProducts,
+    isPending: isInitialLoad
+  } = useInfiniteQuery({
+    queryKey: ['restock-rule-product-search', debouncedSearch],
+    queryFn: ({ pageParam = 1 }) => quickSearchProducts({ searchTerm: debouncedSearch, page: pageParam, pageSize: 12 }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => (lastPage?.hasMore ? allPages.length + 1 : undefined),
+    enabled: open,
+    staleTime: 1000 * 30,
+    gcTime: 1000 * 60
+  });
+
+  const productOptions = productSearchPages?.pages.flatMap((page) => page.items) ?? [];
+
+  useEffect(() => {
+    if (!open) {
+      setSelectedProduct(null);
+    }
+  }, [open]);
+
+  const { saveRule, isSaving } = useRestockRuleMutations({ productId: selectedProduct?.id, projectId: null });
+
+  const handleSubmit = async (values) => {
+    if (!selectedProduct) {
+      toast({
+        title: 'Selecciona un producto',
+        description: 'Elige un producto antes de guardar la regla.',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    try {
+      await saveRule({
+        productId: selectedProduct.id,
+        projectId: values.projectId,
+        minStock: values.minStock,
+        reorderQuantity: values.reorderQuantity,
+        status: values.status,
+        notes: values.notes,
+        preferredVendor: values.preferredVendor,
+        preferredWarehouse: values.preferredWarehouse
+      });
+      toast({
+        title: 'Regla creada',
+        description: `${selectedProduct.name ?? 'El producto'} ahora tiene automatización de reabastecimiento.`,
+        variant: 'success'
+      });
+      onOpenChange(false);
+    } catch (error) {
+      toast({
+        title: 'No se pudo crear la regla',
+        description: error.message,
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const renderProductList = () => {
+    if (!open) return null;
+
+    if ((isInitialLoad || (isFetchingProducts && productOptions.length === 0))) {
+      return (
+        <div className="space-y-2 p-2">
+          {[...Array(5)].map((_, index) => (
+            <Skeleton key={index} className="h-16 w-full rounded-2xl" />
+          ))}
+        </div>
+      );
+    }
+
+    if (productOptions.length === 0) {
+      return (
+        <div className="flex h-[240px] items-center justify-center px-4 text-center text-sm text-muted-foreground">
+          {debouncedSearch
+            ? 'No se encontraron productos para la búsqueda.'
+            : 'Comienza escribiendo para filtrar o desplázate por la lista inicial.'}
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex flex-col" role="list">
+        {productOptions.map((product) => {
+          const isSelected = selectedProduct?.id === product.id;
+          return (
+            <button
+              type="button"
+              key={product.id}
+              role="listitem"
+              className={cn(
+                'flex flex-col gap-1 border-b border-border/60 px-4 py-3 text-left transition-all last:border-b-0 hover:bg-muted',
+                isSelected && 'bg-primary/10 shadow-inner'
+              )}
+              onClick={() => setSelectedProduct(product)}
+            >
+              <p className="text-sm font-semibold text-foreground">{product.name || 'Producto sin nombre'}</p>
+              <p className="text-xs text-muted-foreground">
+                SKU {product.sku || 'N/D'} · Stock {formatNumber(product.stock ?? 0)}
+              </p>
+            </button>
+          );
+        })}
+
+        {hasNextPage && (
+          <div className="border-t border-border/80 p-3">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full rounded-2xl text-sm"
+              onClick={() => fetchNextPage()}
+              disabled={isFetchingNextPage}
+            >
+              {isFetchingNextPage ? 'Cargando...' : 'Cargar más resultados'}
+            </Button>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-5xl lg:max-w-6xl">
+        <DialogHeader className="pb-2">
+          <DialogTitle>Crear regla de reabastecimiento</DialogTitle>
+          <DialogDescription>Selecciona un producto y define los parámetros para automatizar su reabastecimiento.</DialogDescription>
+        </DialogHeader>
+
+        <div className="grid gap-8 lg:grid-cols-[minmax(340px,420px)_minmax(0,1fr)]">
+          <div className="flex flex-col gap-4">
+            <div>
+              <label className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/80">Producto</label>
+              <div className="relative mt-2">
+                <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Nombre o SKU"
+                  value={searchTerm}
+                  onChange={(event) => setSearchTerm(event.target.value)}
+                  className="h-11 rounded-2xl border-2 border-border pl-12 text-sm font-medium text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20"
+                />
+              </div>
+              {selectedProduct && (
+                <div className="mt-2 flex items-center justify-between rounded-2xl border border-border/80 bg-card px-3 py-2 text-xs text-muted-foreground">
+                  <span className="truncate">
+                    {selectedProduct.name || 'Producto sin nombre'}
+                  </span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 text-xs"
+                    onClick={() => setSelectedProduct(null)}
+                  >
+                    Limpiar
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            <div className="flex-1 rounded-3xl border border-border/70 bg-card/80 shadow-sm">
+              <ScrollArea className="max-h-[65vh] min-h-[320px]">
+                {renderProductList()}
+              </ScrollArea>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            {selectedProduct ? (
+              <>
+                <div className="rounded-3xl border border-border/80 bg-muted/40 p-5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground/80">Configurando</p>
+                  <p className="mt-1 text-lg font-semibold text-foreground">{selectedProduct.name || 'Producto sin nombre'}</p>
+                  <p className="text-sm text-muted-foreground">SKU {selectedProduct.sku || 'N/D'}</p>
+                  <p className="text-sm text-muted-foreground">Stock actual: {formatNumber(selectedProduct.stock ?? 0)} u</p>
+                </div>
+
+                <RestockRuleForm
+                  key={selectedProduct.id}
+                  rule={null}
+                  projects={projects}
+                  onSubmit={handleSubmit}
+                  onCancel={() => onOpenChange(false)}
+                  isSubmitting={isSaving}
+                  layout="horizontal"
+                />
+              </>
+            ) : (
+              <div className="flex min-h-[360px] flex-col items-center justify-center rounded-3xl border border-dashed border-border/70 bg-muted/30 px-6 py-8 text-center text-sm text-muted-foreground">
+                Selecciona un producto de la lista para comenzar a configurar su regla automática.
+              </div>
+            )}
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 const InventoryRestockRules = () => {
   const { canManageRestockRules } = useUserPermissions();
   const [filters, setFilters] = useState({
@@ -181,6 +398,7 @@ const InventoryRestockRules = () => {
     page: 1
   });
   const [showFilters, setShowFilters] = useState(false);
+  const [isCreateDialogOpen, setCreateDialogOpen] = useState(false);
 
   const debouncedSearch = useDebounce(filters.searchTerm, 400);
   const queryFilters = useMemo(() => buildQueryFilters(filters, debouncedSearch), [filters, debouncedSearch]);
@@ -238,13 +456,21 @@ const InventoryRestockRules = () => {
                 Configura reglas para disparar requisiciones cuando el stock llegue a un mínimo.
               </p>
             </div>
-            <Button
-              variant="outline"
-              className="hidden h-11 rounded-2xl px-6 text-sm font-semibold lg:inline-flex"
-              onClick={() => setFilters({ searchTerm: '', status: 'all', projectId: 'all', category: 'all', page: 1 })}
-            >
-              Reiniciar filtros
-            </Button>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+              <Button
+                className="h-11 w-full rounded-2xl px-6 text-sm font-semibold sm:w-auto"
+                onClick={() => setCreateDialogOpen(true)}
+              >
+                <Plus className="mr-2 h-4 w-4" /> Nueva regla
+              </Button>
+              <Button
+                variant="outline"
+                className="hidden h-11 rounded-2xl px-6 text-sm font-semibold lg:inline-flex"
+                onClick={() => setFilters({ searchTerm: '', status: 'all', projectId: 'all', category: 'all', page: 1 })}
+              >
+                Reiniciar filtros
+              </Button>
+            </div>
           </div>
         </section>
 
@@ -300,7 +526,7 @@ const InventoryRestockRules = () => {
               ))}
             </div>
           ) : (
-            <EmptyRulesPlaceholder />
+            <EmptyRulesPlaceholder onCreateRule={() => setCreateDialogOpen(true)} />
           )}
         </section>
 
@@ -314,6 +540,8 @@ const InventoryRestockRules = () => {
           </div>
         )}
       </div>
+
+      <CreateRuleDialog open={isCreateDialogOpen} onOpenChange={setCreateDialogOpen} projects={projectOptions} />
     </PageContainer>
   );
 };

@@ -38,7 +38,9 @@ import { es } from 'date-fns/locale';
 import TemplateItemsEditor from '@/components/TemplateItemsEditor';
 import PageContainer from '@/components/layout/PageContainer';
 import { cn } from '@/lib/utils';
-import { IconWrapper, SectionIcon } from '@/components/ui/icon-wrapper';
+import { SectionIcon } from '@/components/ui/icon-wrapper';
+import { IconBadge } from '@/components/ui/icon-badge';
+import { Badge } from '@/components/ui/badge';
 
 const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
   const isFrequentlyUsed = template.usage_count >= 3;
@@ -59,19 +61,25 @@ const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
         <div className="mb-3 flex items-start justify-between">
           <div className="flex flex-col gap-2 min-w-0 flex-1">
             <div className="flex items-center gap-3">
-              <IconWrapper
+              <IconBadge
                 icon={LayoutTemplate}
-                variant="neutral"
                 size="lg"
-                className={cn(isFrequentlyUsed && "ring-2 ring-primary-500/50 dark:ring-primary-400/60")}
+                className={cn(
+                  "bg-gradient-to-br from-primary-50/90 to-primary-100/70 text-primary-700 dark:from-primary-500/25 dark:to-primary-500/10 dark:text-primary-100 border border-primary-200/70 dark:border-primary-400/30 shadow-sm transition-all duration-300",
+                  "group-hover:scale-105",
+                  isFrequentlyUsed && "ring-2 ring-primary-500/40 dark:ring-primary-300/50 shadow-md"
+                )}
               />
               <div className="min-w-0 flex-1">
                 <h3 className="text-xl font-bold text-foreground break-words">{template.name}</h3>
                 {isFrequentlyUsed && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-primary-100 px-2 py-0.5 text-xs font-semibold text-primary-700 dark:bg-primary-500/20 dark:text-primary-300">
-                    <Zap className="h-3 w-3" />
+                  <Badge
+                    variant="info"
+                    className="mt-1 gap-1.5 rounded-full border border-blue-200/70 bg-blue-50/80 px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-wide text-blue-700 shadow-none dark:border-blue-400/30 dark:bg-blue-500/25 dark:text-blue-100"
+                  >
+                    <Zap className="h-3.5 w-3.5" />
                     Frecuente
-                  </span>
+                  </Badge>
                 )}
               </div>
             </div>
@@ -249,7 +257,7 @@ const TemplatesPage = () => {
         <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
           <header className="flex flex-col gap-6 border-b border-border pb-6 sm:flex-row sm:items-center sm:justify-between sm:pb-8 dark:border-border">
             <div className="flex w-full items-start gap-3 sm:items-center sm:gap-4 min-w-0">
-              <SectionIcon icon={LayoutTemplate} className="sm:h-7 sm:w-7" />
+              <SectionIcon icon={LayoutTemplate} size="lg" />
               <div className="min-w-0 flex-1">
                 <h1 className="mb-1 text-xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl break-words">
                   Plantillas de <span className="bg-gradient-primary bg-clip-text text-transparent">Requisición</span>

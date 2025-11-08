@@ -867,36 +867,25 @@
   }
 
   .favorite-icon {
-    color: var(--favorite-500) !important;
+    color: #cc6a02 !important;
+    stroke-width: 1.6;
     transition: color 200ms ease, transform 200ms ease;
   }
 
-  .favorite-icon-badge {
-    background: linear-gradient(145deg, rgba(255, 248, 236, 0.98), rgba(255, 237, 213, 0.95)) !important;
-    border: 1px solid rgba(255, 193, 120, 0.45) !important;
-    box-shadow: 0 26px 55px rgba(255, 179, 71, 0.28) !important;
-  }
-
   .favorite-spotlight {
-    background: linear-gradient(145deg, rgba(255, 248, 236, 0.9), rgba(255, 237, 213, 0.85)) !important;
-    border: 1px solid rgba(255, 193, 120, 0.35) !important;
-    box-shadow: 0 35px 65px rgba(255, 179, 71, 0.25) !important;
+    background: linear-gradient(135deg, rgba(255, 247, 238, 0.98), rgba(255, 225, 193, 0.92)) !important;
+    border: 1px solid rgba(255, 196, 128, 0.55) !important;
+    box-shadow: 0 28px 62px rgba(255, 188, 109, 0.25) !important;
   }
 
   .dark .favorite-icon {
-    color: #FFD291 !important;
-  }
-
-  .dark .favorite-icon-badge {
-    background: linear-gradient(145deg, rgba(255, 176, 67, 0.25), rgba(255, 212, 128, 0.16)) !important;
-    border: 1px solid rgba(255, 204, 128, 0.45) !important;
-    box-shadow: 0 32px 60px rgba(63, 29, 5, 0.55) !important;
+    color: #ffe6c8 !important;
   }
 
   .dark .favorite-spotlight {
-    background: linear-gradient(145deg, rgba(255, 193, 120, 0.2), rgba(255, 204, 128, 0.12)) !important;
-    border: 1px solid rgba(255, 204, 128, 0.3) !important;
-    box-shadow: 0 38px 72px rgba(63, 29, 5, 0.6) !important;
+    background: radial-gradient(circle at top, rgba(255, 188, 107, 0.25), rgba(20, 14, 6, 0.92)) !important;
+    border: 1px solid rgba(255, 192, 124, 0.35) !important;
+    box-shadow: 0 36px 78px rgba(0, 0, 0, 0.65) !important;
   }
 
   .dark .bg-gradient-to-br.from-primary-50.to-primary-100,

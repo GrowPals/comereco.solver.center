@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCompanyScope } from '@/context/CompanyScopeContext';
 import {
     getRestockRule,
     listRestockRules,
@@ -12,16 +13,20 @@ const buildRuleKey = (productId, projectId) => ['restock-rule', { productId, pro
 const buildRulesListKey = (filters) => ['restock-rules', filters];
 
 export const useRestockRule = ({ productId, projectId } = {}) => {
+    const { isGlobalView } = useCompanyScope();
+
     return useQuery({
         queryKey: buildRuleKey(productId, projectId),
         queryFn: () => getRestockRule({ productId, projectId }),
-        enabled: Boolean(productId),
+        enabled: Boolean(productId) && !isGlobalView,
         staleTime: 1000 * 60 * 5,
         gcTime: 1000 * 60 * 15
     });
 };
 
 export const useRestockRulesList = (filters = {}) => {
+    const { isGlobalView } = useCompanyScope();
+
     const sanitizedFilters = useMemo(() => ({
         page: filters.page ?? 1,
         pageSize: filters.pageSize ?? 10,
@@ -34,6 +39,7 @@ export const useRestockRulesList = (filters = {}) => {
     return useQuery({
         queryKey: buildRulesListKey(sanitizedFilters),
         queryFn: () => listRestockRules(sanitizedFilters),
+        enabled: !isGlobalView, // Only fetch when a specific company is selected
         keepPreviousData: true,
         staleTime: 1000 * 60 * 2,
         gcTime: 1000 * 60 * 15

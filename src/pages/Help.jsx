@@ -69,7 +69,7 @@ const HelpPage = () => {
                     {/* Header */}
                     <header className="flex flex-col items-start gap-6 border-b border-border pb-8 sm:flex-row sm:items-center sm:justify-between dark:border-border">
                         <div className="flex items-center gap-4">
-                            <SectionIcon icon={HelpCircle} className="h-7 w-7" />
+                            <SectionIcon icon={HelpCircle} size="lg" />
                             <div>
                                 <h1 className="mb-1 text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
                                     Centro de <span className="bg-gradient-primary bg-clip-text text-transparent">Ayuda</span>

@@ -169,34 +169,16 @@ const CatalogPage = () => {
         <div className="mx-auto w-full max-w-7xl">
           <div className={cn(isDesktop ? 'pt-6' : 'pt-2')}>
             {isDesktop ? (
-              <div className="grid grid-cols-[1.6fr,2fr,1.2fr] items-end gap-10 surface-panel px-10 py-8">
-                <div className="space-y-2">
-                  <h1 className="text-3xl font-semibold text-foreground">Catálogo de productos</h1>
-                  <p className="text-sm text-muted-foreground">
-                    Encuentra proveedores y materiales clave en segundos. Filtra, compara y agrega sin fricción.
-                  </p>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="relative">
-                    <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-foreground/70 transition-colors dark:text-muted-foreground" />
-                    <Input
-                      value={searchTerm}
-                      onChange={handleSearchChange}
-                      placeholder="Buscar por nombre o SKU"
-                      className="h-12 rounded-2xl border border-border/80 bg-[var(--surface-contrast)] pl-12 pr-12 text-base shadow-sm transition-all focus:border-primary-500 focus:bg-[var(--surface-contrast)] focus:shadow-[var(--focus-glow)] dark:border-border dark:bg-muted/70 dark:shadow-none dark:focus:bg-card"
-                    />
-                    {searchTerm && (
-                      <button
-                        onClick={() => setSearchTerm('')}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground dark:hover:text-foreground"
-                        aria-label="Limpiar búsqueda"
-                      >
-                        <X className="h-5 w-5" />
-                      </button>
-                    )}
+              <div className="surface-panel space-y-6 px-8 py-6">
+                <div className="flex flex-wrap items-center justify-between gap-6">
+                  <div className="max-w-3xl space-y-2">
+                    <h1 className="text-3xl font-semibold text-foreground">Catálogo de productos</h1>
+                    <p className="text-sm text-muted-foreground">
+                      Encuentra proveedores y materiales clave en segundos. Filtra, compara y agrega sin fricción.
+                    </p>
                   </div>
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
+
+                  <div className="text-sm text-muted-foreground lg:text-right">
                     <p>
                       <span className="font-semibold text-foreground">{totalCount}</span> productos disponibles
                       {debouncedSearchTerm && (
@@ -213,14 +195,56 @@ const CatalogPage = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-col items-end gap-3">
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="relative flex-1 min-w-[320px]">
+                    <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-foreground/70 transition-colors dark:text-muted-foreground" />
+                    <Input
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+                      placeholder="Buscar por nombre o SKU"
+                      className="h-12 w-full rounded-2xl border border-border/80 bg-[var(--surface-contrast)] pl-12 pr-12 text-base shadow-sm transition-all focus:border-primary-500 focus:bg-[var(--surface-contrast)] focus:shadow-[var(--focus-glow)] dark:border-border dark:bg-muted/70 dark:shadow-none dark:focus:bg-card"
+                    />
+                    {searchTerm && (
+                      <button
+                        onClick={() => setSearchTerm('')}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground dark:hover:text-foreground"
+                        aria-label="Limpiar búsqueda"
+                      >
+                        <X className="h-5 w-5" />
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="flex-shrink-0 min-w-[220px]">
+                    <Select value={category} onValueChange={handleCategoryChange}>
+                      <SelectTrigger className="h-12 w-full rounded-2xl border border-border/80 bg-[var(--surface-contrast)] text-left font-medium shadow-sm transition-colors hover:border-primary-200 focus:outline-none focus:ring-2 focus:ring-primary-200/50 dark:border-border dark:bg-card dark:shadow-none">
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <Filter className="h-4 w-4" />
+                          <SelectValue placeholder="Filtrar por categoría" />
+                        </div>
+                      </SelectTrigger>
+                      <SelectContent className="rounded-2xl">
+                        <SelectItem value="all">Todos los productos</SelectItem>
+                        {isLoadingCategories ? (
+                          <div className="px-3 py-2 text-sm text-muted-foreground/80">Cargando…</div>
+                        ) : (
+                          categories?.map((cat) =>
+                            cat ? (
+                              <SelectItem key={cat} value={cat}>
+                                {cat}
+                              </SelectItem>
+                            ) : null
+                          )
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
                   <Label
                     htmlFor="availability-toggle-desktop"
-                    className="flex w-full cursor-pointer items-center justify-between gap-3 rounded-2xl border border-border/80 bg-white/95 px-4 py-3 text-sm shadow-sm transition-colors hover:bg-white dark:border-border dark:bg-card dark:hover:bg-card/80"
+                    className="flex h-12 flex-shrink-0 min-w-[220px] cursor-pointer items-center justify-between gap-3 rounded-2xl border border-border/80 bg-white/95 px-4 text-sm shadow-sm transition-colors hover:bg-white dark:border-border dark:bg-card dark:hover:bg-card/80"
                   >
-                    <span className="text-sm font-medium text-foreground">
-                      Incluir productos sin stock
-                    </span>
+                    <span className="text-sm font-medium text-foreground">Incluir productos sin stock</span>
                     <Switch
                       id="availability-toggle-desktop"
                       checked={includeOutOfStock}
@@ -229,37 +253,17 @@ const CatalogPage = () => {
                     />
                   </Label>
 
-                  <Select value={category} onValueChange={handleCategoryChange}>
-                    <SelectTrigger className="h-12 w-full rounded-2xl border border-border/80 bg-[var(--surface-contrast)] text-left font-medium shadow-sm transition-colors hover:border-primary-200 focus:outline-none focus:ring-2 focus:ring-primary-200/50 dark:border-border dark:bg-card dark:shadow-none">
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Filter className="h-4 w-4" />
-                        <SelectValue placeholder="Filtrar por categoría" />
-                      </div>
-                    </SelectTrigger>
-                    <SelectContent className="rounded-2xl">
-                      <SelectItem value="all">Todos los productos</SelectItem>
-                      {isLoadingCategories ? (
-                        <div className="px-3 py-2 text-sm text-muted-foreground/80">Cargando…</div>
-                      ) : (
-                        categories?.map((cat) =>
-                          cat ? (
-                            <SelectItem key={cat} value={cat}>
-                              {cat}
-                            </SelectItem>
-                          ) : null
-                        )
-                      )}
-                    </SelectContent>
-                  </Select>
-
                   {hasActiveFilters && (
                     <Button
-                      variant="outline"
-                      size="sm"
+                      type="button"
+                      variant="ghost"
+                      size="icon"
                       onClick={clearFilters}
-                      className="h-10 rounded-xl border-border px-4 text-sm font-medium text-muted-foreground hover:bg-muted/70"
+                      title="Limpiar filtros"
+                      className="h-12 w-12 flex-shrink-0 rounded-2xl border border-border/70 text-muted-foreground transition-colors hover:border-foreground/40 hover:text-foreground"
                     >
-                      <X className="mr-2 h-4 w-4" /> Limpiar filtros
+                      <X className="h-4 w-4" aria-hidden="true" />
+                      <span className="sr-only">Limpiar filtros</span>
                     </Button>
                   )}
                 </div>

@@ -38,9 +38,12 @@ const fetchProductById = async (productId, companyId) => {
     .select('*')
     .eq('id', productId)
     .eq('company_id', companyId)
-    .single();
+    .maybeSingle();
 
   if (error) throw error;
+  if (!data) {
+    throw new Error('Producto no encontrado o no pertenece a la empresa seleccionada');
+  }
   return data;
 };
 
@@ -82,18 +85,7 @@ const fetchRelatedProducts = async (categoryId, currentProductId, companyId, lim
 // Función para obtener historial de pedidos
 const fetchProductHistory = async (productId, userId) => {
   try {
-    // Primero intentar con RPC si existe
-    const { data: rpcData, error: rpcError } = await supabase
-      .rpc('get_product_order_history', {
-        p_product_id: productId,
-        p_user_id: userId
-      });
-
-    if (!rpcError && rpcData) {
-      return rpcData;
-    }
-
-    // Fallback: consulta directa
+    // Consulta directa (RPC function no existe en el schema actual)
     const { data, error } = await supabase
       .from('requisition_items')
       .select(`
@@ -107,7 +99,7 @@ const fetchProductHistory = async (productId, userId) => {
       .eq('product_id', productId)
       .eq('requisitions.created_by', userId)
       .in('requisitions.status', ['approved', 'delivered', 'completed'])
-      .order('requisitions.created_at', { ascending: false })
+      .order('requisitions(created_at)', { ascending: false })
       .limit(PAGINATION.PRODUCT_HISTORY_LIMIT);
 
     if (error || !data || data.length === 0) return null;

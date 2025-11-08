@@ -112,7 +112,7 @@ const ProductCard = memo(({ product }) => {
 
         <div className="absolute left-4 top-3 flex flex-wrap gap-2">
           {product.category && (
-            <span className="rounded-full border border-border bg-white px-3 py-1 caption shadow-sm dark:border-border dark:bg-card/90">
+            <span className="rounded-full border border-white/60 bg-white/95 px-3 py-1 caption shadow-sm backdrop-blur-sm text-neutral-900 dark:border-white/20 dark:bg-white/10 dark:text-white">
               {product.category}
             </span>
           )}
@@ -165,7 +165,7 @@ const ProductCard = memo(({ product }) => {
           onClick={handleNavigate}
           className="text-left"
         >
-          <h3 className="line-clamp-2 heading-5 transition-colors group-hover:text-primary-600">
+          <h3 className="line-clamp-2 heading-5 transition-colors group-hover:text-primary-600 min-h-[3.5rem] md:min-h-[3.75rem]">
             {productName}
           </h3>
         </button>
@@ -177,7 +177,7 @@ const ProductCard = memo(({ product }) => {
             {availabilityLabel}
           </span>
           {Number.isFinite(stock) && (
-            <span className="text-muted">{` · ${stock} pzas`}</span>
+            <span className="text-muted-foreground">{` · ${stock} pzas`}</span>
           )}
         </p>
 
@@ -191,7 +191,7 @@ const ProductCard = memo(({ product }) => {
                 ${productPrice}
               </p>
               {unitLabel && (
-                <span className="text-muted">/ {unitLabel}</span>
+                <span className="text-muted-foreground">/ {unitLabel}</span>
               )}
             </div>
           </div>

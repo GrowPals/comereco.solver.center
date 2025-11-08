@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import {
     Select,
     SelectContent,
@@ -42,8 +41,7 @@ export const RestockRuleForm = ({
         handleSubmit,
         formState: { errors },
         control,
-        reset,
-        watch
+        reset
     } = useForm({
         defaultValues
     });
@@ -51,8 +49,6 @@ export const RestockRuleForm = ({
     useEffect(() => {
         reset(buildDefaultValues(rule));
     }, [rule, reset]);
-
-    const isActive = watch('isActive');
 
     const submitHandler = (values) => {
         if (!onSubmit) return;
@@ -144,25 +140,33 @@ export const RestockRuleForm = ({
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="status" className="flex items-center justify-between">
-                        Estado de la regla
-                        <Controller
-                            control={control}
-                            name="isActive"
-                            render={({ field }) => (
-                                <Switch
-                                    checked={field.value}
-                                    onCheckedChange={field.onChange}
-                                    aria-label={field.value ? 'Regla activa' : 'Regla pausada'}
-                                />
-                            )}
-                        />
-                    </Label>
-                    <p className="text-sm text-muted-foreground">
-                        {isActive
-                            ? 'Cuando el stock llegue al mínimo se generará una alerta para n8n.'
-                            : 'La regla está pausada y no generará alertas.'}
-                    </p>
+                    <Label htmlFor="status">Estado de la regla</Label>
+                    <Controller
+                        control={control}
+                        name="isActive"
+                        render={({ field }) => (
+                            <div className="grid grid-cols-2 gap-2">
+                                <Button
+                                    type="button"
+                                    variant={field.value ? 'default' : 'outline'}
+                                    className={cn('h-11 rounded-2xl text-sm font-semibold', field.value && 'shadow-sm')}
+                                    aria-pressed={field.value}
+                                    onClick={() => field.onChange(true)}
+                                >
+                                    Activa
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant={!field.value ? 'default' : 'outline'}
+                                    className={cn('h-11 rounded-2xl text-sm font-semibold', !field.value && 'shadow-sm')}
+                                    aria-pressed={!field.value}
+                                    onClick={() => field.onChange(false)}
+                                >
+                                    Pausada
+                                </Button>
+                            </div>
+                        )}
+                    />
                 </div>
             </div>
 

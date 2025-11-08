@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Zap } from 'lucide-react';
-import { SectionIcon } from '@/components/ui/icon-wrapper';
+import { SectionIcon, StatIcon } from '@/components/ui/icon-wrapper';
 
 const QuickAccess = memo(({ actions = [] }) => {
     const navigate = useNavigate();
@@ -33,6 +33,7 @@ const QuickAccess = memo(({ actions = [] }) => {
                         if (!action) return null;
                         const ActionIcon = action.icon;
                         const uniqueKey = action.path || action.label;
+                        const tone = action.tone || 'primary';
                         return (
                             <button
                                 key={uniqueKey}
@@ -41,7 +42,13 @@ const QuickAccess = memo(({ actions = [] }) => {
                                 aria-label={action.label || 'Acción rápida'}
                             >
                                 {ActionIcon && (
-                                    <ActionIcon className="h-5 w-5 text-blue-600 dark:text-blue-400 shrink-0 transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />
+                                    <StatIcon
+                                        icon={ActionIcon}
+                                        size="sm"
+                                        tone={tone}
+                                        glow={false}
+                                        className="shrink-0 border-transparent bg-white/95 ring-0 shadow-none dark:bg-slate-950/70"
+                                    />
                                 )}
                                 <span className="text-sm font-semibold text-foreground transition-colors group-hover:text-primary-500">
                                     {action.label || 'Acción'}

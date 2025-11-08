@@ -9,11 +9,13 @@ const StatCard = memo(({
     title,
     value,
     icon: Icon,
+    iconTone = 'primary',
+    iconSize = 'lg',
     isLoading,
     format = val => val,
     trend = null, // { direction: 'up' | 'down' | 'neutral', percentage: number, label: string }
     comparison = null, // { value: number, label: string }
-    sparklineData = null // array of numbers for mini chart
+    sparklineData = null // array de números para mini chart
 }) => {
     if (isLoading) {
         return (
@@ -60,7 +62,9 @@ const StatCard = memo(({
                 {Icon && (
                     <StatIcon
                         icon={Icon}
-                        className="transition-all duration-300 rounded-full group-hover:scale-110 group-hover:shadow-soft-md"
+                        tone={iconTone}
+                        size={iconSize}
+                        className="transition-all duration-300 group-hover:-translate-y-0.5"
                     />
                 )}
             </CardHeader>

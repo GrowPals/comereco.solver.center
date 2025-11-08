@@ -41,11 +41,11 @@ const AdminDashboard = memo(({ user }) => {
     };
 
     const quickActions = [
-        { label: 'Gestionar requisiciones', icon: FileText, path: '/requisitions' },
-        { label: 'Gestionar Usuarios', icon: Users, path: '/users' },
-        { label: 'Gestionar Proyectos', icon: FolderKanban, path: '/projects' },
-        { label: 'Gestionar Productos', icon: ShoppingBag, path: '/products/manage' },
-        { label: 'Reportes', icon: BarChart2, path: '/reports', variant: 'secondary' },
+        { label: 'Gestionar requisiciones', icon: FileText, path: '/requisitions', tone: 'violet' },
+        { label: 'Gestionar Usuarios', icon: Users, path: '/users', tone: 'sky' },
+        { label: 'Gestionar Proyectos', icon: FolderKanban, path: '/projects', tone: 'amber' },
+        { label: 'Gestionar Productos', icon: ShoppingBag, path: '/products/manage', tone: 'rose' },
+        { label: 'Reportes', icon: BarChart2, path: '/reports', variant: 'secondary', tone: 'slate' },
     ];
 
     return (
@@ -71,6 +71,7 @@ const AdminDashboard = memo(({ user }) => {
                     title="Requisiciones Activas"
                     value={stats?.active_requisitions_count || 0}
                     icon={FileText}
+                    iconTone="violet"
                     isLoading={isLoading}
                     trend={calculateTrend(stats?.active_requisitions_count, 'active_requisitions_count')}
                     sparklineData={[12, 15, 18, 14, 20, 18, stats?.active_requisitions_count || 0]}
@@ -79,6 +80,7 @@ const AdminDashboard = memo(({ user }) => {
                     title="Total de Usuarios"
                     value={stats?.total_users_count || 0}
                     icon={Users}
+                    iconTone="sky"
                     isLoading={isLoading}
                     trend={calculateTrend(stats?.total_users_count, 'total_users_count')}
                 />
@@ -86,6 +88,7 @@ const AdminDashboard = memo(({ user }) => {
                     title="Total de Proyectos"
                     value={stats?.total_projects_count || 0}
                     icon={FolderKanban}
+                    iconTone="amber"
                     isLoading={isLoading}
                     trend={calculateTrend(stats?.total_projects_count, 'total_projects_count')}
                 />
@@ -93,6 +96,7 @@ const AdminDashboard = memo(({ user }) => {
                     title="Monto Aprobado (mes)"
                     value={stats?.approved_total || 0}
                     icon={FileText}
+                    iconTone="primary"
                     isLoading={isLoading}
                     format={formatCurrency}
                     trend={calculateTrend(stats?.approved_total, 'approved_total')}

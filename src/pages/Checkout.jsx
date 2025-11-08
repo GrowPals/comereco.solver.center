@@ -130,7 +130,7 @@ const CheckoutPage = () => {
                     {/* Header */}
                     <header className="border-b border-border pb-5 sm:pb-6 dark:border-border">
                         <div className="flex items-center gap-3 sm:gap-4">
-                            <SectionIcon icon={ShoppingCart} className="sm:h-7 sm:w-7" />
+                            <SectionIcon icon={ShoppingCart} size="lg" />
                             <div>
                                 <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
                                     Finalizar <span className="bg-gradient-primary bg-clip-text text-transparent">Compra</span>

@@ -17,7 +17,7 @@ const PROFILE_BASE_FIELDS = [
 ];
 const UNDEFINED_COLUMN_CODE = '42703';
 let supportsApprovalBypassFlag = true;
-let supportsProfileEmail = true;
+let supportsProfileEmail = false; // Email is in auth.users, not profiles table
 const APP_ROLE_V2_VALUES = ['admin', 'supervisor', 'user', 'dev'];
 
 export const isApprovalBypassSupported = () => supportsApprovalBypassFlag;

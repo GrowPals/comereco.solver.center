@@ -6,13 +6,14 @@ import { cn } from '@/lib/utils';
  *
  * Variantes:
  * - default: Icono simple sin fondo
- * - soft: Fondo suave con bordes redondeados
- * - solid: Fondo sólido con texto blanco
+ * - soft: Fondo suave y circular
+ * - solid: Fondo sólido con alto contraste
  *
  * Tamaños:
  * - sm: 32px (icono 16px)
  * - md: 40px (icono 20px)
  * - lg: 48px (icono 24px)
+ * - xl: 56px (icono 28px)
  */
 
 const SIZES = {
@@ -28,6 +29,10 @@ const SIZES = {
     wrapper: 'h-12 w-12',
     icon: 'h-6 w-6',
   },
+  xl: {
+    wrapper: 'h-14 w-14',
+    icon: 'h-7 w-7',
+  },
 };
 
 const VARIANTS = {
@@ -36,11 +41,11 @@ const VARIANTS = {
     icon: 'text-muted-foreground',
   },
   soft: {
-    wrapper: 'bg-muted border border-border',
+    wrapper: 'bg-muted/80 border border-border/70 shadow-sm dark:bg-white/5 dark:border-white/10',
     icon: 'text-foreground',
   },
   solid: {
-    wrapper: 'bg-primary border border-primary',
+    wrapper: 'bg-primary/90 border border-primary/60 shadow-md dark:bg-primary/80',
     icon: 'text-primary-foreground',
   },
 };
@@ -62,7 +67,7 @@ export const Icon = ({
   if (variant === 'default') {
     return (
       <IconComponent
-        className={cn(sizeConfig.icon, variantConfig.icon, iconClassName, className)}
+        className={cn('shrink-0', sizeConfig.icon, variantConfig.icon, iconClassName, className)}
         aria-hidden="true"
         {...props}
       />
@@ -73,7 +78,7 @@ export const Icon = ({
   return (
     <div
       className={cn(
-        'inline-flex items-center justify-center rounded-xl shrink-0',
+        'inline-flex items-center justify-center rounded-full shrink-0 transition-all duration-200',
         sizeConfig.wrapper,
         variantConfig.wrapper,
         className

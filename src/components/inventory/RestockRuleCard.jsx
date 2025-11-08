@@ -7,7 +7,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { RestockRuleForm } from '@/components/inventory/RestockRuleForm';
 import { useRestockRuleMutations } from '@/hooks/useRestockRules';
 import { useToast } from '@/components/ui/useToast';
-import { PauseCircle, PlayCircle, PencilLine, Trash2, ExternalLink } from 'lucide-react';
+import { PauseCircle, PlayCircle, PencilLine, Trash2, ExternalLink, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const useRuleCardController = (rule, projects) => {
@@ -215,12 +215,17 @@ export const RestockRuleCard = ({ rule, projects }) => {
   );
 };
 
-export const EmptyRulesPlaceholder = () => (
+export const EmptyRulesPlaceholder = ({ onCreateRule }) => (
   <div className="flex flex-col items-center justify-center gap-3 rounded-3xl border border-dashed border-border/80 bg-muted/60 py-16 px-6 text-center dark:border-border dark:bg-card/50">
     <PencilLine className="h-8 w-8 text-muted-foreground" />
     <h3 className="text-lg font-semibold text-foreground">Sin reglas configuradas</h3>
     <p className="max-w-sm text-sm text-muted-foreground">
       Usa “Editar” desde la tarjeta de cada producto o ingresa a la ficha para crear la primera regla de reabastecimiento.
     </p>
+    {onCreateRule && (
+      <Button className="mt-1 rounded-2xl px-5 text-sm font-semibold" onClick={onCreateRule}>
+        <Plus className="mr-2 h-4 w-4" /> Crear regla
+      </Button>
+    )}
   </div>
 );

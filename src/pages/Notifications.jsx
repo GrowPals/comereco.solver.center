@@ -24,12 +24,32 @@ import PageLoader from '@/components/PageLoader';
 import PageContainer from '@/components/layout/PageContainer';
 import { IconWrapper, SectionIcon } from '@/components/ui/icon-wrapper';
 
-const notificationIcons = {
-    success: { icon: CheckCheck, badgeClass: 'text-emerald-600 dark:text-emerald-200 ring-1 ring-emerald-300/25 dark:ring-emerald-500/40' },
-    warning: { icon: Bell, badgeClass: 'text-amber-600 dark:text-amber-200 ring-1 ring-amber-300/25 dark:ring-amber-500/35' },
-    danger: { icon: X, badgeClass: 'text-red-600 dark:text-red-200 ring-1 ring-red-300/30 dark:ring-red-500/40' },
-    info: { icon: Bell, badgeClass: 'text-primary-600 dark:text-primary-100 ring-1 ring-primary-300/20 dark:ring-primary-400/35' },
-    default: { icon: Bell, badgeClass: 'text-muted-foreground ring-1 ring-border/40 dark:text-primary-200/70 dark:ring-[#31537f]/50' },
+const notificationStyles = {
+    success: {
+        icon: Bell,
+        iconClass: 'text-emerald-600 drop-shadow-[0_6px_12px_rgba(16,185,129,0.35)] dark:text-emerald-200 dark:drop-shadow-[0_8px_18px_rgba(95,230,185,0.45)]',
+        borderClass: '!border-emerald-200/80 hover:!border-emerald-300/80 dark:!border-emerald-400/80 dark:hover:!border-emerald-300/90',
+    },
+    warning: {
+        icon: Bell,
+        iconClass: 'text-amber-500 drop-shadow-[0_6px_12px_rgba(245,158,11,0.3)] dark:text-amber-200 dark:drop-shadow-[0_8px_18px_rgba(255,200,102,0.4)]',
+        borderClass: '!border-amber-200/80 hover:!border-amber-300/85 dark:!border-amber-400/80 dark:hover:!border-amber-300/85',
+    },
+    danger: {
+        icon: Bell,
+        iconClass: 'text-red-500 drop-shadow-[0_6px_12px_rgba(239,68,68,0.3)] dark:text-rose-200 dark:drop-shadow-[0_8px_18px_rgba(255,120,120,0.45)]',
+        borderClass: '!border-red-200/80 hover:!border-red-300/85 dark:!border-rose-400/80 dark:hover:!border-rose-300/90',
+    },
+    info: {
+        icon: Bell,
+        iconClass: 'text-primary-600 drop-shadow-[0_6px_12px_rgba(37,99,235,0.35)] dark:text-sky-300 dark:drop-shadow-[0_8px_20px_rgba(91,176,255,0.55)]',
+        borderClass: '!border-primary-200/80 hover:!border-primary-300/85 dark:!border-sky-400/90 dark:hover:!border-cyan-300/95',
+    },
+    default: {
+        icon: Bell,
+        iconClass: 'text-muted-foreground drop-shadow-[0_6px_12px_rgba(15,23,42,0.25)] dark:text-[#8cb4ff] dark:drop-shadow-[0_8px_16px_rgba(76,126,196,0.35)]',
+        borderClass: '!border-border/80 dark:!border-[#3a5a8f]/70',
+    },
 };
 
 const groupNotificationsByDate = (notifications) => {
@@ -105,7 +125,7 @@ const NotificationsPage = () => {
     if (isLoading) return <PageLoader />;
     
     const NotificationCard = ({ notification }) => {
-        const { icon: Icon, badgeClass } = notificationIcons[notification.type] || notificationIcons.default;
+        const { icon: Icon, iconClass, borderClass } = notificationStyles[notification.type] || notificationStyles.default;
         const isSelected = selectedIds.includes(notification.id);
         const isUnread = !notification.is_read;
 
@@ -113,6 +133,7 @@ const NotificationsPage = () => {
             <Card
                 className={cn(
                     "surface-card flex items-start gap-4 p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-soft-lg cursor-pointer",
+                    borderClass,
                     isUnread && "ring-1 ring-primary-300/45 dark:ring-primary-400/40",
                     isSelected && "ring-2 ring-primary-500 border-primary-400/80 dark:ring-primary-300 dark:border-primary-400/50"
                 )}
@@ -128,7 +149,13 @@ const NotificationsPage = () => {
                     className="mt-1"
                     onClick={(e) => e.stopPropagation()}
                 />
-                <IconWrapper icon={Icon} variant="neutral" size="lg" className={badgeClass} />
+                <Icon
+                    className={cn(
+                        "h-8 w-8 sm:h-9 sm:w-9 transition-colors duration-200",
+                        iconClass
+                    )}
+                    aria-hidden="true"
+                />
                 <div className="flex-1">
                     <p className={cn("text-base", notification.is_read ? "font-semibold text-foreground" : "font-bold text-foreground")}>{notification.title}</p>
                     <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{notification.message}</p>
@@ -160,7 +187,7 @@ const NotificationsPage = () => {
                 <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
                     <header className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:pb-6 dark:border-border">
                         <div className="flex items-center gap-3 sm:gap-4">
-                            <SectionIcon icon={Bell} className="sm:h-7 sm:w-7" />
+                            <SectionIcon icon={Bell} size="lg" />
                             <div className="space-y-1">
                                 <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Notificaciones</h1>
                                 {unreadCount > 0 && (
