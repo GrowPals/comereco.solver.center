@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Building2, Globe2 } from 'lucide-react';
+import { Building2, Globe2, ChevronDown } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useCompanyScope } from '@/context/CompanyScopeContext';
 import { useToast } from '@/components/ui/useToast';
+import { IconWrapper } from '@/components/ui/icon-wrapper';
 import { cn } from '@/lib/utils';
 
 const CompanySwitcher = ({ variant = 'default' }) => {
@@ -21,24 +22,27 @@ const CompanySwitcher = ({ variant = 'default' }) => {
     isLoading,
   } = useCompanyScope();
 
-  // Efecto de animación al cambiar empresa - Mejorado para mejor feedback
+  // Efecto de animación al cambiar empresa
   useEffect(() => {
     if (activeCompanyId !== null || isGlobalView) {
       setIsChanging(true);
-      const timer = setTimeout(() => setIsChanging(false), 800);
+      const timer = setTimeout(() => setIsChanging(false), 600);
       return () => clearTimeout(timer);
     }
   }, [activeCompanyId, isGlobalView]);
 
   if (!companies.length && isLoading) {
-    // En variante icon, no mostrar nada mientras carga
     if (variant === 'icon') return null;
 
     return (
-      <div className="company-switcher-pill opacity-60">
-        <div className="company-switcher-badge-icon">
-          <Building2 className="icon-sm animate-pulse text-white" />
-        </div>
+      <div className="flex items-center gap-3 rounded-xl bg-muted/40 px-4 py-2.5">
+        <IconWrapper
+          icon={Building2}
+          size="sm"
+          variant="glass"
+          tone="neutral"
+          className="animate-pulse"
+        />
         <span className="text-sm font-medium text-muted-foreground">Cargando...</span>
       </div>
     );
@@ -46,21 +50,22 @@ const CompanySwitcher = ({ variant = 'default' }) => {
 
   // Si el usuario no puede ver todas las empresas (no es admin/dev)
   if (!canViewAllCompanies) {
-    // En variante icon, no mostrar nada (el selector es solo para admins)
     if (variant === 'icon') return null;
 
-    // En variante default, mostrar la empresa asignada (solo lectura)
     const companyName = companies[0]?.name || 'Empresa no asignada';
     return (
-      <div className="company-switcher-pill cursor-default">
-        <div className="company-switcher-badge-icon">
-          <Building2 className="icon-sm text-white" />
-        </div>
-        <div className="flex flex-col overflow-hidden">
-          <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+      <div className="flex items-center gap-3 rounded-xl bg-muted/30 px-4 py-2.5">
+        <IconWrapper
+          icon={Building2}
+          size="sm"
+          variant="soft"
+          tone="brand"
+        />
+        <div className="flex flex-col">
+          <span className="text-[0.625rem] font-semibold uppercase tracking-wider text-muted-foreground">
             Empresa
           </span>
-          <span className="truncate text-sm font-bold text-foreground">
+          <span className="text-sm font-bold text-foreground">
             {companyName}
           </span>
         </div>
@@ -77,22 +82,21 @@ const CompanySwitcher = ({ variant = 'default' }) => {
       setActiveCompanyId(null);
       toast({
         title: '🌍 Vista Global Activada',
-        description: 'Mostrando datos de todas las empresas. El contexto completo ha cambiado.',
+        description: 'Mostrando datos de todas las empresas.',
         variant: 'success',
-        duration: 4000
+        duration: 3000
       });
     } else {
       toggleGlobalView(false);
       setActiveCompanyId(value);
       toast({
         title: '🏢 Contexto de Empresa Cambiado',
-        description: `Ahora trabajas en: ${selectedCompany?.name || 'la empresa seleccionada'}. Todos los datos se filtrarán por esta empresa.`,
+        description: `Ahora trabajas en: ${selectedCompany?.name || 'la empresa seleccionada'}.`,
         variant: 'success',
-        duration: 4000
+        duration: 3000
       });
     }
 
-    // Cerrar el dialog después de seleccionar (solo en variante icon)
     if (variant === 'icon') {
       setIsDialogOpen(false);
     }
@@ -100,12 +104,11 @@ const CompanySwitcher = ({ variant = 'default' }) => {
 
   const selectValue = isGlobalView ? 'all' : activeCompanyId || 'all';
 
-  // Obtener el nombre de la empresa activa para mostrar en el dialog
   const activeCompanyName = isGlobalView
     ? 'Todas las empresas'
     : companies.find(c => c.id === activeCompanyId)?.name || 'Selecciona una empresa';
 
-  // Variante de ícono para móvil - Badge visual mejorado
+  // Variante de ícono para móvil
   if (variant === 'icon') {
     return (
       <>
@@ -115,23 +118,20 @@ const CompanySwitcher = ({ variant = 'default' }) => {
               <button
                 onClick={() => setIsDialogOpen(true)}
                 className={cn(
-                  'company-switcher-icon',
+                  'relative rounded-xl transition-all duration-200',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
-                  isChanging && 'ring-2 ring-primary-500/50 ring-offset-2 ring-offset-background'
+                  isChanging && 'scale-105'
                 )}
                 aria-label="Selector de empresa"
               >
-                <div className={cn(
-                  'company-switcher-badge-icon',
-                  isGlobalView && 'company-switcher-badge-icon--global',
-                  isChanging && 'scale-110'
-                )}>
-                  {isGlobalView ? (
-                    <Globe2 className={cn('icon-sm text-white transition-transform duration-300', isChanging && 'scale-110')} />
-                  ) : (
-                    <Building2 className={cn('icon-sm text-white transition-transform duration-300', isChanging && 'scale-110')} />
-                  )}
-                </div>
+                <IconWrapper
+                  icon={isGlobalView ? Globe2 : Building2}
+                  size="sm"
+                  variant="glass"
+                  tone={isGlobalView ? 'info' : 'brand'}
+                  glow
+                  className="transition-all duration-300"
+                />
               </button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
@@ -153,17 +153,12 @@ const CompanySwitcher = ({ variant = 'default' }) => {
             <div className="flex flex-col gap-4 py-4">
               {/* Vista actual */}
               <div className="flex items-center gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3">
-                <div className={cn(
-                  'company-switcher-badge-icon',
-                  isGlobalView && 'company-switcher-badge-icon--global',
-                  'w-10 h-10'
-                )}>
-                  {isGlobalView ? (
-                    <Globe2 className="icon-md text-white" />
-                  ) : (
-                    <Building2 className="icon-md text-white" />
-                  )}
-                </div>
+                <IconWrapper
+                  icon={isGlobalView ? Globe2 : Building2}
+                  size="md"
+                  variant="soft"
+                  tone={isGlobalView ? 'info' : 'brand'}
+                />
                 <div className="flex-1">
                   <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     Vista actual
@@ -182,18 +177,24 @@ const CompanySwitcher = ({ variant = 'default' }) => {
                 <SelectContent className="max-h-64">
                   <SelectItem value="all">
                     <div className="flex items-center gap-3 py-1">
-                      <div className="company-switcher-badge-icon company-switcher-badge-icon--global">
-                        <Globe2 className="icon-sm text-white" />
-                      </div>
+                      <IconWrapper
+                        icon={Globe2}
+                        size="xs"
+                        variant="soft"
+                        tone="info"
+                      />
                       <span className="font-medium">Todas las empresas</span>
                     </div>
                   </SelectItem>
                   {companies.map((company) => (
                     <SelectItem key={company.id} value={company.id}>
                       <div className="flex items-center gap-3 py-1">
-                        <div className="company-switcher-badge-icon">
-                          <Building2 className="icon-sm text-white" />
-                        </div>
+                        <IconWrapper
+                          icon={Building2}
+                          size="xs"
+                          variant="soft"
+                          tone="brand"
+                        />
                         <span className="font-medium">{company.name}</span>
                       </div>
                     </SelectItem>
@@ -207,54 +208,55 @@ const CompanySwitcher = ({ variant = 'default' }) => {
     );
   }
 
-  // Variante default para desktop - Diseño limpio y elegante
+  // Variante default para desktop
   return (
     <div
       className={cn(
-        'company-switcher-pill group',
-        isChanging && 'company-context-changing ring-2 ring-primary-500/50 ring-offset-2 ring-offset-background'
+        'group flex items-center gap-3 rounded-xl bg-muted/30 px-4 py-2.5 transition-all duration-200',
+        'hover:bg-muted/50',
+        isChanging && 'ring-2 ring-primary-500/50 ring-offset-2 ring-offset-background'
       )}
     >
-      {/* Badge visual */}
-      <div className={cn(
-        'company-switcher-badge-icon',
-        isGlobalView && 'company-switcher-badge-icon--global',
-        isChanging && 'scale-110'
-      )}>
-        {isGlobalView ? (
-          <Globe2 className="icon-sm text-white" />
-        ) : (
-          <Building2 className="icon-sm text-white" />
-        )}
-      </div>
+      <IconWrapper
+        icon={isGlobalView ? Globe2 : Building2}
+        size="sm"
+        variant="soft"
+        tone={isGlobalView ? 'info' : 'brand'}
+        className={cn('transition-all duration-300', isChanging && 'scale-110')}
+      />
 
-      {/* Selector y label */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <span className="text-[0.625rem] font-semibold uppercase tracking-wider text-muted-foreground">
           {isGlobalView ? 'Vista global' : 'Empresa'}
         </span>
         <Select value={selectValue} onValueChange={handleChange}>
           <SelectTrigger className="h-auto border-0 bg-transparent p-0 text-sm font-bold text-foreground shadow-none hover:text-primary-600 focus:ring-0 focus:ring-offset-0 dark:hover:text-primary-400">
-            <SelectValue
-              placeholder="Selecciona una empresa"
-              className="truncate"
-            />
+            <div className="flex items-center gap-2">
+              <SelectValue placeholder="Selecciona una empresa" />
+              <ChevronDown className="h-3.5 w-3.5 opacity-50 transition-opacity group-hover:opacity-100" />
+            </div>
           </SelectTrigger>
           <SelectContent className="max-h-64 min-w-[280px]">
             <SelectItem value="all">
               <div className="flex items-center gap-3 py-1">
-                <div className="company-switcher-badge-icon company-switcher-badge-icon--global">
-                  <Globe2 className="icon-sm text-white" />
-                </div>
+                <IconWrapper
+                  icon={Globe2}
+                  size="xs"
+                  variant="soft"
+                  tone="info"
+                />
                 <span className="font-medium">Todas las empresas</span>
               </div>
             </SelectItem>
             {companies.map((company) => (
               <SelectItem key={company.id} value={company.id}>
                 <div className="flex items-center gap-3 py-1">
-                  <div className="company-switcher-badge-icon">
-                    <Building2 className="icon-sm text-white" />
-                  </div>
+                  <IconWrapper
+                    icon={Building2}
+                    size="xs"
+                    variant="soft"
+                    tone="brand"
+                  />
                   <span className="font-medium">{company.name}</span>
                 </div>
               </SelectItem>
