@@ -161,17 +161,11 @@ const CompanySwitcher = ({ variant = 'default' }) => {
                 </SelectTrigger>
                 <SelectContent className="max-h-64">
                   <SelectItem value="all">
-                    <div className="flex items-center gap-3 py-1">
-                      <Globe2 className="h-4 w-4 text-sky-600 dark:text-sky-400" />
-                      <span className="font-medium">Todas las empresas</span>
-                    </div>
+                    <span className="font-medium">Todas las empresas</span>
                   </SelectItem>
                   {companies.map((company) => (
                     <SelectItem key={company.id} value={company.id}>
-                      <div className="flex items-center gap-3 py-1">
-                        <Building2 className="h-4 w-4 text-primary-600 dark:text-primary-400" />
-                        <span className="font-medium">{company.name}</span>
-                      </div>
+                      <span className="font-medium">{company.name}</span>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -213,17 +207,11 @@ const CompanySwitcher = ({ variant = 'default' }) => {
           </SelectTrigger>
           <SelectContent className="max-h-64 min-w-[280px]">
             <SelectItem value="all">
-              <div className="flex items-center gap-3 py-1">
-                <Globe2 className="h-4 w-4 text-sky-600 dark:text-sky-400" />
-                <span className="font-medium">Todas las empresas</span>
-              </div>
+              <span className="font-medium">Todas las empresas</span>
             </SelectItem>
             {companies.map((company) => (
               <SelectItem key={company.id} value={company.id}>
-                <div className="flex items-center gap-3 py-1">
-                  <Building2 className="h-4 w-4 text-primary-600 dark:text-primary-400" />
-                  <span className="font-medium">{company.name}</span>
-                </div>
+                <span className="font-medium">{company.name}</span>
               </SelectItem>
             ))}
           </SelectContent>
