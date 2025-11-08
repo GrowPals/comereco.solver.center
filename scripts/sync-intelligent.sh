@@ -19,16 +19,23 @@ BRANCH_DEV="dev"
 BRANCH_MAIN="main"
 CLAUDE_BRANCH_PATTERN="origin/claude/"
 
+# Modo silencioso (si se pasa --quiet)
+QUIET_MODE=false
+if [[ "$*" == *"--quiet"* ]] || [[ "$*" == *"-q"* ]]; then
+    QUIET_MODE=true
+fi
+
 print_header() {
+    [ "$QUIET_MODE" = true ] && return
     echo -e "\n${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo -e "${CYAN}  $1${NC}"
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
 }
 
-print_success() { echo -e "${GREEN}✓${NC} $1"; }
-print_warning() { echo -e "${YELLOW}⚠${NC} $1"; }
+print_success() { [ "$QUIET_MODE" = true ] && return; echo -e "${GREEN}✓${NC} $1"; }
+print_warning() { [ "$QUIET_MODE" = true ] && return; echo -e "${YELLOW}⚠${NC} $1"; }
 print_error() { echo -e "${RED}✗${NC} $1"; }
-print_info() { echo -e "${BLUE}ℹ${NC} $1"; }
+print_info() { [ "$QUIET_MODE" = true ] && return; echo -e "${BLUE}ℹ${NC} $1"; }
 
 # Verificar que estamos en un repo git
 check_git_repo() {
@@ -74,7 +81,7 @@ pop_stash() {
 # Fetch todas las ramas remotas
 fetch_all() {
     print_info "Obteniendo cambios del remoto..."
-    git fetch --all --prune
+    git fetch --all --prune --quiet 2>/dev/null || git fetch --all --prune
     print_success "Cambios obtenidos"
 }
 

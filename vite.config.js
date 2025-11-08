@@ -265,13 +265,15 @@ export default defineConfig({
 			'react-hook-form',
 			'react-helmet',
 			'react-intersection-observer',
-			'framer-motion'
+			'framer-motion',
+			'lucide-react' // Pre-bundle para mejor performance
 		],
 		force: false,
 		esbuildOptions: {
 			define: {
 				global: 'globalThis',
 			},
+			treeShaking: true, // Mejor tree-shaking
 		},
 	},
 	resolve: {
@@ -290,6 +292,7 @@ export default defineConfig({
 		minify: 'esbuild',
 		cssMinify: true,
 		sourcemap: false,
+		reportCompressedSize: false, // Faster builds
 		commonjsOptions: {
 			transformMixedEsModules: true,
 		},
@@ -301,12 +304,27 @@ export default defineConfig({
 				'@babel/types'
 			],
 			output: {
-				// SOLUCIÓN DEFINITIVA: TODO en un solo vendor chunk
-				// Esto elimina completamente los problemas de orden de carga entre chunks
-				// porque no hay dependencias entre chunks de vendor
+				// Optimized chunking strategy
 				manualChunks: (id) => {
-					// TODO de node_modules va a un solo chunk vendor
+					// Separate vendor chunks for better caching
 					if (id.includes('node_modules')) {
+						// React core in separate chunk
+						if (id.includes('react') || id.includes('react-dom')) {
+							return 'vendor-react';
+						}
+						// UI libraries
+						if (id.includes('@radix-ui') || id.includes('lucide-react')) {
+							return 'vendor-ui';
+						}
+						// Data libraries
+						if (id.includes('@tanstack') || id.includes('@supabase')) {
+							return 'vendor-data';
+						}
+						// Charts
+						if (id.includes('chart.js') || id.includes('react-chartjs')) {
+							return 'vendor-charts';
+						}
+						// Everything else
 						return 'vendor';
 					}
 				},

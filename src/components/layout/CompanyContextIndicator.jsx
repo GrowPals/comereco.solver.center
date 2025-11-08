@@ -25,13 +25,13 @@ const CompanyContextIndicator = ({ className, showIcon = true, compact = false }
 
   if (compact) {
     return (
-      <div className={cn('company-context-indicator', className)}>
+      <div className={cn('company-context-indicator compact', className)}>
         {showIcon && (
           <div className="company-context-indicator-badge">
             {isGlobalView ? (
-              <Globe2 className="h-3 w-3" />
+              <Globe2 className="h-3.5 w-3.5" />
             ) : (
-              <Building2 className="h-3 w-3" />
+              <Building2 className="h-3.5 w-3.5" />
             )}
           </div>
         )}
@@ -47,17 +47,17 @@ const CompanyContextIndicator = ({ className, showIcon = true, compact = false }
       {showIcon && (
         <div className="company-context-indicator-badge">
           {isGlobalView ? (
-            <Globe2 className="h-3 w-3" />
+            <Globe2 className="h-4 w-4" />
           ) : (
-            <Building2 className="h-3 w-3" />
+            <Building2 className="h-4 w-4" />
           )}
         </div>
       )}
-      <div className="flex flex-col">
-        <span className="text-[0.625rem] font-semibold uppercase tracking-wider text-primary-600/70 dark:text-primary-400/70">
+      <div className="flex flex-col gap-0.5">
+        <span className="text-[0.625rem] font-semibold uppercase tracking-wider text-muted-foreground/70">
           Contexto
         </span>
-        <span className="text-xs font-bold text-primary-700 dark:text-primary-300">
+        <span className="text-sm font-semibold text-foreground">
           {companyName}
         </span>
       </div>

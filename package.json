@@ -15,7 +15,9 @@
     "sync:push": "./scripts/sync-intelligent.sh push",
     "sync:check": "./scripts/sync-with-claude.sh check",
     "sync:morning": "./scripts/sync-with-claude.sh morning",
-    "sync:evening": "./scripts/sync-with-claude.sh evening"
+    "sync:evening": "./scripts/sync-with-claude.sh evening",
+    "optimize": "./scripts/auto-optimize.sh",
+    "optimize:verbose": "./scripts/auto-optimize.sh --verbose"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.1.2",

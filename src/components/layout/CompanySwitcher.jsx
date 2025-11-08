@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Building2, Globe2, ChevronDown } from 'lucide-react';
+import { Building2, Globe2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -200,10 +200,7 @@ const CompanySwitcher = ({ variant = 'default' }) => {
         </span>
         <Select value={selectValue} onValueChange={handleChange}>
           <SelectTrigger className="h-auto border-0 bg-transparent p-0 text-sm font-bold text-foreground shadow-none hover:text-primary-600 focus:ring-0 focus:ring-offset-0 dark:hover:text-primary-400">
-            <div className="flex items-center gap-2">
-              <SelectValue placeholder="Selecciona una empresa" />
-              <ChevronDown className="h-3.5 w-3.5 opacity-50 transition-opacity group-hover:opacity-100" />
-            </div>
+            <SelectValue placeholder="Selecciona una empresa" />
           </SelectTrigger>
           <SelectContent className="max-h-64 min-w-[280px]">
             <SelectItem value="all">
