@@ -1475,8 +1475,8 @@ ORDER BY approved_at DESC;
 **n8n Credentials Storage:**
 ```bash
 # Variables de entorno (NO hardcodear)
-SUPABASE_DB_HOST=aws-0-us-west-1.pooler.supabase.com
-SUPABASE_DB_PASSWORD=***
+SUPABASE_DB_HOST=aws-1-us-east-2.pooler.supabase.com
+SUPABASE_DB_PASSWORD=VicmaBigez2405.
 BIND_API_TOKEN=***
 SMTP_PASSWORD=***
 ```

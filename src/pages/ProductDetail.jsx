@@ -474,12 +474,13 @@ export default function ProductDetail() {
                     min={1}
                     inputMode="numeric"
                     pattern="[0-9]*"
+                    autoComplete="off"
                     value={quantity}
                     onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
                     className={cn(
                       "w-20 h-11 text-center font-semibold text-lg rounded-lg border-2 transition-all touch-manipulation",
-                      "border-border bg-card/70 text-foreground focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:border-transparent",
-                      "dark:bg-muted/20 dark:border-border/60",
+                      "border-border/70 bg-white/80 text-foreground focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:border-transparent",
+                      "dark:bg-[rgba(5,13,30,0.85)] dark:border-border/60 dark:text-white/90 dark:[color-scheme:dark]",
                       "appearance-none [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     )}
                     aria-label="Cantidad"

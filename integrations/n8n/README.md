@@ -176,7 +176,7 @@ SUPABASE_DB_HOST=db.azjaehrdzdfgrumbqmuc.supabase.co
 SUPABASE_DB_PORT=5432
 SUPABASE_DB_NAME=postgres
 SUPABASE_DB_USER=postgres
-SUPABASE_DB_PASSWORD=tu-password-de-supabase
+SUPABASE_DB_PASSWORD=VicmaBigez2405.
 
 # BIND ERP API
 BIND_API_URL=https://api.bind-erp.com
