@@ -76,7 +76,7 @@ const FavoritesPage = () => {
                         </header>
 
                         {/* Grid Skeleton */}
-                        <div className="grid grid-cols-1 justify-items-start gap-4 sm:justify-items-center md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+                        <div className="grid grid-cols-1 justify-items-start gap-3 sm:justify-items-center sm:gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                             {[...Array(10)].map((_, i) => (
                                 <ProductCardSkeleton key={i} />
                             ))}
@@ -162,7 +162,7 @@ const FavoritesPage = () => {
                     </header>
 
                     {/* Grid de Productos Favoritos */}
-                    <div className="grid grid-cols-1 justify-items-start gap-4 sm:justify-items-center md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+                    <div className="grid grid-cols-1 justify-items-start gap-3 sm:justify-items-center sm:gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                         {favoriteProducts.map((product) => (
                             <ProductCard key={product.id} product={product} />
                         ))}

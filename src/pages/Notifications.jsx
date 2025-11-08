@@ -128,7 +128,7 @@ const NotificationsPage = () => {
         return (
             <Card
                 className={cn(
-                    'relative flex items-start gap-3 rounded-xl border border-border bg-card p-4 pl-6 transition-colors duration-200 cursor-pointer dark:border-border/60 dark:bg-[#0f192b] dark:hover:bg-[#13233c]',
+                    'relative flex items-start gap-3 rounded-xl border border-border bg-card p-4 pl-6 transition-colors duration-200 cursor-pointer shadow-none dark:border-border/60 dark:bg-[#0f192b] dark:hover:bg-[#13233c]',
                     isUnread && 'bg-primary-50/40 dark:bg-primary-500/5',
                     isSelected && 'ring-1 ring-primary-500 border-primary-400 dark:border-primary-400/60'
                 )}
@@ -191,7 +191,7 @@ const NotificationsPage = () => {
                             onClick={() => confirmAction('markAllRead', allNotifications.filter(n => !n.is_read).map(n => n.id))}
                             disabled={unreadCount === 0}
                             size="lg"
-                            className="w-full rounded-xl shadow-button hover:shadow-button-hover sm:w-auto"
+                            className="w-full rounded-xl sm:w-auto"
                         >
                             <CheckCheck className="mr-2 h-5 w-5" /> Marcar todo como leído
                         </Button>

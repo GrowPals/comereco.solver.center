@@ -83,7 +83,7 @@ const RequisitionsPage = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto">
+              <div className="flex w-full items-center gap-3 sm:w-auto">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -92,7 +92,7 @@ const RequisitionsPage = () => {
                         size="icon"
                         onClick={() => refetch()}
                         disabled={isFetching}
-                        className="h-10 w-10 rounded-xl shadow-sm"
+                        className="h-11 w-11 flex-shrink-0 rounded-xl shadow-sm"
                       >
                         <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin text-primary-500' : 'text-muted-foreground'}`} />
                       </Button>
@@ -108,7 +108,7 @@ const RequisitionsPage = () => {
                       <Button
                         onClick={() => navigate('/requisitions/new')}
                         size="md"
-                        className="flex-1 min-w-[180px] rounded-lg px-6 py-2.5 text-sm font-semibold sm:w-auto"
+                        className="flex-1 min-w-0 rounded-xl px-5 py-2.5 text-sm font-semibold sm:w-auto sm:min-w-[180px]"
                       >
                         <Plus className="mr-2 h-5 w-5" />
                         Nueva Requisición

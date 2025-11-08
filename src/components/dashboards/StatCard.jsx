@@ -1,6 +1,6 @@
 
 import React, { memo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { StatIcon } from '@/components/ui/icon-wrapper';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
@@ -20,13 +20,13 @@ const StatCard = memo(({
     if (isLoading) {
         return (
         <Card className="dashboard-panel surface-card">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-                    <CardTitle className="text-sm font-medium"><Skeleton className="h-4 w-24" /></CardTitle>
-                    <Skeleton className="h-12 w-12 rounded-xl" />
-                </CardHeader>
-                <CardContent>
-                    <Skeleton className="h-10 w-32 mb-2" />
-                    <Skeleton className="h-4 w-28 mt-2" />
+                <CardContent className="flex flex-col gap-3 px-4 py-4 sm:gap-4 sm:px-6 sm:py-6">
+                    <div className="flex items-start justify-between gap-3">
+                        <CardTitle className="text-sm font-medium"><Skeleton className="h-4 w-24" /></CardTitle>
+                        <Skeleton className="h-12 w-12 rounded-2xl" />
+                    </div>
+                    <Skeleton className="h-10 w-32" />
+                    <Skeleton className="h-4 w-28" />
                 </CardContent>
             </Card>
         );
@@ -58,22 +58,27 @@ const StatCard = memo(({
 
     return (
         <Card interactive className="group stat-card surface-card">
-            <CardHeader className="relative z-10 flex flex-row items-center justify-between space-y-0 px-4 pb-3 pt-4 sm:px-6 sm:pt-5">
-                {Icon && (
-                    <StatIcon
-                        icon={Icon}
-                        tone={iconTone}
-                        size={iconSize}
-                        className="transition-all duration-300 group-hover:-translate-y-0.5"
-                    />
-                )}
-            </CardHeader>
-            <CardContent className="relative z-10 px-4 pb-4 sm:px-6 sm:pb-6">
-                <CardTitle className="caption mb-2 text-[10px] tracking-[0.22em] text-muted-foreground">
-                    {title}
-                </CardTitle>
-                <div className="mb-1 display-number">
-                    {format(value)}
+            <CardContent className="relative z-10 flex flex-col gap-3 px-4 py-4 sm:gap-4 sm:px-6 sm:py-6">
+                <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 space-y-1">
+                        <CardTitle className="caption text-[10px] tracking-[0.22em] text-muted-foreground">
+                            {title}
+                        </CardTitle>
+                        <div className="display-number leading-tight">
+                            {format(value)}
+                        </div>
+                    </div>
+                    {Icon && (
+                        <div className="stat-icon shrink-0 border border-border/60 bg-white text-primary-600 shadow-none dark:border-white/10 dark:bg-white/5">
+                            <StatIcon
+                                icon={Icon}
+                                tone={iconTone}
+                                size={iconSize}
+                                glow={false}
+                                className="transition-transform duration-300 group-hover:-translate-y-0.5"
+                            />
+                        </div>
+                    )}
                 </div>
 
                 {/* Trend Indicator */}
@@ -99,7 +104,7 @@ const StatCard = memo(({
 
                 {/* Sparkline - Simple bars visualization */}
                 {sparklineData && sparklineData.length > 0 && (
-                    <div className="mt-3 hidden h-8 items-end gap-0.5 sm:flex">
+                    <div className="mt-2 hidden h-8 items-end gap-0.5 sm:flex">
                         {sparklineData.map((val, idx) => {
                             const maxVal = Math.max(...sparklineData);
                             const height = maxVal > 0 ? (val / maxVal) * 100 : 0;
@@ -116,7 +121,7 @@ const StatCard = memo(({
 
                 {/* Animated accent bar */}
                 {!sparklineData && (
-                    <div className="mt-3 h-1 w-12 rounded-full bg-gradient-primary transition-all duration-300 group-hover:w-full sm:w-16"></div>
+                    <div className="mt-2 h-1 w-12 rounded-full bg-gradient-primary transition-all duration-300 group-hover:w-full sm:w-16"></div>
                 )}
             </CardContent>
         </Card>
