@@ -161,6 +161,7 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
                 role="complementary"
                 aria-label="Menú de navegación"
                 id="navigation"
+                tabIndex="-1"
             >
             <div className="flex items-center justify-between border-b border-border px-6 pb-4 pt-[calc(env(safe-area-inset-top)+1rem)] transition-colors lg:hidden dark:border-border">
                 <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Menú principal</p>
