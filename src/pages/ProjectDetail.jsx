@@ -242,9 +242,7 @@ const ProjectDetail = () => {
             <Card className="shadow-soft-md border-2 transition-shadow duration-300 hover:shadow-soft-lg">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-50 dark:bg-primary-950">
-                    <Users className="h-6 w-6 text-primary-600 dark:text-primary-100" />
-                  </div>
+                  <Users className="h-6 w-6 text-primary-600 dark:text-primary-100" />
                   <CardTitle className="text-2xl font-bold text-foreground">Miembros del Proyecto</CardTitle>
                 </div>
               </CardHeader>
@@ -300,9 +298,7 @@ const ProjectDetail = () => {
             <Card className="shadow-soft-md border-2 transition-shadow duration-300 hover:shadow-soft-lg">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-50 dark:bg-primary-950">
-                    <FileText className="h-6 w-6 text-primary-600 dark:text-primary-100" />
-                  </div>
+                  <FileText className="h-6 w-6 text-primary-600 dark:text-primary-100" />
                   <CardTitle className="text-2xl font-bold text-foreground">Requisiciones Recientes</CardTitle>
                 </div>
               </CardHeader>

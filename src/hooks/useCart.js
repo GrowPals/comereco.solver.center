@@ -157,13 +157,19 @@ export const useCart = () => {
 
     const mutationOptions = {
         onError: (err, variables, context) => {
-            if (context?.previousCart) {
-                queryClient.setQueryData(['cart', user?.id], context.previousCart);
+            // Usar userId del contexto en lugar del estado actual
+            const targetUserId = context?.userId || user?.id;
+            if (context?.previousCart && targetUserId) {
+                queryClient.setQueryData(['cart', targetUserId], context.previousCart);
             }
             toast({ variant: 'destructive', title: 'Error en el carrito', description: err.message });
         },
-        onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: ['cart', user?.id] });
+        onSettled: (data, error, variables, context) => {
+            // Usar userId del contexto en lugar del estado actual
+            const targetUserId = context?.userId || user?.id;
+            if (targetUserId) {
+                queryClient.invalidateQueries({ queryKey: ['cart', targetUserId] });
+            }
         },
     };
 
@@ -180,9 +186,18 @@ export const useCart = () => {
             return upsertCartItemAPI({ userId: user.id, productId: product.id, quantity: newQuantity });
         },
         onMutate: async ({ product, quantity = 1 }) => {
-            if (!user?.id) return { previousCart: [] };
-            await queryClient.cancelQueries({ queryKey: ['cart', user?.id] });
-            const previousCart = queryClient.getQueryData(['cart', user?.id]) || [];
+            const currentUserId = user?.id;
+            if (!currentUserId) {
+                throw new Error('Usuario no autenticado');
+            }
+
+            // Validar que el producto tenga los campos necesarios
+            if (!product?.id || product?.price == null) {
+                throw new Error('Datos del producto inválidos');
+            }
+
+            await queryClient.cancelQueries({ queryKey: ['cart', currentUserId] });
+            const previousCart = queryClient.getQueryData(['cart', currentUserId]) || [];
 
             const existingIndex = previousCart.findIndex(item => item.id === product.id);
             let optimisticCart;
@@ -203,8 +218,8 @@ export const useCart = () => {
                 ];
             }
 
-            queryClient.setQueryData(['cart', user?.id], optimisticCart);
-            return { previousCart };
+            queryClient.setQueryData(['cart', currentUserId], optimisticCart);
+            return { previousCart, userId: currentUserId };
         },
         ...mutationOptions,
         onSuccess: () => {}
