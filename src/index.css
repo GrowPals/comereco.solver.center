@@ -158,6 +158,7 @@
 
     --nav-label-muted: rgba(100, 116, 139, 0.82);
     --nav-label-active: var(--primary-600);
+    --content-safe-bottom: calc(7rem + env(safe-area-inset-bottom));
     --nav-chip-border: rgba(59, 130, 246, 0.24);
     --nav-chip-glow: none; /* Sin glow en light mode */
     --nav-icon-active-glow: none; /* Sin glow en light mode */
@@ -592,6 +593,13 @@
   .app-main-shell > * {
     position: relative;
     z-index: 1;
+  }
+
+  .mobile-nav-safe-space {
+    width: 100%;
+    height: var(--content-safe-bottom);
+    flex-shrink: 0;
+    pointer-events: none;
   }
 
   .page-title {

@@ -128,13 +128,13 @@ const NotificationsPage = () => {
         return (
             <Card
                 className={cn(
-                    'relative flex items-start gap-4 rounded-xl border border-border bg-card p-4 pl-6 transition-colors duration-200 cursor-pointer dark:border-border/60 dark:bg-[#0f192b] dark:hover:bg-[#13233c]',
+                    'relative flex items-start gap-3 rounded-xl border border-border bg-card p-4 pl-6 transition-colors duration-200 cursor-pointer dark:border-border/60 dark:bg-[#0f192b] dark:hover:bg-[#13233c]',
                     isUnread && 'bg-primary-50/40 dark:bg-primary-500/5',
                     isSelected && 'ring-1 ring-primary-500 border-primary-400 dark:border-primary-400/60'
                 )}
                 onClick={() => notification.link && navigate(notification.link)}
             >
-                <span className={cn('absolute inset-y-4 left-2 w-[3px] rounded-full bg-gradient-to-b shadow-[0_0_12px_rgba(37,99,235,0.35)]', theme.accent)} aria-hidden="true" />
+                <span className={cn('absolute inset-y-4 left-2 w-[3px] rounded-full', theme.accent)} aria-hidden="true" />
                 <Checkbox
                     checked={isSelected}
                     onCheckedChange={(checked) =>
@@ -145,15 +145,15 @@ const NotificationsPage = () => {
                     className="mt-1"
                     onClick={(e) => e.stopPropagation()}
                 />
-                <Glyph icon={Bell} tone={theme.iconTone} size="lg" className="mt-1" aria-hidden="true" />
-                <div className="flex-1">
-                    <p className={cn("text-base", notification.is_read ? "font-semibold text-foreground" : "font-bold text-foreground")}>{notification.title}</p>
-                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{notification.message}</p>
-                    <p className="mt-2 text-xs text-muted-foreground/80">{format(new Date(notification.created_at), 'dd MMM, HH:mm', { locale: es })}</p>
+                <Glyph icon={Bell} tone={theme.iconTone} size="lg" className="mt-1 flex-shrink-0" aria-hidden="true" />
+                <div className="flex-1 min-w-0">
+                    <p className={cn("text-sm sm:text-base", notification.is_read ? "font-semibold text-foreground" : "font-bold text-foreground")}>{notification.title}</p>
+                    <p className="mt-1 text-xs leading-snug text-muted-foreground sm:text-sm">{notification.message}</p>
+                    <p className="mt-2 text-[11px] text-muted-foreground/80">{format(new Date(notification.created_at), 'dd MMM, HH:mm', { locale: es })}</p>
                 </div>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()} className="rounded-xl h-9 w-9">
+                        <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()} className="rounded-xl h-8 w-8 mt-0.5">
                             <MoreVertical className="h-5 w-5 text-muted-foreground" />
                         </Button>
                     </DropdownMenuTrigger>

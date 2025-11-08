@@ -436,9 +436,53 @@ const ManageProductsPage = () => {
                     </header>
 
                     {products?.length > 0 ? (
-                        <div className="overflow-hidden rounded-2xl border-2 border-border bg-card shadow-soft-md">
-                            <div className="w-full overflow-x-auto">
-                            <Table className="min-w-[720px] md:min-w-full">
+                        <>
+                            <div className="grid gap-3 md:hidden">
+                                {sortedProducts?.map((p) => (
+                                    <div key={p.id} className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+                                        <div className="flex items-start gap-3">
+                                            <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl bg-muted">
+                                                {p.image_url ? (
+                                                    <OptimizedImage
+                                                        src={p.image_url}
+                                                        alt={p.name}
+                                                        fallback="/placeholder.svg"
+                                                        className="h-full w-full object-contain p-1.5"
+                                                    />
+                                                ) : (
+                                                    <ImageIcon className="h-6 w-6 text-muted-foreground/70" />
+                                                )}
+                                            </div>
+                                            <div className="min-w-0 flex-1 space-y-1">
+                                                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{p.sku}</p>
+                                                <p className="text-base font-semibold leading-tight text-foreground line-clamp-2">{p.name}</p>
+                                                <p className="text-sm text-muted-foreground">
+                                                    {p.category || 'Sin categoría'} · Stock {p.stock ?? 0}
+                                                </p>
+                                            </div>
+                                            <Badge variant={p.is_active ? 'success' : 'destructive'}>{p.is_active ? 'Activo' : 'Inactivo'}</Badge>
+                                        </div>
+                                        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+                                            <p className="text-lg font-bold text-foreground">${p.price.toFixed(2)}</p>
+                                            <div className="flex flex-wrap gap-2">
+                                                <Button size="sm" className="rounded-xl" onClick={() => setFormModal({ isOpen: true, product: p })}>
+                                                    Editar
+                                                </Button>
+                                                <Button size="sm" variant="outline" className="rounded-xl" onClick={() => handleToggleActive(p)}>
+                                                    {p.is_active ? 'Pausar' : 'Activar'}
+                                                </Button>
+                                                <Button size="sm" variant="ghost" className="rounded-xl" onClick={() => handleDuplicate(p)}>
+                                                    Duplicar
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="hidden overflow-hidden rounded-2xl border-2 border-border bg-card shadow-soft-md md:block">
+                                <div className="w-full overflow-x-auto">
+                                <Table className="min-w-[720px] md:min-w-full">
                             <TableHeader>
                                 <TableRow>
                                     <TableHead className="w-16 whitespace-nowrap">Imagen</TableHead>
@@ -624,6 +668,7 @@ const ManageProductsPage = () => {
                             </Table>
                             </div>
                         </div>
+                        </>
                     ) : (
                         <EmptyState
                             icon={ShoppingBag}

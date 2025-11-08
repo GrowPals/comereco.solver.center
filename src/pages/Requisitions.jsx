@@ -83,7 +83,7 @@ const RequisitionsPage = () => {
                   </div>
                 </div>
               </div>
-              <div className="grid w-full gap-3 sm:w-auto sm:grid-cols-[auto_auto] sm:items-center">
+              <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -108,7 +108,7 @@ const RequisitionsPage = () => {
                       <Button
                         onClick={() => navigate('/requisitions/new')}
                         size="md"
-                        className="w-full rounded-lg px-6 py-2.5 text-sm font-semibold sm:w-auto"
+                        className="flex-1 min-w-[180px] rounded-lg px-6 py-2.5 text-sm font-semibold sm:w-auto"
                       >
                         <Plus className="mr-2 h-5 w-5" />
                         Nueva Requisición
@@ -124,49 +124,51 @@ const RequisitionsPage = () => {
           </header>
 
           {/* Filters - Sticky on scroll */}
-          <div className="sticky top-0 z-10 mb-6 flex flex-col gap-4 surface-card p-4 sm:flex-row sm:flex-wrap sm:items-center backdrop-blur-md shadow-sm">
-            <div className="flex items-center gap-2 text-sm">
+          <div className="sticky top-0 z-10 mb-6 space-y-3 surface-card p-4 backdrop-blur-md shadow-sm">
+            <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
               <Filter className="h-5 w-5 text-muted-foreground" />
               <span className="font-semibold text-foreground">Filtros:</span>
             </div>
-            <Select value={selectedProject} onValueChange={(value) => { setSelectedProject(value); setPage(1); }}>
-              <SelectTrigger className="w-full min-w-[200px] rounded-xl sm:w-[220px]">
-                <SelectValue placeholder="Todos los proyectos" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos los proyectos</SelectItem>
-                {projects?.map((project) => (
-                  <SelectItem key={project.id} value={project.id}>
-                    {project.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={selectedStatus} onValueChange={(value) => { setSelectedStatus(value); setPage(1); }}>
-              <SelectTrigger className="w-full min-w-[200px] rounded-xl sm:w-[220px]">
-                <SelectValue placeholder="Todos los estados" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos los estados</SelectItem>
-                <SelectItem value="draft">Borrador</SelectItem>
-                <SelectItem value="submitted">Enviada</SelectItem>
-                <SelectItem value="approved">Aprobada</SelectItem>
-                <SelectItem value="rejected">Rechazada</SelectItem>
-                <SelectItem value="ordered">Ordenada</SelectItem>
-                <SelectItem value="cancelled">Cancelada</SelectItem>
-              </SelectContent>
-            </Select>
-            {hasFilters && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={clearFilters}
-                className="w-full rounded-xl border border-transparent text-muted-foreground hover:border-border hover:text-foreground sm:w-auto"
-              >
-                <X className="mr-2 h-4 w-4" />
-                Limpiar filtros
-              </Button>
-            )}
+            <div className="grid w-full gap-3 min-[420px]:grid-cols-2 sm:flex sm:flex-wrap sm:items-center sm:gap-4">
+              <Select value={selectedProject} onValueChange={(value) => { setSelectedProject(value); setPage(1); }}>
+                <SelectTrigger className="w-full rounded-xl text-sm">
+                  <SelectValue placeholder="Todos los proyectos" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos los proyectos</SelectItem>
+                  {projects?.map((project) => (
+                    <SelectItem key={project.id} value={project.id}>
+                      {project.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={selectedStatus} onValueChange={(value) => { setSelectedStatus(value); setPage(1); }}>
+                <SelectTrigger className="w-full rounded-xl text-sm">
+                  <SelectValue placeholder="Todos los estados" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos los estados</SelectItem>
+                  <SelectItem value="draft">Borrador</SelectItem>
+                  <SelectItem value="submitted">Enviada</SelectItem>
+                  <SelectItem value="approved">Aprobada</SelectItem>
+                  <SelectItem value="rejected">Rechazada</SelectItem>
+                  <SelectItem value="ordered">Ordenada</SelectItem>
+                  <SelectItem value="cancelled">Cancelada</SelectItem>
+                </SelectContent>
+              </Select>
+              {hasFilters && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearFilters}
+                  className="w-full rounded-xl border border-muted/40 text-muted-foreground hover:border-primary/40 hover:text-primary-600 min-[420px]:col-span-2 sm:w-auto"
+                >
+                  <X className="mr-2 h-4 w-4" />
+                  Limpiar filtros
+                </Button>
+              )}
+            </div>
           </div>
 
           {/* Error State */}
@@ -188,7 +190,7 @@ const RequisitionsPage = () => {
           ) : filteredRequisitions.length > 0 ? (
             <>
               {/* Requisitions Count */}
-              <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="mb-6 flex flex-wrap items-center gap-3">
                 <IconWrapper icon={FileText} variant="neutral" size="md" />
                 <p className="text-sm text-muted-foreground sm:text-base">
                   <span className="mr-1 text-2xl font-bold text-foreground sm:text-3xl">

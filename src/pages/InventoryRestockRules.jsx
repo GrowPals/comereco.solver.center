@@ -52,12 +52,12 @@ const buildQueryFilters = (filters, searchTerm) => ({
 });
 
 const SummaryStat = ({ icon: Icon, title, value }) => (
-  <div className="surface-card flex items-center justify-between rounded-2xl px-5 py-4">
+  <div className="surface-card flex items-center justify-between rounded-2xl px-4 py-3 sm:px-5 sm:py-4">
     <div className="flex items-center gap-3">
       <IconWrapper icon={Icon} variant="neutral" size="lg" />
       <div className="leading-tight">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/80">{title}</p>
-        <p className="text-2xl font-semibold text-foreground">{value}</p>
+        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/80 sm:text-[11px]">{title}</p>
+        <p className="text-xl font-semibold text-foreground sm:text-2xl">{value}</p>
       </div>
     </div>
   </div>

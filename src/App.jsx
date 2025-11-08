@@ -252,10 +252,13 @@ const AppLayout = () => {
                         <Route path={ROUTES.RESET_PASSWORD} element={<ResetPasswordPage />} />
                         <Route path={ROUTES.HOME} element={<Navigate to={ROUTES.DASHBOARD} replace />} />
                         <Route path="*" element={<NotFoundPage />} />
-                    </Routes>
+                </Routes>
               </Suspense>
             </ErrorBoundary>
           </div>
+          {showBottomNav && (
+            <div className="mobile-nav-safe-space lg:hidden" aria-hidden="true" />
+          )}
         </main>
       </div>
 

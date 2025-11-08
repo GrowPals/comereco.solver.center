@@ -88,7 +88,7 @@ const ProductCard = memo(({ product }) => {
   return (
     <article
       className={cn(
-        'group relative flex w-full flex-col overflow-hidden rounded-3xl surface-card transition-all duration-base ease-smooth-out hover:shadow-elevated hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:hover:shadow-elevated',
+        'product-card group relative flex w-full flex-col overflow-hidden rounded-2xl surface-card transition-all duration-base ease-smooth-out hover:shadow-elevated hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:hover:shadow-elevated',
         !isInStock && 'opacity-70 grayscale-[0.3]'
       )}
       role="article"
@@ -106,7 +106,7 @@ const ProductCard = memo(({ product }) => {
             alt={`Imagen de ${productName}`}
             fallback="/placeholder.svg"
             loading="lazy"
-            className="aspect-video w-full object-cover transition-transform duration-slow ease-smooth-out group-hover:scale-105 bg-neutral-100 dark:bg-[#0e1f3c]"
+            className="aspect-[18/8] w-full object-cover transition-transform duration-slow ease-smooth-out group-hover:scale-105 bg-neutral-100 dark:bg-[#0e1f3c] sm:aspect-video"
           />
         </button>
 
@@ -159,17 +159,17 @@ const ProductCard = memo(({ product }) => {
         </button>
       </div>
 
-      <div className="flex flex-1 flex-col gap-4 p-4">
+      <div className="flex flex-1 flex-col gap-3 p-4 sm:gap-4 sm:p-5">
         <button
           type="button"
           onClick={handleNavigate}
           className="text-left"
         >
-          <h3 className="line-clamp-2 heading-5 transition-colors group-hover:text-primary-600 min-h-[3.5rem] md:min-h-[3.75rem]">
+          <h3 className="line-clamp-2 heading-5 transition-colors group-hover:text-primary-600 min-h-[2.6rem] text-base sm:text-lg md:min-h-[3.5rem]">
             {productName}
           </h3>
         </button>
-        <p className="text-secondary-sm">
+        <p className="text-sm leading-snug text-muted-foreground sm:text-secondary-sm">
           <span className={cn(
             'font-semibold',
             isInStock ? 'text-success' : 'text-error uppercase'
@@ -182,12 +182,12 @@ const ProductCard = memo(({ product }) => {
         </p>
 
         <div className="flex flex-1 flex-col justify-between gap-4">
-          <div className="rounded-xl bg-muted/40 p-3 dark:bg-muted/20">
+          <div className="rounded-xl bg-muted/40 p-2.5 dark:bg-muted/20">
             <span className="caption">
               Precio
             </span>
             <div className="mt-1 flex items-baseline justify-between gap-2">
-              <p className="price-large text-emerald-600 dark:text-emerald-400">
+              <p className="price-large text-emerald-600 dark:text-emerald-400 text-2xl sm:text-3xl">
                 ${productPrice}
               </p>
               {unitLabel && (
@@ -202,7 +202,7 @@ const ProductCard = memo(({ product }) => {
               onClick={handleAddToCart}
               disabled={isAdding || !isInStock}
               className={cn(
-                'flex w-full items-center justify-center gap-2 rounded-2xl py-3 text-base font-semibold text-white transition-all duration-base ease-smooth-out active:scale-[0.98]',
+                'flex w-full items-center justify-center gap-2 rounded-2xl py-2.5 text-sm font-semibold text-white transition-all duration-base ease-smooth-out active:scale-[0.98] sm:text-base sm:py-3',
                 showSuccess
                   ? 'bg-success hover:bg-success/90'
                   : isInStock
@@ -225,7 +225,7 @@ const ProductCard = memo(({ product }) => {
               )}
             </button>
           ) : (
-            <div className="flex w-full h-[52px] items-center justify-between gap-3 rounded-2xl surface-card p-2">
+            <div className="flex w-full h-[48px] items-center justify-between gap-2 rounded-2xl surface-card p-2 sm:gap-3 sm:h-[52px]">
               <button
                 type="button"
                 onClick={handleDecrease}
@@ -243,7 +243,7 @@ const ProductCard = memo(({ product }) => {
                 )}
               </button>
               <span
-                className="flex h-11 min-w-[3.25rem] items-center justify-center rounded-xl bg-card px-3 text-center text-base font-semibold text-foreground"
+                className="flex h-10 min-w-[3rem] items-center justify-center rounded-xl bg-card px-3 text-center text-base font-semibold text-foreground"
                 aria-label={`Cantidad seleccionada: ${currentQuantity}`}
               >
                 {currentQuantity}

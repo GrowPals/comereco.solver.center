@@ -91,30 +91,40 @@ const RecentRequisitions = memo(() => {
                                     <span className={cn('absolute inset-y-4 left-2 w-1 rounded-full', accent)} aria-hidden="true" />
                                     <div className="flex items-start justify-between gap-3">
                                         <div className="flex-1 space-y-2">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                                                Folio
-                                            </span>
-                                            <span className="font-bold text-foreground">{req.internal_folio}</span>
+                                            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                                <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                                                    Folio
+                                                </span>
+                                                <span className="font-bold text-foreground text-base">{req.internal_folio}</span>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-xs sm:text-sm">
+                                                <div>
+                                                    <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Proyecto</p>
+                                                    <p className="font-medium text-foreground line-clamp-2 leading-tight">
+                                                        {req.project?.name || 'N/A'}
+                                                    </p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Fecha</p>
+                                                    <p className="text-muted-foreground font-medium">
+                                                        {format(parseISO(req.created_at), 'dd MMM yyyy', { locale: es })}
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Total</p>
+                                                    <p className="font-semibold text-foreground">
+                                                        ${formatPrice(req.total_amount)}
+                                                    </p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Estado</p>
+                                                    <p className="font-semibold text-foreground">
+                                                        {req.business_status?.toUpperCase() || '—'}
+                                                    </p>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="flex items-center gap-2 text-sm">
-                                            <span className="text-muted-foreground">Proyecto:</span>
-                                            <span className="font-medium text-foreground">{req.project?.name || 'N/A'}</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-sm">
-                                            <span className="text-muted-foreground">Fecha:</span>
-                                            <span className="text-muted-foreground">
-                                                {format(parseISO(req.created_at), 'dd MMM yyyy', { locale: es })}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-sm">
-                                            <span className="text-muted-foreground">Total:</span>
-                                            <span className="font-semibold text-foreground">
-                                                ${formatPrice(req.total_amount)}
-                                            </span>
-                                        </div>
-                                        </div>
-                                        <Badge status={req.business_status} className="shrink-0 font-semibold" />
+                                        <Badge status={req.business_status} className="shrink-0 font-semibold text-xs leading-tight" />
                                     </div>
                                 </div>
                             );

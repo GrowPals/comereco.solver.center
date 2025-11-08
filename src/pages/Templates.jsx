@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PlusCircle, MoreHorizontal, Edit, Trash2, LayoutTemplate, FilePlus, Bot, Zap } from 'lucide-react';
@@ -42,6 +42,8 @@ import { SectionIcon } from '@/components/ui/icon-wrapper';
 import { Icon as Glyph } from '@/components/ui/icon';
 import { Badge } from '@/components/ui/badge';
 
+const MOBILE_BREAKPOINT = 768;
+
 const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
   const [isActionsMenuOpen, setIsActionsMenuOpen] = useState(false);
   const isFrequentlyUsed = template.usage_count >= 3;
@@ -52,20 +54,39 @@ const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
   const productCount = template.items?.length || 0;
   const usageCount = template.usage_count || 0;
 
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window === 'undefined' ? false : window.innerWidth < MOBILE_BREAKPOINT
+  );
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const handleResize = () => setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const openActionsMenu = (event) => {
     event?.preventDefault();
     setIsActionsMenuOpen(true);
+  };
+
+  const handleCardAction = (event) => {
+    if (isMobile) {
+      onUse?.(template.id);
+      return;
+    }
+    openActionsMenu(event);
   };
 
   return (
     <article
       tabIndex={0}
       role="button"
-      onClick={openActionsMenu}
+      onClick={handleCardAction}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
-          openActionsMenu();
+          handleCardAction(event);
         }
       }}
       className={cn(
@@ -78,11 +99,11 @@ const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
           <div className="flex flex-1 items-start gap-2">
             <Glyph icon={LayoutTemplate} tone="primary" size="sm" className="mt-0.5 text-primary-500" />
             <div className="min-w-0 space-y-1">
-              <h3 className="text-base font-semibold leading-tight text-foreground break-words line-clamp-2">
+              <h3 className="text-base font-semibold leading-tight text-foreground break-words line-clamp-2 sm:text-lg">
                 {template.name}
               </h3>
               {showDescription && (
-                <p className="text-sm text-muted-foreground/90 leading-relaxed">
+                <p className="text-sm text-muted-foreground/90 leading-relaxed sm:text-base">
                   {description}
                 </p>
               )}
@@ -122,7 +143,7 @@ const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
         </div>
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center gap-4 border-t border-dashed border-border/70 pt-3 text-xs text-muted-foreground">
+      <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-dashed border-border/70 pt-3 text-[11px] uppercase tracking-wide text-muted-foreground">
         <span className="font-semibold text-foreground">
           {productCount} {productCount === 1 ? 'producto' : 'productos'}
         </span>

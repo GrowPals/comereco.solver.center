@@ -58,7 +58,7 @@ const StatCard = memo(({
 
     return (
         <Card interactive className="group stat-card surface-card">
-            <CardHeader className="relative z-10 flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardHeader className="relative z-10 flex flex-row items-center justify-between space-y-0 px-4 pb-3 pt-4 sm:px-6 sm:pt-5">
                 {Icon && (
                     <StatIcon
                         icon={Icon}
@@ -68,21 +68,21 @@ const StatCard = memo(({
                     />
                 )}
             </CardHeader>
-            <CardContent className="relative z-10">
-                <CardTitle className="caption mb-2">
+            <CardContent className="relative z-10 px-4 pb-4 sm:px-6 sm:pb-6">
+                <CardTitle className="caption mb-2 text-[10px] tracking-[0.22em] text-muted-foreground">
                     {title}
                 </CardTitle>
-                <div className="mb-2 display-number">
+                <div className="mb-1 display-number">
                     {format(value)}
                 </div>
 
                 {/* Trend Indicator */}
                 {trend && (
-                    <div className={`flex items-center gap-1.5 text-sm font-semibold ${getTrendColor()}`}>
+                    <div className={`flex flex-wrap items-center gap-1.5 text-xs font-semibold sm:text-sm ${getTrendColor()}`}>
                         {getTrendIcon()}
                         <span>{trend.percentage > 0 ? '+' : ''}{trend.percentage}%</span>
                         {trend.label && (
-                            <span className="text-xs font-normal text-muted-foreground ml-1">
+                            <span className="text-[11px] font-normal text-muted-foreground ml-1">
                                 {trend.label}
                             </span>
                         )}
@@ -99,7 +99,7 @@ const StatCard = memo(({
 
                 {/* Sparkline - Simple bars visualization */}
                 {sparklineData && sparklineData.length > 0 && (
-                    <div className="mt-3 flex h-8 items-end gap-0.5">
+                    <div className="mt-3 hidden h-8 items-end gap-0.5 sm:flex">
                         {sparklineData.map((val, idx) => {
                             const maxVal = Math.max(...sparklineData);
                             const height = maxVal > 0 ? (val / maxVal) * 100 : 0;
@@ -116,7 +116,7 @@ const StatCard = memo(({
 
                 {/* Animated accent bar */}
                 {!sparklineData && (
-                    <div className="mt-3 h-1 w-16 rounded-full bg-gradient-primary transition-all duration-300 group-hover:w-full"></div>
+                    <div className="mt-3 h-1 w-12 rounded-full bg-gradient-primary transition-all duration-300 group-hover:w-full sm:w-16"></div>
                 )}
             </CardContent>
         </Card>
