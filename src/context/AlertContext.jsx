@@ -2,7 +2,9 @@ import React, {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 
@@ -14,6 +16,15 @@ const AlertContext = createContext(null);
  */
 export const AlertProvider = ({ children }) => {
   const [alerts, setAlerts] = useState([]);
+  const timersRef = useRef(new Map());
+
+  // Limpiar todos los timers al desmontar
+  useEffect(() => {
+    return () => {
+      timersRef.current.forEach((timer) => clearTimeout(timer));
+      timersRef.current.clear();
+    };
+  }, []);
 
   /**
    * Remueve una alerta por su ID
@@ -21,6 +32,11 @@ export const AlertProvider = ({ children }) => {
    */
   const removeAlert = useCallback((id) => {
     setAlerts((prevAlerts) => prevAlerts.filter((alert) => alert.id !== id));
+    // Limpiar el timer asociado si existe
+    if (timersRef.current.has(id)) {
+      clearTimeout(timersRef.current.get(id));
+      timersRef.current.delete(id);
+    }
   }, []);
 
   /**
@@ -38,9 +54,12 @@ export const AlertProvider = ({ children }) => {
 
     // Auto-dismiss si tiene duration
     if (alert.duration) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         removeAlert(id);
       }, alert.duration);
+
+      // Guardar referencia al timer
+      timersRef.current.set(id, timer);
     }
 
     return id;
@@ -51,6 +70,9 @@ export const AlertProvider = ({ children }) => {
    */
   const clearAlerts = useCallback(() => {
     setAlerts([]);
+    // Limpiar todos los timers
+    timersRef.current.forEach((timer) => clearTimeout(timer));
+    timersRef.current.clear();
   }, []);
 
   /**

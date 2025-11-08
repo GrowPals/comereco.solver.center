@@ -77,14 +77,19 @@ function PrivateRoute({ children, permissionCheck }) {
 
 // Layout principal de la aplicación
 const AppLayout = () => {
-  const [isSidebarOpen, setSidebarOpen] = useState(() => window.innerWidth > 1024);
+  const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isMobileNavOpen, setMobileNavOpen] = useState(false);
   const location = useLocation();
   const queryClient = useQueryClient();
   const { session } = useSupabaseAuth();
-  
+
   // Hook para manejar expiración de sesión
   useSessionExpirationHandler();
+
+  // Inicializar estado de sidebar basado en el tamaño de ventana
+  useEffect(() => {
+    setSidebarOpen(window.innerWidth > 1024);
+  }, []);
 
   // Prefetching inteligente de datos probables
   useEffect(() => {
