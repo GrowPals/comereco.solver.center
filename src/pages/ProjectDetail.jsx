@@ -17,6 +17,7 @@ import PageLoader from '@/components/PageLoader';
 import PageContainer from '@/components/layout/PageContainer';
 import EmptyState from '@/components/EmptyState';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Icon } from '@/components/ui/icon';
 
 const ProjectDetail = () => {
   const { id: projectId } = useParams();
@@ -195,7 +196,7 @@ const ProjectDetail = () => {
                     <p className="text-sm font-medium text-muted-foreground mb-1">Total Requisiciones</p>
                     <p className="text-3xl font-bold text-foreground">{totalRequisitions}</p>
                   </div>
-                  <FileText className="h-8 w-8 text-primary-600" />
+                  <Icon icon={FileText} variant="soft" size="md" />
                 </div>
               </CardContent>
             </Card>
@@ -206,7 +207,7 @@ const ProjectDetail = () => {
                     <p className="text-sm font-medium text-muted-foreground mb-1">Aprobadas</p>
                     <p className="text-3xl font-bold text-green-600">{approvedRequisitions}</p>
                   </div>
-                  <CheckCircle2 className="h-8 w-8 text-green-600" />
+                  <Icon icon={CheckCircle2} variant="soft" size="md" />
                 </div>
               </CardContent>
             </Card>
@@ -217,7 +218,7 @@ const ProjectDetail = () => {
                     <p className="text-sm font-medium text-muted-foreground mb-1">Pendientes</p>
                     <p className="text-3xl font-bold text-amber-600">{pendingRequisitions}</p>
                   </div>
-                  <Clock className="h-8 w-8 text-amber-600" />
+                  <Icon icon={Clock} variant="soft" size="md" />
                 </div>
               </CardContent>
             </Card>
@@ -228,7 +229,7 @@ const ProjectDetail = () => {
                     <p className="text-sm font-medium text-muted-foreground mb-1">Total Invertido</p>
                     <p className="text-3xl font-bold text-foreground">${totalAmount.toFixed(2)}</p>
                   </div>
-                  <TrendingUp className="h-8 w-8 text-primary-600" />
+                  <Icon icon={TrendingUp} variant="soft" size="md" />
                 </div>
               </CardContent>
             </Card>
@@ -239,9 +240,7 @@ const ProjectDetail = () => {
             <Card className="shadow-lg border-2 transition-shadow duration-300 hover:shadow-xl">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="icon-badge flex h-12 w-12 items-center justify-center">
-                    <Users className="h-6 w-6 text-primary-600 dark:text-primary-100" />
-                  </div>
+                  <Icon icon={Users} variant="soft" size="lg" />
                   <CardTitle className="text-2xl font-bold text-foreground">Miembros del Proyecto</CardTitle>
                 </div>
               </CardHeader>
@@ -297,9 +296,7 @@ const ProjectDetail = () => {
             <Card className="shadow-lg border-2 transition-shadow duration-300 hover:shadow-xl">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="icon-badge flex h-12 w-12 items-center justify-center">
-                    <FileText className="h-6 w-6 text-primary-600 dark:text-primary-100" />
-                  </div>
+                  <Icon icon={FileText} variant="soft" size="lg" />
                   <CardTitle className="text-2xl font-bold text-foreground">Requisiciones Recientes</CardTitle>
                 </div>
               </CardHeader>
