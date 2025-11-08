@@ -23,18 +23,18 @@ const MenuItem = memo(({ to, icon: Icon, children, onClick, badge }) => {
         <NavLink to={to} onClick={handleClick}>
             <div
                 className={cn(
-                    'group flex items-center gap-3 rounded-lg px-4 py-3 transition-all duration-200',
-                    'font-medium text-sm',
+                    'group flex items-center gap-3 rounded-lg px-4 py-3 transition-all duration-base ease-smooth-out',
+                    'font-medium text-sm cursor-pointer',
                     'border-l-[6px]',
                     isActive
                         ? 'bg-primary-100/80 dark:bg-primary-900/30 text-primary-700 dark:text-primary-100 border-primary-600 dark:border-primary-400 shadow-sm dark:shadow-primary-900/20'
-                        : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 border-transparent'
+                        : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 border-transparent hover:translate-x-0.5'
                 )}
             >
                 {/* Icon */}
                 <Icon
                     className={cn(
-                        'icon-md flex-shrink-0 transition-colors duration-200',
+                        'icon-md flex-shrink-0 transition-colors duration-base ease-smooth-out',
                         isActive
                             ? 'text-primary-600 dark:text-primary-200'
                             : 'text-neutral-600 dark:text-neutral-300 group-hover:text-primary-600 dark:group-hover:text-primary-400'

@@ -88,7 +88,7 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
     return (
         <header
             className={cn(
-                'nav-shell sticky top-0 z-40 w-full transition-all duration-300',
+                'nav-shell sticky top-0 z-40 w-full transition-all duration-base ease-smooth-out',
                 'px-4 pb-1.5 pt-[calc(env(safe-area-inset-top)+0.35rem)] sm:px-6 sm:py-3 lg:px-10',
                 !isDesktop && !isHeaderVisible && '-translate-y-full opacity-0',
                 !isDesktop && isHeaderVisible && 'translate-y-0 opacity-100'
@@ -98,7 +98,7 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
             {isDesktop ? (
                 <div className="flex w-full items-center justify-between gap-6">
                     <div className="flex flex-1 items-center gap-6">
-                        <Link to="/dashboard" className="flex items-center gap-2" aria-label="ComerECO - Ir al inicio">
+                        <Link to="/dashboard" className="flex items-center gap-2 transition-opacity duration-base ease-smooth-out hover:opacity-80 active:opacity-70" aria-label="ComerECO - Ir al inicio">
                             <img
                                 src="/logo.png"
                                 alt="ComerECO"
@@ -121,7 +121,7 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <button
-                                    className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200 hover:bg-[var(--surface-muted)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-background dark:hover:bg-[rgba(26,48,86,0.55)]"
+                                    className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2 transition-all duration-base ease-smooth-out hover:bg-[var(--surface-muted)] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-background dark:hover:bg-[rgba(26,48,86,0.55)]"
                                     aria-label={`Menú de usuario: ${userName}`}
                                     aria-haspopup="true"
                                 >

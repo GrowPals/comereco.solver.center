@@ -26,7 +26,7 @@ const DialogOverlay = React.forwardRef(({ className, ...props }, ref) => (
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      'fixed inset-0 z-50 bg-black/55 backdrop-blur-[2px] transition-all duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 dark:bg-black/70',
+      'fixed inset-0 z-50 bg-black/55 backdrop-blur-[2px] transition-all duration-base ease-smooth-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 dark:bg-black/70',
       className
     )}
     {...props}
@@ -46,7 +46,7 @@ const DialogContent = React.forwardRef(({ className, children, ...props }, ref) 
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-xl bg-muted text-muted-foreground shadow-sm transition-all duration-200 hover:scale-110 hover:bg-muted/60 hover:text-foreground active:scale-95 ring-offset-background focus:outline-none focus:ring-2 focus:ring-primary-200 focus:ring-offset-2 disabled:pointer-events-none hover:shadow-md sm:right-4 sm:top-4 dark:bg-muted/30 dark:text-foreground/80 dark:hover:bg-muted/50 dark:hover:text-white">
+      <DialogPrimitive.Close className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-xl bg-muted text-muted-foreground shadow-sm transition-all duration-base ease-smooth-out hover:scale-105 hover:bg-muted/60 hover:text-foreground active:scale-95 ring-offset-background focus:outline-none focus:ring-2 focus:ring-primary-200 focus:ring-offset-2 disabled:pointer-events-none hover:shadow-md sm:right-4 sm:top-4 dark:bg-muted/30 dark:text-foreground/80 dark:hover:bg-muted/50 dark:hover:text-white cursor-pointer">
         <X className="h-5 w-5" />
         <span className="sr-only">Cerrar diálogo</span>
       </DialogPrimitive.Close>
