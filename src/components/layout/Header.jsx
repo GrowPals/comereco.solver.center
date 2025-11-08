@@ -1,5 +1,5 @@
 
-import React, { useMemo, useCallback, memo, useEffect, useState } from 'react';
+import React, { useMemo, useCallback, memo, useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ChevronDown, LogOut, User } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -13,6 +13,7 @@ import ThemeToggle from '@/components/layout/ThemeToggle';
 import CompanySwitcher from '@/components/layout/CompanySwitcher';
 
 const MOBILE_BREAKPOINT = 1024;
+const SCROLL_THRESHOLD = 10; // Píxeles mínimos de scroll para activar hide/show
 
 const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
     const { user, signOut } = useSupabaseAuth();
@@ -22,6 +23,10 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
         if (typeof window === 'undefined') return true;
         return window.innerWidth >= MOBILE_BREAKPOINT;
     });
+
+    const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+    const lastScrollY = useRef(0);
+    const ticking = useRef(false);
 
     const handleLogout = useCallback(async () => {
         await signOut();
@@ -46,12 +51,47 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    // Efecto para manejar scroll en mobile
+    useEffect(() => {
+        if (typeof window === 'undefined' || isDesktop) return undefined;
+
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+
+            if (!ticking.current) {
+                window.requestAnimationFrame(() => {
+                    // Si está en el top, siempre mostrar
+                    if (currentScrollY < 10) {
+                        setIsHeaderVisible(true);
+                    }
+                    // Si scrollea hacia abajo y ha superado el threshold, ocultar
+                    else if (currentScrollY > lastScrollY.current && currentScrollY - lastScrollY.current > SCROLL_THRESHOLD) {
+                        setIsHeaderVisible(false);
+                    }
+                    // Si scrollea hacia arriba, mostrar
+                    else if (currentScrollY < lastScrollY.current && lastScrollY.current - currentScrollY > SCROLL_THRESHOLD) {
+                        setIsHeaderVisible(true);
+                    }
+
+                    lastScrollY.current = currentScrollY;
+                    ticking.current = false;
+                });
+
+                ticking.current = true;
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [isDesktop]);
+
     return (
         <header
             className={cn(
-                'nav-shell sticky top-0 z-40 w-full transition-shadow duration-200',
-                'px-4 pb-2 pt-[calc(env(safe-area-inset-top)+0.55rem)] sm:px-6 sm:py-3 lg:px-10',
-                'transition-colors duration-200'
+                'nav-shell sticky top-0 z-40 w-full transition-all duration-300',
+                'px-4 pb-1.5 pt-[calc(env(safe-area-inset-top)+0.35rem)] sm:px-6 sm:py-3 lg:px-10',
+                !isDesktop && !isHeaderVisible && '-translate-y-full opacity-0',
+                !isDesktop && isHeaderVisible && 'translate-y-0 opacity-100'
             )}
             role="banner"
         >

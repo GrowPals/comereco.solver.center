@@ -17,6 +17,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import PageContainer from '@/components/layout/PageContainer';
 import CompanyContextIndicator from '@/components/layout/CompanyContextIndicator';
 import { IconWrapper } from '@/components/ui/icon-wrapper';
+import ScrollToTopButton from '@/components/ScrollToTopButton';
 
 
 const RequisitionsPage = () => {
@@ -62,6 +63,8 @@ const RequisitionsPage = () => {
         <title>Mis Requisiciones - ComerECO</title>
         <meta name="description" content="Vea y gestione sus requisiciones de compra." />
       </Helmet>
+
+      <ScrollToTopButton />
 
       <PageContainer>
         <div className="mx-auto w-full max-w-7xl">
