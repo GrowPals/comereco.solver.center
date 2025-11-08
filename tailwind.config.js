@@ -195,11 +195,33 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: 0 },
         },
+        // Animación de corazón favorito - bounce suave
+        "heart-bounce": {
+          "0%": { transform: "scale(1)" },
+          "25%": { transform: "scale(1.25)" },
+          "50%": { transform: "scale(0.9)" },
+          "75%": { transform: "scale(1.1)" },
+          "100%": { transform: "scale(1)" },
+        },
+        // Animación de pulso sutil para favorito activo
+        "heart-pulse": {
+          "0%, 100%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.05)" },
+        },
+        // Animación de check para botón agregar
+        "check-bounce": {
+          "0%": { transform: "scale(0) rotate(-45deg)", opacity: "0" },
+          "50%": { transform: "scale(1.2) rotate(-45deg)", opacity: "1" },
+          "100%": { transform: "scale(1) rotate(0deg)", opacity: "1" },
+        },
       },
 
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "heart-bounce": "heart-bounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "heart-pulse": "heart-pulse 1.5s ease-in-out infinite",
+        "check-bounce": "check-bounce 0.5s ease-out",
       },
 
       transitionDuration: {
