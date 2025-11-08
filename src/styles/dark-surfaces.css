@@ -2,13 +2,13 @@
   .dark .surface-glass {
     background: rgba(12, 24, 46, 0.16);
     backdrop-filter: blur(18px);
-    border: 1px solid rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(110, 180, 245, 0.08);
   }
 
   .dark .surface-glass-strong {
     background: rgba(15, 30, 55, 0.24);
     backdrop-filter: blur(24px);
-    border: 1px solid rgba(109, 186, 255, 0.1);
+    border: 1px solid rgba(110, 180, 245, 0.14);
   }
 
   .dark .surface-transparent {

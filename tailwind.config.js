@@ -195,11 +195,33 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: 0 },
         },
+        // Animación de corazón favorito - bounce suave
+        "heart-bounce": {
+          "0%": { transform: "scale(1)" },
+          "25%": { transform: "scale(1.25)" },
+          "50%": { transform: "scale(0.9)" },
+          "75%": { transform: "scale(1.1)" },
+          "100%": { transform: "scale(1)" },
+        },
+        // Animación de pulso sutil para favorito activo
+        "heart-pulse": {
+          "0%, 100%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.05)" },
+        },
+        // Animación de check para botón agregar
+        "check-bounce": {
+          "0%": { transform: "scale(0) rotate(-45deg)", opacity: "0" },
+          "50%": { transform: "scale(1.2) rotate(-45deg)", opacity: "1" },
+          "100%": { transform: "scale(1) rotate(0deg)", opacity: "1" },
+        },
       },
 
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "heart-bounce": "heart-bounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "heart-pulse": "heart-pulse 1.5s ease-in-out infinite",
+        "check-bounce": "check-bounce 0.5s ease-out",
       },
 
       transitionDuration: {
@@ -211,38 +233,100 @@ export default {
   },
   plugins: [
     tailwindcssAnimate,
-    // Plugin para clases semánticas de tipografía
+    // Plugin para clases semánticas de tipografía - Sistema unificado
     function({ addComponents }) {
       addComponents({
+        // ============ HEADINGS ============
+        // H1 - Hero titles, main page headings
         '.heading-1': {
           '@apply text-4xl md:text-5xl font-bold tracking-tight leading-tight text-foreground': {},
         },
+        // H2 - Section titles, major divisions
         '.heading-2': {
           '@apply text-3xl md:text-4xl font-bold tracking-tight leading-tight text-foreground': {},
         },
+        // H3 - Subsection titles, card titles
         '.heading-3': {
           '@apply text-2xl md:text-3xl font-semibold leading-tight text-foreground': {},
         },
+        // H4 - Component titles, smaller headers
         '.heading-4': {
           '@apply text-xl md:text-2xl font-semibold leading-normal text-foreground': {},
         },
+        // H5 - Minor headings, list headers
         '.heading-5': {
           '@apply text-lg md:text-xl font-semibold leading-normal text-foreground': {},
         },
+
+        // ============ BODY TEXT ============
+        // Body Large - Introductory text, emphasis paragraphs
         '.body-large': {
-          '@apply text-lg leading-relaxed text-foreground text-opacity-80': {},
+          '@apply text-lg leading-relaxed text-foreground': {},
         },
+        // Body Base - Standard body text, default reading
         '.body-base': {
-          '@apply text-base leading-normal text-foreground text-opacity-80': {},
+          '@apply text-base leading-normal text-foreground': {},
         },
+        // Body Small - Compact text, secondary information
         '.body-small': {
-          '@apply text-sm leading-normal text-muted-foreground': {},
+          '@apply text-sm leading-normal text-foreground': {},
         },
+
+        // ============ SECONDARY TEXT ============
+        // Secondary Large - Large auxiliary text with improved contrast
+        '.text-secondary-lg': {
+          '@apply text-lg leading-relaxed text-neutral-700 dark:text-neutral-200': {},
+        },
+        // Secondary Base - Standard auxiliary text with improved contrast
+        '.text-secondary': {
+          '@apply text-base leading-normal text-neutral-700 dark:text-neutral-200': {},
+        },
+        // Secondary Small - Small auxiliary text with improved contrast
+        '.text-secondary-sm': {
+          '@apply text-sm leading-normal text-neutral-700 dark:text-neutral-200': {},
+        },
+
+        // ============ MUTED/TERTIARY TEXT ============
+        // Muted text for less important information
+        '.text-muted': {
+          '@apply text-sm leading-normal text-neutral-600 dark:text-neutral-300': {},
+        },
+        // Muted extra small
+        '.text-muted-xs': {
+          '@apply text-xs leading-normal text-neutral-600 dark:text-neutral-300': {},
+        },
+
+        // ============ LABELS & METADATA ============
+        // Caption - Uppercase labels, tags, badges
         '.caption': {
-          '@apply text-xs leading-normal uppercase tracking-wide text-muted-foreground': {},
+          '@apply text-xs leading-normal uppercase tracking-wide font-semibold text-neutral-600 dark:text-neutral-300': {},
         },
+        // Label - Form labels, input labels
         '.label': {
-          '@apply text-sm font-medium leading-none text-foreground text-opacity-90': {},
+          '@apply text-sm font-medium leading-none text-foreground': {},
+        },
+        // Small text - Fine print, helper text
+        '.text-small': {
+          '@apply text-xs leading-normal text-neutral-600 dark:text-neutral-300': {},
+        },
+
+        // ============ NUMERIC/DISPLAY TEXT ============
+        // Large numbers for stats, metrics
+        '.display-number': {
+          '@apply text-3xl md:text-4xl font-bold tabular-nums tracking-tight text-foreground': {},
+        },
+        // Price display
+        '.price-large': {
+          '@apply text-2xl font-bold tabular-nums text-foreground': {},
+        },
+        '.price-medium': {
+          '@apply text-xl font-bold tabular-nums text-foreground': {},
+        },
+
+        // ============ INTERACTIVE TEXT ============
+        // Link style
+        '.text-link': {
+          '@apply text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 underline-offset-2 hover:underline transition-colors': {},
         },
       })
     }

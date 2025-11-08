@@ -49,13 +49,13 @@ const BottomNav = memo(({ onMenuClick, isMenuOpen = false }) => {
                             key={item.path}
                             to={item.path}
                             onClick={(e) => handleNavClick(e, item.path)}
-                            className="group inline-flex flex-col items-center justify-center gap-1 transition-all duration-200"
+                            className="group inline-flex flex-col items-center justify-center gap-1 transition-all duration-200 p-1"
                             aria-label={item.label}
                             aria-current={isItemActive ? 'page' : undefined}
                         >
                             <div
                                 className={cn(
-                                    'nav-link-base relative flex min-h-[44px] min-w-[44px] items-center justify-center transition-transform duration-200',
+                                    'nav-link-base relative flex min-h-[48px] min-w-[48px] items-center justify-center transition-transform duration-200 rounded-xl',
                                     isItemActive ? 'nav-link-active' : 'nav-link-inactive'
                                 )}
                             >
@@ -82,14 +82,14 @@ const BottomNav = memo(({ onMenuClick, isMenuOpen = false }) => {
                 {/* Botón de acción rápida - Catálogo */}
                 <button
                     onClick={() => navigate('/catalog')}
-                    className="group inline-flex flex-col items-center justify-center gap-1 transition-all duration-200"
+                    className="group inline-flex flex-col items-center justify-center gap-1 transition-all duration-200 px-2"
                     aria-label="Ir al catálogo de productos"
                 >
-                    <div className="relative -mt-2 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary-500 to-primary-600 shadow-button transition-all duration-300 hover:shadow-button-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-2 focus-visible:ring-offset-background group-active:scale-95">
+                    <div className="relative -mt-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary-500 to-primary-600 shadow-button transition-all duration-300 hover:shadow-button-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-300/50 focus-visible:ring-offset-4 focus-visible:ring-offset-background group-active:scale-95 ring-4 ring-background">
                         <Plus className="h-7 w-7 text-white transition-transform duration-200 group-hover:scale-110 drop-shadow-[0_1px_4px_rgba(255,255,255,0.25)]" aria-hidden="true" />
                     </div>
-                    <span className="nav-label nav-label-active mt-1 font-semibold">
-                        Agregar
+                    <span className="nav-label nav-label-active font-semibold">
+                        Catálogo
                     </span>
                 </button>
 
@@ -103,13 +103,13 @@ const BottomNav = memo(({ onMenuClick, isMenuOpen = false }) => {
                             key={item.path}
                             to={item.path}
                             onClick={(e) => handleNavClick(e, item.path)}
-                            className="group inline-flex flex-col items-center justify-center gap-1 transition-all duration-200"
+                            className="group inline-flex flex-col items-center justify-center gap-1 transition-all duration-200 p-1"
                             aria-label={item.label}
                             aria-current={isItemActive ? 'page' : undefined}
                         >
                             <div
                                 className={cn(
-                                    'nav-link-base relative flex min-h-[44px] min-w-[44px] items-center justify-center transition-transform duration-200',
+                                    'nav-link-base relative flex min-h-[48px] min-w-[48px] items-center justify-center transition-transform duration-200 rounded-xl',
                                     isItemActive ? 'nav-link-active' : 'nav-link-inactive'
                                 )}
                             >
@@ -136,14 +136,14 @@ const BottomNav = memo(({ onMenuClick, isMenuOpen = false }) => {
                 {/* Botón de Menú - Abre el Sidebar */}
                 <button
                     onClick={onMenuClick}
-                    className="group inline-flex flex-col items-center justify-center gap-1 transition-all duration-200"
+                    className="group inline-flex flex-col items-center justify-center gap-1 transition-all duration-200 p-1"
                     aria-label="Abrir menú de navegación"
                     aria-haspopup="true"
                     aria-expanded={isMenuOpen}
                 >
                     <div
                         className={cn(
-                            'nav-link-base relative flex min-h-[44px] min-w-[44px] items-center justify-center transition-transform duration-200',
+                            'nav-link-base relative flex min-h-[48px] min-w-[48px] items-center justify-center transition-transform duration-200 rounded-xl',
                             isMenuOpen ? 'nav-link-active' : 'nav-link-inactive'
                         )}
                     >

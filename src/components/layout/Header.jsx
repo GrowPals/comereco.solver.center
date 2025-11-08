@@ -100,7 +100,7 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
                     <div className="flex flex-1 items-center gap-6">
                         <Link to="/dashboard" className="flex items-center gap-2" aria-label="ComerECO - Ir al inicio">
                             <img
-                                src="https://i.ibb.co/HLZ06zr5/isotipo-comereco-1.png"
+                                src="/logo.png"
                                 alt="ComerECO"
                                 className="h-10 w-10 object-contain"
                                 loading="eager"
