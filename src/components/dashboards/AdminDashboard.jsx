@@ -5,7 +5,6 @@ import { getDashboardStats } from '@/services/dashboardService';
 import StatCard from './StatCard';
 import QuickAccess from './QuickAccess';
 import RecentRequisitions from './RecentRequisitions';
-import CompanyContextIndicator from '@/components/layout/CompanyContextIndicator';
 import { Users, FolderKanban, FileText, ShoppingBag, BarChart2 } from 'lucide-react';
 
 const AdminDashboard = memo(({ user }) => {
@@ -17,6 +16,8 @@ const AdminDashboard = memo(({ user }) => {
     });
 
     const formatCurrency = (value) => value ? `$${Number(value).toFixed(2)}` : '$0.00';
+
+    const firstName = user?.full_name?.split(' ')[0] || 'Usuario';
 
     // Calculate trends (in production, this would come from the backend)
     const calculateTrend = (current, metricType) => {
@@ -45,23 +46,21 @@ const AdminDashboard = memo(({ user }) => {
         { label: 'Gestionar Usuarios', icon: Users, path: '/users', tone: 'sky' },
         { label: 'Gestionar Proyectos', icon: FolderKanban, path: '/projects', tone: 'amber' },
         { label: 'Gestionar Productos', icon: ShoppingBag, path: '/products/manage', tone: 'rose' },
-        { label: 'Reportes', icon: BarChart2, path: '/reports', variant: 'secondary', tone: 'slate' },
+            { label: 'Reportes', icon: BarChart2, path: '/reports', variant: 'secondary', tone: 'slate' },
     ];
 
     return (
         <div className="max-w-7xl mx-auto space-y-10">
             {/* Hero Section */}
-            <div className="flex flex-col gap-4 pb-8 border-b border-border">
-                <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                        <h1 className="text-5xl font-bold tracking-tight text-foreground">
-                            Panel <span className="bg-gradient-primary bg-clip-text text-transparent">Ejecutivo</span>
-                        </h1>
-                        <p className="mt-3 text-lg text-muted-foreground">
-                            Vista general de la compañía: <span className="font-semibold text-foreground">{user.company?.name || 'Tu Empresa'}</span>
-                        </p>
-                    </div>
-                    <CompanyContextIndicator className="flex-shrink-0" />
+            <div className="flex flex-col gap-6 border-b border-border pb-8">
+                <div className="space-y-3 max-w-3xl">
+                    <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">Bienvenido</p>
+                    <h1 className="page-title">
+                        Hola, <span className="page-title-accent">{firstName}</span>
+                    </h1>
+                    <p className="page-title-subtext">
+                        Panel ejecutivo para monitorear requisiciones, equipos y presupuesto en tiempo real.
+                    </p>
                 </div>
             </div>
 
@@ -71,7 +70,7 @@ const AdminDashboard = memo(({ user }) => {
                     title="Requisiciones Activas"
                     value={stats?.active_requisitions_count || 0}
                     icon={FileText}
-                    iconTone="violet"
+                    iconTone="primary"
                     isLoading={isLoading}
                     trend={calculateTrend(stats?.active_requisitions_count, 'active_requisitions_count')}
                     sparklineData={[12, 15, 18, 14, 20, 18, stats?.active_requisitions_count || 0]}
@@ -80,7 +79,7 @@ const AdminDashboard = memo(({ user }) => {
                     title="Total de Usuarios"
                     value={stats?.total_users_count || 0}
                     icon={Users}
-                    iconTone="sky"
+                    iconTone="primary"
                     isLoading={isLoading}
                     trend={calculateTrend(stats?.total_users_count, 'total_users_count')}
                 />
@@ -88,7 +87,7 @@ const AdminDashboard = memo(({ user }) => {
                     title="Total de Proyectos"
                     value={stats?.total_projects_count || 0}
                     icon={FolderKanban}
-                    iconTone="amber"
+                    iconTone="primary"
                     isLoading={isLoading}
                     trend={calculateTrend(stats?.total_projects_count, 'total_projects_count')}
                 />

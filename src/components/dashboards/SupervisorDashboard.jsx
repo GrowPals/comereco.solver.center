@@ -5,7 +5,6 @@ import { getDashboardStats, getSupervisorProjectsActivity } from '@/services/das
 import StatCard from './StatCard';
 import QuickAccess from './QuickAccess';
 import RecentRequisitions from './RecentRequisitions';
-import CompanyContextIndicator from '@/components/layout/CompanyContextIndicator';
 import { CheckSquare, FolderKanban, History, Hourglass, CheckCircle, XCircle } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { ROUTES } from '@/config/routes.config';
@@ -58,19 +57,27 @@ const SupervisorDashboard = memo(({ user }) => {
         { label: 'Historial', icon: History, path: '/requisitions', variant: 'outline', tone: 'violet' },
     ];
 
+    const firstName = user?.full_name?.split(' ')[0] || 'Supervisor';
+
     return (
         <div className="space-y-8">
-            <div className="flex flex-col gap-2">
-                <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                        <h1 className="text-4xl font-bold text-foreground">
-                            Panel del <span className="bg-gradient-primary bg-clip-text text-transparent">Supervisor</span>
+            <div className="flex flex-col gap-6 border-b border-border pb-6">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                    <div className="space-y-2">
+                        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">Hola</p>
+                        <h1 className="page-title">
+                            Hola, <span className="page-title-accent">{firstName}</span>
                         </h1>
-                        <p className="mt-2 text-base text-muted-foreground">
-                            Bienvenido, <span className="font-semibold text-foreground">{user.full_name}</span>. Revisa las requisiciones pendientes.
+                        <p className="page-title-subtext">
+                            Revisa tus requisiciones pendientes y proyectos asignados.
                         </p>
                     </div>
-                    <CompanyContextIndicator className="flex-shrink-0" />
+                    <div className="space-y-1 text-left lg:text-right">
+                        <p className="text-sm font-semibold text-muted-foreground">Panel</p>
+                        <p className="text-3xl font-bold text-foreground">
+                            Panel del <span className="page-title-accent">Supervisor</span>
+                        </p>
+                    </div>
                 </div>
             </div>
 
@@ -79,7 +86,7 @@ const SupervisorDashboard = memo(({ user }) => {
                     title="Pendientes de Aprobación"
                     value={stats?.pending_approvals_count || 0}
                     icon={Hourglass}
-                    iconTone="amber"
+                    iconTone="primary"
                     isLoading={isLoadingStats}
                     trend={calculateTrend(stats?.pending_approvals_count, 'pending_approvals_count')}
                 />
@@ -96,7 +103,7 @@ const SupervisorDashboard = memo(({ user }) => {
                     title="Rechazadas (mes)"
                     value={stats?.rejected_count || 0}
                     icon={XCircle}
-                    iconTone="rose"
+                    iconTone="primary"
                     isLoading={isLoadingStats}
                     trend={calculateTrend(stats?.rejected_count, 'rejected_count')}
                 />
@@ -104,7 +111,7 @@ const SupervisorDashboard = memo(({ user }) => {
                     title="Monto Aprobado (mes)"
                     value={stats?.approved_total || 0}
                     icon={CheckCircle}
-                    iconTone="violet"
+                    iconTone="primary"
                     isLoading={isLoadingStats}
                     format={formatCurrency}
                     trend={calculateTrend(stats?.approved_total, 'approved_total')}

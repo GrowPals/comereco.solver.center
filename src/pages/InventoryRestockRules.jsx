@@ -155,13 +155,13 @@ const FiltersBar = ({ filters, onFiltersChange, categories, projects, isRefreshi
         </div>
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 sm:justify-end">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
         <Button
           variant="ghost"
           onClick={handleClear}
-          className="h-10 rounded-2xl border-2 border-border text-sm font-semibold text-muted-foreground hover:bg-muted/70 hover:text-foreground dark:border-border dark:text-foreground"
+          className="h-10 rounded-2xl border border-border text-sm font-semibold text-muted-foreground hover:border-primary-300 hover:text-foreground dark:border-border"
         >
-          Limpiar filtros
+          Reiniciar filtros
         </Button>
         <Button
           variant="secondary"
@@ -448,31 +448,24 @@ const InventoryRestockRules = () => {
       </Helmet>
 
       <div className="mx-auto flex w-full max-w-[92rem] flex-col gap-6 lg:gap-7">
-        <section className="surface-panel px-5 py-4 sm:px-6 sm:py-5">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-            <div className="space-y-1">
-              <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-[2.05rem]">Reabastecimiento automático</h1>
-              <p className="max-w-2xl text-sm text-muted-foreground">
+        <header className="border-b border-border pb-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="space-y-2">
+              <h1 className="page-title">
+                Reabastecimiento <span className="page-title-accent">Automático</span>
+              </h1>
+              <p className="page-title-subtext max-w-2xl">
                 Configura reglas para disparar requisiciones cuando el stock llegue a un mínimo.
               </p>
             </div>
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
-              <Button
-                className="h-11 w-full rounded-2xl px-6 text-sm font-semibold sm:w-auto"
-                onClick={() => setCreateDialogOpen(true)}
-              >
-                <Plus className="mr-2 h-4 w-4" /> Nueva regla
-              </Button>
-              <Button
-                variant="outline"
-                className="hidden h-11 rounded-2xl px-6 text-sm font-semibold lg:inline-flex"
-                onClick={() => setFilters({ searchTerm: '', status: 'all', projectId: 'all', category: 'all', page: 1 })}
-              >
-                Reiniciar filtros
-              </Button>
-            </div>
+            <Button
+              className="h-11 rounded-2xl px-6 text-sm font-semibold"
+              onClick={() => setCreateDialogOpen(true)}
+            >
+              <Plus className="mr-2 h-4 w-4" /> Crear regla
+            </Button>
           </div>
-        </section>
+        </header>
 
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           <SummaryStat
@@ -526,7 +519,7 @@ const InventoryRestockRules = () => {
               ))}
             </div>
           ) : (
-            <EmptyRulesPlaceholder onCreateRule={() => setCreateDialogOpen(true)} />
+            <EmptyRulesPlaceholder />
           )}
         </section>
 

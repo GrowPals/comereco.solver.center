@@ -34,7 +34,7 @@ const SettingsCard = ({ title, description, children, onSave, isSaving }) => (
             {children}
         </CardContent>
         {onSave && (
-            <div className="surface-sticky sticky bottom-0 left-0 right-0 z-10 mt-auto rounded-b-2xl px-6 py-4">
+            <div className="settings-sticky-footer sticky bottom-0 left-0 right-0 z-10 mt-auto rounded-b-2xl px-6 py-4">
                 <Button onClick={onSave} disabled={isSaving} className="w-full rounded-xl shadow-soft-md hover:shadow-soft-lg" size="lg">
                     {isSaving ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : null}
                     Guardar Cambios

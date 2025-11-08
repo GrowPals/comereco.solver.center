@@ -22,33 +22,29 @@ import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import PageLoader from '@/components/PageLoader';
 import PageContainer from '@/components/layout/PageContainer';
-import { IconWrapper, SectionIcon } from '@/components/ui/icon-wrapper';
+import { Icon as Glyph } from '@/components/ui/icon';
+import { SectionIcon } from '@/components/ui/icon-wrapper';
 
-const notificationStyles = {
+const notificationThemes = {
     success: {
-        icon: Bell,
-        iconClass: 'text-emerald-600 drop-shadow-[0_6px_12px_rgba(16,185,129,0.35)] dark:text-emerald-200 dark:drop-shadow-[0_8px_18px_rgba(95,230,185,0.45)]',
-        borderClass: '!border-emerald-200/80 hover:!border-emerald-300/80 dark:!border-emerald-400/80 dark:hover:!border-emerald-300/90',
+        iconTone: 'success',
+        accent: 'from-emerald-400/80 to-emerald-500/30',
     },
     warning: {
-        icon: Bell,
-        iconClass: 'text-amber-500 drop-shadow-[0_6px_12px_rgba(245,158,11,0.3)] dark:text-amber-200 dark:drop-shadow-[0_8px_18px_rgba(255,200,102,0.4)]',
-        borderClass: '!border-amber-200/80 hover:!border-amber-300/85 dark:!border-amber-400/80 dark:hover:!border-amber-300/85',
+        iconTone: 'warning',
+        accent: 'from-amber-400/80 to-amber-500/30',
     },
     danger: {
-        icon: Bell,
-        iconClass: 'text-red-500 drop-shadow-[0_6px_12px_rgba(239,68,68,0.3)] dark:text-rose-200 dark:drop-shadow-[0_8px_18px_rgba(255,120,120,0.45)]',
-        borderClass: '!border-red-200/80 hover:!border-red-300/85 dark:!border-rose-400/80 dark:hover:!border-rose-300/90',
+        iconTone: 'danger',
+        accent: 'from-coral-400/80 to-red-500/30',
     },
     info: {
-        icon: Bell,
-        iconClass: 'text-primary-600 drop-shadow-[0_6px_12px_rgba(37,99,235,0.35)] dark:text-sky-300 dark:drop-shadow-[0_8px_20px_rgba(91,176,255,0.55)]',
-        borderClass: '!border-primary-200/80 hover:!border-primary-300/85 dark:!border-sky-400/90 dark:hover:!border-cyan-300/95',
+        iconTone: 'primary',
+        accent: 'from-sky-400/80 to-indigo-500/30',
     },
     default: {
-        icon: Bell,
-        iconClass: 'text-muted-foreground drop-shadow-[0_6px_12px_rgba(15,23,42,0.25)] dark:text-[#8cb4ff] dark:drop-shadow-[0_8px_16px_rgba(76,126,196,0.35)]',
-        borderClass: '!border-border/80 dark:!border-[#3a5a8f]/70',
+        iconTone: 'primary',
+        accent: 'from-muted/80 to-muted/40',
     },
 };
 
@@ -125,20 +121,20 @@ const NotificationsPage = () => {
     if (isLoading) return <PageLoader />;
     
     const NotificationCard = ({ notification }) => {
-        const { icon: Icon, iconClass, borderClass } = notificationStyles[notification.type] || notificationStyles.default;
+        const theme = notificationThemes[notification.type] || notificationThemes.default;
         const isSelected = selectedIds.includes(notification.id);
         const isUnread = !notification.is_read;
 
         return (
             <Card
                 className={cn(
-                    "surface-card flex items-start gap-4 p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-soft-lg cursor-pointer",
-                    borderClass,
-                    isUnread && "ring-1 ring-primary-300/45 dark:ring-primary-400/40",
-                    isSelected && "ring-2 ring-primary-500 border-primary-400/80 dark:ring-primary-300 dark:border-primary-400/50"
+                    'relative flex items-start gap-4 rounded-xl border border-border bg-card p-4 pl-6 transition-colors duration-200 cursor-pointer dark:border-border/60 dark:bg-[#0f192b] dark:hover:bg-[#13233c]',
+                    isUnread && 'bg-primary-50/40 dark:bg-primary-500/5',
+                    isSelected && 'ring-1 ring-primary-500 border-primary-400 dark:border-primary-400/60'
                 )}
                 onClick={() => notification.link && navigate(notification.link)}
             >
+                <span className={cn('absolute inset-y-4 left-2 w-[3px] rounded-full bg-gradient-to-b shadow-[0_0_12px_rgba(37,99,235,0.35)]', theme.accent)} aria-hidden="true" />
                 <Checkbox
                     checked={isSelected}
                     onCheckedChange={(checked) =>
@@ -149,13 +145,7 @@ const NotificationsPage = () => {
                     className="mt-1"
                     onClick={(e) => e.stopPropagation()}
                 />
-                <Icon
-                    className={cn(
-                        "h-8 w-8 sm:h-9 sm:w-9 transition-colors duration-200",
-                        iconClass
-                    )}
-                    aria-hidden="true"
-                />
+                <Glyph icon={Bell} tone={theme.iconTone} size="lg" className="mt-1" aria-hidden="true" />
                 <div className="flex-1">
                     <p className={cn("text-base", notification.is_read ? "font-semibold text-foreground" : "font-bold text-foreground")}>{notification.title}</p>
                     <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{notification.message}</p>
@@ -164,7 +154,7 @@ const NotificationsPage = () => {
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()} className="rounded-xl h-9 w-9">
-                            <MoreVertical className="h-5 w-5" />
+                            <MoreVertical className="h-5 w-5 text-muted-foreground" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="rounded-xl surface-card p-2">
@@ -189,9 +179,11 @@ const NotificationsPage = () => {
                         <div className="flex items-center gap-3 sm:gap-4">
                             <SectionIcon icon={Bell} size="lg" />
                             <div className="space-y-1">
-                                <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Notificaciones</h1>
+                                <h1 className="page-title">
+                                    Centro de <span className="page-title-accent">Notificaciones</span>
+                                </h1>
                                 {unreadCount > 0 && (
-                                    <p className="text-sm text-muted-foreground sm:text-base">{unreadCount} notificaciones no leídas</p>
+                                    <p className="page-title-subtext">{unreadCount} notificaciones no leídas</p>
                                 )}
                             </div>
                         </div>
@@ -293,8 +285,8 @@ const NotificationsPage = () => {
                             ))}
                         </div>
                     ) : (
-                        <div className="surface-card p-20 text-center shadow-soft-md">
-                            <IconWrapper icon={Search} variant="neutral" size="xl" className="mx-auto mb-6 text-muted-foreground" />
+                        <div className="surface-card p-20 text-center">
+                            <Glyph icon={Search} size="lg" className="mx-auto mb-6" tone="primary" />
                             <h3 className="mb-2 text-2xl font-bold text-foreground">No se encontraron notificaciones</h3>
                             <p className="text-base text-muted-foreground">Intenta ajustar tus filtros de búsqueda.</p>
                         </div>

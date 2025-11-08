@@ -44,11 +44,25 @@ const STAT_ICON_TONES = {
   slate: 'text-muted-foreground',
 };
 
-export function StatIcon({ icon: IconComponent, size = 'lg', tone = 'primary', className, ...props }) {
+const STAT_ICON_GLOWS = {
+  primary: 'shadow-glow-primary',
+  sky: 'shadow-glow-primary',
+  mint: 'shadow-glow-success',
+  amber: 'shadow-glow-warning',
+  rose: 'shadow-glow-error',
+  slate: '',
+};
+
+export function StatIcon({ icon: IconComponent, size = 'lg', tone = 'primary', className, glow = true, ...props }) {
   if (!IconComponent) return null;
   return (
     <IconComponent
-      className={cn(STAT_ICON_SIZES[size] || STAT_ICON_SIZES.md, STAT_ICON_TONES[tone] || STAT_ICON_TONES.primary, className)}
+      className={cn(
+        STAT_ICON_SIZES[size] || STAT_ICON_SIZES.md,
+        STAT_ICON_TONES[tone] || STAT_ICON_TONES.primary,
+        glow ? STAT_ICON_GLOWS[tone] : null,
+        className,
+      )}
       aria-hidden="true"
       {...props}
     />

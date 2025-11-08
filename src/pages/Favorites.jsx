@@ -12,7 +12,6 @@ import ProductCardSkeleton from '@/components/skeletons/ProductCardSkeleton';
 import EmptyState from '@/components/EmptyState';
 import PageContainer from '@/components/layout/PageContainer';
 import logger from '@/utils/logger';
-import { cn } from '@/lib/utils';
 
 // Función para obtener productos favoritos por IDs
 const fetchFavoriteProducts = async (productIds) => {
@@ -33,56 +32,6 @@ const fetchFavoriteProducts = async (productIds) => {
     }
 
     return data || [];
-};
-
-const favoriteIconSizes = {
-    md: {
-        wrapper: 'h-12 w-12 rounded-2xl',
-        icon: 'h-6 w-6',
-    },
-    lg: {
-        wrapper: 'h-14 w-14 rounded-[1.65rem]',
-        icon: 'h-7 w-7',
-    },
-};
-
-const FavoriteHeroIcon = ({ size = 'lg', className }) => {
-    const sizeConfig = favoriteIconSizes[size] || favoriteIconSizes.lg;
-
-    return (
-        <span
-            className={cn(
-                'relative inline-flex shrink-0 items-center justify-center overflow-hidden transition-all duration-300',
-                sizeConfig.wrapper,
-                'bg-gradient-to-br from-[#FFE8C5] via-[#FFD395] to-[#FFB665]',
-                'ring-1 ring-[#FFD8A0] shadow-[0_16px_36px_rgba(255,182,101,0.35)]',
-                'dark:bg-gradient-to-br dark:from-[#2C1607] dark:via-[#5D2A09] dark:to-[#B86C1C]',
-                'dark:ring-[#FFC487]/60 dark:shadow-[0_22px_55px_rgba(0,0,0,0.65)]',
-                className
-            )}
-        >
-            <span
-                className="pointer-events-none absolute inset-0 rounded-[inherit] border border-white/40 opacity-60 dark:border-white/10"
-                aria-hidden="true"
-            />
-            <span
-                className="pointer-events-none absolute inset-[20%] rounded-[inherit] bg-white/55 blur-lg opacity-80 dark:hidden"
-                aria-hidden="true"
-            />
-            <span
-                className="pointer-events-none absolute inset-[-45%] rounded-full bg-[#FFB55C]/40 blur-3xl opacity-0 dark:opacity-70"
-                aria-hidden="true"
-            />
-            <Star
-                className={cn(
-                    'relative drop-shadow-[0_6px_14px_rgba(255,210,160,0.65)] text-[#C36404]',
-                    'dark:text-[#FFE6C7] dark:drop-shadow-[0_0_18px_rgba(255,214,170,0.85)]',
-                    sizeConfig.icon
-                )}
-                aria-hidden="true"
-            />
-        </span>
-    );
 };
 
 const FavoritesPage = () => {
@@ -113,10 +62,10 @@ const FavoritesPage = () => {
                         {/* Header Skeleton */}
                         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-border">
                             <div className="flex items-center gap-4">
-                                <FavoriteHeroIcon size="lg" />
+                                <Star className="page-title-icon-gold h-10 w-10" aria-hidden="true" />
                                 <div>
-                                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-1">
-                                        Mis <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">Favoritos</span>
+                                    <h1 className="page-title mb-1">
+                                        Mis <span className="page-title-accent-gold">Favoritos</span>
                                     </h1>
                                     <div className="flex items-center gap-2">
                                         <Loader2 className="h-4 w-4 animate-spin text-muted-foreground/70" />
@@ -144,13 +93,13 @@ const FavoritesPage = () => {
             <>
                 <Helmet><title>{`Mis Favoritos - ComerECO`}</title></Helmet>
                 <PageContainer className="flex items-center justify-center">
-                    <div className="bg-card rounded-2xl shadow-soft-md p-12 max-w-md border-2 border-error/30">
+                    <div className="max-w-md rounded-2xl border border-error/30 bg-card p-12 text-center">
                         <EmptyState
                             icon={AlertCircle}
                             title="Error al Cargar Favoritos"
                             description="No pudimos cargar tus productos favoritos. Por favor, inténtalo de nuevo."
                             actionButton={
-                                <Button onClick={() => window.location.reload()} size="lg" className="shadow-soft-md hover:shadow-soft-lg">
+                                <Button onClick={() => window.location.reload()} size="lg">
                                     Reintentar
                                 </Button>
                             }
@@ -167,13 +116,13 @@ const FavoritesPage = () => {
             <>
                 <Helmet><title>Mis Favoritos - ComerECO</title></Helmet>
                 <PageContainer className="flex items-center justify-center">
-                    <div className="bg-card rounded-2xl shadow-soft-md p-12 max-w-md border-2 border-border">
-                        <EmptyState
-                            icon={<Star className="favorite-icon" />}
-                            title="Aún no tienes favoritos"
-                            description="Explora el catálogo y marca los productos que más te gustan para encontrarlos aquí fácilmente."
-                            actionButton={
-                                <Button onClick={() => navigate('/catalog')} size="lg" className="shadow-soft-md hover:shadow-soft-lg bg-gradient-to-r from-primary-500 to-primary-700 hover:from-primary-600 hover:to-primary-800">
+                            <div className="max-w-md rounded-2xl border border-border bg-card p-12 text-center">
+                                <EmptyState
+                                    icon={<Star className="page-title-icon-gold" />}
+                                    title="Aún no tienes favoritos"
+                                    description="Explora el catálogo y marca los productos que más te gustan para encontrarlos aquí fácilmente."
+                                    actionButton={
+                                <Button onClick={() => navigate('/catalog')} size="lg">
                                     <ShoppingBag className="mr-2 h-5 w-5" />
                                     Explorar Catálogo
                                 </Button>
@@ -192,41 +141,25 @@ const FavoritesPage = () => {
             <PageContainer className="pb-12">
                 <div className="mx-auto max-w-7xl space-y-6 sm:space-y-8">
                     {/* Header */}
-                    <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-8 border-b border-border">
+                    <header className="flex flex-col gap-6 border-b border-border pb-8 sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex items-center gap-4">
-                            <FavoriteHeroIcon size="lg" className="shadow-soft-md" />
+                            <Star className="page-title-icon-gold h-10 w-10" aria-hidden="true" />
                             <div>
-                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-1">
-                                    Mis <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">Favoritos</span>
+                                <h1 className="page-title mb-1">
+                                    Mis <span className="page-title-accent-gold">Favoritos</span>
                                 </h1>
-                                <p className="text-base sm:text-lg text-muted-foreground">
-                                    {favoriteCount} {favoriteCount === 1 ? 'producto guardado' : 'productos guardados'}
-                                </p>
                             </div>
                         </div>
                         <Button
                             onClick={() => navigate('/catalog')}
                             size="lg"
                             variant="outline"
-                            className="shadow-md hover:shadow-soft-md whitespace-nowrap border-2"
+                            className="whitespace-nowrap"
                         >
                             <ShoppingBag className="mr-2 h-5 w-5" />
                             Seguir Explorando
                         </Button>
                     </header>
-
-                    {/* Info Card */}
-                    <div className="favorite-spotlight hidden rounded-2xl p-6 md:block">
-                        <div className="flex items-start gap-4">
-                            <FavoriteHeroIcon size="md" />
-                            <div>
-                                <h3 className="font-bold text-foreground mb-1">Tus productos favoritos</h3>
-                                <p className="text-sm text-muted-foreground">
-                                    Estos son los productos que has marcado como favoritos. Puedes agregarlos rápidamente a tu carrito o quitarlos de favoritos en cualquier momento.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
 
                     {/* Grid de Productos Favoritos */}
                     <div className="grid grid-cols-1 justify-items-start gap-4 sm:justify-items-center md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
@@ -236,7 +169,7 @@ const FavoritesPage = () => {
                     </div>
 
                     {/* Footer CTA */}
-                    <div className="rounded-2xl border border-border bg-card p-6 text-center shadow-md sm:p-8">
+                    <div className="rounded-2xl border border-border bg-card p-6 text-center sm:p-8">
                         <h3 className="text-xl font-bold text-foreground mb-2">
                             ¿Buscas más productos?
                         </h3>
@@ -246,7 +179,7 @@ const FavoritesPage = () => {
                         <Button
                             onClick={() => navigate('/catalog')}
                             size="lg"
-                            className="shadow-soft-md hover:shadow-soft-lg bg-gradient-to-r from-primary-500 to-primary-700 hover:from-primary-600 hover:to-primary-800"
+                            className="w-full sm:w-auto"
                         >
                             <ShoppingBag className="mr-2 h-5 w-5" />
                             Ver Catálogo Completo

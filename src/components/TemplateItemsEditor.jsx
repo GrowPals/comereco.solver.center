@@ -216,13 +216,14 @@ const TemplateItemsEditor = ({ items = [], onChange, readOnly = false }) => {
                       >
                         <Minus className="h-4 w-4" />
                       </button>
-                      <Input
+                      <input
                         type="number"
+                        inputMode="numeric"
                         min="1"
                         value={item.quantity}
                         onChange={(e) => handleUpdateQuantity(item.product_id, e.target.value)}
                         disabled={readOnly}
-                        className="h-11 w-16 border-0 bg-transparent text-center text-lg font-semibold focus-visible:ring-0"
+                        className="h-11 w-16 appearance-none border-none bg-transparent px-0 py-0 text-center text-lg font-semibold leading-tight text-foreground outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed [-moz-appearance:textfield]"
                         aria-label={`Cantidad actual de ${product.name}`}
                       />
                       <button

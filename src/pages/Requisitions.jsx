@@ -15,8 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PageContainer from '@/components/layout/PageContainer';
-import CompanyContextIndicator from '@/components/layout/CompanyContextIndicator';
-import { IconWrapper } from '@/components/ui/icon-wrapper';
+import { IconWrapper, SectionIcon } from '@/components/ui/icon-wrapper';
 import ScrollToTopButton from '@/components/ScrollToTopButton';
 
 
@@ -72,15 +71,17 @@ const RequisitionsPage = () => {
           <header className="mb-6 border-b border-border pb-4 sm:mb-8 sm:pb-6">
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div className="space-y-2">
-                  <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
-                    Mis Requisiciones
-                  </h1>
-                  <p className="text-sm text-muted-foreground sm:text-base">
-                    Historial y seguimiento de todas tus solicitudes
-                  </p>
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <SectionIcon icon={FileText} size="lg" className="h-10 w-10" />
+                  <div>
+                    <h1 className="page-title">
+                      Mis <span className="page-title-accent">Requisiciones</span>
+                    </h1>
+                    <p className="page-title-subtext">
+                      Historial y seguimiento de todas tus solicitudes
+                    </p>
+                  </div>
                 </div>
-                <CompanyContextIndicator compact className="self-start" />
               </div>
               <div className="grid w-full gap-3 sm:w-auto sm:grid-cols-[auto_auto] sm:items-center">
                 <TooltipProvider>
@@ -106,8 +107,8 @@ const RequisitionsPage = () => {
                     <TooltipTrigger asChild>
                       <Button
                         onClick={() => navigate('/requisitions/new')}
-                        size="lg"
-                        className="w-full rounded-xl shadow-soft-md sm:w-auto"
+                        size="md"
+                        className="w-full rounded-lg px-6 py-2.5 text-sm font-semibold sm:w-auto"
                       >
                         <Plus className="mr-2 h-5 w-5" />
                         Nueva Requisición

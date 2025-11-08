@@ -452,10 +452,10 @@ const ProjectsPage = () => {
             <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
               <SectionIcon icon={FolderKanban} size="lg" />
               <div className="space-y-1 min-w-0 flex-1">
-                <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl break-words">
-                  <span className="bg-gradient-primary bg-clip-text text-transparent">Proyectos</span>
+                <h1 className="page-title break-words">
+                  Mis <span className="page-title-accent">Proyectos</span>
                 </h1>
-                <p className="text-sm text-muted-foreground sm:text-base">
+                <p className="page-title-subtext">
                   {projects?.length || 0} {projects?.length === 1 ? 'proyecto' : 'proyectos'} en gestión
                 </p>
               </div>

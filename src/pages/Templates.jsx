@@ -39,84 +39,99 @@ import TemplateItemsEditor from '@/components/TemplateItemsEditor';
 import PageContainer from '@/components/layout/PageContainer';
 import { cn } from '@/lib/utils';
 import { SectionIcon } from '@/components/ui/icon-wrapper';
-import { IconBadge } from '@/components/ui/icon-badge';
+import { Icon as Glyph } from '@/components/ui/icon';
 import { Badge } from '@/components/ui/badge';
 
 const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
+  const [isActionsMenuOpen, setIsActionsMenuOpen] = useState(false);
   const isFrequentlyUsed = template.usage_count >= 3;
-  const isRecentlyUsed = template.last_used_at && new Date(template.last_used_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const description = template?.description?.trim();
+  const redundantCopy = ['template para pedidos recurrentes', 'template para pedidos recurrentes.'];
+  const showDescription = description && !redundantCopy.includes(description.toLowerCase());
+
+  const productCount = template.items?.length || 0;
+  const usageCount = template.usage_count || 0;
+
+  const openActionsMenu = (event) => {
+    event?.preventDefault();
+    setIsActionsMenuOpen(true);
+  };
 
   return (
-    <div className={cn(
-      "surface-card group relative flex flex-col justify-between overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-soft-lg",
-      isFrequentlyUsed && "ring-2 ring-primary-500/30 dark:ring-primary-400/40"
-    )}>
-      {/* Accent bar on hover - changes color based on usage */}
-      <div className={cn(
-        "absolute inset-x-0 top-0 h-1 scale-x-0 transition-transform duration-300 group-hover:scale-x-100",
-        isFrequentlyUsed ? "bg-gradient-primary" : "bg-gradient-to-r from-muted-foreground/50 to-muted-foreground/30"
-      )} />
-
-      <div>
-        <div className="mb-3 flex items-start justify-between">
-          <div className="flex flex-col gap-2 min-w-0 flex-1">
-            <div className="flex items-center gap-3">
-              <IconBadge
-                icon={LayoutTemplate}
-                size="lg"
-                className={cn(
-                  "bg-gradient-to-br from-primary-50/90 to-primary-100/70 text-primary-700 dark:from-primary-500/25 dark:to-primary-500/10 dark:text-primary-100 border border-primary-200/70 dark:border-primary-400/30 shadow-sm transition-all duration-300",
-                  "group-hover:scale-105",
-                  isFrequentlyUsed && "ring-2 ring-primary-500/40 dark:ring-primary-300/50 shadow-md"
-                )}
-              />
-              <div className="min-w-0 flex-1">
-                <h3 className="text-xl font-bold text-foreground break-words">{template.name}</h3>
-                {isFrequentlyUsed && (
-                  <Badge
-                    variant="info"
-                    className="mt-1 gap-1.5 rounded-full border border-blue-200/70 bg-blue-50/80 px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-wide text-blue-700 shadow-none dark:border-blue-400/30 dark:bg-blue-500/25 dark:text-blue-100"
-                  >
-                    <Zap className="h-3.5 w-3.5" />
-                    Frecuente
-                  </Badge>
-                )}
-              </div>
+    <article
+      tabIndex={0}
+      role="button"
+      onClick={openActionsMenu}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openActionsMenu();
+        }
+      }}
+      className={cn(
+        'group flex h-full cursor-pointer flex-col rounded-2xl border border-border/60 bg-card/80 p-4 transition-all hover:border-primary/30 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:outline-none',
+        isFrequentlyUsed && 'border-primary-200 bg-primary-50/40 dark:border-primary-400/30 dark:bg-primary-500/5'
+      )}
+    >
+      <div className="flex flex-1 flex-col gap-3">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex flex-1 items-start gap-2">
+            <Glyph icon={LayoutTemplate} tone="primary" size="sm" className="mt-0.5 text-primary-500" />
+            <div className="min-w-0 space-y-1">
+              <h3 className="text-base font-semibold leading-tight text-foreground break-words line-clamp-2">
+                {template.name}
+              </h3>
+              {showDescription && (
+                <p className="text-sm text-muted-foreground/90 leading-relaxed">
+                  {description}
+                </p>
+              )}
             </div>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-9 w-9 rounded-xl p-0 transition-colors hover:bg-muted/70 dark:hover:bg-muted/40">
-                <MoreHorizontal className="h-5 w-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="rounded-xl surface-card p-2">
-              <DropdownMenuItem onClick={() => onUse(template.id)}>
-                <Zap className="mr-2 h-4 w-4" /> Usar Plantilla
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onEdit(template)}>
-                <Edit className="mr-2 h-4 w-4" /> Editar
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onDelete(template)} className="text-destructive focus:text-destructive">
-                <Trash2 className="mr-2 h-4 w-4" /> Eliminar
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-start gap-2">
+            {isFrequentlyUsed && (
+              <Badge variant="info" className="gap-1.5 px-2.5 py-1 text-[0.65rem] uppercase tracking-wide">
+                <Zap className="h-3 w-3" />
+                Frecuente
+              </Badge>
+            )}
+            <DropdownMenu open={isActionsMenuOpen} onOpenChange={setIsActionsMenuOpen}>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={(event) => event.stopPropagation()}
+                >
+                  <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="rounded-xl p-2">
+                <DropdownMenuItem onClick={() => onUse(template.id)}>
+                  <Zap className="mr-2 h-4 w-4" /> Usar Plantilla
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onEdit(template)}>
+                  <Edit className="mr-2 h-4 w-4" /> Editar
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onDelete(template)} className="text-destructive focus:text-destructive">
+                  <Trash2 className="mr-2 h-4 w-4" /> Eliminar
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
-        <p className="min-h-[3rem] text-base leading-relaxed text-muted-foreground">
-          {template.description || 'Sin descripción'}
-        </p>
       </div>
-      <div className="mt-6 flex items-center justify-between border-t border-border/70 pt-4 text-sm text-muted-foreground dark:border-border">
-        <span className="font-medium text-foreground">{template.items?.length || 0} productos</span>
-        <span>Usada {template.usage_count || 0} veces</span>
+
+      <div className="mt-3 flex flex-wrap items-center gap-4 border-t border-dashed border-border/70 pt-3 text-xs text-muted-foreground">
+        <span className="font-semibold text-foreground">
+          {productCount} {productCount === 1 ? 'producto' : 'productos'}
+        </span>
+        <span>Usada {usageCount} {usageCount === 1 ? 'vez' : 'veces'}</span>
         {template.last_used_at && (
-          <span className="text-xs">
-            Últ: {format(parseISO(template.last_used_at), 'dd MMM', { locale: es })}
-          </span>
+          <span>Últ: {format(parseISO(template.last_used_at), 'dd MMM', { locale: es })}</span>
         )}
       </div>
-    </div>
+    </article>
   );
 };
 
@@ -257,12 +272,11 @@ const TemplatesPage = () => {
         <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
           <header className="flex flex-col gap-6 border-b border-border pb-6 sm:flex-row sm:items-center sm:justify-between sm:pb-8 dark:border-border">
             <div className="flex w-full items-start gap-3 sm:items-center sm:gap-4 min-w-0">
-              <SectionIcon icon={LayoutTemplate} size="lg" />
+              <SectionIcon icon={LayoutTemplate} size="lg" className="h-10 w-10" />
               <div className="min-w-0 flex-1">
-                <h1 className="mb-1 text-xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl break-words">
-                  Plantillas de <span className="bg-gradient-primary bg-clip-text text-transparent">Requisición</span>
+                <h1 className="page-title mb-1 break-words">
+                  Plantillas de <span className="page-title-accent">Requisición</span>
                 </h1>
-                <p className="text-sm text-muted-foreground sm:text-lg">Reutiliza tus pedidos frecuentes con un solo clic.</p>
               </div>
             </div>
             <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
@@ -285,7 +299,7 @@ const TemplatesPage = () => {
           </header>
 
           {templates && templates.length > 0 ? (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
               {templates.map((template) => (
                 <TemplateCard key={template.id} template={template} onEdit={(t) => setFormModal({ isOpen: true, template: t })} onDelete={(t) => setDeleteModal({ isOpen: true, template: t })} onUse={(id) => useTemplateMutation.mutate(id)} />
               ))}

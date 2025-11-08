@@ -33,7 +33,6 @@ const QuickAccess = memo(({ actions = [] }) => {
                         if (!action) return null;
                         const ActionIcon = action.icon;
                         const uniqueKey = action.path || action.label;
-                        const tone = action.tone || 'primary';
                         return (
                             <button
                                 key={uniqueKey}
@@ -45,9 +44,9 @@ const QuickAccess = memo(({ actions = [] }) => {
                                     <StatIcon
                                         icon={ActionIcon}
                                         size="sm"
-                                        tone={tone}
+                                        tone="primary"
                                         glow={false}
-                                        className="shrink-0 border-transparent bg-white/95 ring-0 shadow-none dark:bg-slate-950/70"
+                                        className="shrink-0"
                                     />
                                 )}
                                 <span className="text-sm font-semibold text-foreground transition-colors group-hover:text-primary-500">

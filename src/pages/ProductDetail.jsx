@@ -33,17 +33,35 @@ import { PAGINATION } from '@/constants/config';
 
 // Función para obtener producto por ID
 const fetchProductById = async (productId, companyId) => {
-  const { data, error } = await supabase
+  let query = supabase
     .from('products')
     .select('*')
-    .eq('id', productId)
-    .eq('company_id', companyId)
-    .maybeSingle();
+    .eq('id', productId);
 
-  if (error) throw error;
-  if (!data) {
-    throw new Error('Producto no encontrado o no pertenece a la empresa seleccionada');
+  if (companyId) {
+    query = query.eq('company_id', companyId);
   }
+
+  let { data, error } = await query.maybeSingle();
+
+  if (error && error.code !== 'PGRST116') throw error;
+
+  // Fallback: si no hay coincidencia por compañía, intentar por ID para permitir favoritos heredados
+  if (!data) {
+    const fallback = await supabase
+      .from('products')
+      .select('*')
+      .eq('id', productId)
+      .maybeSingle();
+
+    if (fallback.error) throw fallback.error;
+    data = fallback.data;
+  }
+
+  if (!data || data.is_active === false) {
+    throw new Error('Producto no disponible en este momento');
+  }
+
   return data;
 };
 
@@ -92,13 +110,13 @@ const fetchProductHistory = async (productId, userId) => {
         quantity,
         requisitions!inner(
           created_at,
-          status,
+          business_status,
           created_by
         )
       `)
       .eq('product_id', productId)
       .eq('requisitions.created_by', userId)
-      .in('requisitions.status', ['approved', 'delivered', 'completed'])
+      .in('requisitions.business_status', ['approved', 'delivered', 'completed'])
       .order('requisitions(created_at)', { ascending: false })
       .limit(PAGINATION.PRODUCT_HISTORY_LIMIT);
 

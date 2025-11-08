@@ -37,7 +37,6 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import PageContainer from '@/components/layout/PageContainer';
-import CompanyContextIndicator from '@/components/layout/CompanyContextIndicator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { fetchUsersInCompany, inviteUser, updateUserProfile, toggleUserStatus, deleteUser, isApprovalBypassSupported, isProfileEmailSupported } from '@/services/userService';
@@ -423,16 +422,15 @@ const Users = () => {
                             <div className="flex items-center gap-3 sm:gap-4">
                                 <SectionIcon icon={UserIcon} size="lg" />
                                 <div className="space-y-1">
-                                    <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                                        Gestión de <span className="bg-gradient-primary bg-clip-text text-transparent">Usuarios</span>
+                                    <h1 className="page-title">
+                                        Gestión de <span className="page-title-accent">Usuarios</span>
                                     </h1>
-                                    <p className="text-sm text-muted-foreground sm:text-base">
+                                    <p className="page-title-subtext">
                                         {users?.length || 0} {users?.length === 1 ? 'usuario' : 'usuarios'} en tu organización
                                     </p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
-                                <CompanyContextIndicator compact className="hidden sm:flex" />
                                 <Button
                                     size="lg"
                                     onClick={() => handleOpenForm()}

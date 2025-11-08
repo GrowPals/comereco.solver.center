@@ -167,34 +167,28 @@ const CatalogPage = () => {
 
       <PageContainer className={cn(isDesktop ? 'pb-16' : 'pb-28')}>
         <div className="mx-auto w-full max-w-7xl">
-          <div className={cn(isDesktop ? 'pt-6' : 'pt-2')}>
+          <div className="space-y-2 border-b border-border pb-6 pt-4">
+            <h1 className="page-title">Catálogo de <span className="page-title-accent">Productos</span></h1>
+            <p className="page-title-subtext">
+              Encuentra proveedores y materiales clave en segundos. Filtra, compara y agrega sin fricción.
+            </p>
+            <div className="text-sm text-muted-foreground">
+              <span className="font-semibold text-foreground">{totalCount}</span> productos disponibles
+              {debouncedSearchTerm && (
+                <span className="ml-2 text-muted-foreground">&ldquo;{debouncedSearchTerm}&rdquo;</span>
+              )}
+              {category !== 'all' && (
+                <span className="ml-2 text-muted-foreground">· {category}</span>
+              )}
+              {includeOutOfStock && (
+                <span className="ml-2 text-muted-foreground">· Incluye sin stock</span>
+              )}
+              {isFetching && <span className="ml-2 text-xs">Actualizando…</span>}
+            </div>
+          </div>
+          <div className={cn(isDesktop ? 'pt-4' : 'pt-3')}>
             {isDesktop ? (
-              <div className="surface-panel space-y-6 px-8 py-6">
-                <div className="flex flex-wrap items-center justify-between gap-6">
-                  <div className="max-w-3xl space-y-2">
-                    <h1 className="text-3xl font-semibold text-foreground">Catálogo de productos</h1>
-                    <p className="text-sm text-muted-foreground">
-                      Encuentra proveedores y materiales clave en segundos. Filtra, compara y agrega sin fricción.
-                    </p>
-                  </div>
-
-                  <div className="text-sm text-muted-foreground lg:text-right">
-                    <p>
-                      <span className="font-semibold text-foreground">{totalCount}</span> productos disponibles
-                      {debouncedSearchTerm && (
-                        <span className="ml-2 text-muted-foreground">&ldquo;{debouncedSearchTerm}&rdquo;</span>
-                      )}
-                      {category !== 'all' && (
-                        <span className="ml-2 text-muted-foreground">· {category}</span>
-                      )}
-                      {includeOutOfStock && (
-                        <span className="ml-2 text-muted-foreground">· Incluye sin stock</span>
-                      )}
-                    </p>
-                    {isFetching && <span className="text-xs text-muted-foreground">Actualizando…</span>}
-                  </div>
-                </div>
-
+              <div className="rounded-2xl border border-border/60 bg-background/70 p-4 shadow-none backdrop-blur-sm transition-colors dark:border-border/70 dark:bg-background/30">
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="relative flex-1 min-w-[320px]">
                     <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-foreground/70 transition-colors dark:text-muted-foreground" />
@@ -202,12 +196,12 @@ const CatalogPage = () => {
                       value={searchTerm}
                       onChange={handleSearchChange}
                       placeholder="Buscar por nombre o SKU"
-                      className="h-12 w-full rounded-2xl border border-border/80 bg-[var(--surface-contrast)] pl-12 pr-12 text-base shadow-sm transition-all focus:border-primary-500 focus:bg-[var(--surface-contrast)] focus:shadow-[var(--focus-glow)] dark:border-border dark:bg-muted/70 dark:shadow-none dark:focus:bg-card"
+                      className="h-11 w-full rounded-xl border border-border/70 bg-transparent pl-12 pr-12 text-base transition-colors focus:border-primary-500 focus:bg-background dark:border-border/60"
                     />
                     {searchTerm && (
                       <button
                         onClick={() => setSearchTerm('')}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground dark:hover:text-foreground"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-primary-500"
                         aria-label="Limpiar búsqueda"
                       >
                         <X className="h-5 w-5" />
@@ -217,13 +211,13 @@ const CatalogPage = () => {
 
                   <div className="flex-shrink-0 min-w-[220px]">
                     <Select value={category} onValueChange={handleCategoryChange}>
-                      <SelectTrigger className="h-12 w-full rounded-2xl border border-border/80 bg-[var(--surface-contrast)] text-left font-medium shadow-sm transition-colors hover:border-primary-200 focus:outline-none focus:ring-2 focus:ring-primary-200/50 dark:border-border dark:bg-card dark:shadow-none">
+                      <SelectTrigger className="h-11 w-full rounded-xl border border-border/70 bg-transparent text-left font-medium transition-colors hover:border-primary-200 focus:border-primary-300 dark:border-border/60">
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <Filter className="h-4 w-4" />
                           <SelectValue placeholder="Filtrar por categoría" />
                         </div>
                       </SelectTrigger>
-                      <SelectContent className="rounded-2xl">
+                      <SelectContent className="rounded-xl">
                         <SelectItem value="all">Todos los productos</SelectItem>
                         {isLoadingCategories ? (
                           <div className="px-3 py-2 text-sm text-muted-foreground/80">Cargando…</div>
@@ -242,7 +236,7 @@ const CatalogPage = () => {
 
                   <Label
                     htmlFor="availability-toggle-desktop"
-                    className="flex h-12 flex-shrink-0 min-w-[220px] cursor-pointer items-center justify-between gap-3 rounded-2xl border border-border/80 bg-white/95 px-4 text-sm shadow-sm transition-colors hover:bg-white dark:border-border dark:bg-card dark:hover:bg-card/80"
+                    className="flex h-11 flex-shrink-0 min-w-[220px] cursor-pointer items-center justify-between gap-3 rounded-xl border border-border/70 bg-transparent px-4 text-sm transition-colors hover:border-primary-300 dark:border-border/60"
                   >
                     <span className="text-sm font-medium text-foreground">Incluir productos sin stock</span>
                     <Switch
@@ -260,7 +254,7 @@ const CatalogPage = () => {
                       size="icon"
                       onClick={clearFilters}
                       title="Limpiar filtros"
-                      className="h-12 w-12 flex-shrink-0 rounded-2xl border border-border/70 text-muted-foreground transition-colors hover:border-foreground/40 hover:text-foreground"
+                      className="h-11 w-11 flex-shrink-0 rounded-xl border border-border/70 text-muted-foreground transition-colors hover:border-primary-400 hover:text-primary-500"
                     >
                       <X className="h-4 w-4" aria-hidden="true" />
                       <span className="sr-only">Limpiar filtros</span>
@@ -270,9 +264,9 @@ const CatalogPage = () => {
               </div>
             ) : (
               <div className="flex flex-col gap-3 pb-5">
-                <div className="surface-panel px-4 py-3">
+                <div className="rounded-2xl border border-border/60 bg-background/70 px-4 py-3 shadow-none dark:border-border/70 dark:bg-background/40">
                   <div className="flex items-center justify-between">
-                    <h1 className="text-lg font-semibold text-foreground">Catálogo</h1>
+                    <p className="text-sm font-semibold text-foreground">Filtros rápidos</p>
                     {hasActiveFilters && (
                       <button
                         type="button"
@@ -283,18 +277,15 @@ const CatalogPage = () => {
                       </button>
                     )}
                   </div>
-                  <p className="mt-2 text-sm text-muted-foreground/80">
-                    Escoge productos y actualiza cantidades sin perder tu posición.
-                  </p>
                   <div className="mt-3">
                     <Select value={category} onValueChange={handleCategoryChange}>
-                      <SelectTrigger className="h-11 w-full rounded-xl border border-border/80 bg-[var(--surface-contrast)] text-left text-sm font-medium shadow-sm transition-colors hover:border-primary-200 focus:outline-none focus:ring-2 focus:ring-primary-200/50 dark:border-border dark:bg-muted/70 dark:shadow-none">
+                      <SelectTrigger className="h-11 w-full rounded-xl border border-border/70 bg-transparent text-left text-sm font-medium transition-colors hover:border-primary-200 focus:border-primary-300 dark:border-border/60">
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <Filter className="h-4 w-4" />
                           <SelectValue placeholder="Todas las categorías" />
                         </div>
                       </SelectTrigger>
-                      <SelectContent className="rounded-2xl">
+                      <SelectContent className="rounded-xl">
                         <SelectItem value="all">Todos los productos</SelectItem>
                         {isLoadingCategories ? (
                           <div className="px-3 py-2 text-sm text-muted-foreground/80">Cargando…</div>
@@ -313,7 +304,7 @@ const CatalogPage = () => {
 
                   <Label
                     htmlFor="availability-toggle-mobile"
-                    className="mt-3 flex cursor-pointer items-center justify-between gap-3 rounded-2xl border border-border/80 bg-[var(--surface-overlay-strong)] px-4 py-3 shadow-sm transition-colors hover:bg-[var(--surface-overlay)] active:scale-[0.98] dark:border-border/70 dark:bg-[var(--surface-overlay)] dark:hover:bg-[var(--surface-overlay-strong)]"
+                    className="mt-3 flex cursor-pointer items-center justify-between gap-3 rounded-xl border border-border/70 bg-transparent px-4 py-3 text-sm transition-colors hover:border-primary-300 dark:border-border/60"
                   >
                     <span className="text-sm font-medium text-foreground">
                       Incluir productos sin stock
@@ -327,7 +318,7 @@ const CatalogPage = () => {
                   </Label>
                 </div>
 
-                <div className="flex items-center justify-between text-[11px] uppercase tracking-wide text-muted-foreground">
+                <div className="mt-2 flex items-center justify-between text-[11px] uppercase tracking-wide text-muted-foreground">
                   <span>
                     <span className="text-base font-semibold text-foreground">{totalCount}</span> productos
                     {includeOutOfStock && <span className="ml-1 text-muted-foreground">· Incluye sin stock</span>}

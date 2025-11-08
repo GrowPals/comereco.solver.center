@@ -128,10 +128,10 @@ const Approvals = () => {
                 <div className="mx-auto mb-6 w-full max-w-7xl sm:mb-8">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div className="space-y-2">
-                            <h1 className="text-3xl font-bold text-foreground sm:text-4xl">
-                                Aprobaciones Pendientes
+                            <h1 className="page-title">
+                                Aprobaciones <span className="page-title-accent">Pendientes</span>
                             </h1>
-                            <p className="text-sm text-muted-foreground sm:text-base">
+                            <p className="page-title-subtext">
                                 {requisitions?.length || 0} {requisitions?.length === 1 ? 'requisición' : 'requisiciones'} esperando tu revisión
                             </p>
                         </div>
