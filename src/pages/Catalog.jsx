@@ -7,6 +7,7 @@ import { Search, Filter, X, Loader2 } from 'lucide-react';
 import { fetchProducts } from '@/services/productService';
 import { useProductCategories } from '@/hooks/useProducts';
 import { useDebounce } from '@/hooks/useDebounce';
+import useViewport from '@/hooks/useViewport';
 import { cn } from '@/lib/utils';
 
 import ProductCard from '@/components/ProductCard';
@@ -27,8 +28,6 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import EmptyState from '@/components/EmptyState';
 
-const MOBILE_BREAKPOINT = 1024;
-
 const computePageSize = (width) => {
   if (!Number.isFinite(width)) return 24;
   if (width >= 1760) return 72;
@@ -44,20 +43,10 @@ const CatalogPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [category, setCategory] = useState('all');
   const [includeOutOfStock, setIncludeOutOfStock] = useState(false);
-  const [viewportWidth, setViewportWidth] = useState(() =>
-    typeof window === 'undefined' ? 1440 : window.innerWidth
-  );
 
-  const isDesktop = viewportWidth >= MOBILE_BREAKPOINT;
+  const { width: viewportWidth, isDesktop } = useViewport();
   const debouncedSearchTerm = useDebounce(searchTerm, 400);
   const pageSize = useMemo(() => computePageSize(viewportWidth), [viewportWidth]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return undefined;
-    const handleResize = () => setViewportWidth(window.innerWidth);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   const filtersKey = useMemo(
     () => ({
@@ -241,7 +230,7 @@ const CatalogPage = () => {
                       {isLoadingCategories ? (
                         <div className="px-3 py-2 text-sm text-muted-foreground/80">Cargando…</div>
                       ) : (
-                        categories?.map((cat) =>
+                        Array.isArray(categories) && categories.map((cat) =>
                           cat ? (
                             <SelectItem key={cat} value={cat}>
                               {cat}

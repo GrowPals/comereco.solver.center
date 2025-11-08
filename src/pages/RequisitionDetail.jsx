@@ -223,7 +223,7 @@ const RequisitionDetail = () => {
                                 <CardContent className="space-y-4">
                                     {/* Items List */}
                                     <div className="space-y-3">
-                                        {items.map((item) => {
+                                        {Array.isArray(items) && items.map((item) => {
                                             const uniqueKey = item.id || `${item.product_id || 'unknown'}-${item.unit_price || '0'}-${item.quantity || '0'}`;
                                             return (
                                                 <div
