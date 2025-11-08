@@ -8,12 +8,18 @@ export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,
   retries: process.env.CI ? 2 : 0,
-  reporter: process.env.CI ? [['html', { open: 'never' }], ['list']] : 'list',
+  timeout: 30 * 1000, // 30 segundos por test
+  reporter: process.env.CI 
+    ? [['html', { open: 'never' }], ['list'], ['json', { outputFile: 'test-results/results.json' }]]
+    : [['list'], ['html', { open: 'on-failure' }]],
   use: {
     baseURL: BASE_URL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
-    video: process.env.CI ? 'retain-on-failure' : 'off'
+    video: process.env.CI ? 'retain-on-failure' : 'off',
+    // Timeouts optimizados
+    actionTimeout: 10 * 1000,
+    navigationTimeout: 30 * 1000,
   },
   webServer: {
     command: `npm run dev -- --host ${HOST} --port ${PORT}`,
@@ -21,12 +27,32 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     stdout: 'pipe',
     stderr: 'pipe',
-    timeout: 2 * 60 * 1000
+    timeout: 2 * 60 * 1000,
+    // Esperar a que el servidor esté listo
+    waitTimeout: 60 * 1000,
   },
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] }
-    }
-  ]
+      use: { 
+        ...devices['Desktop Chrome'],
+        // Optimizaciones de performance
+        viewport: { width: 1280, height: 720 },
+      }
+    },
+    // Agregar más navegadores en CI
+    ...(process.env.CI ? [
+      {
+        name: 'firefox',
+        use: { ...devices['Desktop Firefox'] }
+      },
+      {
+        name: 'webkit',
+        use: { ...devices['Desktop Safari'] }
+      }
+    ] : [])
+  ],
+  // Global setup/teardown
+  globalSetup: undefined,
+  globalTeardown: undefined,
 });

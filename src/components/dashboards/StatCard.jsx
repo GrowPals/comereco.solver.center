@@ -58,9 +58,10 @@ const StatCard = memo(({
         <Card interactive className="group stat-card surface-card">
             <CardHeader className="relative z-10 flex flex-row items-center justify-between space-y-0 pb-3">
                 {Icon && (
-                    <div className="transition-all duration-300 group-hover:scale-110 group-hover:shadow-soft-md">
-                        <StatIcon icon={Icon} />
-                    </div>
+                    <StatIcon
+                        icon={Icon}
+                        className="transition-all duration-300 rounded-full group-hover:scale-110 group-hover:shadow-soft-md"
+                    />
                 )}
             </CardHeader>
             <CardContent className="relative z-10">
