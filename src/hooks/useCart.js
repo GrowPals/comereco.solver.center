@@ -149,7 +149,10 @@ export const useCart = () => {
     const { toast } = useToast();
     const { data: items = [], isLoading, refetch } = useQuery({
         queryKey: ['cart', user?.id],
-        queryFn: () => fetchCartAPI(user.id),
+        queryFn: () => {
+            if (!user?.id) throw new Error('Usuario no autenticado');
+            return fetchCartAPI(user.id);
+        },
         enabled: !!user,
         staleTime: 1000 * 30, // 30 segundos - carrito puede cambiar frecuentemente
         refetchOnWindowFocus: true, // Refetch al enfocar para mantener sincronizado

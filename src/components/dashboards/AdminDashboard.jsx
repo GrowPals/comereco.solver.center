@@ -6,15 +6,28 @@ import StatCard from './StatCard';
 import QuickAccess from './QuickAccess';
 import RecentRequisitions from './RecentRequisitions';
 import CompanyContextIndicator from '@/components/layout/CompanyContextIndicator';
+import ErrorState from '@/components/ErrorState';
 import { Users, FolderKanban, FileText, ShoppingBag, BarChart2 } from 'lucide-react';
 
 const AdminDashboard = memo(({ user }) => {
-    const { data: stats, isLoading } = useQuery({
+    const { data: stats, isLoading, error, refetch } = useQuery({
         queryKey: ['dashboardStats', user.id],
         queryFn: getDashboardStats,
         staleTime: 1000 * 60 * 5, // 5 minutos
         gcTime: 1000 * 60 * 30, // 30 minutos
     });
+
+    if (error) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <ErrorState
+                    error={error}
+                    onRetry={refetch}
+                    title="Error al cargar estadísticas"
+                />
+            </div>
+        );
+    }
 
     const formatCurrency = (value) => value ? `$${Number(value).toFixed(2)}` : '$0.00';
 

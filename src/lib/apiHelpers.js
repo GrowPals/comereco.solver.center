@@ -4,6 +4,8 @@
  * Centraliza validaciones y helpers para operaciones de API
  */
 
+import logger from '@/utils/logger';
+
 /**
  * Valida que el usuario esté autenticado
  * @param {string} userId - ID del usuario
@@ -72,7 +74,7 @@ export const ensureRequiredFields = (obj, requiredFields, objectName = 'objeto')
  * }
  */
 export const handleApiError = (error, context = 'operación') => {
-  console.error(`Error en ${context}:`, error);
+  logger.error(`Error en ${context}:`, error);
 
   // Si es un error de Supabase, extraer mensaje más útil
   if (error?.message) {

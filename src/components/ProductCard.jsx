@@ -50,7 +50,7 @@ const ProductCard = memo(({ product }) => {
   const availabilityLabel = isInStock ? 'DISPONIBLE' : 'SIN STOCK';
 
   const handleNavigate = useCallback(() => {
-    navigate(`/producto/${product.id}`, {
+    navigate(`/products/${product.id}`, {
       state: { from: location.pathname },
     });
   }, [navigate, product.id, location.pathname]);

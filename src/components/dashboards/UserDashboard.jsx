@@ -6,6 +6,7 @@ import StatCard from './StatCard';
 import QuickAccess from './QuickAccess';
 import RecentRequisitions from './RecentRequisitions';
 import CompanyContextIndicator from '@/components/layout/CompanyContextIndicator';
+import ErrorState from '@/components/ErrorState';
 import { FileText, Hourglass, CheckCircle, XCircle, ShoppingCart, LayoutTemplate, History, Sparkles, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -13,10 +14,22 @@ import { Card } from '@/components/ui/card';
 
 const UserDashboard = ({ user }) => {
     const navigate = useNavigate();
-    const { data: stats, isLoading } = useQuery({
+    const { data: stats, isLoading, error, refetch } = useQuery({
         queryKey: ['dashboardStats', user.id],
         queryFn: getDashboardStats,
     });
+
+    if (error) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <ErrorState
+                    error={error}
+                    onRetry={refetch}
+                    title="Error al cargar estadísticas"
+                />
+            </div>
+        );
+    }
     
     const formatCurrency = useMemo(() => (value) => value ? `$${Number(value).toFixed(2)}` : '$0.00', []);
 

@@ -35,7 +35,9 @@ const IconBadge = React.forwardRef(({
   };
 
   if (!Icon) {
-    console.warn('IconBadge: No icon provided');
+    if (import.meta.env.DEV) {
+      console.warn('IconBadge: No icon provided');
+    }
     return null;
   }
 

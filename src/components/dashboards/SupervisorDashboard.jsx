@@ -6,6 +6,7 @@ import StatCard from './StatCard';
 import QuickAccess from './QuickAccess';
 import RecentRequisitions from './RecentRequisitions';
 import CompanyContextIndicator from '@/components/layout/CompanyContextIndicator';
+import ErrorState from '@/components/ErrorState';
 import { CheckSquare, FolderKanban, History, Hourglass, CheckCircle, XCircle } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -14,19 +15,31 @@ import { useNavigate } from 'react-router-dom';
 
 const SupervisorDashboard = memo(({ user }) => {
     const navigate = useNavigate();
-    const { data: stats, isLoading: isLoadingStats } = useQuery({
+    const { data: stats, isLoading: isLoadingStats, error: statsError, refetch: refetchStats } = useQuery({
         queryKey: ['dashboardStats', user.id],
         queryFn: getDashboardStats,
         staleTime: 1000 * 60 * 5, // 5 minutos
         gcTime: 1000 * 60 * 30, // 30 minutos
     });
 
-    const { data: projects, isLoading: isLoadingProjects } = useQuery({
+    const { data: projects, isLoading: isLoadingProjects, error: projectsError, refetch: refetchProjects } = useQuery({
         queryKey: ['supervisorProjectsActivity'],
         queryFn: getSupervisorProjectsActivity,
         staleTime: 1000 * 60 * 5, // 5 minutos
         gcTime: 1000 * 60 * 30, // 30 minutos
     });
+
+    if (statsError) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <ErrorState
+                    error={statsError}
+                    onRetry={refetchStats}
+                    title="Error al cargar estadísticas"
+                />
+            </div>
+        );
+    }
 
     const formatCurrency = (value) => value ? `$${Number(value).toFixed(2)}` : '$0.00';
 

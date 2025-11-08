@@ -1,6 +1,6 @@
 
 import React, { Suspense, lazy, useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
@@ -45,6 +45,7 @@ const HelpPage = lazy(() => import('@/pages/Help'));
 const NotFoundPage = lazy(() => import('@/pages/NotFound'));
 const ProductDetail = lazy(() => import('@/pages/ProductDetail'));
 const InventoryRestockRulesPage = lazy(() => import('@/pages/InventoryRestockRules'));
+const HistoryPage = lazy(() => import('@/pages/History'));
 
 
 // Componente para rutas privadas
@@ -65,7 +66,7 @@ function PrivateRoute({ children, permissionCheck }) {
     // Guardar la ruta a la que intentó acceder para redirigir después del login
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
-  
+
   if (permissionCheck && !permissionCheck(permissions)) {
     // Si el chequeo de permisos falla, redirige al dashboard con mensaje.
     // El usuario verá el dashboard apropiado para su rol.
@@ -73,6 +74,12 @@ function PrivateRoute({ children, permissionCheck }) {
   }
 
   return children;
+}
+
+// Componente para redirigir rutas legacy de productos
+function LegacyProductRedirect() {
+  const { id } = useParams();
+  return <Navigate to={`/products/${id}`} replace />;
 }
 
 // Layout principal de la aplicación
@@ -246,12 +253,14 @@ const AppLayout = () => {
 
                         <Route path="/settings" element={<SettingsPage />} />
                         <Route path="/catalog" element={<CatalogPage />} />
-                        <Route path="/producto/:id" element={<ProductDetail />} />
+                        <Route path="/products/:id" element={<ProductDetail />} />
+                        <Route path="/producto/:id" element={<LegacyProductRedirect />} />
                         <Route path="/notifications" element={<NotificationsPage />} />
                         <Route path="/cart" element={<CartPage />} />
                         <Route path="/checkout" element={<CheckoutPage />} />
                         <Route path="/templates" element={<TemplatesPage />} />
                         <Route path="/favorites" element={<FavoritesPage />} />
+                        <Route path="/history" element={<HistoryPage />} />
                         <Route path="/help" element={<HelpPage />} />
                         <Route path="/reset-password" element={<ResetPasswordPage />} />
 

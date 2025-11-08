@@ -112,7 +112,10 @@ export const useFavorites = () => {
 
     const { data: favorites = new Set(), isLoading: isLoadingFavorites, refetch } = useQuery({
         queryKey: ['favorites', user?.id],
-        queryFn: () => getFavoritesAPI(user.id),
+        queryFn: () => {
+            if (!user?.id) throw new Error('Usuario no autenticado');
+            return getFavoritesAPI(user.id);
+        },
         enabled: !!user,
         staleTime: 1000 * 60 * 5, // 5 minutos - favoritos cambian poco
         gcTime: 1000 * 60 * 15, // 15 minutos en cache
