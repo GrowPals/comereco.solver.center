@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/components/ui/useToast';
 import { cn } from '@/lib/utils';
 
-const MenuItem = memo(({ to, icon: Icon, children, onClick, badge }) => {
+const MenuItem = memo(({ to, icon: Icon, children, onClick, badge, isSidebarOpen }) => {
     const location = useLocation();
     const isActive = location.pathname === to || (to !== '/dashboard' && location.pathname.startsWith(to));
 
@@ -20,12 +20,13 @@ const MenuItem = memo(({ to, icon: Icon, children, onClick, badge }) => {
     };
 
     return (
-        <NavLink to={to} onClick={handleClick}>
+        <NavLink to={to} onClick={handleClick} title={!isSidebarOpen ? children : undefined}>
             <div
                 className={cn(
                     'group flex items-center gap-3 rounded-lg px-4 py-3 transition-all duration-base ease-smooth-out',
                     'font-medium text-sm cursor-pointer',
                     'border-l-[6px]',
+                    !isSidebarOpen && 'lg:justify-center lg:px-2',
                     isActive
                         ? 'bg-primary-100/80 dark:bg-primary-900/30 text-primary-700 dark:text-primary-100 border-primary-600 dark:border-primary-400 shadow-sm dark:shadow-primary-900/20'
                         : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 border-transparent hover:translate-x-0.5'
@@ -41,12 +42,15 @@ const MenuItem = memo(({ to, icon: Icon, children, onClick, badge }) => {
                     )}
                 />
 
-                {/* Label */}
-                <span className="flex-1">{children}</span>
+                {/* Label - Hidden when sidebar is collapsed */}
+                <span className={cn("flex-1", !isSidebarOpen && "lg:hidden")}>{children}</span>
 
-                {/* Badge */}
+                {/* Badge - Hidden when sidebar is collapsed */}
                 {badge && (
-                    <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-destructive px-1.5 text-xs font-bold text-destructive-foreground">
+                    <span className={cn(
+                        "flex h-5 min-w-[20px] items-center justify-center rounded-full bg-destructive px-1.5 text-xs font-bold text-destructive-foreground",
+                        !isSidebarOpen && "lg:hidden"
+                    )}>
                         {badge}
                     </span>
                 )}
@@ -175,23 +179,35 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
                 </button>
             </div>
             {/* Header del Sidebar - Perfil del Usuario */}
-            <div className="border-b border-border p-6 transition-colors dark:border-border">
-                <NavLink to="/profile" onClick={handleNavClick}>
-                    <div className="-m-2 flex items-center gap-4 rounded-xl p-2 transition-colors hover:bg-[var(--surface-muted)] dark:hover:bg-muted/40">
-                        <Avatar className="h-16 w-16 ring-2 ring-primary/30 dark:ring-primary/40">
+            <div className={cn(
+                "border-b border-border p-6 transition-colors dark:border-border",
+                !isSidebarOpen && "lg:p-2"
+            )}>
+                <NavLink to="/profile" onClick={handleNavClick} title={!isSidebarOpen ? userName : undefined}>
+                    <div className={cn(
+                        "-m-2 flex items-center gap-4 rounded-xl p-2 transition-colors hover:bg-[var(--surface-muted)] dark:hover:bg-muted/40",
+                        !isSidebarOpen && "lg:justify-center lg:gap-0"
+                    )}>
+                        <Avatar className={cn(
+                            "h-16 w-16 ring-2 ring-primary/30 dark:ring-primary/40",
+                            !isSidebarOpen && "lg:h-10 lg:w-10"
+                        )}>
                             <AvatarImage alt={`Avatar de ${userName}`} src={user?.avatar_url} />
                             <AvatarFallback className="text-lg font-bold text-white">
                                 {userInitials}
                             </AvatarFallback>
                         </Avatar>
-                        <div className="min-w-0 flex-1">
+                        <div className={cn("min-w-0 flex-1", !isSidebarOpen && "lg:hidden")}>
                             <p className="text-base font-bold text-foreground truncate" title={primaryName}>{primaryName}</p>
                             <p className="truncate text-sm text-muted-foreground" title={userEmail}>{userEmail}</p>
                             <span className="mt-1 inline-block rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary-600 dark:bg-primary/20 dark:text-primary-100">
                                 {isAdmin ? 'Administrador' : isSupervisor ? 'Supervisor' : 'Usuario'}
                             </span>
                         </div>
-                        <ChevronRight className="icon-md flex-shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1" />
+                        <ChevronRight className={cn(
+                            "icon-md flex-shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1",
+                            !isSidebarOpen && "lg:hidden"
+                        )} />
                     </div>
                 </NavLink>
             </div>
@@ -201,7 +217,10 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
                 {/* Secciones específicas del rol */}
                 {menuSections.map((section, idx) => (
                     <div key={idx} className="mb-6">
-                        <h3 className="mb-2 px-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                        <h3 className={cn(
+                            "mb-2 px-3 text-xs font-bold uppercase tracking-wider text-muted-foreground",
+                            !isSidebarOpen && "lg:hidden"
+                        )}>
                             {section.title}
                         </h3>
                         <div className="space-y-1">
@@ -212,6 +231,7 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
                                     icon={item.icon}
                                     onClick={handleNavClick}
                                     badge={item.badge}
+                                    isSidebarOpen={isSidebarOpen}
                                 >
                                     {item.text}
                                 </MenuItem>
@@ -222,17 +242,20 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
 
                 {/* Sección de Configuración y Ayuda */}
                 <div className="mb-6">
-                    <h3 className="mb-2 px-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    <h3 className={cn(
+                        "mb-2 px-3 text-xs font-bold uppercase tracking-wider text-muted-foreground",
+                        !isSidebarOpen && "lg:hidden"
+                    )}>
                         General
                     </h3>
                     <div className="space-y-1">
-                        <MenuItem to="/notifications" icon={Bell} onClick={handleNavClick}>
+                        <MenuItem to="/notifications" icon={Bell} onClick={handleNavClick} isSidebarOpen={isSidebarOpen}>
                             Notificaciones
                         </MenuItem>
-                        <MenuItem to="/settings" icon={Settings} onClick={handleNavClick}>
+                        <MenuItem to="/settings" icon={Settings} onClick={handleNavClick} isSidebarOpen={isSidebarOpen}>
                             Configuración
                         </MenuItem>
-                        <MenuItem to="/help" icon={HelpCircle} onClick={handleNavClick}>
+                        <MenuItem to="/help" icon={HelpCircle} onClick={handleNavClick} isSidebarOpen={isSidebarOpen}>
                             Ayuda y Soporte
                         </MenuItem>
                     </div>
@@ -243,11 +266,15 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
             <div className="border-t border-border p-4 transition-colors dark:border-border">
                 <button
                     onClick={handleLogout}
-                    className="group flex w-full items-center gap-3 px-4 py-3 rounded-lg font-medium text-sm text-neutral-700 dark:text-neutral-300 hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-600 dark:hover:text-red-400 transition-all duration-200"
+                    className={cn(
+                        "group flex w-full items-center gap-3 px-4 py-3 rounded-lg font-medium text-sm text-neutral-700 dark:text-neutral-300 hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-600 dark:hover:text-red-400 transition-all duration-200",
+                        !isSidebarOpen && "lg:justify-center lg:px-2"
+                    )}
                     aria-label="Cerrar sesión"
+                    title={!isSidebarOpen ? "Cerrar Sesión" : undefined}
                 >
                     <LogOut className="icon-md flex-shrink-0 transition-colors" />
-                    <span>Cerrar Sesión</span>
+                    <span className={cn(!isSidebarOpen && "lg:hidden")}>Cerrar Sesión</span>
                 </button>
             </div>
             </aside>
