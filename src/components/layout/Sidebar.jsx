@@ -25,9 +25,9 @@ const MenuItem = memo(({ to, icon: Icon, children, onClick, badge }) => {
                 className={cn(
                     'group flex items-center gap-3 rounded-lg px-4 py-3 transition-all duration-200',
                     'font-medium text-sm',
-                    'border-l-4',
+                    'border-l-[6px]',
                     isActive
-                        ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-200 border-primary-600 dark:border-primary-400'
+                        ? 'bg-primary-100/80 dark:bg-primary-900/30 text-primary-700 dark:text-primary-100 border-primary-600 dark:border-primary-400 shadow-sm dark:shadow-primary-900/20'
                         : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 border-transparent'
                 )}
             >
@@ -36,7 +36,7 @@ const MenuItem = memo(({ to, icon: Icon, children, onClick, badge }) => {
                     className={cn(
                         'icon-md flex-shrink-0 transition-colors duration-200',
                         isActive
-                            ? 'text-primary-700 dark:text-primary-300'
+                            ? 'text-primary-600 dark:text-primary-200'
                             : 'text-neutral-600 dark:text-neutral-300 group-hover:text-primary-600 dark:group-hover:text-primary-400'
                     )}
                 />
