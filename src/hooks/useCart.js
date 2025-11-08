@@ -172,6 +172,9 @@ export const useCart = () => {
             if (!user?.id) {
                 throw new Error('Usuario no autenticado');
             }
+            if (!Number.isFinite(quantity) || quantity <= 0) {
+                throw new Error('Cantidad inválida');
+            }
             const existingItem = items.find(item => item.id === product.id);
             const newQuantity = (existingItem?.quantity || 0) + quantity;
             return upsertCartItemAPI({ userId: user.id, productId: product.id, quantity: newQuantity });

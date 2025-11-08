@@ -63,8 +63,11 @@ const RequisitionDetail = () => {
     }, [isError, navigate, toast]);
     
     useEffect(() => {
-        if (!requisitionId) return;
-        
+        if (!requisitionId || !requisitionId.match(/^[a-f0-9-]+$/)) {
+            logger.error('Invalid requisition ID');
+            return;
+        }
+
         const channel = supabase
             .channel(`requisition-detail:${requisitionId}`)
             .on('postgres_changes', {
@@ -139,7 +142,16 @@ const RequisitionDetail = () => {
     }
 
     // CORREGIDO: Usar creator en lugar de requester según documentación
-    const { internal_folio, created_at, business_status, creator, items, total_amount, comments, project } = requisition;
+    const {
+        internal_folio = 'N/A',
+        created_at,
+        business_status = 'draft',
+        creator = {},
+        items = [],
+        total_amount = 0,
+        comments = '',
+        project = null
+    } = requisition || {};
 
     const statusConfig = {
         draft: { text: 'Borrador', variant: 'draft', accent: 'bg-muted' },

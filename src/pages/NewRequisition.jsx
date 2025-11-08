@@ -56,7 +56,7 @@ const NewRequisitionContent = () => {
         }
     });
 
-    const handleNext = () => setCurrentStep(prev => Math.min(prev + 1, steps.length));
+    const handleNext = () => setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
     const handleBack = () => setCurrentStep(prev => Math.max(prev - 1, 0));
     
     const onSubmit = (formData) => {

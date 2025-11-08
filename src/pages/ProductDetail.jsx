@@ -331,8 +331,9 @@ export default function ProductDetail() {
   const productCategory = product.category_name || product.categoria || '';
 
   // Lógica de stock - igual que en ProductCard
-  const stock = Number.isFinite(product.stock) ? product.stock : product.existencias;
-  const isInStock = stock === undefined || stock === null ? true : stock > 0;
+  const stock = Number.isFinite(product.stock) ? product.stock :
+                Number.isFinite(product.existencias) ? product.existencias : null;
+  const isInStock = stock !== null && stock !== undefined && stock > 0;
 
   return (
     <motion.div
