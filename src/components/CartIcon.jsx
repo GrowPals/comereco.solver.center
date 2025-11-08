@@ -16,6 +16,7 @@ export function CartIcon({ variant = 'default' }) {
     if (totalItems > prevItemsRef.current) {
       setShouldAnimate(true);
       const timer = setTimeout(() => setShouldAnimate(false), 600);
+      prevItemsRef.current = totalItems;
       return () => clearTimeout(timer);
     }
     prevItemsRef.current = totalItems;

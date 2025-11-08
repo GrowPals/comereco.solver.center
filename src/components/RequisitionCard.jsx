@@ -25,7 +25,7 @@ const statusAccents = {
 
 const RequisitionCard = memo(({ requisition }) => {
   const navigate = useNavigate();
-  const { width, isMobile, isTablet } = useViewport();
+  const { isMobile } = useViewport();
   const [showDetails, setShowDetails] = useState(false);
 
   // Memoizar accent de estado para la barra superior
@@ -33,6 +33,7 @@ const RequisitionCard = memo(({ requisition }) => {
     statusAccents[requisition?.business_status] || statusAccents.default,
     [requisition?.business_status]
   );
+
 
   // Memoizar fecha formateada
   const formattedDate = useMemo(() => {
@@ -82,7 +83,7 @@ const RequisitionCard = memo(({ requisition }) => {
           aria-label={`Requisición ${requisition.internal_folio || requisition.id}`}
         >
           {/* Accent Bar */}
-          <div className={cn('absolute top-0 left-0 right-0 h-1.5 transition-transform duration-300', statusAccent)} />
+          <div className={cn('absolute top-0 left-0 right-0 h-1 transition-transform duration-300', statusAccent)} />
 
           <CardContent className="p-4">
             {/* Información Principal - Siempre visible */}

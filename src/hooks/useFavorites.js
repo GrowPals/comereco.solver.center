@@ -120,10 +120,17 @@ export const useFavorites = () => {
     
     const mutationOptions = {
         onMutate: async (productId) => {
-            await queryClient.cancelQueries({queryKey: ['favorites', user.id]});
-            const previousFavorites = queryClient.getQueryData(['favorites', user.id]);
-            queryClient.setQueryData(['favorites', user.id], (old) => {
-                const newFavorites = new Set(old);
+            const currentUserId = user?.id;
+            if (!currentUserId) {
+                throw new Error('Usuario no autenticado');
+            }
+
+            await queryClient.cancelQueries({queryKey: ['favorites', currentUserId]});
+            const previousFavorites = queryClient.getQueryData(['favorites', currentUserId]);
+
+            queryClient.setQueryData(['favorites', currentUserId], (old) => {
+                // Manejar el caso de que old sea undefined
+                const newFavorites = new Set(old || new Set());
                 if (newFavorites.has(productId)) {
                     newFavorites.delete(productId);
                 } else {
@@ -131,14 +138,23 @@ export const useFavorites = () => {
                 }
                 return newFavorites;
             });
-            return { previousFavorites };
+
+            return { previousFavorites, userId: currentUserId };
         },
         onError: (err, productId, context) => {
-            queryClient.setQueryData(['favorites', user.id], context.previousFavorites);
+            // Usar userId del contexto en lugar del estado actual
+            const targetUserId = context?.userId || user?.id;
+            if (context?.previousFavorites && targetUserId) {
+                queryClient.setQueryData(['favorites', targetUserId], context.previousFavorites);
+            }
             toast({ variant: 'destructive', title: 'Error', description: "No se pudo actualizar tus favoritos." });
         },
-        onSettled: () => {
-            queryClient.invalidateQueries({queryKey: ['favorites', user.id]});
+        onSettled: (data, error, variables, context) => {
+            // Usar userId del contexto en lugar del estado actual
+            const targetUserId = context?.userId || user?.id;
+            if (targetUserId) {
+                queryClient.invalidateQueries({queryKey: ['favorites', targetUserId]});
+            }
         }
     };
 

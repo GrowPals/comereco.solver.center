@@ -34,6 +34,7 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
     const [imageFile, setImageFile] = useState(null);
     const [uploadingImage, setUploadingImage] = useState(false);
     const [oldImageUrl, setOldImageUrl] = useState(null);
+    const [shouldCloseAfterSuccess, setShouldCloseAfterSuccess] = useState(false);
     
     const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } = useForm({ 
         mode: 'onBlur',
@@ -113,17 +114,26 @@ const ProductFormModal = ({ product, isOpen, onClose, onSave }) => {
             // Crear o actualizar producto con la URL de la imagen
             await onSave({ ...data, image_url: imageUrl });
             setFormStatus({ status: 'success', message: product ? 'Producto actualizado exitosamente' : 'Producto creado exitosamente' });
-            setTimeout(() => {
+            setShouldCloseAfterSuccess(true);
+        } catch (error) {
+            setFormStatus({ status: 'error', message: error.message || 'Error al guardar el producto' });
+        }
+    };
+
+    // Cerrar modal después de 1500ms del éxito
+    useEffect(() => {
+        if (shouldCloseAfterSuccess) {
+            const timer = setTimeout(() => {
                 onClose();
                 setFormStatus({ status: 'idle', message: '' });
                 setImagePreview('');
                 setImageFile(null);
                 setOldImageUrl(null);
+                setShouldCloseAfterSuccess(false);
             }, 1500);
-        } catch (error) {
-            setFormStatus({ status: 'error', message: error.message || 'Error al guardar el producto' });
+            return () => clearTimeout(timer);
         }
-    };
+    }, [shouldCloseAfterSuccess, onClose]);
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>

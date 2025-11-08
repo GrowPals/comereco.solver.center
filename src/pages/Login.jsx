@@ -39,6 +39,14 @@ const LoginPage = () => {
     const [isResetting, setIsResetting] = useState(false);
     const [hasPreloadedEmail] = useState(() => !!localStorage.getItem('rememberMeEmail'));
 
+    // Remover animación de shake después de 500ms
+    useEffect(() => {
+        if (isShaking) {
+            const timer = setTimeout(() => setIsShaking(false), 500);
+            return () => clearTimeout(timer);
+        }
+    }, [isShaking]);
+
     useEffect(() => {
       if (session) {
         navigate(from, { replace: true });
@@ -63,14 +71,12 @@ const LoginPage = () => {
                   : 'Ha ocurrido un error. Por favor, inténtalo de nuevo.';
                 setAuthError(errorMessage);
                 setIsShaking(true);
-                setTimeout(() => setIsShaking(false), 500);
                 toast.error('Error al iniciar sesión', errorMessage);
             }
         } catch (err) {
             logger.error('Error during login:', err);
             setAuthError('Ha ocurrido un error. Por favor, inténtalo de nuevo.');
             setIsShaking(true);
-            setTimeout(() => setIsShaking(false), 500);
         } finally {
             setIsLoading(false);
         }
@@ -231,6 +237,7 @@ const LoginPage = () => {
                                         className="absolute right-2 top-1/2 -translate-y-1/2 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 text-muted-foreground transition-colors duration-200 hover:bg-muted/70 hover:text-foreground active:bg-muted/60 dark:hover:bg-muted/40"
                                         disabled={isLoading}
                                         aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                        aria-pressed={showPassword}
                                     >
                                         {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                                     </button>

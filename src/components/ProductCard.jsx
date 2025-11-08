@@ -26,6 +26,22 @@ const ProductCard = memo(({ product }) => {
     setCurrentQuantity(quantity);
   }, [getItemQuantity, product.id]);
 
+  // Cleanup del heart animation
+  useEffect(() => {
+    if (heartAnimation) {
+      const timer = setTimeout(() => setHeartAnimation(false), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [heartAnimation]);
+
+  // Cleanup del success feedback
+  useEffect(() => {
+    if (showSuccess) {
+      const timer = setTimeout(() => setShowSuccess(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccess]);
+
   const productName = product.name || product.nombre || 'Producto sin nombre';
   const unitLabel = product.unit || product.unidad || '';
   const productPrice = Number(product.price || product.precio || 0).toFixed(2);
@@ -44,7 +60,6 @@ const ProductCard = memo(({ product }) => {
       event.stopPropagation();
       setHeartAnimation(true);
       toggleFavorite(product.id, productName);
-      setTimeout(() => setHeartAnimation(false), 500);
     },
     [toggleFavorite, product.id, productName]
   );
@@ -58,7 +73,6 @@ const ProductCard = memo(({ product }) => {
         .then(() => addToCart(product))
         .then(() => {
           setShowSuccess(true);
-          setTimeout(() => setShowSuccess(false), 2000);
         })
         .finally(() => setIsAdding(false));
     },
@@ -89,7 +103,7 @@ const ProductCard = memo(({ product }) => {
     <article
       className={cn(
         'group relative flex w-full flex-col overflow-hidden rounded-3xl surface-card transition-all duration-base ease-smooth-out hover:shadow-elevated hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:hover:shadow-elevated',
-        !isInStock && 'opacity-70 grayscale-[0.3]'
+        !isInStock && 'opacity-70 grayscale'
       )}
       role="article"
       aria-label={`Producto ${productName}, precio ${productPrice} pesos${!isInStock ? ', sin stock' : ''}`}
