@@ -152,7 +152,7 @@ const LoginPage = () => {
                         className="text-center mb-10"
                     >
                         <img
-                            src="https://i.ibb.co/HLZ06zr5/isotipo-comereco-1.png"
+                            src="/logo.png"
                             alt="ComerECO Logo"
                             className="w-32 h-32 object-contain mx-auto drop-shadow-2xl"
                             loading="eager"
