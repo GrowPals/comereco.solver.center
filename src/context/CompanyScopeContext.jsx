@@ -76,7 +76,7 @@ export const CompanyScopeProvider = ({ children }) => {
       }
 
       if (preferCandidate(snapshot.company, company)) {
-        bestByKey.set(key, { company, index: snapshot.index });
+        bestByKey.set(key, { company, index });
       }
     });
 

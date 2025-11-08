@@ -39,7 +39,7 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
     }, [userName]);
 
     useEffect(() => {
-        if (typeof window === 'undefined') return undefined;
+        if (typeof window === 'undefined') return;
 
         const handleResize = () => {
             const nextIsDesktop = window.innerWidth >= MOBILE_BREAKPOINT;
@@ -53,7 +53,7 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
 
     // Efecto para manejar scroll en mobile
     useEffect(() => {
-        if (typeof window === 'undefined' || isDesktop) return undefined;
+        if (typeof window === 'undefined' || isDesktop) return;
 
         const handleScroll = () => {
             const currentScrollY = window.scrollY;

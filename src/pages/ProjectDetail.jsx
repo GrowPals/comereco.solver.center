@@ -13,7 +13,6 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { getProjectDetails } from '@/services/projectService';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
-import { SectionIcon } from '@/components/ui/icon-wrapper';
 import PageLoader from '@/components/PageLoader';
 import PageContainer from '@/components/layout/PageContainer';
 import EmptyState from '@/components/EmptyState';

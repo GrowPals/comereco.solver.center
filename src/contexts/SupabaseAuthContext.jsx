@@ -116,11 +116,15 @@ export const SupabaseAuthProvider = ({ children }) => {
 
       if (error) {
         logger.error('Error getting session:', error);
+        setLoading(false);
+        return;
       }
       setSession(session);
 
-      // FIX: Llamar a fetchUserProfile al inicializar
-      await fetchUserProfile(session?.user);
+      // FIX: Llamar a fetchUserProfile al inicializar solo si hay usuario
+      if (session?.user) {
+        await fetchUserProfile(session.user);
+      }
 
       if (isMounted) {
         setLoading(false);
@@ -195,7 +199,7 @@ export const SupabaseAuthProvider = ({ children }) => {
       return null;
     }
     return fetchUserProfile(authUser);
-  }, [fetchUserProfile, session?.user, user]);
+  }, [fetchUserProfile, session, user]);
 
   const value = useMemo(() => ({
     session,

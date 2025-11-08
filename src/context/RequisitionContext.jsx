@@ -17,31 +17,16 @@ export const RequisitionProvider = ({ children }) => {
     const { user } = useSupabaseAuth();
     const { items: cartItems } = useCart();
     const [requisition, setRequisition] = useState(initialState);
-    const [isInitialized, setIsInitialized] = useState(false);
 
     useEffect(() => {
-        if (user && !isInitialized) {
+        if (user) {
             setRequisition(prev => ({
                 ...prev,
                 created_by: user.id,
                 items: cartItems.map(item => ({ ...item, product_id: item.id }))
             }));
-            setIsInitialized(true);
         }
-    }, [user, cartItems, isInitialized]);
-    
-    const updateItemsFromCart = useCallback(() => {
-        setRequisition(prev => ({
-            ...prev,
-            items: cartItems.map(item => ({...item, product_id: item.id}))
-        }));
-    }, [cartItems]);
-    
-    useEffect(() => {
-        if(isInitialized) {
-            updateItemsFromCart();
-        }
-    }, [cartItems, isInitialized, updateItemsFromCart]);
+    }, [user, cartItems]);
     
     const updateItemQuantity = (productId, quantity) => {
         setRequisition(prev => ({

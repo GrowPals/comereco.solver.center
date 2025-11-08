@@ -337,9 +337,10 @@ export default function ProductDetail() {
   const productDescription = product.description || product.descripcion || '';
   const productCategory = product.category_name || product.categoria || '';
 
-  // Lógica de stock - igual que en ProductCard
-  const stock = Number.isFinite(product.stock) ? product.stock : product.existencias;
-  const isInStock = stock != null ? stock > 0 : true;
+  // Lógica de stock - igual que en ProductCard (corregida para validar correctamente)
+  const stock = Number.isFinite(product.stock) ? product.stock :
+                Number.isFinite(product.existencias) ? product.existencias : null;
+  const isInStock = stock !== null && stock !== undefined && stock > 0;
 
   return (
     <motion.div
