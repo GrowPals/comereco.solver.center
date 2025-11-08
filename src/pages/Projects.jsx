@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { PlusCircle, MoreHorizontal, Edit, Trash2, Users, FolderKanban, UserPlus, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
+import { PlusCircle, MoreHorizontal, Edit, Trash2, Users, FolderKanban, UserPlus, CheckCircle2, XCircle, ArrowRight, Calendar, Hash, AlertCircle, UserCog } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/useToast';
@@ -43,8 +43,19 @@ import EmptyState from '@/components/EmptyState';
 import PageContainer from '@/components/layout/PageContainer';
 
 const ProjectCard = ({ project, onEdit, onDelete, onManageMembers, onView }) => {
-  const { canManageProjects } = useUserPermissions();
+  const { canManageProjects, isAdmin } = useUserPermissions();
   const isActive = project.status === 'active';
+  const hasNoSupervisor = !project.supervisor?.full_name;
+
+  // Format creation date
+  const formattedDate = project.created_at
+    ? new Date(project.created_at).toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      })
+    : 'N/A';
+
   return (
     <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border-2 border-border bg-card p-6 shadow-soft-md transition-all duration-300 hover:-translate-y-1 hover:shadow-soft-lg dark:border-border dark:bg-card">
       {/* Accent bar on hover */}
@@ -82,15 +93,54 @@ const ProjectCard = ({ project, onEdit, onDelete, onManageMembers, onView }) => 
           )}
         </div>
         <p className="min-h-[3rem] text-base leading-relaxed text-muted-foreground">{project.description}</p>
+
+        {/* Project Metadata - helps differentiate duplicates */}
+        <div className="mt-4 flex flex-wrap gap-3 rounded-lg border border-border/50 bg-muted/30 px-3 py-2 text-xs dark:border-border/50 dark:bg-muted/20">
+          <div className="flex items-center gap-1.5 text-muted-foreground">
+            <Hash className="h-3.5 w-3.5" />
+            <span className="font-mono font-medium">ID: {project.id}</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-muted-foreground">
+            <Calendar className="h-3.5 w-3.5" />
+            <span>Creado: {formattedDate}</span>
+          </div>
+        </div>
       </div>
 
       <div className="mt-6 flex flex-col gap-3 border-t border-border pt-4 dark:border-border">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <Badge variant={isActive ? 'success' : 'muted'} className="shadow-sm">
             {isActive ? 'Activo' : 'Archivado'}
           </Badge>
-          <div className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">{project.supervisor?.full_name || 'Sin asignar'}</span>
+
+          {/* Supervisor assignment - with actionable state for unassigned */}
+          <div className="flex items-center gap-2">
+            {hasNoSupervisor ? (
+              <>
+                <div className="flex items-center gap-1.5 rounded-lg border border-warning/40 bg-warning/10 px-2.5 py-1 dark:border-warning/30 dark:bg-warning/5">
+                  <AlertCircle className="h-3.5 w-3.5 text-warning dark:text-warning" />
+                  <span className="text-xs font-medium text-warning dark:text-warning">Sin asignar</span>
+                </div>
+                {isAdmin && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 rounded-lg text-warning hover:bg-warning/10 hover:text-warning dark:text-warning dark:hover:bg-warning/5"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEdit(project);
+                    }}
+                    title="Asignar supervisor"
+                  >
+                    <UserCog className="h-4 w-4" />
+                  </Button>
+                )}
+              </>
+            ) : (
+              <div className="text-sm text-muted-foreground">
+                <span className="font-medium text-foreground">{project.supervisor.full_name}</span>
+              </div>
+            )}
           </div>
         </div>
         <Button

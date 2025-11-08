@@ -15,7 +15,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PageContainer from '@/components/layout/PageContainer';
+import CompanyContextIndicator from '@/components/layout/CompanyContextIndicator';
 import { IconWrapper } from '@/components/ui/icon-wrapper';
+import ScrollToTopButton from '@/components/ScrollToTopButton';
 
 
 const RequisitionsPage = () => {
@@ -62,18 +64,23 @@ const RequisitionsPage = () => {
         <meta name="description" content="Vea y gestione sus requisiciones de compra." />
       </Helmet>
 
+      <ScrollToTopButton />
+
       <PageContainer>
         <div className="mx-auto w-full max-w-7xl">
           {/* Header */}
           <header className="mb-6 border-b border-border pb-4 sm:mb-8 sm:pb-6">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="space-y-2">
-                <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
-                  Mis Requisiciones
-                </h1>
-                <p className="text-sm text-muted-foreground sm:text-base">
-                  Historial y seguimiento de todas tus solicitudes
-                </p>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="space-y-2">
+                  <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
+                    Mis Requisiciones
+                  </h1>
+                  <p className="text-sm text-muted-foreground sm:text-base">
+                    Historial y seguimiento de todas tus solicitudes
+                  </p>
+                </div>
+                <CompanyContextIndicator compact className="self-start" />
               </div>
               <div className="grid w-full gap-3 sm:w-auto sm:grid-cols-[auto_auto] sm:items-center">
                 <TooltipProvider>

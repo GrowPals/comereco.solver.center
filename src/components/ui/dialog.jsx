@@ -1,4 +1,17 @@
-
+/**
+ * Dialog Component
+ *
+ * Implementa modal dialogs con accesibilidad completa mediante Radix UI.
+ *
+ * Características de accesibilidad incluidas automáticamente:
+ * - Focus trapping: El foco permanece dentro del dialog mientras está abierto
+ * - Focus return: El foco regresa al elemento que abrió el dialog al cerrarse
+ * - Escape para cerrar: Presionar Escape cierra el dialog
+ * - Primer elemento interactivo: El foco se mueve automáticamente al primer elemento interactivo
+ * - Tab/Shift+Tab: Cicla solo entre elementos interactivos dentro del dialog
+ *
+ * @see https://www.radix-ui.com/docs/primitives/components/dialog#accessibility
+ */
 import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
@@ -27,7 +40,7 @@ const DialogContent = React.forwardRef(({ className, children, ...props }, ref) 
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        'fixed left-[50%] top-[50%] z-50 grid w-[calc(100%-1.5rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 surface-overlay border border-border p-4 sm:p-6 text-foreground shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-2xl sm:rounded-2xl max-h-[calc(100dvh-2.5rem)] overflow-y-auto overscroll-contain touch-pan-y dark:bg-[#0e1829] dark:border-[rgba(90,150,230,0.28)] dark:shadow-[0_16px_48px_rgba(0,0,0,0.35)]',
+        'fixed left-[50%] top-[50%] z-50 grid w-[calc(100%-1.5rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 surface-overlay border border-border p-4 sm:p-6 text-foreground shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-2xl sm:rounded-2xl max-h-[calc(100dvh-2.5rem)] overflow-y-auto overscroll-contain touch-pan-y dark:bg-[#0e1829] dark:shadow-[0_16px_48px_rgba(0,0,0,0.35)]',
         className
       )}
       {...props}

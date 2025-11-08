@@ -53,7 +53,7 @@ export function CartIcon({ variant = 'default' }) {
       {totalItems > 0 && (
         <span
           className={cn(
-            'header-badge',
+            'cart-badge',
             shouldAnimate && 'animate-[badgePulse_0.4s_ease-in-out]'
           )}
         >

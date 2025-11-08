@@ -4,9 +4,9 @@ import { cn } from '@/lib/utils';
 const Card = React.forwardRef(({ className, interactive = false, accentColor = 'primary', variant = 'default', ...props }, ref) => {
   // Sistema de variantes de sombras
   const shadowClasses = {
-    default: 'shadow-soft-sm dark:border dark:border-slate-700',
+    default: 'shadow-soft-sm',
     elevated: 'shadow-soft-md dark:shadow-dark-sm',
-    interactive: 'shadow-soft-sm hover:shadow-soft-md dark:border dark:border-slate-700 transition-shadow duration-base cursor-pointer',
+    interactive: 'shadow-soft-sm hover:shadow-soft-md transition-shadow duration-base cursor-pointer',
   };
 
   return (
@@ -25,8 +25,8 @@ const Card = React.forwardRef(({ className, interactive = false, accentColor = '
         accentColor === 'success' && 'before:bg-gradient-success',
         // Dark mode: limpio sin overlays innecesarios, con bordes visibles
         'dark:bg-card',
-        // Interactive: shadow transitions sin translate (evita layout shift) + hover lift sutil
-        interactive && 'cursor-pointer hover:border-neutral-300 hover:before:scale-x-100 hover:shadow-soft-md hover:-translate-y-0.5 dark:hover:border-slate-600',
+        // Interactive: shadow transitions + hover lift sutil
+        interactive && 'cursor-pointer hover:border-neutral-300 hover:before:scale-x-100 hover:shadow-soft-md hover:-translate-y-0.5 dark:hover:border-[rgba(130,200,255,0.22)]',
         className
       )}
       {...props}
