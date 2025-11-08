@@ -4,7 +4,7 @@ import { getCompanyScopeOverride, COMPANY_SCOPE_GLOBAL } from '@/lib/companyScop
 // Cache simple para sesión (evita múltiples llamadas en el mismo tick)
 let sessionCache = null;
 let sessionCacheTime = 0;
-const CACHE_DURATION = 5000; // 5 segundos
+const CACHE_DURATION = 3000; // 3 segundos (reducido de 5s para evitar stale data)
 
 /**
  * Helper optimizado para obtener sesión con cache temporal
@@ -48,6 +48,30 @@ export const getCachedUser = async () => {
 export const clearSessionCache = () => {
   sessionCache = null;
   sessionCacheTime = 0;
+};
+
+/**
+ * Invalidar cache si hay error de autenticación
+ * Útil para forzar re-autenticación en errores 401/403
+ * @param {Object} error - Error de Supabase
+ */
+export const invalidateCacheOnAuthError = (error) => {
+  if (!error) return;
+
+  const isAuthError =
+    error.status === 401 ||
+    error.status === 403 ||
+    error.code === 'PGRST301' || // JWT expired
+    error.code === 'PGRST302' || // JWT invalid
+    error.message?.toLowerCase().includes('jwt') ||
+    error.message?.toLowerCase().includes('unauthorized') ||
+    error.message?.toLowerCase().includes('forbidden');
+
+  if (isAuthError) {
+    clearSessionCache();
+    companyIdCache = null;
+    companyIdCacheTime = 0;
+  }
 };
 
 // Escuchar cambios de auth para limpiar cache

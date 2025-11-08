@@ -38,9 +38,11 @@ const Approvals = () => {
     const [dismissingIds, setDismissingIds] = useState([]);
     const [pendingRefetch, setPendingRefetch] = useState(false);
 
-    const { data: requisitions, isLoading } = useQuery({
+    const { data: requisitions, isLoading, isError, error, refetch } = useQuery({
         queryKey: ['pendingApprovals'],
         queryFn: fetchPendingApprovals,
+        retry: 2,
+        staleTime: 1000 * 30, // 30 segundos
     });
 
     // Memoizar hora actual para evitar recalcular en cada render
@@ -129,6 +131,31 @@ const Approvals = () => {
 
     if (isLoading) {
         return <div className="p-8"><PageLoader /></div>;
+    }
+
+    if (isError) {
+        return (
+            <PageContainer>
+                <div className="mx-auto w-full max-w-7xl">
+                    <div className="flex min-h-[400px] items-center justify-center">
+                        <div className="max-w-md rounded-2xl border-2 border-destructive bg-card p-8 text-center shadow-md">
+                            <AlertTriangle className="mx-auto mb-4 h-12 w-12 text-destructive" />
+                            <h2 className="mb-2 text-2xl font-bold text-foreground">Error al cargar aprobaciones</h2>
+                            <p className="mb-6 text-sm text-muted-foreground">
+                                {error?.message || 'No se pudieron cargar las aprobaciones pendientes'}
+                            </p>
+                            <Button
+                                onClick={() => refetch()}
+                                variant="outline"
+                                className="rounded-xl"
+                            >
+                                Reintentar
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </PageContainer>
+        );
     }
 
     return (

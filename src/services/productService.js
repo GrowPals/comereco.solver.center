@@ -4,11 +4,19 @@ import { getCachedSession, ensureScopedCompanyId } from '@/lib/supabaseHelpers';
 import { formatErrorMessage } from '@/utils/errorHandler';
 import logger from '@/utils/logger';
 
+// Sistema de cancelación de queries para evitar race conditions
+let currentFetchToken = 0;
+
 /**
  * CORREGIDO: Asegura que la sesión esté activa antes de hacer queries
  * RLS filtra automáticamente por company_id según REFERENCIA_TECNICA_BD_SUPABASE.md
+ * OPTIMIZACIÓN: Ignora resultados de queries obsoletas para evitar race conditions
+ * @param {Object} params - Parámetros de la búsqueda
+ * @param {number} params.fetchToken - Token opcional para cancelación
+ * @returns {Promise<{products: Array, nextPage?: number, totalCount: number, isCancelled?: boolean}>}
  */
-export const fetchProducts = async ({ pageParam = 0, searchTerm = '', category = '', availability = '', pageSize = 12 }) => {
+export const fetchProducts = async ({ pageParam = 0, searchTerm = '', category = '', availability = '', pageSize = 12, fetchToken }) => {
+    const token = fetchToken !== undefined ? fetchToken : ++currentFetchToken;
     try {
         // Validar sesión antes de hacer queries (usando cache)
         const { session, error: sessionError } = await getCachedSession();
@@ -41,10 +49,30 @@ export const fetchProducts = async ({ pageParam = 0, searchTerm = '', category =
 
         const { data, error, count } = await query;
 
+        // Verificar si esta query fue cancelada por una más reciente
+        if (fetchToken !== undefined && token !== currentFetchToken) {
+            logger.debug(`Product fetch cancelled (token ${token}, current ${currentFetchToken})`);
+            return {
+                products: [],
+                totalCount: 0,
+                isCancelled: true,
+            };
+        }
+
         if (error) {
             logger.error('Error fetching products:', error);
             // En lugar de lanzar error, devolver datos vacíos para que la UI se muestre
-            return { products: [], totalCount: 0 };
+            return { products: [], totalCount: 0, isCancelled: false };
+        }
+
+        // Verificar una vez más antes de devolver resultados
+        if (fetchToken !== undefined && token !== currentFetchToken) {
+            logger.debug(`Product fetch cancelled after query (token ${token}, current ${currentFetchToken})`);
+            return {
+                products: [],
+                totalCount: 0,
+                isCancelled: true,
+            };
         }
 
         return {
@@ -52,12 +80,22 @@ export const fetchProducts = async ({ pageParam = 0, searchTerm = '', category =
             nextPage: (to + 1) < (count || 0) ? pageParam + 1 : undefined,
             totalCount: count || 0,
             pageSize: ITEMS_PER_PAGE,
+            isCancelled: false,
         };
     } catch (err) {
         logger.error('Exception in fetchProducts:', err);
         // Devolver datos vacíos en caso de excepción
-        return { products: [], totalCount: 0 };
+        return { products: [], totalCount: 0, isCancelled: false };
     }
+};
+
+/**
+ * Obtiene un nuevo token de fetch
+ * Útil para componentes que quieren controlar la cancelación
+ * @returns {number} Nuevo token de fetch
+ */
+export const getProductFetchToken = () => {
+    return ++currentFetchToken;
 };
 
 export const fetchProductById = async (productId) => {

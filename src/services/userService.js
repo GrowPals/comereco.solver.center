@@ -5,6 +5,7 @@ import { getUserAccessContext } from '@/lib/accessControl';
 import { scopeToCompany } from '@/lib/companyScope';
 import logger from '@/utils/logger';
 import { formatErrorMessage } from '@/utils/errorHandler';
+import { retryEdgeFunction } from '@/lib/retryHelper';
 
 const PROFILE_BASE_FIELDS = [
   'id',
@@ -228,26 +229,49 @@ export const inviteUser = async (email, role) => {
     }
 
     try {
-        // Llamar a la Edge Function con el token del usuario
-        const { data, error } = await supabase.functions.invoke('invite-user', {
-            body: {
-                email: normalizedEmail,
-                role: normalizedRole,
+        // Llamar a la Edge Function con retry logic automático
+        const result = await retryEdgeFunction(
+            async () => {
+                const { data, error } = await supabase.functions.invoke('invite-user', {
+                    body: {
+                        email: normalizedEmail,
+                        role: normalizedRole,
+                    },
+                });
+
+                if (error) {
+                    logger.error('Error inviting user via Edge Function:', error);
+                    throw error;
+                }
+
+                if (data?.error) {
+                    logger.error('Edge Function returned error:', data.error);
+                    // Si es un error de negocio, no reintentar
+                    const businessError = new Error(data.error);
+                    businessError.isBusinessError = true;
+                    throw businessError;
+                }
+
+                return data;
             },
-        });
+            {
+                functionName: 'invite-user',
+                maxRetries: 3,
+                shouldRetry: (error) => {
+                    // No reintentar errores de negocio
+                    if (error.isBusinessError) return false;
+                    // No reintentar errores de validación
+                    if (error.message?.includes('already registered')) return false;
+                    if (error.message?.includes('already exists')) return false;
+                    if (error.message?.includes('permisos')) return false;
+                    // Reintentar errores de red/infraestructura
+                    return true;
+                }
+            }
+        );
 
-        if (error) {
-            logger.error('Error inviting user via Edge Function:', error);
-            throw new Error(error.message || 'Error al invitar usuario');
-        }
-
-        if (data?.error) {
-            logger.error('Edge Function returned error:', data.error);
-            throw new Error(data.error);
-        }
-
-        logger.info('User invited successfully:', data);
-        return data;
+        logger.info('User invited successfully:', result);
+        return result;
     } catch (error) {
         logger.error('Exception inviting user:', error);
 
@@ -414,26 +438,48 @@ export const toggleUserStatus = async (userId, isActive) => {
   }
 
   try {
-    // Llamar a la Edge Function
-    const { data, error } = await supabase.functions.invoke('toggle-user-status', {
-      body: {
-        userId,
-        isActive,
+    // Llamar a la Edge Function con retry logic automático
+    const result = await retryEdgeFunction(
+      async () => {
+        const { data, error } = await supabase.functions.invoke('toggle-user-status', {
+          body: {
+            userId,
+            isActive,
+          },
+        });
+
+        if (error) {
+          logger.error('Error toggling user status via Edge Function:', error);
+          throw error;
+        }
+
+        if (data?.error) {
+          logger.error('Edge Function returned error:', data.error);
+          // Si es un error de negocio, no reintentar
+          const businessError = new Error(data.error);
+          businessError.isBusinessError = true;
+          throw businessError;
+        }
+
+        return data;
       },
-    });
+      {
+        functionName: 'toggle-user-status',
+        maxRetries: 3,
+        shouldRetry: (error) => {
+          // No reintentar errores de negocio
+          if (error.isBusinessError) return false;
+          // No reintentar errores de validación
+          if (error.message?.includes('desactivarte a ti mismo')) return false;
+          if (error.message?.includes('permisos')) return false;
+          // Reintentar errores de red/infraestructura
+          return true;
+        }
+      }
+    );
 
-    if (error) {
-      logger.error('Error toggling user status via Edge Function:', error);
-      throw new Error(error.message || 'Error al cambiar el estado del usuario');
-    }
-
-    if (data?.error) {
-      logger.error('Edge Function returned error:', data.error);
-      throw new Error(data.error);
-    }
-
-    logger.info('User status toggled successfully:', data);
-    return data;
+    logger.info('User status toggled successfully:', result);
+    return result;
   } catch (error) {
     logger.error('Exception toggling user status:', error);
 

@@ -14,18 +14,20 @@ import { useNavigate } from 'react-router-dom';
 
 const SupervisorDashboard = memo(({ user }) => {
     const navigate = useNavigate();
-    const { data: stats, isLoading: isLoadingStats } = useQuery({
+    const { data: stats, isLoading: isLoadingStats, isError: isErrorStats, error: errorStats, refetch: refetchStats } = useQuery({
         queryKey: ['dashboardStats', user.id],
         queryFn: getDashboardStats,
         staleTime: 1000 * 60 * 5, // 5 minutos
         gcTime: 1000 * 60 * 30, // 30 minutos
+        retry: 2,
     });
 
-    const { data: projects, isLoading: isLoadingProjects } = useQuery({
+    const { data: projects, isLoading: isLoadingProjects, isError: isErrorProjects, error: errorProjects, refetch: refetchProjects } = useQuery({
         queryKey: ['supervisorProjectsActivity'],
         queryFn: getSupervisorProjectsActivity,
         staleTime: 1000 * 60 * 5, // 5 minutos
         gcTime: 1000 * 60 * 30, // 30 minutos
+        retry: 2,
     });
 
     const formatCurrency = (value) => value ? `$${Number(value).toFixed(2)}` : '$0.00';
@@ -56,6 +58,28 @@ const SupervisorDashboard = memo(({ user }) => {
         { label: 'Mis Proyectos', icon: FolderKanban, path: '/projects', variant: 'outline' },
         { label: 'Historial', icon: History, path: '/requisitions', variant: 'outline' },
     ];
+
+    if (isErrorStats) {
+        return (
+            <div className="max-w-7xl mx-auto">
+                <div className="flex min-h-[300px] items-center justify-center">
+                    <div className="max-w-md rounded-2xl border-2 border-destructive bg-card p-8 text-center shadow-md">
+                        <CheckSquare className="mx-auto mb-4 h-12 w-12 text-destructive" />
+                        <h2 className="mb-2 text-2xl font-bold text-foreground">Error al cargar estadísticas</h2>
+                        <p className="mb-6 text-sm text-muted-foreground">
+                            {errorStats?.message || 'No se pudieron cargar las estadísticas del dashboard'}
+                        </p>
+                        <button
+                            onClick={() => refetchStats()}
+                            className="rounded-xl border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted"
+                        >
+                            Reintentar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-8">

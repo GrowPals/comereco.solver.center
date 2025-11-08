@@ -9,11 +9,12 @@ import CompanyContextIndicator from '@/components/layout/CompanyContextIndicator
 import { Users, FolderKanban, FileText, ShoppingBag, BarChart2 } from 'lucide-react';
 
 const AdminDashboard = memo(({ user }) => {
-    const { data: stats, isLoading } = useQuery({
+    const { data: stats, isLoading, isError, error, refetch } = useQuery({
         queryKey: ['dashboardStats', user.id],
         queryFn: getDashboardStats,
         staleTime: 1000 * 60 * 5, // 5 minutos
         gcTime: 1000 * 60 * 30, // 30 minutos
+        retry: 2,
     });
 
     const formatCurrency = (value) => value ? `$${Number(value).toFixed(2)}` : '$0.00';
@@ -47,6 +48,28 @@ const AdminDashboard = memo(({ user }) => {
         { label: 'Gestionar Productos', icon: ShoppingBag, path: '/products/manage' },
         { label: 'Reportes', icon: BarChart2, path: '/reports', variant: 'secondary' },
     ];
+
+    if (isError) {
+        return (
+            <div className="max-w-7xl mx-auto">
+                <div className="flex min-h-[300px] items-center justify-center">
+                    <div className="max-w-md rounded-2xl border-2 border-destructive bg-card p-8 text-center shadow-md">
+                        <BarChart2 className="mx-auto mb-4 h-12 w-12 text-destructive" />
+                        <h2 className="mb-2 text-2xl font-bold text-foreground">Error al cargar estadísticas</h2>
+                        <p className="mb-6 text-sm text-muted-foreground">
+                            {error?.message || 'No se pudieron cargar las estadísticas del dashboard'}
+                        </p>
+                        <button
+                            onClick={() => refetch()}
+                            className="rounded-xl border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted"
+                        >
+                            Reintentar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="max-w-7xl mx-auto space-y-10">
