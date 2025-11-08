@@ -16,13 +16,14 @@ const AlertContext = createContext(null);
  */
 export const AlertProvider = ({ children }) => {
   const [alerts, setAlerts] = useState([]);
-  const timersRef = useRef(new Map());
+  // Almacenar referencias a los timeouts para poder limpiarlos
+  const timeoutsRef = useRef(new Map());
 
   // Limpiar todos los timers al desmontar
   useEffect(() => {
     return () => {
-      timersRef.current.forEach((timer) => clearTimeout(timer));
-      timersRef.current.clear();
+      timeoutsRef.current.forEach((timeoutId) => clearTimeout(timeoutId));
+      timeoutsRef.current.clear();
     };
   }, []);
 
@@ -32,10 +33,11 @@ export const AlertProvider = ({ children }) => {
    */
   const removeAlert = useCallback((id) => {
     setAlerts((prevAlerts) => prevAlerts.filter((alert) => alert.id !== id));
-    // Limpiar el timer asociado si existe
-    if (timersRef.current.has(id)) {
-      clearTimeout(timersRef.current.get(id));
-      timersRef.current.delete(id);
+    // Limpiar el timeout asociado si existe
+    const timeoutId = timeoutsRef.current.get(id);
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutsRef.current.delete(id);
     }
   }, []);
 
@@ -54,12 +56,11 @@ export const AlertProvider = ({ children }) => {
 
     // Auto-dismiss si tiene duration
     if (alert.duration) {
-      const timer = setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         removeAlert(id);
       }, alert.duration);
-
-      // Guardar referencia al timer
-      timersRef.current.set(id, timer);
+      // Guardar la referencia del timeout
+      timeoutsRef.current.set(id, timeoutId);
     }
 
     return id;
@@ -69,10 +70,12 @@ export const AlertProvider = ({ children }) => {
    * Limpia todas las alertas
    */
   const clearAlerts = useCallback(() => {
+    // Limpiar todos los timeouts antes de eliminar las alertas
+    timeoutsRef.current.forEach((timeoutId) => {
+      clearTimeout(timeoutId);
+    });
+    timeoutsRef.current.clear();
     setAlerts([]);
-    // Limpiar todos los timers
-    timersRef.current.forEach((timer) => clearTimeout(timer));
-    timersRef.current.clear();
   }, []);
 
   /**

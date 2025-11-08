@@ -93,13 +93,16 @@ const AppLayout = () => {
 
   // Prefetching inteligente de datos probables
   useEffect(() => {
-    if (!session) return;
+    if (!session?.user?.id) return;
+
+    let isCancelled = false;
 
     // Prefetch requisiciones si está en dashboard
     if (location.pathname === '/dashboard') {
       queryClient.prefetchQuery({
         queryKey: ['requisitions', { page: 1, pageSize: 10 }],
         queryFn: async () => {
+          if (isCancelled) return { data: [], total: 0, count: 0 };
           const result = await fetchRequisitions(1, 10, 'created_at', false);
           return {
             data: result?.data ?? [],
@@ -115,11 +118,18 @@ const AppLayout = () => {
     if (location.pathname === '/dashboard' || location.pathname === '/catalog') {
       queryClient.prefetchQuery({
         queryKey: ['products', { page: 1, pageSize: 12, searchTerm: '', category: '' }],
-        queryFn: () => getProducts({ page: 1, pageSize: 12, searchTerm: '', category: '' }),
+        queryFn: async () => {
+          if (isCancelled) return { data: [], count: 0, currentPage: 1, totalPages: 0 };
+          return getProducts({ page: 1, pageSize: 12, searchTerm: '', category: '' });
+        },
         staleTime: 60000, // 1 minuto
       });
     }
-  }, [location.pathname, session, queryClient]);
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [location.pathname, session?.user?.id, queryClient]);
 
   const handleToggleSidebar = () => {
     if (window.innerWidth < 1024) {

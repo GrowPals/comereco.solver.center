@@ -39,15 +39,22 @@ const RequisitionCard = memo(({ requisition }) => {
   useEffect(() => {
     if (typeof window === 'undefined') return undefined;
 
+    let timeoutId;
     const handleResize = () => {
-      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+      }, 250);
     };
 
     // Inicializar estado basado en viewport
     setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
 
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   // Memoizar fecha formateada
@@ -98,7 +105,7 @@ const RequisitionCard = memo(({ requisition }) => {
           aria-label={`Requisición ${requisition.internal_folio || requisition.id}`}
         >
           {/* Accent Bar */}
-          <div className={cn('absolute top-0 left-0 right-0 h-1.5 transition-transform duration-300', statusAccent)} />
+          <div className={cn('absolute top-0 left-0 right-0 h-1 transition-transform duration-300', statusAccent)} />
 
           <CardContent className="p-4">
             {/* Información Principal - Siempre visible */}
