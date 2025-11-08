@@ -19,7 +19,6 @@ import { ToastProvider } from '@/components/ui/toast-notification';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { AlertContainer } from '@/components/AlertContainer';
 import { cn } from '@/lib/utils';
-import CompanyScopeIndicator from '@/components/layout/CompanyScopeIndicator';
 
 // Lazy loading de las páginas
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
@@ -167,7 +166,6 @@ const AppLayout = () => {
         isSidebarOpen ? 'lg:pl-[18rem]' : 'lg:pl-[5rem]'
       )}>
         {showNav && <Header setSidebarOpen={handleToggleSidebar} />}
-        {showNav && <CompanyScopeIndicator />}
 
         {/* Floating company scope indicator */}
         {showNav && <CompanyScopeIndicator />}
