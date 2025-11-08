@@ -117,15 +117,14 @@ const ProjectCard = ({ project, onEdit, onDelete, onManageMembers, onView }) => 
           <div className="flex items-center gap-2">
             {hasNoSupervisor ? (
               <>
-                <div className="flex items-center gap-1.5 rounded-lg border border-warning/40 bg-warning/10 px-2.5 py-1 dark:border-warning/30 dark:bg-warning/5">
-                  <AlertCircle className="h-3.5 w-3.5 text-warning dark:text-warning" />
-                  <span className="text-xs font-medium text-warning dark:text-warning">Sin asignar</span>
-                </div>
+                <Badge variant="warning" className="text-xs">
+                  Sin asignar
+                </Badge>
                 {isAdmin && (
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-7 w-7 rounded-lg text-warning hover:bg-warning/10 hover:text-warning dark:text-warning dark:hover:bg-warning/5"
+                    className="h-7 w-7 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
                     onClick={(e) => {
                       e.stopPropagation();
                       onEdit(project);

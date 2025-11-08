@@ -1,57 +1,45 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { cn } from '@/lib/utils';
-
-const sizeMap = {
-  sm: 'h-8 w-8',
-  md: 'h-10 w-10',
-  lg: 'h-12 w-12',
-  xl: 'h-16 w-16',
-};
-
-const toneClass = {
-  primary: 'text-primary-600 dark:text-primary-100',
-  neutral: 'text-neutral-600 dark:text-neutral-100',
-  success: 'text-success dark:text-success-light',
-  warning: 'text-warning dark:text-warning-light',
-  danger: 'text-error dark:text-error-light',
-};
+import { buildIconStyles } from './icon-presets';
 
 export const IconToken = ({
   icon: Icon,
   size = 'md',
-  tone = 'primary',
+  tone = 'brand',
+  variant = 'soft',
+  glow = false,
   className,
+  iconClassName,
   children,
   ...props
 }) => {
-  const iconSizes = {
-    sm: 'h-4 w-4',
-    md: 'h-5 w-5',
-    lg: 'h-6 w-6',
-    xl: 'h-8 w-8',
-  };
+  const { wrapper, icon } = buildIconStyles({
+    size,
+    tone,
+    variant,
+    glow,
+    forceWrapper: true,
+  });
 
   return (
     <span
-      className={cn(
-        'icon-badge flex shrink-0 items-center justify-center',
-        sizeMap[size],
-        toneClass[tone],
-        className
-      )}
+      className={cn('icon-token flex items-center justify-center', wrapper, className)}
       {...props}
     >
-      {children ?? <Icon aria-hidden="true" className={iconSizes[size]} />}
+      {children ?? (Icon ? <Icon aria-hidden="true" className={cn(icon, iconClassName)} /> : null)}
     </span>
   );
 };
 
 IconToken.propTypes = {
   icon: PropTypes.elementType,
-  size: PropTypes.oneOf(['sm', 'md', 'lg', 'xl']),
-  tone: PropTypes.oneOf(['primary', 'neutral', 'success', 'warning', 'danger']),
+  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', '2xl']),
+  tone: PropTypes.oneOf(['brand', 'neutral', 'info', 'success', 'warning', 'danger']),
+  variant: PropTypes.oneOf(['simple', 'soft', 'solid', 'outline', 'glass', 'ghost']),
+  glow: PropTypes.bool,
   className: PropTypes.string,
+  iconClassName: PropTypes.string,
   children: PropTypes.node,
 };
 

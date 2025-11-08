@@ -2,32 +2,46 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-const baseIconClasses = 'h-16 w-16 text-muted-foreground';
+import { IconWrapper } from '@/components/ui/icon-wrapper';
 
 const EmptyState = ({ icon, title, description, buttonText, onButtonClick, actionButton, message }) => {
-  const IconComponent = typeof icon === 'string' ? null : icon;
+  const renderIcon = () => {
+    if (!icon || typeof icon === 'string') return null;
 
-  let iconElement = null;
+    if (React.isValidElement(icon)) {
+      return (
+        <IconWrapper
+          icon={icon.type}
+          size={icon.props.size ?? '2xl'}
+          variant={icon.props.variant ?? 'glass'}
+          tone={icon.props.tone}
+          glow={icon.props.glow ?? true}
+          className={cn('empty-state-icon shadow-soft-lg', icon.props.wrapperClassName)}
+          iconClassName={icon.props.className}
+        />
+      );
+    }
 
-  if (React.isValidElement(icon)) {
-    iconElement = React.cloneElement(icon, {
-      className: cn(baseIconClasses, icon.props.className),
-      'aria-hidden': true,
-    });
-  } else if (IconComponent) {
-    iconElement = <IconComponent className={baseIconClasses} aria-hidden="true" />;
-  }
+    return (
+      <IconWrapper
+        icon={icon}
+        size="2xl"
+        variant="glass"
+        glow
+        className="empty-state-icon shadow-soft-lg"
+      />
+    );
+  };
 
-  // Usar message si description no está disponible (para compatibilidad)
   const displayDescription = description || message;
+  const iconElement = renderIcon();
 
   return (
     <div className="animate-fadeIn p-12 text-center">
       <div className="mb-6 flex justify-center">
-        <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-muted/60 shadow-md dark:bg-card/70">
-          {iconElement}
-        </div>
+        {iconElement ?? (
+          <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-muted/60 shadow-md dark:bg-card/70" />
+        )}
       </div>
       <h2 className="mb-3 heading-3" role="heading" aria-level="2">{title}</h2>
       <p className="mx-auto max-w-md text-secondary">{displayDescription}</p>

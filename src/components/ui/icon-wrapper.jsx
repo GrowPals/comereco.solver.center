@@ -1,97 +1,82 @@
 import React from 'react';
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
+import { buildIconStyles } from './icon-presets';
 import { IconToken } from './icon-token';
 
-/**
- * Variantes de iconos según contexto
- */
-const iconVariants = {
-  // Icono simple - SIN fondo, solo el icono en color
-  simple: {
-    wrapper: "",
-    icon: "text-blue-600 dark:text-blue-400"
-  },
-
-  // Icono con fondo sutil - Para elementos que necesitan un poco más de presencia
-  subtle: {
-    wrapper: "bg-slate-100 dark:bg-slate-700/50 rounded-full p-2",
-    icon: "text-blue-600 dark:text-blue-400"
-  },
-
-  // Icono destacado - Para elementos MUY importantes (usar con moderación)
-  prominent: {
-    wrapper: "bg-blue-600 dark:bg-blue-500 rounded-full p-2",
-    icon: "text-white"
-  },
-
-  // Icono en badge neutral - Para información secundaria
-  neutral: {
-    wrapper: "bg-slate-100 dark:bg-slate-700/50 rounded-full p-2",
-    icon: "text-slate-600 dark:text-slate-400"
-  }
-};
-
-/**
- * Wrapper genérico para iconos
- */
 export function IconWrapper({
   icon: Icon,
-  variant = "simple",
-  size = "md",
-  className
+  variant = 'soft',
+  tone,
+  size = 'md',
+  glow = false,
+  interactive = false,
+  decorative = true,
+  className,
+  iconClassName,
+  ...props
 }) {
-  const sizes = {
-    sm: "w-4 h-4",
-    md: "w-5 h-5",
-    lg: "w-6 h-6",
-    xl: "w-8 h-8"
-  };
+  if (!Icon) return null;
 
-  const wrapperSizes = {
-    sm: "w-8 h-8",
-    md: "w-10 h-10",
-    lg: "w-12 h-12",
-    xl: "w-16 h-16"
-  };
+  const { ['aria-hidden']: ariaHiddenProp, ...rest } = props;
+  const { wrapper, icon, tone: resolvedTone, variant: resolvedVariant } = buildIconStyles({
+    size,
+    tone,
+    variant,
+    glow,
+  });
 
-  const config = iconVariants[variant];
+  const ariaHidden = decorative ? true : ariaHiddenProp;
 
-  // Si es "simple", no usar wrapper
-  if (variant === "simple") {
-    return <Icon className={cn(sizes[size], config.icon, className)} />;
+  if (!wrapper) {
+    return (
+      <Icon
+        className={cn(icon, iconClassName, className)}
+        aria-hidden={ariaHidden}
+        {...rest}
+      />
+    );
   }
 
   return (
-    <div className={cn(wrapperSizes[size], config.wrapper, "flex items-center justify-center shrink-0", className)}>
-      <Icon className={cn(sizes[size], config.icon)} />
-    </div>
+    <span
+      className={cn(
+        wrapper,
+        interactive && 'hover:-translate-y-0.5 hover:shadow-soft-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400/60 focus-visible:ring-offset-2',
+        className,
+      )}
+      data-tone={resolvedTone}
+      data-variant={resolvedVariant}
+      {...rest}
+    >
+      <Icon className={cn(icon, iconClassName)} aria-hidden={ariaHidden} />
+    </span>
   );
 }
 
-/**
- * Icono para estadísticas (dashboard)
- */
-export function StatIcon({ icon: Icon, className }) {
+export function StatIcon({ icon: Icon, tone = 'brand', variant = 'glass', size = 'lg', className, ...props }) {
   return (
     <IconToken
       icon={Icon}
-      size="md"
-      className={cn('shrink-0', className)}
-      aria-hidden="true"
+      tone={tone}
+      variant={variant}
+      size={size}
+      glow
+      className={cn('stat-icon shrink-0', className)}
+      {...props}
     />
   );
 }
 
-/**
- * Icono para headers de sección
- */
-export function SectionIcon({ icon: Icon, className }) {
+export function SectionIcon({ icon: Icon, tone = 'brand', variant = 'soft', size = 'md', className, ...props }) {
   return (
     <IconToken
       icon={Icon}
-      size="sm"
-      className={className}
-      aria-hidden="true"
+      tone={tone}
+      variant={variant}
+      size={size}
+      glow={variant !== 'outline'}
+      className={cn('section-icon', className)}
+      {...props}
     />
   );
 }

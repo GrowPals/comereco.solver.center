@@ -98,12 +98,12 @@
      ============================================ */
 
   /* Tamaños de íconos */
-  --icon-size-xs: 0.875rem;   /* 14px - Muy pequeños, uso mínimo */
-  --icon-size-sm: 1rem;       /* 16px - Estándar para UI compacta */
-  --icon-size-md: 1.25rem;    /* 20px - Estándar para navegación */
-  --icon-size-lg: 1.5rem;     /* 24px - Mobile y elementos destacados */
-  --icon-size-xl: 2rem;       /* 32px - Iconos hero o decorativos */
-  --icon-size-2xl: 2.5rem;    /* 40px - Iconos grandes en estados vacíos */
+  --icon-size-xs: 1rem;       /* 16px - Tamaño mínimo legible */
+  --icon-size-sm: 1.25rem;    /* 20px - UI compacta/navegación */
+  --icon-size-md: 1.5rem;     /* 24px - Acciones primarias */
+  --icon-size-lg: 1.875rem;   /* 30px - Iconos destacados */
+  --icon-size-xl: 2.5rem;     /* 40px - Hero/estados vacíos */
+  --icon-size-2xl: 3rem;      /* 48px - Ilustraciones ligeras */
 
   /* Colores de íconos - Se adaptan al tema en index.css */
   --icon-color-primary: var(--primary-600);

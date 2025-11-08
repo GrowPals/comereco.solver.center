@@ -166,9 +166,6 @@ const ProjectDetail = () => {
                     <p className="mt-2 text-sm text-muted-foreground sm:text-base">{project.description}</p>
                   )}
                   <div className="mt-4 flex flex-wrap items-center gap-3">
-                    <Badge variant={isActive ? 'success' : 'muted'} className="shadow-sm">
-                      {isActive ? 'Activo' : 'Archivado'}
-                    </Badge>
                     <Badge variant={currentStatus.variant} className="shadow-sm">
                       {currentStatus.text}
                     </Badge>
