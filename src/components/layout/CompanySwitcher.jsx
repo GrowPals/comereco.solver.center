@@ -5,7 +5,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useCompanyScope } from '@/context/CompanyScopeContext';
 import { useToast } from '@/components/ui/useToast';
-import { IconWrapper } from '@/components/ui/icon-wrapper';
 import { cn } from '@/lib/utils';
 
 const CompanySwitcher = ({ variant = 'default' }) => {
@@ -35,14 +34,8 @@ const CompanySwitcher = ({ variant = 'default' }) => {
     if (variant === 'icon') return null;
 
     return (
-      <div className="flex items-center gap-3 rounded-xl bg-muted/40 px-4 py-2.5">
-        <IconWrapper
-          icon={Building2}
-          size="sm"
-          variant="glass"
-          tone="neutral"
-          className="animate-pulse"
-        />
+      <div className="flex items-center gap-3 rounded-xl bg-muted/40 px-3 py-2">
+        <Building2 className="h-5 w-5 animate-pulse text-muted-foreground" />
         <span className="text-sm font-medium text-muted-foreground">Cargando...</span>
       </div>
     );
@@ -54,13 +47,8 @@ const CompanySwitcher = ({ variant = 'default' }) => {
 
     const companyName = companies[0]?.name || 'Empresa no asignada';
     return (
-      <div className="flex items-center gap-3 rounded-xl bg-muted/30 px-4 py-2.5">
-        <IconWrapper
-          icon={Building2}
-          size="sm"
-          variant="soft"
-          tone="brand"
-        />
+      <div className="flex items-center gap-3 rounded-xl bg-muted/30 px-3 py-2">
+        <Building2 className="h-5 w-5 text-primary-600 dark:text-primary-400" />
         <div className="flex flex-col">
           <span className="text-[0.625rem] font-semibold uppercase tracking-wider text-muted-foreground">
             Empresa
@@ -110,6 +98,8 @@ const CompanySwitcher = ({ variant = 'default' }) => {
 
   // Variante de ícono para móvil
   if (variant === 'icon') {
+    const MobileIcon = isGlobalView ? Globe2 : Building2;
+
     return (
       <>
         <TooltipProvider>
@@ -118,20 +108,17 @@ const CompanySwitcher = ({ variant = 'default' }) => {
               <button
                 onClick={() => setIsDialogOpen(true)}
                 className={cn(
-                  'relative rounded-xl transition-all duration-200',
+                  'flex h-10 w-10 items-center justify-center rounded-xl bg-muted/30 transition-all duration-200',
+                  'hover:bg-muted/50',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
-                  isChanging && 'scale-105'
+                  isChanging && 'scale-105 ring-2 ring-primary-500/50'
                 )}
                 aria-label="Selector de empresa"
               >
-                <IconWrapper
-                  icon={isGlobalView ? Globe2 : Building2}
-                  size="sm"
-                  variant="glass"
-                  tone={isGlobalView ? 'info' : 'brand'}
-                  glow
-                  className="transition-all duration-300"
-                />
+                <MobileIcon className={cn(
+                  'h-5 w-5 transition-all duration-300',
+                  isGlobalView ? 'text-sky-600 dark:text-sky-400' : 'text-primary-600 dark:text-primary-400'
+                )} />
               </button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
@@ -153,12 +140,10 @@ const CompanySwitcher = ({ variant = 'default' }) => {
             <div className="flex flex-col gap-4 py-4">
               {/* Vista actual */}
               <div className="flex items-center gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3">
-                <IconWrapper
-                  icon={isGlobalView ? Globe2 : Building2}
-                  size="md"
-                  variant="soft"
-                  tone={isGlobalView ? 'info' : 'brand'}
-                />
+                <MobileIcon className={cn(
+                  'h-6 w-6',
+                  isGlobalView ? 'text-sky-600 dark:text-sky-400' : 'text-primary-600 dark:text-primary-400'
+                )} />
                 <div className="flex-1">
                   <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     Vista actual
@@ -177,24 +162,14 @@ const CompanySwitcher = ({ variant = 'default' }) => {
                 <SelectContent className="max-h-64">
                   <SelectItem value="all">
                     <div className="flex items-center gap-3 py-1">
-                      <IconWrapper
-                        icon={Globe2}
-                        size="xs"
-                        variant="soft"
-                        tone="info"
-                      />
+                      <Globe2 className="h-4 w-4 text-sky-600 dark:text-sky-400" />
                       <span className="font-medium">Todas las empresas</span>
                     </div>
                   </SelectItem>
                   {companies.map((company) => (
                     <SelectItem key={company.id} value={company.id}>
                       <div className="flex items-center gap-3 py-1">
-                        <IconWrapper
-                          icon={Building2}
-                          size="xs"
-                          variant="soft"
-                          tone="brand"
-                        />
+                        <Building2 className="h-4 w-4 text-primary-600 dark:text-primary-400" />
                         <span className="font-medium">{company.name}</span>
                       </div>
                     </SelectItem>
@@ -208,22 +183,22 @@ const CompanySwitcher = ({ variant = 'default' }) => {
     );
   }
 
-  // Variante default para desktop
+  // Variante default para desktop - diseño simple y limpio
+  const Icon = isGlobalView ? Globe2 : Building2;
+
   return (
     <div
       className={cn(
-        'group flex items-center gap-3 rounded-xl bg-muted/30 px-4 py-2.5 transition-all duration-200',
+        'group flex items-center gap-3 rounded-xl bg-muted/30 px-3 py-2 transition-all duration-200',
         'hover:bg-muted/50',
         isChanging && 'ring-2 ring-primary-500/50 ring-offset-2 ring-offset-background'
       )}
     >
-      <IconWrapper
-        icon={isGlobalView ? Globe2 : Building2}
-        size="sm"
-        variant="soft"
-        tone={isGlobalView ? 'info' : 'brand'}
-        className={cn('transition-all duration-300', isChanging && 'scale-110')}
-      />
+      <Icon className={cn(
+        'h-5 w-5 shrink-0 transition-all duration-300',
+        isGlobalView ? 'text-sky-600 dark:text-sky-400' : 'text-primary-600 dark:text-primary-400',
+        isChanging && 'scale-110'
+      )} />
 
       <div className="flex flex-1 flex-col overflow-hidden">
         <span className="text-[0.625rem] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -239,24 +214,14 @@ const CompanySwitcher = ({ variant = 'default' }) => {
           <SelectContent className="max-h-64 min-w-[280px]">
             <SelectItem value="all">
               <div className="flex items-center gap-3 py-1">
-                <IconWrapper
-                  icon={Globe2}
-                  size="xs"
-                  variant="soft"
-                  tone="info"
-                />
+                <Globe2 className="h-4 w-4 text-sky-600 dark:text-sky-400" />
                 <span className="font-medium">Todas las empresas</span>
               </div>
             </SelectItem>
             {companies.map((company) => (
               <SelectItem key={company.id} value={company.id}>
                 <div className="flex items-center gap-3 py-1">
-                  <IconWrapper
-                    icon={Building2}
-                    size="xs"
-                    variant="soft"
-                    tone="brand"
-                  />
+                  <Building2 className="h-4 w-4 text-primary-600 dark:text-primary-400" />
                   <span className="font-medium">{company.name}</span>
                 </div>
               </SelectItem>
