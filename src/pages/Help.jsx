@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import PageContainer from '@/components/layout/PageContainer';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { IconToken } from '@/components/ui/icon-token';
 
 const faqData = [
   {
@@ -68,9 +69,7 @@ const HelpPage = () => {
                     {/* Header */}
                     <header className="flex flex-col items-start gap-6 border-b border-border pb-8 sm:flex-row sm:items-center sm:justify-between dark:border-border">
                         <div className="flex items-center gap-4">
-                            <div className="icon-badge flex h-14 w-14 items-center justify-center">
-                                <HelpCircle className="h-7 w-7 text-primary-600 dark:text-primary-100" aria-hidden="true" />
-                            </div>
+                            <IconToken icon={HelpCircle} size="lg" aria-hidden="true" />
                             <div>
                                 <h1 className="mb-1 text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
                                     Centro de <span className="bg-gradient-primary bg-clip-text text-transparent">Ayuda</span>
@@ -87,7 +86,7 @@ const HelpPage = () => {
                         <Card className="border border-border transition-shadow duration-300 hover:shadow-lg dark:border-border">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
-                                    <Mail className="h-5 w-5 text-primary-500" />
+                                    <IconToken icon={Mail} size="sm" className="text-primary-600" aria-hidden="true" />
                                     Contacto por Email
                                 </CardTitle>
                             </CardHeader>
@@ -109,7 +108,7 @@ const HelpPage = () => {
                         <Card className="border border-border transition-shadow duration-300 hover:shadow-lg dark:border-border">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
-                                    <MessageCircle className="h-5 w-5 text-emerald-500" />
+                                    <IconToken icon={MessageCircle} size="sm" className="text-emerald-600" aria-hidden="true" />
                                     Chat en Vivo
                                 </CardTitle>
                             </CardHeader>
@@ -132,7 +131,7 @@ const HelpPage = () => {
                     <Card className="border border-border dark:border-border">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-3 text-xl">
-                                <HelpCircle className="h-6 w-6 text-muted-foreground" />
+                                <IconToken icon={HelpCircle} size="sm" className="text-muted-foreground" aria-hidden="true" />
                                 Guía de Usuario y Preguntas Frecuentes
                             </CardTitle>
                         </CardHeader>
@@ -141,7 +140,7 @@ const HelpPage = () => {
                                 {faqData.map((section, index) => (
                                     <div key={index} className="mb-4 last:mb-0">
                                         <h3 className="mb-2 flex items-center gap-2 text-lg font-semibold text-foreground">
-                                            <section.icon className={`h-5 w-5 ${section.color}`} />
+                                            <IconToken icon={section.icon} size="sm" className={section.color} aria-hidden="true" />
                                             {section.role}
                                         </h3>
                                         {section.questions.map((faq, qIndex) => (

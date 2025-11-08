@@ -1,0 +1,454 @@
+{
+  "name": "WF-01: Stock Monitoring & Auto-Reorder",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8,14 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Schedule 8am & 2pm (Mon-Fri)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  rule_id,\n  company_id,\n  product_id,\n  product_name,\n  product_sku,\n  product_category,\n  current_stock,\n  min_stock,\n  reorder_quantity,\n  stock_deficit,\n  alert_level,\n  project_id,\n  project_name,\n  preferred_vendor,\n  preferred_warehouse,\n  notes\nFROM restock_alerts_dashboard\nWHERE\n  alert_level IN ('CRITICAL', 'HIGH', 'MEDIUM')\n  AND current_stock < min_stock\nORDER BY\n  CASE alert_level\n    WHEN 'CRITICAL' THEN 1\n    WHEN 'HIGH' THEN 2\n    WHEN 'MEDIUM' THEN 3\n  END,\n  stock_deficit DESC\nLIMIT 50;",
+        "options": {}
+      },
+      "id": "get-alerts",
+      "name": "Get Stock Alerts",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [450, 300],
+      "credentials": {
+        "postgres": {
+          "id": "supabase-production",
+          "name": "Supabase Production"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.length }}",
+              "operation": "larger",
+              "value2": 0
+            }
+          ]
+        }
+      },
+      "id": "if-has-alerts",
+      "name": "Has Alerts?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "message",
+              "name": "message",
+              "value": "No stock alerts found - all products OK",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "no-alerts-end",
+      "name": "No Alerts - End",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [850, 500]
+    },
+    {
+      "parameters": {
+        "mode": "each",
+        "options": {}
+      },
+      "id": "loop-alerts",
+      "name": "Loop Each Alert",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [850, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Classify alert and decide action\nconst alert = $input.item.json;\n\n// Determine action based on alert level\nlet action = 'notify'; // Default: just notify\n\nif (alert.alert_level === 'CRITICAL') {\n  // CRITICAL: Auto-create requisition\n  action = 'auto_requisition';\n} else if (alert.alert_level === 'HIGH') {\n  // HIGH: Create requisition if deficit > 50% of min_stock\n  if (alert.stock_deficit > (alert.min_stock * 0.5)) {\n    action = 'auto_requisition';\n  } else {\n    action = 'notify';\n  }\n} else {\n  // MEDIUM: Just notify\n  action = 'notify';\n}\n\nreturn {\n  json: {\n    ...alert,\n    action: action,\n    execution_id: $execution.id,\n    triggered_at: new Date().toISOString()\n  }\n};"
+      },
+      "id": "classify-action",
+      "name": "Classify Action",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 200]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "auto_requisition",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "create_requisition"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "notify",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "notify_only"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "switch-action",
+      "name": "Switch Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [1250, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build requisition for auto-creation\nconst alert = $input.item.json;\n\n// Get price from products table (will be fetched in next node)\nconst requisitionData = {\n  company_id: alert.company_id,\n  project_id: alert.project_id,\n  items: [\n    {\n      product_id: alert.product_id,\n      quantity: alert.reorder_quantity\n    }\n  ],\n  comments: `Requisición automática - Stock ${alert.alert_level}\\n` +\n           `Producto: ${alert.product_name} (${alert.product_sku})\\n` +\n           `Stock actual: ${alert.current_stock} / Mínimo: ${alert.min_stock}\\n` +\n           `Déficit: ${alert.stock_deficit}\\n` +\n           `${alert.notes || ''}`\n};\n\nreturn {\n  json: {\n    alert_data: alert,\n    requisition_data: requisitionData\n  }\n};"
+      },
+      "id": "build-requisition",
+      "name": "Build Requisition Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1450, 100]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Get product price\nSELECT\n  id,\n  price\nFROM products\nWHERE id = '{{ $json.alert_data.product_id }}'\nLIMIT 1;",
+        "options": {}
+      },
+      "id": "get-product-price",
+      "name": "Get Product Price",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1650, 100],
+      "credentials": {
+        "postgres": {
+          "id": "supabase-production",
+          "name": "Supabase Production"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Create requisition via function\nSELECT create_full_requisition(\n  p_company_id := '{{ $('Build Requisition Data').item.json.requisition_data.company_id }}'::uuid,\n  p_created_by := '00000000-0000-0000-0000-000000000000'::uuid,  -- System user\n  p_project_id := '{{ $('Build Requisition Data').item.json.requisition_data.project_id }}'::uuid,\n  p_items := '[\n    {\n      \"product_id\": \"{{ $('Build Requisition Data').item.json.requisition_data.items[0].product_id }}\",\n      \"quantity\": {{ $('Build Requisition Data').item.json.requisition_data.items[0].quantity }},\n      \"unit_price\": {{ $json[0].price }}\n    }\n  ]'::jsonb,\n  p_comments := '{{ $('Build Requisition Data').item.json.requisition_data.comments }}'\n) as requisition_id;",
+        "options": {}
+      },
+      "id": "create-requisition",
+      "name": "Create Requisition",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1850, 100],
+      "credentials": {
+        "postgres": {
+          "id": "supabase-production",
+          "name": "Supabase Production"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO inventory_restock_rule_logs (\n  rule_id,\n  product_id,\n  company_id,\n  trigger_type,\n  stock_at_trigger,\n  min_stock_at_trigger,\n  reorder_quantity_sent,\n  requisition_id,\n  notes\n) VALUES (\n  '{{ $('Classify Action').item.json.rule_id }}',\n  '{{ $('Classify Action').item.json.product_id }}',\n  '{{ $('Classify Action').item.json.company_id }}',\n  'automatic_schedule',\n  {{ $('Classify Action').item.json.current_stock }},\n  {{ $('Classify Action').item.json.min_stock }},\n  {{ $('Classify Action').item.json.reorder_quantity }},\n  {{ $json[0].requisition_id }},\n  'Requisición creada automáticamente por n8n - {{ $('Classify Action').item.json.alert_level }}'\n)\nRETURNING id;",
+        "options": {}
+      },
+      "id": "log-requisition",
+      "name": "Log Requisition Created",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2050, 100],
+      "credentials": {
+        "postgres": {
+          "id": "supabase-production",
+          "name": "Supabase Production"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO inventory_restock_rule_logs (\n  rule_id,\n  product_id,\n  company_id,\n  trigger_type,\n  stock_at_trigger,\n  min_stock_at_trigger,\n  reorder_quantity_sent,\n  notes\n) VALUES (\n  '{{ $json.rule_id }}',\n  '{{ $json.product_id }}',\n  '{{ $json.company_id }}',\n  'notification_only',\n  {{ $json.current_stock }},\n  {{ $json.min_stock }},\n  {{ $json.reorder_quantity }},\n  'Alerta enviada - Stock {{ $json.alert_level }} - Solo notificación'\n)\nRETURNING id;",
+        "options": {}
+      },
+      "id": "log-notification",
+      "name": "Log Notification Sent",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1450, 300],
+      "credentials": {
+        "postgres": {
+          "id": "supabase-production",
+          "name": "Supabase Production"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "status",
+              "name": "status",
+              "value": "={{ $('Classify Action').item.json.action }}",
+              "type": "string"
+            },
+            {
+              "id": "product_name",
+              "name": "product_name",
+              "value": "={{ $('Classify Action').item.json.product_name }}",
+              "type": "string"
+            },
+            {
+              "id": "alert_level",
+              "name": "alert_level",
+              "value": "={{ $('Classify Action').item.json.alert_level }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "merge-results",
+      "name": "Merge Results",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [2250, 200]
+    },
+    {
+      "parameters": {},
+      "id": "loop-back",
+      "name": "Loop Back",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [2450, 200]
+    }
+  ],
+  "connections": {
+    "Schedule 8am & 2pm (Mon-Fri)": {
+      "main": [
+        [
+          {
+            "node": "Get Stock Alerts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Stock Alerts": {
+      "main": [
+        [
+          {
+            "node": "Has Alerts?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Alerts?": {
+      "main": [
+        [
+          {
+            "node": "Loop Each Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Alerts - End",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Each Alert": {
+      "main": [
+        [
+          {
+            "node": "Classify Action",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Back",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify Action": {
+      "main": [
+        [
+          {
+            "node": "Switch Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch Action": {
+      "main": [
+        [
+          {
+            "node": "Build Requisition Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Notification Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Requisition Data": {
+      "main": [
+        [
+          {
+            "node": "Get Product Price",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Product Price": {
+      "main": [
+        [
+          {
+            "node": "Create Requisition",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Requisition": {
+      "main": [
+        [
+          {
+            "node": "Log Requisition Created",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Requisition Created": {
+      "main": [
+        [
+          {
+            "node": "Merge Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Notification Sent": {
+      "main": [
+        [
+          {
+            "node": "Merge Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Results": {
+      "main": [
+        [
+          {
+            "node": "Loop Each Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "Inventory",
+      "id": "inventory"
+    },
+    {
+      "name": "Production",
+      "id": "production"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2025-11-05T00:00:00.000Z",
+  "versionId": "1"
+}

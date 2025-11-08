@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PageContainer from '@/components/layout/PageContainer';
+import { IconToken } from '@/components/ui/icon-token';
 
 
 const RequisitionsPage = () => {
@@ -180,9 +181,7 @@ const RequisitionsPage = () => {
             <>
               {/* Requisitions Count */}
               <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <div className="icon-badge flex h-10 w-10 items-center justify-center">
-                  <FileText className="h-5 w-5 text-primary-600 dark:text-primary-100" />
-                </div>
+                <IconToken icon={FileText} size="sm" className="sm:h-10 sm:w-10" aria-hidden="true" />
                 <p className="text-sm text-muted-foreground sm:text-base">
                   <span className="mr-1 text-2xl font-bold text-foreground sm:text-3xl">
                     {hasFilters ? filteredRequisitions.length : totalCount}

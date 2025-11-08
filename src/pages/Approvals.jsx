@@ -25,6 +25,7 @@ import { es } from 'date-fns/locale';
 import logger from '@/utils/logger';
 import { cn } from '@/lib/utils';
 import { formatNumber } from '@/lib/formatters';
+import { IconToken } from '@/components/ui/icon-token';
 
 const Approvals = () => {
     const navigate = useNavigate();
@@ -148,9 +149,13 @@ const Approvals = () => {
                         <div className="rounded-2xl border border-border bg-card shadow-lg dark:border-border dark:bg-card">
                             <div className="flex flex-col items-center justify-center min-h-[360px] md:min-h-[480px] max-w-md mx-auto px-6 text-center">
                                 {/* Icon with consistent circular background */}
-                                <div className="w-20 h-20 rounded-full bg-green-50 dark:bg-neutral-800 flex items-center justify-center mb-6">
-                                    <CheckCircle className="w-12 h-12 text-green-600 dark:text-green-400 stroke-[1.5]" />
-                                </div>
+                                <IconToken
+                                    icon={CheckCircle}
+                                    size="xl"
+                                    tone="success"
+                                    className="mb-6"
+                                    aria-hidden="true"
+                                />
 
                                 {/* Title */}
                                 <h3 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-3">
@@ -187,9 +192,7 @@ const Approvals = () => {
                                         {/* Header */}
                                         <div className="flex items-start justify-between mb-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="icon-badge flex h-12 w-12 items-center justify-center">
-                                                    <FileText className="h-6 w-6 text-primary-600 dark:text-primary-100" />
-                                                </div>
+                                                <IconToken icon={FileText} size="md" aria-hidden="true" />
                                                 <div>
                                                     <p className="mb-1 text-sm font-medium text-muted-foreground">Folio</p>
                                                     <p className="text-xl font-bold text-foreground">{req.internal_folio}</p>
@@ -204,15 +207,15 @@ const Approvals = () => {
 
                                         {/* Info Grid */}
                                         <div className="mb-5 grid grid-cols-2 gap-4 border-b border-border/70 pb-5 dark:border-border">
-                                            <div className="flex items-center gap-2">
-                                                <User className="h-4 w-4 text-muted-foreground" />
+                                            <div className="flex items-center gap-3">
+                                                <IconToken icon={User} size="sm" tone="neutral" aria-hidden="true" />
                                                 <div>
                                                     <p className="text-xs text-muted-foreground">Solicitante</p>
                                                     <p className="text-sm font-medium text-foreground">{req.creator?.full_name || 'N/A'}</p>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-2">
-                                                <Calendar className="h-4 w-4 text-muted-foreground" />
+                                            <div className="flex items-center gap-3">
+                                                <IconToken icon={Calendar} size="sm" tone="neutral" aria-hidden="true" />
                                                 <div>
                                                     <p className="text-xs text-muted-foreground">Fecha</p>
                                                     <p className="text-sm font-medium text-foreground">
@@ -224,10 +227,8 @@ const Approvals = () => {
 
                                         {/* Monto */}
                                         <div className="flex items-center justify-between mb-5">
-                                            <div className="flex items-center gap-2">
-                                                <div className="icon-badge flex h-10 w-10 items-center justify-center text-emerald-600 dark:text-emerald-200">
-                                                    <DollarSign className="h-5 w-5" />
-                                                </div>
+                                            <div className="flex items-center gap-3">
+                                                <IconToken icon={DollarSign} size="sm" tone="success" aria-hidden="true" />
                                                 <div>
                                                     <p className="mb-0.5 text-xs text-muted-foreground">Monto Total</p>
                                                     <p className="text-2xl font-bold text-foreground">

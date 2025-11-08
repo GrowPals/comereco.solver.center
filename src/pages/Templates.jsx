@@ -38,6 +38,7 @@ import { es } from 'date-fns/locale';
 import TemplateItemsEditor from '@/components/TemplateItemsEditor';
 import PageContainer from '@/components/layout/PageContainer';
 import { cn } from '@/lib/utils';
+import { IconToken } from '@/components/ui/icon-token';
 
 const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
   const isFrequentlyUsed = template.usage_count >= 3;
@@ -58,12 +59,13 @@ const TemplateCard = ({ template, onEdit, onDelete, onUse }) => {
         <div className="mb-3 flex items-start justify-between">
           <div className="flex flex-col gap-2 min-w-0">
             <div className="flex items-center gap-3">
-              <div className={cn(
-                "icon-badge flex h-12 w-12 flex-shrink-0 items-center justify-center",
-                isFrequentlyUsed && "ring-2 ring-primary-500/50 dark:ring-primary-400/60"
-              )}>
-                <LayoutTemplate className="h-6 w-6" aria-hidden="true" />
-              </div>
+              <IconToken
+                icon={LayoutTemplate}
+                size="md"
+                tone={isFrequentlyUsed ? 'primary' : 'neutral'}
+                className={cn('flex-shrink-0', isFrequentlyUsed && 'ring-2 ring-primary-500/50 dark:ring-primary-400/60')}
+                aria-hidden="true"
+              />
               <div className="min-w-0">
                 <h3 className="text-xl font-bold leading-snug text-foreground break-words">{template.name}</h3>
                 {isFrequentlyUsed && (
@@ -248,9 +250,7 @@ const TemplatesPage = () => {
         <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
           <header className="flex flex-col gap-6 border-b border-border pb-6 sm:flex-row sm:items-center sm:justify-between sm:pb-8 dark:border-border">
             <div className="flex w-full items-start gap-3 sm:items-center sm:gap-4">
-            <div className="icon-badge flex h-12 w-12 flex-shrink-0 items-center justify-center sm:h-14 sm:w-14">
-                <LayoutTemplate className="h-6 w-6 sm:h-7 sm:w-7" aria-hidden="true" />
-              </div>
+            <IconToken icon={LayoutTemplate} size="lg" className="flex-shrink-0" aria-hidden="true" />
               <div className="min-w-0">
                 <h1 className="mb-1 text-xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
                   Plantillas de <span className="bg-gradient-primary bg-clip-text text-transparent">Requisición</span>

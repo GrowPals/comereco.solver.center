@@ -1,0 +1,36 @@
+{
+  "examples": {
+    "unauthorized": {
+      "status": 401,
+      "description": "Token inválido o expirado",
+      "response": {
+        "error": "Unauthorized",
+        "message": "Invalid or expired token"
+      }
+    },
+    "bad_request": {
+      "status": 400,
+      "description": "Payload malformado o campos faltantes",
+      "response": {
+        "error": "Bad Request",
+        "message": "Required field missing: ClientID"
+      }
+    },
+    "not_found": {
+      "status": 404,
+      "description": "Recurso no encontrado",
+      "response": {
+        "error": "Not Found",
+        "message": "Product with ID 'xxx' not found"
+      }
+    },
+    "server_error": {
+      "status": 500,
+      "description": "Error interno del servidor",
+      "response": {
+        "error": "Internal Server Error",
+        "message": "An unexpected error occurred"
+      }
+    }
+  }
+}

@@ -34,6 +34,7 @@ import logger from '@/utils/logger';
 import { useToast } from '@/components/ui/useToast';
 import { cn } from '@/lib/utils';
 import { formatNumber } from '@/lib/formatters';
+import { IconToken } from '@/components/ui/icon-token';
 
 // Componente de tarjeta de estadística
 const StatCard = ({ icon: Icon, title, value, subtitle, color = 'blue', trend }) => {
@@ -55,9 +56,12 @@ const StatCard = ({ icon: Icon, title, value, subtitle, color = 'blue', trend })
                             <p className="text-xs text-muted-foreground/80">{subtitle}</p>
                         )}
                     </div>
-                    <div className={cn('icon-badge flex h-12 w-12 items-center justify-center', colorClasses[color])}>
-                        <Icon className="h-6 w-6" aria-hidden="true" />
-                    </div>
+                    <IconToken
+                        icon={Icon}
+                        size="md"
+                        className={colorClasses[color]}
+                        aria-hidden="true"
+                    />
                 </div>
             </CardContent>
         </Card>
@@ -426,9 +430,7 @@ const ReportsPage = () => {
                     {/* Header */}
                     <header className="flex flex-col items-start gap-5 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:pb-6">
                         <div className="flex items-center gap-4 sm:gap-5">
-                            <div className="icon-badge flex h-14 w-14 items-center justify-center">
-                                <BarChart2 className="h-7 w-7 text-primary-600 dark:text-primary-100" aria-hidden="true" />
-                            </div>
+                            <IconToken icon={BarChart2} size="lg" aria-hidden="true" />
                             <div>
                                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-1">
                                     Reportes y <span className="bg-gradient-primary bg-clip-text text-transparent">Analíticas</span>

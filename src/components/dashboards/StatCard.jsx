@@ -2,6 +2,7 @@
 import React, { memo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { IconToken } from '@/components/ui/icon-token';
 
 const StatCard = memo(({ title, value, icon: Icon, isLoading, format = val => val }) => {
     if (isLoading) {
@@ -19,22 +20,18 @@ const StatCard = memo(({ title, value, icon: Icon, isLoading, format = val => va
     }
 
     return (
-        <Card interactive className="group stat-card surface-card">
+        <Card interactive className="group stat-card">
             <CardHeader className="relative z-10 flex flex-row items-center justify-between space-y-0 pb-3">
-                {Icon && (
-                    <div className="stat-icon flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg">
-                        <Icon className="h-6 w-6 text-primary-500 dark:text-primary-200" />
-                    </div>
-                )}
+                {Icon && <IconToken icon={Icon} size="md" aria-hidden="true" />}
             </CardHeader>
             <CardContent className="relative z-10">
-                <CardTitle className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                <CardTitle className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     {title}
                 </CardTitle>
                 <div className="mb-2 text-3xl font-extrabold tracking-tight text-foreground">
                     {format(value)}
                 </div>
-                <div className="mt-3 h-1 w-16 rounded-full bg-gradient-primary transition-all duration-300 group-hover:w-full"></div>
+                <div className="mt-3 h-1 w-16 rounded-full bg-primary/20 transition-all duration-300 group-hover:w-full"></div>
             </CardContent>
         </Card>
     );
