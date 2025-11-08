@@ -38,24 +38,42 @@
    - Trigger `create_profile_after_signup` + tabla `user_invitations` con RLS y auditoría completa.
 
 ### Fase 2 – Consistencia Operativa
-1. **Consolidar `projects.status`/`active`** ✅  
-   - `active` eliminado; UI/servicios usan `status` como fuente de verdad.  
-2. **Snapshot vs Vista para `requisitions.items`** ✅  
-   - Trigger `refresh_requisition_items_snapshot` mantiene el JSON sincronizado (evaluar vista materializada sólo para analítica pesada).  
-3. **Eliminar `profiles.role`**  
-   - Verificar ningún servicio externo lo usa.  
-  - Migración drop column + limpieza de código frontend/backend.
+1. **Normalización de plantillas** ✅  
+   - Tabla `requisition_template_items` + trigger `sync_template_items_from_json` + vista `requisition_template_items_view`.
+2. **Infra para integraciones** ✅  
+   - Cola `integration_queue` con RLS y helper `refresh_integration_views()` para `mv_products_for_sync`, `mv_requisitions_for_bind`, `mv_restock_alerts`.
+3. **Indices & timestamps** ✅  
+   - `set_timestamps` aplicado a tablas faltantes, nuevos índices (`inventory_restock_rules_company_status`, `requisition_templates_user_company`, `requisition_items_product`).
+4. **Eliminar `profiles.role`**  
+   - (Pendiente) verificar que ningún servicio externo lo use → migración `DROP COLUMN` cuando se confirme.
 
 ### Fase 3 – Observabilidad y Escalado
-1. **Suite de tests RLS** 🚧  
-   - Harness inicial con `npm run test:rls` (crea datos temporales y valida políticas clave).  
-   - Extender casos: supervisor, platform admin, `requisition_templates`, `audit_log`.
-2. **Revisión periódica de índices**  
-   - Script `npm run report:indexes` genera archivos `docs/reports/unused-indexes-*.md`.  
-   - Calendarizar ejecución mensual (1er lunes) y documentar decisiones.
-3. **Documentación viva**  
-   - Actualizar `docs/guides/REFERENCIA_BD_SUPABASE.md` tras cada cambio estructural.  
-   - Checklist antes de despliegues major (migraciones, RLS, tests).
+1. **Soft delete + limpieza histórica** ✅  
+   - Columnas `deleted_at`, políticas actualizadas, triggers `soft_delete_*` y partial unique indexes.
+2. **Rol `ops_automation` + cola robusta** ✅  
+   - Helper `is_ops_automation()`, guía de tokens y RLS de `integration_queue` ampliada.
+3. **Materialized views listas para workers** ✅  
+   - `mv_products_for_sync`, `mv_requisitions_for_bind`, `mv_restock_alerts` con filtros `deleted_at` + helper `refresh_integration_views()`.
+4. **Suite de tests RLS / monitoreo índices** 🚧  
+   - Pendiente automatizar harness y reportes `pg_stat_user_indexes`.
+
+### Fase 4 – Retención & Ops
+1. **Archivos históricos** ✅  
+   - Tablas `audit_log_archive`, `bind_sync_logs_archive`, funciones `archive_*`.
+2. **Drop legados** ✅  
+   - `profiles.role` eliminado; helpers dependen sólo de `role_v2`.
+3. **Dashboards Ops** ✅  
+   - `mv_integration_dashboard`, cron `refresh_integration_views_job`, RPCs `dequeue_/complete_integration_job`.
+4. **Alert Hooks** ✅  
+   - `notify_restock_alert` inserta jobs `target_system='alert'`.
+5. **Tooling** ✅  
+   - Scripts `scripts/db/run_rls_checks.sql` y `scripts/db/report_indexes.sql`.
+
+### Fase 5 – Observabilidad continua (próxima)
+1. Automatizar ejecución de smoke tests/pgTAP en CI.
+2. Generar reportes periódicos de índices / pg_stat_statements.
+3. Alerting real-time con Edge Functions (restock/integration backlog).
+4. Documentar playbooks de retención y disaster recovery.
 
 ---
 

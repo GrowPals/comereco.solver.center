@@ -65,13 +65,12 @@ created_at            timestamptz DEFAULT now()
 
 **Campos**:
 ```sql
-id                    uuid PRIMARY KEY (FK a auth.users.id)
-company_id            uuid (FK a companies.id)
-full_name             text NULL
-avatar_url            text NULL
-role                  app_role DEPRECATED (employee | admin_corp | super_admin) -- NO usar en frontend nuevo
-updated_at            timestamptz DEFAULT now()
-role_v2               app_role_v2 DEFAULT 'user' -- USAR ESTE (admin | supervisor | user)
+id          uuid PRIMARY KEY (FK a auth.users.id)
+company_id  uuid (FK a companies.id)
+full_name   text NULL
+avatar_url  text NULL
+role_v2     app_role_v2 DEFAULT 'user'  -- (admin | supervisor | user)
+updated_at  timestamptz DEFAULT now()
 ```
 
 **Relaciones salientes**:
@@ -82,7 +81,7 @@ role_v2               app_role_v2 DEFAULT 'user' -- USAR ESTE (admin | superviso
 - `Users see themselves` / `profiles_self_select`: Pueden verse a sí mismos por `id = auth.uid()`
 - `profiles_company_select`: SELECT por usuarios de la misma company
 - `Users can update their own profile`: UPDATE por `id = auth.uid()`
-- `admin_*`: Vistas amplias si `is_admin()` evalúa true (ver helpers)
+- `admin_*`: Vistas amplias si `is_admin()` evalúa true (ver helpers); `platform_admin` y `ops_automation` se gestionan por helpers aparte.
 
 ---
 
@@ -104,10 +103,14 @@ category              text NULL
 image_url             text NULL
 is_active             boolean DEFAULT true
 bind_last_synced_at   timestamptz NULL
+created_at            timestamptz DEFAULT now()
+updated_at            timestamptz DEFAULT now()
+deleted_at            timestamptz NULL
 ```
 
 **RLS/Políticas**:
 - `products_select_access`: usuarios ven productos activos de su empresa; admins (y `platform_admin`) acceden a todo el catálogo, incluidos inactivos
+- `DELETE` es lógico: las operaciones `DELETE` sólo marcan `deleted_at`; para restaurar basta con poner `NULL`.
 
 **Usos relacionados**:
 - `user_favorites`, `user_cart_items` y `requisition_items` referencian `products.id`
@@ -128,11 +131,13 @@ created_by            uuid FK profiles.id
 created_at            timestamptz DEFAULT now()
 updated_at            timestamptz DEFAULT now()
 supervisor_id         uuid FK profiles.id NULL
+deleted_at            timestamptz NULL
 ```
 
 **RLS/Políticas**:
 - `proj_company_select`: SELECT por company del usuario
 - `admin_select_all_projects` & `admin_modify_all_projects`: Admins amplio acceso
+- `DELETE` marca `deleted_at` (no elimina físicos) para preservar históricos.
 - `supervisor_select_own_projects`: Supervisor o admin
 - `supervisor_update_own_projects`: Supervisor o admin
 - `user_select_member_projects`: Miembros del proyecto (via `project_members`) pueden ver
@@ -165,6 +170,7 @@ added_at              timestamptz DEFAULT now()
 ```sql
 id                    uuid PRIMARY KEY DEFAULT extensions.uuid_generate_v4()
 company_id            uuid FK companies.id
+project_id            uuid FK projects.id NULL
 internal_folio        text
 total_amount          numeric DEFAULT 0
 comments              text NULL
@@ -173,9 +179,9 @@ bind_status           text NULL
 bind_rejection_reason text NULL
 created_at            timestamptz DEFAULT now()
 updated_at            timestamptz DEFAULT now()
+deleted_at            timestamptz NULL
 integration_status    integration_status DEFAULT 'draft' ('draft','pending_sync','syncing','synced','rejected','cancelled')
 business_status       business_status DEFAULT 'draft' ('draft','submitted','approved','rejected','ordered','cancelled')
-project_id            uuid FK projects.id NULL
 created_by            uuid FK profiles.id NULL
 approved_by           uuid FK profiles.id NULL
 items                 jsonb DEFAULT '[]'
@@ -191,6 +197,7 @@ rejection_reason      text NULL
 
 **Notas**:
 - La columna `items` se sincroniza automáticamente mediante `refresh_requisition_items_snapshot()` cada vez que cambian los `requisition_items`. El snapshot incluye datos esenciales del producto (`name`, `sku`, `unit`, `image_url`) para consumo rápido.
+- `DELETE` marca `deleted_at`; esto bloquea visibilidad vía RLS y evita romper trazabilidad.
 
 ---
 
@@ -205,6 +212,9 @@ product_id            uuid FK products.id
 quantity              int CHECK (quantity > 0)
 unit_price            numeric
 subtotal              numeric
+created_at            timestamptz DEFAULT now()
+updated_at            timestamptz DEFAULT now()
+deleted_at            timestamptz NULL
 ```
 
 **RLS/Políticas**:
@@ -212,6 +222,7 @@ subtotal              numeric
 
 **Notas**:
 - Trigger `refresh_requisition_items_snapshot` (AFTER INSERT/UPDATE/DELETE) mantiene actualizado el snapshot en `requisitions.items`.
+- Cuando una requisición se elimina, los renglones sólo marcan `deleted_at` para conservar historial.
 
 ---
 
@@ -237,6 +248,32 @@ project_id            uuid FK projects.id NULL
 **RLS/Políticas**:
 - `requisition_templates_select_scope`: usuarios ven sus plantillas, miembros del proyecto o admins/supervisores según corresponda; `platform_admin` hereda de `is_admin()`
 - `requisition_templates_insert_manage` / `update_manage` / `delete_manage`: admins de la company, supervisores del proyecto o el autor (`user_id = auth.uid()`); `platform_admin` tiene acceso total
+
+---
+
+### `requisition_template_items`
+**Propósito**: Normalizar los productos asociados a cada plantilla sin romper la compatibilidad con el JSON original.
+
+**Campos**:
+```sql
+id          uuid PK DEFAULT gen_random_uuid()
+template_id uuid FK requisition_templates.id ON DELETE CASCADE
+product_id  uuid FK products.id
+quantity    int CHECK (quantity > 0)
+created_at  timestamptz DEFAULT now()
+updated_at  timestamptz DEFAULT now()
+```
+
+**Funciones/Triggers**:
+- `sync_template_items_from_json`: corre después de INSERT/UPDATE de `requisition_templates.items` y repuebla la tabla normalizada.
+- `set_timestamps_on_requisition_template_items`: aplica la política global de timestamps.
+
+**Vista útil**:
+```sql
+SELECT template_id, product_id, quantity, sku, name, unit, category
+FROM requisition_template_items_view;
+```
+Sirve para REST o herramientas externas que necesiten datos tabulares.
 
 ---
 
@@ -272,10 +309,21 @@ user_id               uuid FK profiles.id NULL
 event_name            text
 payload               jsonb NULL
 timestamp             timestamptz DEFAULT now()
+archived              boolean DEFAULT false
 ```
 
 **RLS/Políticas**:
 - `audit_log_select_access`: admins o supervisores leen eventos de su empresa; `platform_admin` consulta el log completo
+
+---
+
+### `audit_log_archive`
+**Propósito**: Contener eventos históricos (se llenan con `archive_audit_log`).
+
+**Campos**: mismos que `audit_log` + `archived_at timestamptz`.
+
+- RLS deshabilitado para facilitar descargas batch (acceso sólo vía `service_role` o procesos controlados).
+- Usa `archive_audit_log(p_before timestamptz)` para mover registros (`default = 90 días`). Retorna la cantidad archivada.
 
 ---
 
@@ -287,6 +335,7 @@ timestamp             timestamptz DEFAULT now()
 user_id               uuid FK profiles.id (PK compuesta)
 product_id            uuid FK products.id (PK compuesta)
 created_at            timestamptz DEFAULT now()
+deleted_at            timestamptz NULL
 ```
 
 **RLS/Políticas**:
@@ -304,6 +353,7 @@ product_id            uuid FK products.id (PK compuesta)
 quantity              int CHECK (quantity > 0)
 created_at            timestamptz DEFAULT now()
 updated_at            timestamptz DEFAULT now()
+deleted_at            timestamptz NULL
 ```
 
 **RLS/Políticas**:
@@ -350,6 +400,108 @@ completed_at timestamptz NULL
 **RLS/Políticas**:
 - `user_invitations_select_company`: admins consultan invitaciones de su compañía; `platform_admin` puede ver todas
 - `user_invitations_insert_admin` / `update_admin`: admins crean/gestionan invitaciones propias; `platform_admin` global
+
+---
+
+### `integration_queue`
+**Propósito**: Cola transaccional para integraciones externas (Bind ERP, dashboards, etc.).
+
+**Campos**:
+```sql
+id             uuid PRIMARY KEY DEFAULT gen_random_uuid()
+company_id     uuid FK companies.id
+entity_type    text (product, requisition, restock_rule, ...)
+entity_id      uuid NULL
+target_system  text DEFAULT 'bind'
+payload        jsonb
+status         text DEFAULT 'pending'      -- pending | processing | success | error
+priority       smallint DEFAULT 5 CHECK (priority BETWEEN 1 AND 9)
+attempts       int DEFAULT 0
+last_error     text
+scheduled_at   timestamptz DEFAULT now()
+locked_at      timestamptz NULL
+locked_by      uuid NULL
+created_at     timestamptz DEFAULT now()
+updated_at     timestamptz DEFAULT now()
+```
+
+**RLS/Políticas**:
+- `integration_queue_select_company`: admins/supervisores consultan jobs de su empresa; `platform_admin` global.
+- `integration_queue_mutate_company`: sólo admins de la empresa (o platform_admin / `ops_automation`) pueden insertar/actualizar/borrar.
+
+**Uso recomendado**:
+```sql
+SELECT *
+FROM integration_queue
+WHERE status = 'pending'
+  AND scheduled_at <= now()
+ORDER BY priority, scheduled_at
+FOR UPDATE SKIP LOCKED;
+```
+Los workers de n8n procesan el lote, publican en Bind y luego actualizan `status`, `attempts`, `last_error`.
+
+**RPCs disponibles**:
+- `dequeue_integration_jobs(p_target text DEFAULT 'bind', p_limit int DEFAULT 20, p_worker uuid DEFAULT auth.uid())`
+- `complete_integration_job(p_job_id uuid, p_status text, p_error text DEFAULT NULL, p_reschedule_at timestamptz DEFAULT NULL)`
+
+**Automatización**:
+- `pg_cron` ejecuta `SELECT refresh_integration_views();` cada 5 minutos para mantener los snapshots actualizados.
+
+---
+
+### `bind_sync_logs`
+**Propósito**: Bitácora detallada de sincronizaciones salientes hacía Bind (u otros destinos).
+
+**Campos**:
+```sql
+id             uuid PRIMARY KEY
+company_id     uuid FK companies.id
+sync_type      text
+entity_type    text
+entity_id      uuid NULL
+bind_id        text NULL
+status         text
+request_payload jsonb
+response_payload jsonb
+error_message  text NULL
+synced_at      timestamptz DEFAULT now()
+created_at     timestamptz DEFAULT now()
+updated_at     timestamptz DEFAULT now()
+archived       boolean DEFAULT false
+```
+
+**RLS/Políticas**: admins/supervisores leen logs de su empresa; `platform_admin` acceso global.
+
+### `bind_sync_logs_archive`
+Replica el esquema anterior + `archived_at`. Se alimenta con `archive_bind_sync_logs()` y tiene RLS deshabilitado (uso interno).
+
+---
+
+### Materialized Views para Integraciones
+
+#### `mv_products_for_sync`
+- Campos clave: `product_id`, `company_id`, `bind_id`, `sku`, `price`, `stock`, `updated_at`, `last_success_synced_at`, `last_status`, `error_message`, `needs_sync`.
+- Fuente: `products` + `bind_sync_logs`.
+- Índice: `mv_products_for_sync_pk(product_id)`.
+
+#### `mv_requisitions_for_bind`
+- Campos: `requisition_id`, `company_id`, `project_id`, `internal_folio`, `business_status`, `integration_status`, `total_amount`, `last_success_synced_at`, `needs_sync`.
+- Fuente: `requisitions` + `bind_sync_logs`.
+
+#### `mv_restock_alerts`
+- Campos: `rule_id`, `company_id`, `product_id`, `sku`, `name`, `stock`, `min_stock`, `reorder_quantity`, `stock_gap`, `alert_level`.
+- Fuente: `inventory_restock_rules` + `products`.
+
+#### `mv_integration_dashboard`
+- Vista (no materializada) con la foto actual de `integration_queue`.
+- Columnas: `company_id`, `target_system`, `status`, `jobs`, `oldest_pending`, `last_activity`, `latest_error`.
+- Ideal para tableros operativos y monitoreo en tiempo real.
+
+**Helper**:
+```sql
+SELECT refresh_integration_views();
+```
+Refresca las tres vistas; ideal ejecutarlo antes de correr los flujos de sincronización.
 
 ---
 
@@ -407,6 +559,10 @@ granted_at timestamptz
 - Devuelve `true` si el usuario aparece en `platform_admins`
 - Úsalo para habilitar vistas/controles globales (ej. dashboards corporativos, gestión de tenants)
 
+**`is_ops_automation()`**:
+- Evalúa el claim `request.jwt.claim.role`. Retorna `true` para tokens emitidos con rol `ops_automation` (o `platform_admin`).
+- Útil para workers (n8n, scripts) que necesitan operar sobre múltiples compañías sin exponer `service_role`.
+
 **`get_my_role()`**:
 - Referencia a `role` (LEGACY)
 - **No usar en frontend nuevo**
@@ -414,6 +570,18 @@ granted_at timestamptz
 **`refresh_requisition_items_snapshot(requisition_id uuid)`**:
 - Recalcula el snapshot JSON almacenado en `requisitions.items` a partir de `requisition_items` y metadatos de producto.  
 - Invocado automáticamente por triggers y disponible para procesos de backfill/manual en integraciones.
+
+**`archive_audit_log(p_before timestamptz DEFAULT now() - interval '90 days')`**:
+- Mueve eventos antiguos a `audit_log_archive`. Devuelve el número de filas archivadas.
+
+**`archive_bind_sync_logs(p_before timestamptz DEFAULT now() - interval '90 days')`**:
+- Mismo patrón para `bind_sync_logs`.
+
+**`notify_restock_alert(p_rule_id uuid)`**:
+- Inserta un job (`target_system = 'alert'`) en `integration_queue` con la información de la regla/producto.
+
+**`dequeue_integration_jobs(...)` / `complete_integration_job(...)`**:
+- RPCs `SECURITY DEFINER` para workers `ops_automation`.
 
 ---
 

@@ -57,10 +57,10 @@ const StatCard = memo(({
     };
 
     return (
-        <Card interactive className="group stat-card surface-card">
-            <CardContent className="relative z-10 flex flex-col gap-3 px-4 py-4 sm:gap-4 sm:px-6 sm:py-6">
+        <Card interactive className="group stat-card surface-card overflow-hidden">
+            <CardContent className="relative z-10 flex flex-col justify-between p-4 sm:p-5 h-full">
                 <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0 space-y-1">
+                    <div className="min-w-0 flex-1 space-y-1">
                         <CardTitle className="caption text-[10px] tracking-[0.22em] text-muted-foreground">
                             {title}
                         </CardTitle>
@@ -69,60 +69,41 @@ const StatCard = memo(({
                         </div>
                     </div>
                     {Icon && (
-                        <div className="stat-icon shrink-0 border border-border/60 bg-white text-primary-600 shadow-none dark:border-white/10 dark:bg-white/5">
-                            <StatIcon
-                                icon={Icon}
-                                tone={iconTone}
-                                size={iconSize}
-                                glow={false}
-                                className="transition-transform duration-300 group-hover:-translate-y-0.5"
-                            />
-                        </div>
+                        <StatIcon
+                            icon={Icon}
+                            tone={iconTone}
+                            size="md"
+                            glow={false}
+                            className="shrink-0 transition-transform duration-300 group-hover:-translate-y-1 text-primary-500 dark:text-primary-400"
+                        />
                     )}
                 </div>
 
-                {/* Trend Indicator */}
-                {trend && (
-                    <div className={`flex flex-wrap items-center gap-1.5 text-xs font-semibold sm:text-sm ${getTrendColor()}`}>
-                        {getTrendIcon()}
-                        <span>{trend.percentage > 0 ? '+' : ''}{trend.percentage}%</span>
-                        {trend.label && (
-                            <span className="text-[11px] font-normal text-muted-foreground ml-1">
-                                {trend.label}
-                            </span>
-                        )}
-                    </div>
-                )}
-
-                {/* Comparison */}
-                {comparison && !trend && (
-                    <div className="text-sm text-muted-foreground">
-                        <span className="font-medium text-foreground">{format(comparison.value)}</span>
-                        {comparison.label && <span className="ml-1">{comparison.label}</span>}
-                    </div>
-                )}
-
-                {/* Sparkline - Simple bars visualization */}
-                {sparklineData && sparklineData.length > 0 && (
-                    <div className="mt-2 hidden h-8 items-end gap-0.5 sm:flex">
-                        {sparklineData.map((val, idx) => {
-                            const maxVal = Math.max(...sparklineData);
-                            const height = maxVal > 0 ? (val / maxVal) * 100 : 0;
-                            return (
-                                <div
-                                    key={idx}
-                                    className="flex-1 rounded-sm bg-primary/30 transition-all duration-200 group-hover:bg-primary/50"
-                                    style={{ height: `${height}%`, minHeight: height > 0 ? '4px' : '2px' }}
-                                />
-                            );
-                        })}
-                    </div>
-                )}
-
-                {/* Animated accent bar */}
-                {!sparklineData && (
-                    <div className="mt-2 h-1 w-12 rounded-full bg-gradient-primary transition-all duration-300 group-hover:w-full sm:w-16"></div>
-                )}
+                <div className="mt-2">
+                    {trend && (
+                        <div className={`flex flex-wrap items-center gap-1.5 text-xs font-semibold ${getTrendColor()}`}>
+                            {getTrendIcon()}
+                            <span>{trend.percentage > 0 ? '+' : ''}{trend.percentage}%</span>
+                            {trend.label && (
+                                <span className="text-[11px] font-normal text-muted-foreground ml-1">
+                                    {trend.label}
+                                </span>
+                            )}
+                        </div>
+                    )}
+                    {comparison && !trend && (
+                        <div className="text-sm text-muted-foreground">
+                            <span className="font-medium text-foreground">{format(comparison.value)}</span>
+                            {comparison.label && <span className="ml-1">{comparison.label}</span>}
+                        </div>
+                    )}
+                    
+                    {!trend && !comparison && (
+                         <div className="h-5" /> // Placeholder to maintain height
+                    )}
+                </div>
+                 {/* Animated accent bar */}
+                <div className="absolute bottom-0 left-0 h-1 w-1/3 rounded-full bg-gradient-primary transition-all duration-300 group-hover:w-full"></div>
             </CardContent>
         </Card>
     );
