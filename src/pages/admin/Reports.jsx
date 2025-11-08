@@ -424,17 +424,21 @@ const ReportsPage = () => {
         <>
             <Helmet><title>Reportes y Analíticas - ComerECO</title></Helmet>
             <PageContainer>
-                <div className="mx-auto max-w-7xl space-y-6 sm:space-y-8">
+                <Helmet>
+                    <title>Reportes y Analíticas - ComerECO</title>
+                </Helmet>
+                <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
                     {/* Header */}
                     <header className="flex flex-col items-start gap-5 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:pb-6">
                         <div className="flex items-center gap-4 sm:gap-5">
-                            <SectionIcon icon={BarChart2} size="lg" />
+                            <SectionIcon icon={BarChart2} size="lg" className="hidden sm:flex" />
                             <div>
-                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-1">
+                                <h1 className="text-3xl sm:text-2xl md:text-4xl font-bold tracking-tight text-foreground sm:mb-1">
                                     Reportes y <span className="bg-gradient-primary bg-clip-text text-transparent">Analíticas</span>
                                 </h1>
-                                <p className="text-sm text-muted-foreground sm:text-base">
-                                    Visualiza el desempeño y tendencias de tu organización
+                                <p className="text-base text-muted-foreground sm:text-sm max-w-2xl">
+                                    <span className="sm:hidden">Visualiza el desempeño y tendencias.</span>
+                                    <span className="hidden sm:inline">Visualiza el desempeño y tendencias de tu organización</span>
                                 </p>
                             </div>
                         </div>

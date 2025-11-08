@@ -55,11 +55,12 @@ const AdminDashboard = memo(({ user }) => {
             <div className="flex flex-col gap-6 border-b border-border pb-8">
                 <div className="space-y-3 max-w-3xl">
                     <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">Bienvenido</p>
-                    <h1 className="page-title">
-                        Hola, <span className="page-title-accent">{firstName}</span>
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground">
+                        Hola, <span className="bg-gradient-primary bg-clip-text text-transparent">{firstName}</span>
                     </h1>
-                    <p className="page-title-subtext">
-                        Panel ejecutivo para monitorear requisiciones, equipos y presupuesto en tiempo real.
+                    <p className="text-base text-muted-foreground sm:text-lg">
+                        <span className="sm:hidden">Panel ejecutivo de tu organización.</span>
+                        <span className="hidden sm:inline">Panel ejecutivo para monitorear requisiciones, equipos y presupuesto en tiempo real.</span>
                     </p>
                 </div>
             </div>

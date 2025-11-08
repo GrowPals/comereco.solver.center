@@ -1,0 +1,43 @@
+name: DB Checks
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'supabase/**'
+      - 'scripts/db/**'
+      - '.github/workflows/db-checks.yml'
+
+jobs:
+  rls-and-index-report:
+    runs-on: ubuntu-latest
+    env:
+      DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run RLS smoke tests
+        run: |
+          if [ -z "$DB_URL" ]; then
+            echo "DB_URL secret is missing" && exit 1
+          fi
+          psql "$DB_URL" -f scripts/db/run_rls_checks.sql
+
+      - name: Generate index report
+        run: |
+          if [ -z "$DB_URL" ]; then
+            echo "DB_URL secret is missing" && exit 1
+          fi
+          mkdir -p docs/reports
+          OUT=docs/reports/indexes-$(date +%Y%m%d).txt
+          psql "$DB_URL" -f scripts/db/report_indexes.sql > "$OUT"
+          echo "Index report written to $OUT"
+          echo "## Index report" >> $GITHUB_STEP_SUMMARY
+          echo "Artifact: $OUT" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload index report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: index-report
+          path: docs/reports/indexes-*.txt
+          if-no-files-found: warn

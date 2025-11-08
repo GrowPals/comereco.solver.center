@@ -287,57 +287,67 @@ const TemplatesPage = () => {
   if (isError) return <EmptyState icon={LayoutTemplate} title="Error al Cargar" description="No se pudieron cargar las plantillas." />;
 
   return (
-    <>
-      <Helmet><title>Plantillas - ComerECO</title></Helmet>
-      <PageContainer className="pb-24 sm:pb-16">
-        <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
-          <header className="flex flex-col gap-6 border-b border-border pb-6 sm:flex-row sm:items-center sm:justify-between sm:pb-8 dark:border-border">
-            <div className="flex w-full items-start gap-3 sm:items-center sm:gap-4 min-w-0">
-              <SectionIcon icon={LayoutTemplate} size="lg" className="h-10 w-10" />
-              <div className="min-w-0 flex-1">
-                <h1 className="page-title mb-1 break-words">
-                  Plantillas de <span className="page-title-accent">Requisición</span>
-                </h1>
+    <PageContainer>
+      <Helmet>
+        <title>Plantillas de Requisición - ComerECO</title>
+      </Helmet>
+
+      <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
+        <header className="flex flex-col items-start gap-5 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:pb-6">
+            <div className="flex items-center gap-4 sm:gap-5">
+                <SectionIcon icon={LayoutTemplate} size="lg" className="hidden sm:flex" />
+                <div>
+                    <h1 className="text-3xl sm:text-2xl md:text-4xl font-bold tracking-tight text-foreground sm:mb-1">
+                        Plantillas de <span className="bg-gradient-primary bg-clip-text text-transparent">Requisición</span>
+                    </h1>
+                    <p className="text-base text-muted-foreground sm:text-sm max-w-2xl">
+                        <span className="sm:hidden">Crea y gestiona listas de productos.</span>
+                        <span className="hidden sm:inline">Crea, gestiona y reutiliza listas de productos para agilizar tus compras recurrentes.</span>
+                    </p>
+                </div>
+            </div>
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
+                <Button
+                    onClick={() => setFormModal({ isOpen: true, template: null })}
+                    variant="outline"
+                    className="w-full sm:w-auto"
+                >
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Nueva Plantilla
+                </Button>
+                <Button
+                    onClick={() => navigate('/catalog')}
+                    className="w-full sm:w-auto"
+                >
+                    <FilePlus className="mr-2 h-4 w-4" />
+                    Desde Carrito
+                </Button>
+            </div>
+        </header>
+
+        {isLoading && <PageLoader message="Cargando plantillas..." />}
+
+        {!isLoading && !isError && (
+          <div className="mt-8">
+            {templates && templates.length > 0 ? (
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {templates.map((template) => (
+                  <TemplateCard key={template.id} template={template} onEdit={(t) => setFormModal({ isOpen: true, template: t })} onDelete={(t) => setDeleteModal({ isOpen: true, template: t })} onUse={(id) => useTemplateMutation.mutate(id)} />
+                ))}
               </div>
-            </div>
-            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
-              <Button
-                onClick={() => setFormModal({ isOpen: true, template: null })}
-                size="lg"
-                variant="outline"
-                className="w-full shadow-button hover:shadow-button-hover sm:w-auto sm:whitespace-nowrap"
-              >
-                <PlusCircle className="mr-2 h-5 w-5" /> Nueva Plantilla
-              </Button>
-              <Button
-                onClick={() => navigate('/catalog')}
-                size="lg"
-                className="w-full shadow-button hover:shadow-button-hover sm:w-auto sm:whitespace-nowrap"
-              >
-                <FilePlus className="mr-2 h-5 w-5" /> Desde Carrito
-              </Button>
-            </div>
-          </header>
-
-          {templates && templates.length > 0 ? (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
-              {templates.map((template) => (
-                <TemplateCard key={template.id} template={template} onEdit={(t) => setFormModal({ isOpen: true, template: t })} onDelete={(t) => setDeleteModal({ isOpen: true, template: t })} onUse={(id) => useTemplateMutation.mutate(id)} />
-              ))}
-            </div>
-          ) : (
-            <div className="rounded-2xl border border-border bg-card p-8 shadow-soft-md dark:border-border dark:bg-card sm:p-12 lg:p-16">
-              <EmptyState
-                icon={Bot}
-                title="Aún no tienes plantillas"
-                description="Crea tu primera plantilla guardando un carrito de compras para agilizar tus pedidos futuros."
-                actionButton={<Button onClick={() => navigate('/catalog')} size="lg" className="shadow-button hover:shadow-button-hover">Ir al Catálogo</Button>}
-              />
-            </div>
-          )}
-        </div>
-      </PageContainer>
-
+            ) : (
+              <div className="rounded-2xl border border-border bg-card p-8 shadow-soft-md dark:border-border dark:bg-card sm:p-12 lg:p-16">
+                <EmptyState
+                  icon={Bot}
+                  title="Aún no tienes plantillas"
+                  description="Crea tu primera plantilla guardando un carrito de compras para agilizar tus pedidos futuros."
+                  actionButton={<Button onClick={() => navigate('/catalog')} size="lg" className="shadow-button hover:shadow-button-hover">Ir al Catálogo</Button>}
+                />
+              </div>
+            )}
+          </div>
+        )}
+      </div>
       {formModal.isOpen && <TemplateFormModal isOpen={formModal.isOpen} onClose={() => setFormModal({ isOpen: false, template: null })} template={formModal.template} onSave={handleSave} />}
       
       <Dialog open={deleteModal.isOpen} onOpenChange={() => setDeleteModal({ isOpen: false, template: null })}>
@@ -352,7 +362,7 @@ const TemplatesPage = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </PageContainer>
   );
 };
 

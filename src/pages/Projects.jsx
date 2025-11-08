@@ -444,32 +444,36 @@ const ProjectsPage = () => {
 
   return (
     <>
-      <Helmet><title>Proyectos - ComerECO</title></Helmet>
+      <Helmet>
+        <title>Mis Proyectos - ComerECO</title>
+      </Helmet>
       <PageContainer>
         <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
           {/* Header */}
-          <header className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
-            <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
-              <SectionIcon icon={FolderKanban} size="lg" />
-              <div className="space-y-1 min-w-0 flex-1">
-                <h1 className="page-title break-words">
-                  Mis <span className="page-title-accent">Proyectos</span>
-                </h1>
-                <p className="page-title-subtext">
-                  {projects?.length || 0} {projects?.length === 1 ? 'proyecto' : 'proyectos'} en gestión
-                </p>
+          <header className="flex flex-col items-start gap-5 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:pb-6">
+              <div className="flex items-center gap-4 sm:gap-5">
+                  <SectionIcon icon={FolderKanban} size="lg" className="hidden sm:flex" />
+                  <div>
+                      <h1 className="text-3xl sm:text-2xl md:text-4xl font-bold tracking-tight text-foreground sm:mb-1">
+                          Mis <span className="bg-gradient-primary bg-clip-text text-transparent">Proyectos</span>
+                      </h1>
+                      <p className="text-base text-muted-foreground sm:text-sm max-w-2xl">
+                          <span className="sm:hidden">Visualiza y gestiona tus proyectos.</span>
+                          <span className="hidden sm:inline">Visualiza y gestiona los proyectos de tu organización.</span>
+                      </p>
+                  </div>
               </div>
-            </div>
-            {canManageProjects && (
-              <Button
-                size="lg"
-                onClick={() => setFormModal({ isOpen: true, project: null })}
-                className="w-full rounded-xl shadow-soft-md hover:shadow-soft-lg sm:w-auto"
-              >
-                <PlusCircle className="mr-2 h-5 w-5" />
-                Crear Proyecto
-              </Button>
-            )}
+              {canManageProjects && (
+                  <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
+                      <Button
+                          onClick={() => setFormModal({ isOpen: true, project: null })}
+                          className="w-full sm:w-auto"
+                      >
+                          <PlusCircle className="mr-2 h-4 w-4" />
+                          Crear Proyecto
+                      </Button>
+                  </div>
+              )}
           </header>
 
           {projects && projects.length > 0 ? (

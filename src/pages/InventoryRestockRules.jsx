@@ -28,6 +28,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/components/ui/useToast';
 import { RestockRuleForm } from '@/components/inventory/RestockRuleForm';
 import { formatNumber } from '@/lib/formatters';
+import { SectionIcon } from '@/components/ui/icon-wrapper';
 
 const STATUS_OPTIONS = [
   { value: 'all', label: 'Todos los estados' },
@@ -443,28 +444,33 @@ const InventoryRestockRules = () => {
   return (
     <PageContainer>
       <Helmet>
-        <title>Reglas de Reabastecimiento - ComerECO</title>
+        <title>Reabastecimiento Automático - ComerECO</title>
         <meta name="description" content="Configura las reglas de stock mínimo para automatizar requisiciones." />
       </Helmet>
 
-      <div className="mx-auto flex w-full max-w-[92rem] flex-col gap-6 lg:gap-7">
-        <header className="border-b border-border pb-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div className="space-y-2">
-              <h1 className="page-title">
-                Reabastecimiento <span className="page-title-accent">Automático</span>
-              </h1>
-              <p className="page-title-subtext max-w-2xl">
-                Configura reglas para disparar requisiciones cuando el stock llegue a un mínimo.
-              </p>
+      <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
+        <header className="flex flex-col items-start gap-5 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:pb-6">
+            <div className="flex items-center gap-4 sm:gap-5">
+                <SectionIcon icon={Layers} size="lg" className="hidden sm:flex" />
+                <div>
+                    <h1 className="text-3xl sm:text-2xl md:text-4xl font-bold tracking-tight text-foreground sm:mb-1">
+                        Reabastecimiento <span className="bg-gradient-primary bg-clip-text text-transparent">Automático</span>
+                    </h1>
+                    <p className="text-base text-muted-foreground sm:text-sm max-w-2xl">
+                        <span className="sm:hidden">Configura reglas de stock mínimo.</span>
+                        <span className="hidden sm:inline">Configura reglas para disparar requisiciones cuando el stock llegue a un mínimo.</span>
+                    </p>
+                </div>
             </div>
-            <Button
-              className="h-11 rounded-2xl px-6 text-sm font-semibold"
-              onClick={() => setCreateDialogOpen(true)}
-            >
-              <Plus className="mr-2 h-4 w-4" /> Crear regla
-            </Button>
-          </div>
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
+                <Button
+                    onClick={() => setCreateDialogOpen(true)}
+                    className="w-full sm:w-auto"
+                >
+                    <Plus className="mr-2 h-4 w-4" /> 
+                    Crear regla
+                </Button>
+            </div>
         </header>
 
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">

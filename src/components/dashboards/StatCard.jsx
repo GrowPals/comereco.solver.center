@@ -103,7 +103,7 @@ const StatCard = memo(({
                     )}
                 </div>
                  {/* Animated accent bar */}
-                <div className="absolute bottom-0 left-0 h-1 w-1/3 rounded-full bg-gradient-primary transition-all duration-300 group-hover:w-full"></div>
+                <div className="absolute bottom-0 left-0 h-1 w-full origin-center scale-x-0 transform rounded-full bg-gradient-primary transition-transform duration-300 group-hover:scale-x-100"></div>
             </CardContent>
         </Card>
     );

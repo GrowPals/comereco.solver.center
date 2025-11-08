@@ -174,4 +174,21 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION public.get_user_role_v2()
+RETURNS app_role_v2
+LANGUAGE plpgsql
+SECURITY DEFINER
+STABLE
+SET search_path = public
+AS $$
+BEGIN
+  RETURN (
+    SELECT role_v2
+    FROM public.profiles
+    WHERE id = auth.uid()
+    LIMIT 1
+  );
+END;
+$$;
+
 COMMIT;

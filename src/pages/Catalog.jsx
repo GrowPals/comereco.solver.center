@@ -26,6 +26,8 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import EmptyState from '@/components/EmptyState';
+import { SectionIcon } from '@/components/ui/icon-wrapper';
+import { ShoppingCart } from 'lucide-react';
 
 const MOBILE_BREAKPOINT = 1024;
 
@@ -167,12 +169,21 @@ const CatalogPage = () => {
 
       <PageContainer className={cn(isDesktop ? 'pb-16' : 'pb-28')}>
         <div className="mx-auto w-full max-w-7xl">
-          <div className="space-y-2 border-b border-border pb-6 pt-4">
-            <h1 className="page-title">Catálogo de <span className="page-title-accent">Productos</span></h1>
-            <p className="page-title-subtext">
-              Encuentra proveedores y materiales clave en segundos. Filtra, compara y agrega sin fricción.
-            </p>
-            <div className="text-sm text-muted-foreground">
+            <header className="flex flex-col items-start gap-5 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:pb-6">
+                <div className="flex items-center gap-4 sm:gap-5">
+                    <SectionIcon icon={ShoppingCart} size="lg" className="hidden sm:flex" />
+                    <div>
+                        <h1 className="text-3xl sm:text-2xl md:text-4xl font-bold tracking-tight text-foreground sm:mb-1">
+                            Catálogo de <span className="bg-gradient-primary bg-clip-text text-transparent">Productos</span>
+                        </h1>
+                        <p className="text-base text-muted-foreground sm:text-sm max-w-2xl">
+                            <span className="sm:hidden">Explora, filtra y compara.</span>
+                            <span className="hidden sm:inline">Encuentra proveedores y materiales clave en segundos. Filtra, compara y agrega sin fricción.</span>
+                        </p>
+                    </div>
+                </div>
+            </header>
+          <div className="text-sm text-muted-foreground mt-4">
               <span className="font-semibold text-foreground">{totalCount}</span> productos disponibles
               {debouncedSearchTerm && (
                 <span className="ml-2 text-muted-foreground">&ldquo;{debouncedSearchTerm}&rdquo;</span>
@@ -185,7 +196,6 @@ const CatalogPage = () => {
               )}
               {isFetching && <span className="ml-2 text-xs">Actualizando…</span>}
             </div>
-          </div>
           <div className={cn(isDesktop ? 'pt-4' : 'pt-3')}>
             {isDesktop ? (
               <div className="rounded-2xl border border-border/60 bg-background/70 p-4 shadow-none backdrop-blur-sm transition-colors dark:border-border/70 dark:bg-background/30">

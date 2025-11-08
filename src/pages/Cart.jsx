@@ -317,11 +317,11 @@ const CartPage = () => {
                 >
                   <ArrowLeft className="h-5 w-5" aria-hidden="true" />
                 </Button>
-                <div className="min-w-0">
-                  <h1 className="text-2xl font-bold text-foreground sm:text-3xl">Tu Carrito</h1>
-                  <p className="text-sm text-muted-foreground/80 sm:text-base">
+                <div className="min-w-0 pt-1">
+                  <h1 className="text-3xl sm:text-2xl md:text-4xl font-bold tracking-tight text-foreground">Tu Carrito</h1>
+                  <p className="text-base text-muted-foreground sm:text-sm">
                     {totalItems === 0
-                      ? 'Aún no tienes productos en el carrito.'
+                      ? 'Aún no tienes productos.'
                       : totalItems === 1
                         ? '1 producto listo para tu requisición.'
                         : `${totalItems} productos listos para tu requisición.`}

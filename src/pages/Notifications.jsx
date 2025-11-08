@@ -177,56 +177,62 @@ const NotificationsPage = () => {
                 <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
                     <header className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:pb-6 dark:border-border">
                         <div className="flex items-center gap-3 sm:gap-4">
-                            <SectionIcon icon={Bell} size="lg" />
-                            <div className="space-y-1">
-                                <h1 className="page-title">
-                                    Centro de <span className="page-title-accent">Notificaciones</span>
+                            <SectionIcon icon={Bell} size="lg" className="hidden sm:flex" />
+                            <div>
+                                <h1 className="text-3xl sm:text-2xl md:text-4xl font-bold tracking-tight text-foreground sm:mb-1">
+                                    Centro de <span className="bg-gradient-primary bg-clip-text text-transparent">Notificaciones</span>
                                 </h1>
-                                {unreadCount > 0 && (
-                                    <p className="page-title-subtext">{unreadCount} notificaciones no leídas</p>
-                                )}
+                                <p className="text-base text-muted-foreground sm:text-sm">
+                                  Gestiona tus alertas y actualizaciones importantes.
+                                  {unreadCount > 0 && (
+                                      <span className="hidden sm:inline"> - Tienes {unreadCount} notificaciones no leídas.</span>
+                                  )}
+                                </p>
                             </div>
                         </div>
-                        <Button
-                            onClick={() => confirmAction('markAllRead', allNotifications.filter(n => !n.is_read).map(n => n.id))}
-                            disabled={unreadCount === 0}
-                            size="lg"
-                            className="w-full rounded-xl sm:w-auto"
-                        >
-                            <CheckCheck className="mr-2 h-5 w-5" /> Marcar todo como leído
-                        </Button>
                     </header>
 
                     <Card className="surface-card p-4 shadow-soft-md sm:p-6">
-                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-                            <div className="relative w-full sm:max-w-xs">
-                                <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-                                <Input
-                                    placeholder="Buscar..."
-                                    value={filters.query}
-                                    onChange={e => setFilters(p => ({ ...p, query: e.target.value }))}
-                                    className="h-11 rounded-xl pl-10"
-                                />
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                                <div className="relative w-full sm:max-w-xs">
+                                    <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+                                    <Input
+                                        placeholder="Buscar..."
+                                        value={filters.query}
+                                        onChange={e => setFilters(p => ({ ...p, query: e.target.value }))}
+                                        className="h-11 rounded-xl pl-10"
+                                    />
+                                </div>
+                                <Select value={filters.type} onValueChange={v => setFilters(p => ({ ...p, type: v }))}>
+                                    <SelectTrigger className="h-11 w-full rounded-xl sm:w-[220px]">
+                                        <SelectValue placeholder="Todos los tipos" />
+                                    </SelectTrigger>
+                                    <SelectContent className="rounded-xl border-border bg-card dark:border-border dark:bg-card">
+                                        <SelectItem value="all">Todos los tipos</SelectItem>
+                                        <SelectItem value="success">Éxito</SelectItem>
+                                        <SelectItem value="warning">Advertencia</SelectItem>
+                                        <SelectItem value="danger">Error</SelectItem>
+                                        <SelectItem value="info">Información</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
-                            <Select value={filters.type} onValueChange={v => setFilters(p => ({ ...p, type: v }))}>
-                                <SelectTrigger className="h-11 w-full rounded-xl sm:w-[220px]">
-                                    <SelectValue placeholder="Todos los tipos" />
-                                </SelectTrigger>
-                                <SelectContent className="rounded-xl border-border bg-card dark:border-border dark:bg-card">
-                                    <SelectItem value="all">Todos los tipos</SelectItem>
-                                    <SelectItem value="success">Éxito</SelectItem>
-                                    <SelectItem value="warning">Advertencia</SelectItem>
-                                    <SelectItem value="danger">Error</SelectItem>
-                                    <SelectItem value="info">Información</SelectItem>
-                                </SelectContent>
-                            </Select>
-                            <Button
-                                variant="ghost"
-                                onClick={() => setFilters({ query: '', type: 'all' })}
-                                className="w-full rounded-xl border border-transparent hover:border-border sm:w-auto dark:hover:border-border"
-                            >
-                                <X className="mr-2 h-4 w-4" />Limpiar
-                            </Button>
+                            <div className="flex flex-col gap-2 border-t border-border pt-3 sm:border-none sm:pt-0 sm:flex-row sm:items-center">
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => setFilters({ query: '', type: 'all' })}
+                                    className="w-full justify-center rounded-xl border border-transparent hover:border-border sm:w-auto dark:hover:border-border"
+                                >
+                                    <X className="mr-2 h-4 w-4" />Limpiar
+                                </Button>
+                                 <Button
+                                    onClick={() => confirmAction('markAllRead', allNotifications.filter(n => !n.is_read).map(n => n.id))}
+                                    disabled={unreadCount === 0}
+                                    className="w-full rounded-xl sm:w-auto"
+                                >
+                                    <CheckCheck className="mr-2 h-5 w-5" /> Marcar todo como leído
+                                </Button>
+                            </div>
                         </div>
                     </Card>
 

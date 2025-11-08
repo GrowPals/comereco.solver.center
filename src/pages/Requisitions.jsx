@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Pagination } from '@/components/ui/pagination';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PageContainer from '@/components/layout/PageContainer';
@@ -23,6 +24,7 @@ const RequisitionsPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [page, setPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedProject, setSelectedProject] = useState(location.state?.projectId || 'all');
   const [selectedStatus, setSelectedStatus] = useState('all');
   const pageSize = 10;
@@ -42,11 +44,19 @@ const RequisitionsPage = () => {
       filtered = filtered.filter(req => req.business_status === selectedStatus);
     }
     
-    return filtered;
-  }, [data?.data, selectedProject, selectedStatus]);
+    if (searchTerm) {
+        filtered = filtered.filter(req =>
+            req.internal_folio.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (req.name && req.name.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
+    }
 
-  const hasFilters = (selectedProject && selectedProject !== 'all') || (selectedStatus && selectedStatus !== 'all');
+    return filtered;
+  }, [data?.data, selectedProject, selectedStatus, searchTerm]);
+
+  const hasFilters = (selectedProject && selectedProject !== 'all') || (selectedStatus && selectedStatus !== 'all') || searchTerm;
   const clearFilters = () => {
+    setSearchTerm('');
     setSelectedProject('all');
     setSelectedStatus('all');
     setPage(1);
@@ -68,70 +78,63 @@ const RequisitionsPage = () => {
       <PageContainer>
         <div className="mx-auto w-full max-w-7xl">
           {/* Header */}
-          <header className="mb-6 border-b border-border pb-4 sm:mb-8 sm:pb-6">
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div className="flex items-center gap-3 sm:gap-4">
-                  <SectionIcon icon={FileText} size="lg" className="h-10 w-10" />
+          <header className="flex flex-col items-start gap-5 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:pb-6">
+              <div className="flex items-center gap-4 sm:gap-5">
+                  <SectionIcon icon={FileText} size="lg" className="hidden sm:flex" />
                   <div>
-                    <h1 className="page-title">
-                      Mis <span className="page-title-accent">Requisiciones</span>
-                    </h1>
-                    <p className="page-title-subtext">
-                      Historial y seguimiento de todas tus solicitudes
-                    </p>
+                      <h1 className="text-3xl sm:text-2xl md:text-4xl font-bold tracking-tight text-foreground sm:mb-1">
+                          Mis <span className="bg-gradient-primary bg-clip-text text-transparent">Requisiciones</span>
+                      </h1>
+                      <p className="text-base text-muted-foreground sm:text-sm max-w-2xl">
+                          <span className="sm:hidden">Gestiona y rastrea tus compras.</span>
+                          <span className="hidden sm:inline">Gestiona, rastrea y revisa el historial de todas tus solicitudes de compra.</span>
+                      </p>
                   </div>
-                </div>
               </div>
-              <div className="flex w-full items-center gap-3 sm:w-auto">
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="secondary"
-                        size="icon"
-                        onClick={() => refetch()}
-                        disabled={isFetching}
-                        className="h-11 w-11 flex-shrink-0 rounded-xl shadow-sm"
-                      >
-                        <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin text-primary-500' : 'text-muted-foreground'}`} />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Actualizar lista de requisiciones</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        onClick={() => navigate('/requisitions/new')}
-                        size="md"
-                        className="flex-1 min-w-0 rounded-xl px-5 py-2.5 text-sm font-semibold sm:w-auto sm:min-w-[180px]"
-                      >
-                        <Plus className="mr-2 h-5 w-5" />
-                        Nueva Requisición
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Crear una nueva requisición de compra</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+              <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
+                  <TooltipProvider>
+                      <Tooltip>
+                          <TooltipTrigger asChild>
+                              <Button
+                                  variant="outline"
+                                  size="icon"
+                                  onClick={() => refetch()}
+                                  disabled={isFetching}
+                                  className="h-9 w-9 flex-shrink-0"
+                              >
+                                  <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
+                              </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                              <p>Actualizar lista</p>
+                          </TooltipContent>
+                      </Tooltip>
+                  </TooltipProvider>
+                  <Button
+                      onClick={() => navigate('/requisitions/new')}
+                      className="w-full sm:w-auto"
+                  >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Nueva Requisición
+                  </Button>
               </div>
-            </div>
           </header>
 
           {/* Filters - Sticky on scroll */}
-          <div className="sticky top-0 z-10 mb-6 space-y-3 surface-card p-4 backdrop-blur-md shadow-sm">
-            <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-              <Filter className="h-5 w-5 text-muted-foreground" />
-              <span className="font-semibold text-foreground">Filtros:</span>
+          <div className="sticky top-0 z-10 my-6 space-y-3 rounded-2xl border border-border bg-card/80 p-4 backdrop-blur-md">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <Filter className="h-4 w-4" />
+              <span>Filtros</span>
             </div>
-            <div className="grid w-full gap-3 min-[420px]:grid-cols-2 sm:flex sm:flex-wrap sm:items-center sm:gap-4">
+            <div className="grid w-full gap-3 md:grid-cols-3">
+              <Input
+                placeholder="Buscar por folio o nombre..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="rounded-xl text-sm md:col-span-1"
+              />
               <Select value={selectedProject} onValueChange={(value) => { setSelectedProject(value); setPage(1); }}>
-                <SelectTrigger className="w-full rounded-xl text-sm">
+                <SelectTrigger className="w-full rounded-xl text-sm md:col-span-1">
                   <SelectValue placeholder="Todos los proyectos" />
                 </SelectTrigger>
                 <SelectContent>
@@ -144,7 +147,7 @@ const RequisitionsPage = () => {
                 </SelectContent>
               </Select>
               <Select value={selectedStatus} onValueChange={(value) => { setSelectedStatus(value); setPage(1); }}>
-                <SelectTrigger className="w-full rounded-xl text-sm">
+                <SelectTrigger className="w-full rounded-xl text-sm md:col-span-1">
                   <SelectValue placeholder="Todos los estados" />
                 </SelectTrigger>
                 <SelectContent>
@@ -157,18 +160,18 @@ const RequisitionsPage = () => {
                   <SelectItem value="cancelled">Cancelada</SelectItem>
                 </SelectContent>
               </Select>
-              {hasFilters && (
+            </div>
+             {hasFilters && (
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={clearFilters}
-                  className="w-full rounded-xl border border-muted/40 text-muted-foreground hover:border-primary/40 hover:text-primary-600 min-[420px]:col-span-2 sm:w-auto"
+                  className="w-full rounded-xl border border-muted/40 text-muted-foreground hover:border-primary/40 hover:text-primary-600 sm:w-auto mt-3"
                 >
                   <X className="mr-2 h-4 w-4" />
                   Limpiar filtros
                 </Button>
               )}
-            </div>
           </div>
 
           {/* Error State */}

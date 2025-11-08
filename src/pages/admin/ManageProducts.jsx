@@ -413,26 +413,30 @@ const ManageProductsPage = () => {
         <>
             <Helmet><title>Gestionar Productos - ComerECO</title></Helmet>
             <PageContainer>
-                <div className="mx-auto max-w-7xl space-y-6 sm:space-y-8">
+                <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
                     {/* Header */}
                     <header className="flex flex-col items-start gap-5 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:pb-6">
                         <div className="flex items-center gap-4 sm:gap-5">
-                            <SectionIcon icon={ShoppingBag} size="lg" />
+                            <SectionIcon icon={ShoppingBag} size="lg" className="hidden sm:flex" />
                             <div>
-                                <h1 className="text-3xl font-bold tracking-tight text-foreground mb-1 sm:text-4xl">
+                                <h1 className="text-3xl sm:text-2xl md:text-4xl font-bold tracking-tight text-foreground sm:mb-1">
                                     Gestionar <span className="bg-gradient-primary bg-clip-text text-transparent">Productos</span>
                                 </h1>
-                                <p className="text-sm text-muted-foreground sm:text-base">Crea, edita y gestiona el catálogo de tu compañía</p>
+                                <p className="text-base text-muted-foreground sm:text-sm max-w-2xl">
+                                    <span className="sm:hidden">Crea y organiza tu catálogo.</span>
+                                    <span className="hidden sm:inline">Crea, edita y organiza el catálogo de productos de tu compañía.</span>
+                                </p>
                             </div>
                         </div>
-                        <Button
-                            size="lg"
-                            onClick={() => setFormModal({ isOpen: true, product: null })}
-                            className="w-full whitespace-nowrap shadow-button hover:shadow-button-hover sm:w-auto"
-                        >
-                            <PlusCircle className="mr-2 h-5 w-5" />
-                            Crear Producto
-                        </Button>
+                        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
+                            <Button
+                                onClick={() => setFormModal({ isOpen: true, product: null })}
+                                className="w-full sm:w-auto"
+                            >
+                                <PlusCircle className="mr-2 h-4 w-4" />
+                                Crear Producto
+                            </Button>
+                        </div>
                     </header>
 
                     {products?.length > 0 ? (

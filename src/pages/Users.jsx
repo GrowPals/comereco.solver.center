@@ -417,29 +417,27 @@ const Users = () => {
             <PageContainer>
                 <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
                     {/* Header */}
-                    <header className="flex flex-col gap-4 border-b border-border pb-5 sm:pb-6">
-                        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                            <div className="flex items-center gap-3 sm:gap-4">
-                                <SectionIcon icon={UserIcon} size="lg" />
-                                <div className="space-y-1">
-                                    <h1 className="page-title">
-                                        Gestión de <span className="page-title-accent">Usuarios</span>
-                                    </h1>
-                                    <p className="page-title-subtext">
-                                        {users?.length || 0} {users?.length === 1 ? 'usuario' : 'usuarios'} en tu organización
-                                    </p>
-                                </div>
+                    <header className="flex flex-col items-start gap-5 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:pb-6">
+                        <div className="flex items-center gap-4 sm:gap-5">
+                            <SectionIcon icon={UserIcon} size="lg" className="hidden sm:flex" />
+                            <div>
+                                <h1 className="text-3xl sm:text-2xl md:text-4xl font-bold tracking-tight text-foreground sm:mb-1">
+                                    Gestión de <span className="bg-gradient-primary bg-clip-text text-transparent">Usuarios</span>
+                                </h1>
+                                <p className="text-base text-muted-foreground sm:text-sm max-w-2xl">
+                                    <span className="sm:hidden">Invita y gestiona a tu equipo.</span>
+                                    <span className="hidden sm:inline">Invita, asigna roles y administra a los miembros de tu organización.</span>
+                                </p>
                             </div>
-                            <div className="flex items-center gap-3">
-                                <Button
-                                    size="lg"
-                                    onClick={() => handleOpenForm()}
-                                    className="w-full rounded-xl shadow-button hover:shadow-button-hover sm:w-auto"
-                                >
-                                    <Plus className="mr-2 h-5 w-5" />
-                                    Invitar Usuario
-                                </Button>
-                            </div>
+                        </div>
+                        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
+                            <Button
+                                onClick={() => handleOpenForm()}
+                                className="w-full sm:w-auto"
+                            >
+                                <Plus className="mr-2 h-4 w-4" />
+                                Invitar Usuario
+                            </Button>
                         </div>
                     </header>
 

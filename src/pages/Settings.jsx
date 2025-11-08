@@ -72,54 +72,63 @@ const SettingsPage = () => {
         <>
             <Helmet><title>Configuración - ComerECO</title></Helmet>
             <PageContainer>
-                <div className="mx-auto flex w-full max-w-7xl flex-col-reverse gap-6 pb-6 pt-2 lg:grid lg:grid-cols-[22rem,minmax(0,1fr)] lg:items-start lg:gap-10">
-                    <aside className="order-2 w-full overflow-hidden rounded-2xl border border-border bg-card shadow-soft-md lg:order-1 lg:sticky lg:top-24 lg:h-fit">
-                    <div className="hidden border-b border-border p-6 lg:block">
-                        <div className="flex items-center gap-3">
-                            <SectionIcon icon={Settings} />
-                            <h2 className="text-2xl font-bold text-foreground">Configuración</h2>
+                <div className="mx-auto w-full max-w-7xl space-y-8 lg:space-y-12">
+                    <header className="flex items-start gap-4 sm:gap-5">
+                        <SectionIcon icon={Settings} size="lg" className="hidden sm:flex" />
+                        <div>
+                            <h1 className="text-3xl sm:text-2xl md:text-4xl font-bold tracking-tight text-foreground sm:mb-1">
+                                Configuración de la <span className="bg-gradient-primary bg-clip-text text-transparent">Cuenta</span>
+                            </h1>
+                            <p className="text-base text-muted-foreground sm:text-sm max-w-2xl">
+                                <span className="sm:hidden">Gestiona tus preferencias.</span>
+                                <span className="hidden sm:inline">Gestiona tus preferencias, seguridad y apariencia.</span>
+                            </p>
                         </div>
-                    </div>
-                    {/* Mobile Dropdown */}
-                    <div className="p-4 lg:hidden">
-                        <Select value={activeTab} onValueChange={setActiveTab}>
-                            <SelectTrigger className="rounded-xl h-12 shadow-sm">
-                                <SelectValue placeholder="Seleccionar sección" />
-                            </SelectTrigger>
-                            <SelectContent className="rounded-xl">
+                    </header>
+
+                    <div className="mx-auto flex w-full max-w-7xl flex-col-reverse gap-6 pb-6 pt-2 lg:grid lg:grid-cols-[22rem,minmax(0,1fr)] lg:items-start lg:gap-10">
+                        <aside className="order-2 w-full lg:order-1 lg:sticky lg:top-24 lg:h-fit">
+                            {/* Mobile Dropdown */}
+                            <div className="lg:hidden">
+                                <Select value={activeTab} onValueChange={setActiveTab}>
+                                    <SelectTrigger className="w-full rounded-xl h-12 shadow-sm">
+                                        <SelectValue placeholder="Seleccionar sección" />
+                                    </SelectTrigger>
+                                    <SelectContent className="rounded-xl">
+                                        {TABS.map(tab => (
+                                            <SelectItem key={tab.id} value={tab.id} className="rounded-lg">{tab.name}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            {/* Desktop Sidebar */}
+                            <nav className="hidden lg:block space-y-2">
                                 {TABS.map(tab => (
-                                    <SelectItem key={tab.id} value={tab.id} className="rounded-lg">{tab.name}</SelectItem>
+                                    <button
+                                        key={tab.id}
+                                        onClick={() => setActiveTab(tab.id)}
+                                        className={cn(
+                                            'w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200',
+                                            activeTab === tab.id
+                                                ? 'bg-gradient-to-r from-primary-50 to-primary-100 text-primary-700 font-bold shadow-md border-2 border-primary-200'
+                                                : 'hover:bg-muted text-foreground/90 hover:shadow-sm'
+                                        )}
+                                    >
+                                        <div className={cn(
+                                            "h-9 w-9 rounded-lg flex items-center justify-center transition-all duration-200",
+                                            activeTab === tab.id ? 'bg-gradient-to-br from-primary-100 to-primary-200' : 'bg-muted'
+                                        )}>
+                                            <tab.icon className={cn("h-5 w-5", activeTab === tab.id ? 'text-primary-600' : 'text-muted-foreground')} aria-hidden="true" />
+                                        </div>
+                                        <span>{tab.name}</span>
+                                    </button>
                                 ))}
-                            </SelectContent>
-                        </Select>
+                            </nav>
+                        </aside>
+                        <main className="order-1 w-full max-w-3xl space-y-6 lg:order-2">
+                            {renderContent()}
+                        </main>
                     </div>
-                    {/* Desktop Sidebar */}
-                    <nav className="hidden lg:block space-y-2 p-4">
-                        {TABS.map(tab => (
-                            <button
-                                key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                                className={cn(
-                                    'w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200',
-                                    activeTab === tab.id
-                                        ? 'bg-gradient-to-r from-primary-50 to-primary-100 text-primary-700 font-bold shadow-md border-2 border-primary-200'
-                                        : 'hover:bg-muted text-foreground/90 hover:shadow-sm'
-                                )}
-                            >
-                                <div className={cn(
-                                    "h-9 w-9 rounded-lg flex items-center justify-center transition-all duration-200",
-                                    activeTab === tab.id ? 'bg-gradient-to-br from-primary-100 to-primary-200' : 'bg-muted'
-                                )}>
-                                    <tab.icon className={cn("h-5 w-5", activeTab === tab.id ? 'text-primary-600' : 'text-muted-foreground')} aria-hidden="true" />
-                                </div>
-                                <span>{tab.name}</span>
-                            </button>
-                        ))}
-                    </nav>
-                    </aside>
-                    <main className="order-1 w-full max-w-3xl space-y-6 lg:order-2">
-                        {renderContent()}
-                    </main>
                 </div>
             </PageContainer>
         </>
