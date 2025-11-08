@@ -107,9 +107,9 @@ export const RestockRuleCard = ({ rule, projects }) => {
   );
 
   return (
-    <div className="surface-card group flex h-full flex-col rounded-3xl p-4 transition-shadow hover:shadow-md sm:p-5">
-      <div className="flex flex-1 flex-col gap-3">
-        <div className="flex items-start justify-between gap-3">
+    <div className="surface-card group flex h-full flex-col rounded-3xl p-6 transition-shadow hover:shadow-md sm:p-7">
+      <div className="flex flex-1 flex-col gap-4">
+        <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 flex-1 space-y-1">
             <p className="line-clamp-2 text-[15px] font-semibold leading-tight text-foreground sm:text-lg">
               {product.name || 'Producto sin nombre'}
@@ -127,13 +127,16 @@ export const RestockRuleCard = ({ rule, projects }) => {
         </div>
 
         {!!rule.notes && (
-          <p className="surface-card line-clamp-2 rounded-2xl p-3 text-xs text-muted-foreground/90 dark:text-primary-100">{/* using surface-card ensures same palette */}
+          <p className="surface-card line-clamp-2 rounded-2xl p-3.5 text-xs text-muted-foreground/90 dark:text-primary-100">{/* using surface-card ensures same palette */}
             {rule.notes}
           </p>
         )}
       </div>
 
-      <div className="mt-4 space-y-3">
+      {/* Visual Separator */}
+      <div className="my-5 h-px bg-gradient-to-r from-transparent via-border/30 to-transparent" aria-hidden="true" />
+
+      <div className="space-y-4">
       <Button className="h-11 w-full rounded-2xl text-sm font-semibold" onClick={() => controller.setDialogOpen(true)}>
           <PencilLine className="mr-2 h-4 w-4" /> Editar regla
         </Button>

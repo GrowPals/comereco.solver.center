@@ -42,8 +42,8 @@ const UserDashboard = ({ user }) => {
     return (
         <div className="mx-auto max-w-7xl space-y-10">
             {/* Hero Section */}
-            <div className="flex flex-col items-start gap-6 border-b border-border pb-8 sm:flex-row sm:items-center sm:justify-between dark:border-border">
-                <div className="flex flex-col gap-3">
+            <div className="flex flex-col items-start gap-6 border-b border-border pb-10 sm:flex-row sm:items-center sm:justify-between dark:border-border">
+                <div className="flex flex-col gap-3.5">
                     <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground">
                         Hola, <span className="bg-gradient-primary bg-clip-text text-transparent">{firstName}</span>
                     </h1>
@@ -71,12 +71,12 @@ const UserDashboard = ({ user }) => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.3 }}
                 >
-                    <Card className="surface-card relative overflow-hidden border-2 border-primary-300/40 bg-gradient-to-br from-primary-50/80 via-background to-background p-8 sm:p-12 dark:border-primary-500/30 dark:from-primary-900/10 dark:via-card dark:to-card">
+                    <Card className="surface-card relative overflow-hidden border-2 border-primary-300/40 bg-gradient-to-br from-primary-50/80 via-background to-background p-10 sm:p-14 dark:border-primary-500/30 dark:from-primary-900/10 dark:via-card dark:to-card">
                         {/* Decorative elements */}
                         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-primary opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
 
                         <div className="relative z-10">
-                            <div className="flex items-center gap-3 mb-6">
+                            <div className="flex items-center gap-4 mb-7">
                                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-primary shadow-glow-primary">
                                     <Sparkles className="h-7 w-7 text-white" />
                                 </div>
@@ -88,39 +88,39 @@ const UserDashboard = ({ user }) => {
                                 </div>
                             </div>
 
-                            <p className="text-base text-muted-foreground mb-8 leading-relaxed max-w-2xl">
+                            <p className="text-base text-muted-foreground mb-10 leading-relaxed max-w-2xl">
                                 Estás a un paso de crear tu primera requisición. Navega por nuestro catálogo,
                                 selecciona los productos que necesitas y envía tu solicitud para aprobación.
                                 ¡Es rápido y sencillo!
                             </p>
 
-                            <div className="grid gap-4 sm:grid-cols-3 mb-8">
-                                <div className="flex items-start gap-3 p-4 rounded-xl bg-background/60 dark:bg-card/40">
+                            <div className="grid gap-5 sm:grid-cols-3 mb-10">
+                                <div className="flex items-start gap-3.5 p-5 rounded-xl bg-background/60 dark:bg-card/40">
                                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-700/50">
                                         <ShoppingCart className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                                     </div>
                                     <div>
-                                        <h3 className="font-semibold text-sm text-foreground mb-1">Explora el catálogo</h3>
+                                        <h3 className="font-semibold text-sm text-foreground mb-1.5">Explora el catálogo</h3>
                                         <p className="text-xs text-muted-foreground">Encuentra productos y servicios</p>
                                     </div>
                                 </div>
 
-                                <div className="flex items-start gap-3 p-4 rounded-xl bg-background/60 dark:bg-card/40">
+                                <div className="flex items-start gap-3.5 p-5 rounded-xl bg-background/60 dark:bg-card/40">
                                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-700/50">
                                         <FileText className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                                     </div>
                                     <div>
-                                        <h3 className="font-semibold text-sm text-foreground mb-1">Crea tu requisición</h3>
+                                        <h3 className="font-semibold text-sm text-foreground mb-1.5">Crea tu requisición</h3>
                                         <p className="text-xs text-muted-foreground">Añade items y detalles</p>
                                     </div>
                                 </div>
 
-                                <div className="flex items-start gap-3 p-4 rounded-xl bg-background/60 dark:bg-card/40">
+                                <div className="flex items-start gap-3.5 p-5 rounded-xl bg-background/60 dark:bg-card/40">
                                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-700/50">
                                         <CheckCircle className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                                     </div>
                                     <div>
-                                        <h3 className="font-semibold text-sm text-foreground mb-1">Envía y aprueba</h3>
+                                        <h3 className="font-semibold text-sm text-foreground mb-1.5">Envía y aprueba</h3>
                                         <p className="text-xs text-muted-foreground">Rastrea tu solicitud</p>
                                     </div>
                                 </div>
