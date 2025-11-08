@@ -37,6 +37,7 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import PageContainer from '@/components/layout/PageContainer';
+import CompanyContextIndicator from '@/components/layout/CompanyContextIndicator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { fetchUsersInCompany, inviteUser, updateUserProfile, toggleUserStatus, deleteUser, isApprovalBypassSupported, isProfileEmailSupported } from '@/services/userService';
@@ -417,26 +418,31 @@ const Users = () => {
             <PageContainer>
                 <div className="mx-auto w-full max-w-7xl space-y-6 sm:space-y-8">
                     {/* Header */}
-                    <header className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
-                        <div className="flex items-center gap-3 sm:gap-4">
-                            <SectionIcon icon={UserIcon} className="sm:h-7 sm:w-7" />
-                            <div className="space-y-1">
-                                <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                                    Gestión de <span className="bg-gradient-primary bg-clip-text text-transparent">Usuarios</span>
-                                </h1>
-                                <p className="text-sm text-muted-foreground sm:text-base">
-                                    {users?.length || 0} {users?.length === 1 ? 'usuario' : 'usuarios'} en tu organización
-                                </p>
+                    <header className="flex flex-col gap-4 border-b border-border pb-5 sm:pb-6">
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                            <div className="flex items-center gap-3 sm:gap-4">
+                                <SectionIcon icon={UserIcon} className="sm:h-7 sm:w-7" />
+                                <div className="space-y-1">
+                                    <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                                        Gestión de <span className="bg-gradient-primary bg-clip-text text-transparent">Usuarios</span>
+                                    </h1>
+                                    <p className="text-sm text-muted-foreground sm:text-base">
+                                        {users?.length || 0} {users?.length === 1 ? 'usuario' : 'usuarios'} en tu organización
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <CompanyContextIndicator compact className="hidden sm:flex" />
+                                <Button
+                                    size="lg"
+                                    onClick={() => handleOpenForm()}
+                                    className="w-full rounded-xl shadow-button hover:shadow-button-hover sm:w-auto"
+                                >
+                                    <Plus className="mr-2 h-5 w-5" />
+                                    Invitar Usuario
+                                </Button>
                             </div>
                         </div>
-                        <Button
-                            size="lg"
-                            onClick={() => handleOpenForm()}
-                            className="w-full rounded-xl shadow-button hover:shadow-button-hover sm:w-auto"
-                        >
-                            <Plus className="mr-2 h-5 w-5" />
-                            Invitar Usuario
-                        </Button>
                     </header>
 
                     {setupWarnings.length > 0 && !migrationAlertDismissed && (

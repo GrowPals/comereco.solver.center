@@ -21,11 +21,11 @@ const CompanySwitcher = ({ variant = 'default' }) => {
     isLoading,
   } = useCompanyScope();
 
-  // Efecto de animación al cambiar empresa
+  // Efecto de animación al cambiar empresa - Mejorado para mejor feedback
   useEffect(() => {
     if (activeCompanyId !== null || isGlobalView) {
       setIsChanging(true);
-      const timer = setTimeout(() => setIsChanging(false), 600);
+      const timer = setTimeout(() => setIsChanging(false), 800);
       return () => clearTimeout(timer);
     }
   }, [activeCompanyId, isGlobalView]);
@@ -76,17 +76,19 @@ const CompanySwitcher = ({ variant = 'default' }) => {
       toggleGlobalView(true);
       setActiveCompanyId(null);
       toast({
-        title: 'Vista Global Activada',
-        description: 'Ahora estás viendo datos de todas las empresas.',
-        variant: 'success'
+        title: '🌍 Vista Global Activada',
+        description: 'Mostrando datos de todas las empresas. El contexto completo ha cambiado.',
+        variant: 'success',
+        duration: 4000
       });
     } else {
       toggleGlobalView(false);
       setActiveCompanyId(value);
       toast({
-        title: 'Empresa Cambiada',
-        description: `Ahora estás viendo: ${selectedCompany?.name || 'la empresa seleccionada'}`,
-        variant: 'success'
+        title: '🏢 Contexto de Empresa Cambiado',
+        description: `Ahora trabajas en: ${selectedCompany?.name || 'la empresa seleccionada'}. Todos los datos se filtrarán por esta empresa.`,
+        variant: 'success',
+        duration: 4000
       });
     }
 
@@ -210,7 +212,7 @@ const CompanySwitcher = ({ variant = 'default' }) => {
     <div
       className={cn(
         'company-switcher-pill group',
-        isChanging && 'ring-2 ring-primary-500/50 ring-offset-2 ring-offset-background'
+        isChanging && 'company-context-changing ring-2 ring-primary-500/50 ring-offset-2 ring-offset-background'
       )}
     >
       {/* Badge visual */}

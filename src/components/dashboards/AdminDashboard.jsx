@@ -5,6 +5,7 @@ import { getDashboardStats } from '@/services/dashboardService';
 import StatCard from './StatCard';
 import QuickAccess from './QuickAccess';
 import RecentRequisitions from './RecentRequisitions';
+import CompanyContextIndicator from '@/components/layout/CompanyContextIndicator';
 import { Users, FolderKanban, FileText, ShoppingBag, BarChart2 } from 'lucide-react';
 
 const AdminDashboard = memo(({ user }) => {
@@ -51,12 +52,17 @@ const AdminDashboard = memo(({ user }) => {
         <div className="max-w-7xl mx-auto space-y-10">
             {/* Hero Section */}
             <div className="flex flex-col gap-4 pb-8 border-b border-border">
-                <h1 className="text-5xl font-bold tracking-tight text-foreground">
-                    Panel <span className="bg-gradient-primary bg-clip-text text-transparent">Ejecutivo</span>
-                </h1>
-                <p className="text-lg text-muted-foreground">
-                    Vista general de la compañía: <span className="font-semibold text-foreground">{user.company?.name || 'Tu Empresa'}</span>
-                </p>
+                <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                        <h1 className="text-5xl font-bold tracking-tight text-foreground">
+                            Panel <span className="bg-gradient-primary bg-clip-text text-transparent">Ejecutivo</span>
+                        </h1>
+                        <p className="mt-3 text-lg text-muted-foreground">
+                            Vista general de la compañía: <span className="font-semibold text-foreground">{user.company?.name || 'Tu Empresa'}</span>
+                        </p>
+                    </div>
+                    <CompanyContextIndicator className="flex-shrink-0" />
+                </div>
             </div>
 
             {/* Stats Grid */}
