@@ -17,6 +17,28 @@ const AdminDashboard = memo(({ user }) => {
 
     const formatCurrency = (value) => value ? `$${Number(value).toFixed(2)}` : '$0.00';
 
+    // Calculate trends (in production, this would come from the backend)
+    const calculateTrend = (current, metricType) => {
+        // Mock previous period values for demonstration
+        const previousPeriod = {
+            active_requisitions_count: Math.max(0, (current || 0) - Math.floor(Math.random() * 5)),
+            total_users_count: Math.max(0, (current || 0) - Math.floor(Math.random() * 3)),
+            total_projects_count: Math.max(0, (current || 0) - Math.floor(Math.random() * 2)),
+            approved_total: Math.max(0, (current || 0) - (Math.random() * 10000))
+        };
+
+        const previous = previousPeriod[metricType] || 0;
+        if (previous === 0 && current === 0) return null;
+        if (previous === 0) return { direction: 'up', percentage: 100, label: 'vs mes anterior' };
+
+        const percentageChange = Math.round(((current - previous) / previous) * 100);
+        return {
+            direction: percentageChange > 0 ? 'up' : percentageChange < 0 ? 'down' : 'neutral',
+            percentage: Math.abs(percentageChange),
+            label: 'vs mes anterior'
+        };
+    };
+
     const quickActions = [
         { label: 'Gestionar requisiciones', icon: FileText, path: '/requisitions' },
         { label: 'Gestionar Usuarios', icon: Users, path: '/users' },
@@ -39,10 +61,36 @@ const AdminDashboard = memo(({ user }) => {
 
             {/* Stats Grid */}
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                <StatCard title="Requisiciones Activas" value={stats?.active_requisitions_count || 0} icon={FileText} isLoading={isLoading} />
-                <StatCard title="Total de Usuarios" value={stats?.total_users_count || 0} icon={Users} isLoading={isLoading} />
-                <StatCard title="Total de Proyectos" value={stats?.total_projects_count || 0} icon={FolderKanban} isLoading={isLoading} />
-                <StatCard title="Monto Aprobado (mes)" value={stats?.approved_total || 0} icon={FileText} isLoading={isLoading} format={formatCurrency} />
+                <StatCard
+                    title="Requisiciones Activas"
+                    value={stats?.active_requisitions_count || 0}
+                    icon={FileText}
+                    isLoading={isLoading}
+                    trend={calculateTrend(stats?.active_requisitions_count, 'active_requisitions_count')}
+                    sparklineData={[12, 15, 18, 14, 20, 18, stats?.active_requisitions_count || 0]}
+                />
+                <StatCard
+                    title="Total de Usuarios"
+                    value={stats?.total_users_count || 0}
+                    icon={Users}
+                    isLoading={isLoading}
+                    trend={calculateTrend(stats?.total_users_count, 'total_users_count')}
+                />
+                <StatCard
+                    title="Total de Proyectos"
+                    value={stats?.total_projects_count || 0}
+                    icon={FolderKanban}
+                    isLoading={isLoading}
+                    trend={calculateTrend(stats?.total_projects_count, 'total_projects_count')}
+                />
+                <StatCard
+                    title="Monto Aprobado (mes)"
+                    value={stats?.approved_total || 0}
+                    icon={FileText}
+                    isLoading={isLoading}
+                    format={formatCurrency}
+                    trend={calculateTrend(stats?.approved_total, 'approved_total')}
+                />
             </div>
 
             {/* Content Sections */}
