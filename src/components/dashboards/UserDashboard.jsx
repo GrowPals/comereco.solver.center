@@ -5,6 +5,7 @@ import { getDashboardStats } from '@/services/dashboardService';
 import StatCard from './StatCard';
 import QuickAccess from './QuickAccess';
 import RecentRequisitions from './RecentRequisitions';
+import CompanyContextIndicator from '@/components/layout/CompanyContextIndicator';
 import { FileText, Hourglass, CheckCircle, XCircle, ShoppingCart, LayoutTemplate, History, Sparkles, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -42,18 +43,23 @@ const UserDashboard = ({ user }) => {
     return (
         <div className="mx-auto max-w-7xl space-y-10">
             {/* Hero Section */}
-            <div className="flex flex-col items-start gap-6 border-b border-border pb-8 sm:flex-row sm:items-center sm:justify-between dark:border-border">
-                <div className="flex flex-col gap-3">
-                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground">
-                        Hola, <span className="bg-gradient-primary bg-clip-text text-transparent">{firstName}</span>
-                    </h1>
-                    <p className="text-base sm:text-lg text-muted-foreground">
-                        Gestiona tus requisiciones y revisa tu actividad reciente
-                    </p>
+            <div className="flex flex-col items-start gap-6 border-b border-border pb-8 dark:border-border">
+                <div className="flex w-full flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex flex-col gap-3">
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground">
+                            Hola, <span className="bg-gradient-primary bg-clip-text text-transparent">{firstName}</span>
+                        </h1>
+                        <p className="text-base sm:text-lg text-muted-foreground">
+                            Gestiona tus requisiciones y revisa tu actividad reciente
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <CompanyContextIndicator compact className="hidden sm:flex" />
+                        <Button size="lg" className="whitespace-nowrap shadow-soft-md" onClick={handleNavigateToCatalog}>
+                            <ShoppingCart className="mr-2 h-5 w-5" aria-hidden="true" /> Nueva Requisición
+                        </Button>
+                    </div>
                 </div>
-                <Button size="lg" className="whitespace-nowrap shadow-soft-md" onClick={handleNavigateToCatalog}>
-                    <ShoppingCart className="mr-2 h-5 w-5" aria-hidden="true" /> Nueva Requisición
-                </Button>
             </div>
 
             {/* Stats Grid */}

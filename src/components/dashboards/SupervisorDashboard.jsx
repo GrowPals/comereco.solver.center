@@ -5,6 +5,7 @@ import { getDashboardStats, getSupervisorProjectsActivity } from '@/services/das
 import StatCard from './StatCard';
 import QuickAccess from './QuickAccess';
 import RecentRequisitions from './RecentRequisitions';
+import CompanyContextIndicator from '@/components/layout/CompanyContextIndicator';
 import { CheckSquare, FolderKanban, History, Hourglass, CheckCircle, XCircle } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -38,12 +39,17 @@ const SupervisorDashboard = memo(({ user }) => {
     return (
         <div className="space-y-8">
             <div className="flex flex-col gap-2">
-                <h1 className="text-4xl font-bold text-foreground">
-                    Panel del <span className="bg-gradient-primary bg-clip-text text-transparent">Supervisor</span>
-                </h1>
-        <p className="text-base text-muted-foreground">
-            Bienvenido, <span className="font-semibold text-foreground">{user.full_name}</span>. Revisa las requisiciones pendientes.
-                </p>
+                <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                        <h1 className="text-4xl font-bold text-foreground">
+                            Panel del <span className="bg-gradient-primary bg-clip-text text-transparent">Supervisor</span>
+                        </h1>
+                        <p className="mt-2 text-base text-muted-foreground">
+                            Bienvenido, <span className="font-semibold text-foreground">{user.full_name}</span>. Revisa las requisiciones pendientes.
+                        </p>
+                    </div>
+                    <CompanyContextIndicator className="flex-shrink-0" />
+                </div>
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
