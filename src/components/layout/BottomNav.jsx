@@ -19,6 +19,19 @@ const BottomNav = memo(({ onMenuClick, isMenuOpen = false }) => {
 
     const isActive = (path) => location.pathname === path || (path !== '/dashboard' && location.pathname.startsWith(path));
 
+    // Función para manejar click en tab - scroll to top si ya está activo
+    const handleNavClick = (e, path) => {
+        const isCurrentlyActive = isActive(path);
+
+        if (isCurrentlyActive) {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth',
+            });
+        }
+    };
+
     return (
         <nav
             className="bottom-nav-shell fixed bottom-0 left-0 right-0 z-50 transition-transform duration-200 lg:hidden"
@@ -35,6 +48,7 @@ const BottomNav = memo(({ onMenuClick, isMenuOpen = false }) => {
                         <NavLink
                             key={item.path}
                             to={item.path}
+                            onClick={(e) => handleNavClick(e, item.path)}
                             className="group inline-flex flex-col items-center justify-center gap-1 transition-all duration-200"
                             aria-label={item.label}
                             aria-current={isItemActive ? 'page' : undefined}
@@ -88,6 +102,7 @@ const BottomNav = memo(({ onMenuClick, isMenuOpen = false }) => {
                         <NavLink
                             key={item.path}
                             to={item.path}
+                            onClick={(e) => handleNavClick(e, item.path)}
                             className="group inline-flex flex-col items-center justify-center gap-1 transition-all duration-200"
                             aria-label={item.label}
                             aria-current={isItemActive ? 'page' : undefined}

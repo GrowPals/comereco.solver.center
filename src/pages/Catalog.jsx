@@ -15,6 +15,7 @@ import ErrorState from '@/components/ErrorState';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import PageContainer from '@/components/layout/PageContainer';
+import ScrollToTopButton from '@/components/ScrollToTopButton';
 import {
   Select,
   SelectContent,
@@ -161,6 +162,8 @@ const CatalogPage = () => {
           content="Explora y agrega productos a tus requisiciones de forma ágil en ComerECO."
         />
       </Helmet>
+
+      <ScrollToTopButton />
 
       <PageContainer className={cn(isDesktop ? 'pb-16' : 'pb-28')}>
         <div className="mx-auto w-full max-w-7xl">
