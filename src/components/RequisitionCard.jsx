@@ -86,8 +86,8 @@ const RequisitionCard = memo(({ requisition }) => {
             <div className="flex items-center gap-4 md:min-w-[200px]">
               <IconWrapper icon={Hash} variant="subtle" size="lg" />
               <div>
-                <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Folio</p>
-                <p className="text-xl font-bold text-foreground">{requisition.internal_folio || 'N/A'}</p>
+                <p className="mb-1 caption">Folio</p>
+                <p className="price-medium">{requisition.internal_folio || 'N/A'}</p>
               </div>
             </div>
 
@@ -97,8 +97,8 @@ const RequisitionCard = memo(({ requisition }) => {
               <div className="flex items-center gap-3">
                 <IconWrapper icon={User} variant="neutral" size="sm" />
                 <div className="min-w-0">
-                  <p className="mb-0.5 text-xs font-medium text-muted-foreground">Solicitante</p>
-                  <p className="truncate text-sm font-semibold text-foreground">{requisition.creator?.full_name || 'No disponible'}</p>
+                  <p className="mb-0.5 text-muted-xs">Solicitante</p>
+                  <p className="truncate text-secondary-sm font-semibold">{requisition.creator?.full_name || 'No disponible'}</p>
                 </div>
               </div>
 
@@ -106,8 +106,8 @@ const RequisitionCard = memo(({ requisition }) => {
               <div className="flex items-center gap-3">
                 <IconWrapper icon={Calendar} variant="neutral" size="sm" />
                 <div className="min-w-0">
-                  <p className="mb-0.5 text-xs font-medium text-muted-foreground">Fecha</p>
-                  <p className="text-sm font-semibold text-foreground">{formattedDate}</p>
+                  <p className="mb-0.5 text-muted-xs">Fecha</p>
+                  <p className="text-secondary-sm font-semibold">{formattedDate}</p>
                 </div>
               </div>
 
@@ -115,8 +115,8 @@ const RequisitionCard = memo(({ requisition }) => {
               <div className="flex items-center gap-3">
                 <IconWrapper icon={DollarSign} variant="neutral" size="sm" />
                 <div className="min-w-0">
-                  <p className="mb-0.5 text-xs font-medium text-muted-foreground">Monto Total</p>
-                  <p className="text-lg font-bold tracking-tight text-foreground">{formattedAmount}</p>
+                  <p className="mb-0.5 text-muted-xs">Monto Total</p>
+                  <p className="price-medium">{formattedAmount}</p>
                 </div>
               </div>
             </div>

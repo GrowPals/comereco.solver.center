@@ -109,7 +109,7 @@ const ProductCard = memo(({ product }) => {
 
         <div className="absolute left-4 top-3 flex flex-wrap gap-2">
           {product.category && (
-            <span className="rounded-full border border-border bg-white px-3 py-1 text-xs font-semibold uppercase tracking-wide text-foreground shadow-sm dark:border-border dark:bg-card/90 dark:text-foreground">
+            <span className="rounded-full border border-border bg-white px-3 py-1 caption shadow-sm dark:border-border dark:bg-card/90">
               {product.category}
             </span>
           )}
@@ -146,11 +146,11 @@ const ProductCard = memo(({ product }) => {
           onClick={handleNavigate}
           className="text-left"
         >
-          <h3 className="line-clamp-2 text-base font-semibold leading-snug text-foreground transition-colors group-hover:text-primary-600">
+          <h3 className="line-clamp-2 heading-5 transition-colors group-hover:text-primary-600">
             {productName}
           </h3>
         </button>
-        <p className="text-sm font-medium text-muted-foreground">
+        <p className="text-secondary-sm">
           <span className={cn(
             'font-semibold',
             isInStock ? 'text-success' : 'text-error uppercase'
@@ -158,21 +158,21 @@ const ProductCard = memo(({ product }) => {
             {availabilityLabel}
           </span>
           {Number.isFinite(stock) && (
-            <span className="text-muted-foreground">{` · ${stock} pzas`}</span>
+            <span className="text-muted">{` · ${stock} pzas`}</span>
           )}
         </p>
 
         <div className="flex flex-1 flex-col justify-between gap-4">
           <div className="rounded-xl bg-muted/40 p-3 dark:bg-muted/20">
-            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <span className="caption">
               Precio
             </span>
             <div className="mt-1 flex items-baseline justify-between gap-2">
-              <p className="text-2xl font-bold tabular-nums text-emerald-600 dark:text-emerald-400">
+              <p className="price-large text-emerald-600 dark:text-emerald-400">
                 ${productPrice}
               </p>
               {unitLabel && (
-                <span className="text-sm font-semibold text-muted-foreground">/ {unitLabel}</span>
+                <span className="text-muted">/ {unitLabel}</span>
               )}
             </div>
           </div>
