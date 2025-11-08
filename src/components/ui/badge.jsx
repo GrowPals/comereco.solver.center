@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
@@ -13,30 +12,118 @@ import {
   PackageCheck
 } from 'lucide-react';
 
+/**
+ * Badge Component - NEW DESIGN SYSTEM
+ *
+ * Badges con estilo minimalista:
+ * - Gradientes pastel sutiles
+ * - SIN bordes, SIN sombras
+ * - Iconos con colores semánticos pasteles
+ * - Tamaño consistente
+ */
+
 const badgeVariants = cva(
-  'inline-flex items-center gap-1.5 font-medium px-3 py-1 rounded-full text-sm transition-colors duration-200',
+  'inline-flex items-center gap-1.5 font-medium px-3 py-1 rounded-full text-sm transition-all duration-200',
   {
     variants: {
       variant: {
-        // Estados de requisiciones - mejorado contraste WCAG AA en modo dark
-        ordered: 'bg-blue-50 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300',
-        approved: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300',
-        sent: 'bg-amber-50 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300',
-        rejected: 'bg-red-50 text-red-700 dark:bg-red-500/20 dark:text-red-300',
-        draft: 'bg-slate-100 text-slate-700 dark:bg-slate-700/60 dark:text-slate-200',
-        in_process: 'bg-cyan-50 text-cyan-700 dark:bg-cyan-500/20 dark:text-cyan-300',
-        completed: 'bg-violet-50 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300',
+        // Primary - Azul cielo
+        default: [
+          'bg-gradient-to-br from-neutral-100 to-neutral-200',
+          'text-neutral-800',
+          'dark:from-neutral-200 dark:to-neutral-300',
+          'dark:text-neutral-900',
+        ].join(' '),
 
-        // Variantes genéricas - mejorado contraste
-        default: 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300',
-        success: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300',
-        warning: 'bg-amber-50 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300',
-        danger: 'bg-red-50 text-red-700 dark:bg-red-500/20 dark:text-red-300',
-        destructive: 'bg-red-50 text-red-700 dark:bg-red-500/20 dark:text-red-300',
-        info: 'bg-blue-50 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300',
-        secondary: 'bg-slate-100 text-slate-700 dark:bg-slate-700/60 dark:text-slate-200',
-        muted: 'bg-slate-100 text-slate-600 dark:bg-slate-700/60 dark:text-slate-300',
-        outline: 'bg-transparent text-slate-700 dark:text-slate-300',
+        // Success - Verde menta
+        success: [
+          'bg-gradient-to-br from-success-100 to-success-200',
+          'text-success-700',
+          'dark:from-success-600 dark:to-success-700',
+          'dark:text-white',
+        ].join(' '),
+
+        // Warning - Amarillo mostaza
+        warning: [
+          'bg-gradient-to-br from-warning-100 to-warning-200',
+          'text-warning-700',
+          'dark:from-warning-600 dark:to-warning-700',
+          'dark:text-white',
+        ].join(' '),
+
+        // Danger - Rojo coral
+        danger: [
+          'bg-gradient-to-br from-error-100 to-error-200',
+          'text-error-700',
+          'dark:from-error-600 dark:to-error-700',
+          'dark:text-white',
+        ].join(' '),
+
+        // Info - Azul cielo
+        info: [
+          'bg-gradient-to-br from-info-100 to-info-200',
+          'text-info-700',
+          'dark:from-info-600 dark:to-info-700',
+          'dark:text-white',
+        ].join(' '),
+
+        // Muted - Gris lavanda
+        muted: [
+          'bg-gradient-to-br from-neutral-100 to-neutral-200',
+          'text-neutral-600',
+          'dark:from-neutral-300 dark:to-neutral-400',
+          'dark:text-neutral-900',
+        ].join(' '),
+
+        // Estados de requisiciones
+        ordered: [
+          'bg-gradient-to-br from-info-100 to-info-200',
+          'text-info-700',
+          'dark:from-info-600 dark:to-info-700',
+          'dark:text-white',
+        ].join(' '),
+
+        approved: [
+          'bg-gradient-to-br from-success-100 to-success-200',
+          'text-success-700',
+          'dark:from-success-600 dark:to-success-700',
+          'dark:text-white',
+        ].join(' '),
+
+        sent: [
+          'bg-gradient-to-br from-warning-100 to-warning-200',
+          'text-warning-700',
+          'dark:from-warning-600 dark:to-warning-700',
+          'dark:text-white',
+        ].join(' '),
+
+        rejected: [
+          'bg-gradient-to-br from-error-100 to-error-200',
+          'text-error-700',
+          'dark:from-error-600 dark:to-error-700',
+          'dark:text-white',
+        ].join(' '),
+
+        draft: [
+          'bg-gradient-to-br from-neutral-100 to-neutral-200',
+          'text-neutral-700',
+          'dark:from-neutral-300 dark:to-neutral-400',
+          'dark:text-neutral-900',
+        ].join(' '),
+
+        in_process: [
+          'bg-gradient-to-br from-info-100 to-info-200',
+          'text-info-700',
+          'dark:from-info-500 dark:to-info-600',
+          'dark:text-white',
+        ].join(' '),
+
+        completed: [
+          'bg-gradient-to-br from-success-100 to-success-200',
+          'text-success-700',
+          'dark:from-success-600 dark:to-success-700',
+          'dark:text-white',
+        ].join(' '),
       },
     },
     defaultVariants: {
@@ -46,7 +133,7 @@ const badgeVariants = cva(
 );
 
 const statusConfig = {
-  // Estados de requisiciones con iconos para mejor accesibilidad
+  // Estados de requisiciones con iconos
   ordered: { label: 'Ordenada', variant: 'ordered', icon: ShoppingCart },
   approved: { label: 'Aprobada', variant: 'approved', icon: CheckCircle },
   sent: { label: 'Enviada', variant: 'sent', icon: Send },
@@ -69,29 +156,31 @@ const statusConfig = {
   inactivo: { label: 'Inactivo', variant: 'muted', icon: XCircle },
 };
 
-const Badge = React.forwardRef(({ className, variant, status, children, showIcon = true, ...props }, ref) => {
-  const config = status ? statusConfig[status] : null;
+const Badge = React.forwardRef(
+  ({ className, variant, status, children, showIcon = true, ...props }, ref) => {
+    const config = status ? statusConfig[status] : null;
 
-  if (config) {
-    const Icon = config.icon;
+    if (config) {
+      const Icon = config.icon;
+      return (
+        <div
+          ref={ref}
+          className={cn(badgeVariants({ variant: config.variant }), className)}
+          {...props}
+        >
+          {showIcon && Icon && <Icon className="w-3.5 h-3.5" />}
+          {config.label}
+        </div>
+      );
+    }
+
     return (
-      <div
-        ref={ref}
-        className={cn(badgeVariants({ variant: config.variant }), className)}
-        {...props}
-      >
-        {showIcon && Icon && <Icon className="w-3.5 h-3.5" />}
-        {config.label}
+      <div ref={ref} className={cn(badgeVariants({ variant }), className)} {...props}>
+        {children}
       </div>
     );
   }
-
-  return (
-    <div ref={ref} className={cn(badgeVariants({ variant }), className)} {...props}>
-      {children}
-    </div>
-  );
-});
+);
 
 Badge.displayName = 'Badge';
 

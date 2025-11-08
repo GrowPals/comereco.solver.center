@@ -25,24 +25,21 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
 
-        // Primary - ComerECO Green
+        // Primary - Azul Cielo Pastel
         primary: {
           50: "var(--primary-50)",
           100: "var(--primary-100)",
           200: "var(--primary-200)",
           300: "var(--primary-300)",
           400: "var(--primary-400)",
-          500: "var(--primary-500)", // BASE
+          500: "var(--primary-500)",
           600: "var(--primary-600)",
           700: "var(--primary-700)",
-          800: "var(--primary-800)",
-          900: "var(--primary-900)",
-          950: "var(--primary-950)",
-          DEFAULT: "var(--primary-500)",
+          DEFAULT: "var(--primary)",
           foreground: "var(--primary-foreground)",
         },
 
-        // Neutral scale
+        // Neutral - Gris Lavanda
         neutral: {
           50: "var(--neutral-50)",
           100: "var(--neutral-100)",
@@ -56,34 +53,10 @@ export default {
           900: "var(--neutral-900)",
         },
 
-        // Secondary
-        secondary: {
-          DEFAULT: "var(--secondary)",
-          foreground: "var(--secondary-foreground)",
-        },
-
-        // Destructive
-        destructive: {
-          DEFAULT: "var(--destructive)",
-          foreground: "var(--destructive-foreground)",
-        },
-
         // Muted
         muted: {
           DEFAULT: "var(--muted)",
           foreground: "var(--muted-foreground)",
-        },
-
-        // Accent
-        accent: {
-          DEFAULT: "var(--accent)",
-          foreground: "var(--accent-foreground)",
-        },
-
-        // Popover
-        popover: {
-          DEFAULT: "var(--popover)",
-          foreground: "var(--popover-foreground)",
         },
 
         // Card
@@ -92,52 +65,71 @@ export default {
           foreground: "var(--card-foreground)",
         },
 
-        // Semantic colors - Extended
+        // Semantic colors - Paleta Pastel
         success: {
-          DEFAULT: '#10b981',
-          light: '#d1fae5',
-          dark: '#065f46',
-          foreground: '#ffffff',
+          50: "var(--success-50)",
+          100: "var(--success-100)",
+          200: "var(--success-200)",
+          300: "var(--success-300)",
+          400: "var(--success-400)",
+          500: "var(--success-500)",
+          600: "var(--success-600)",
+          700: "var(--success-700)",
+          DEFAULT: "var(--success)",
         },
         warning: {
-          DEFAULT: '#f59e0b',
-          light: '#fef3c7',
-          dark: '#92400e',
-          foreground: '#ffffff',
+          50: "var(--warning-50)",
+          100: "var(--warning-100)",
+          200: "var(--warning-200)",
+          300: "var(--warning-300)",
+          400: "var(--warning-400)",
+          500: "var(--warning-500)",
+          600: "var(--warning-600)",
+          700: "var(--warning-700)",
+          DEFAULT: "var(--warning)",
         },
         error: {
-          DEFAULT: '#ef4444',
-          light: '#fee2e2',
-          dark: '#991b1b',
-          foreground: '#ffffff',
+          50: "var(--error-50)",
+          100: "var(--error-100)",
+          200: "var(--error-200)",
+          300: "var(--error-300)",
+          400: "var(--error-400)",
+          500: "var(--error-500)",
+          600: "var(--error-600)",
+          700: "var(--error-700)",
+          DEFAULT: "var(--error)",
         },
         info: {
-          DEFAULT: '#3b82f6',
-          light: '#dbeafe',
-          dark: '#1e40af',
-          foreground: '#ffffff',
+          50: "var(--info-50)",
+          100: "var(--info-100)",
+          200: "var(--info-200)",
+          300: "var(--info-300)",
+          400: "var(--info-400)",
+          500: "var(--info-500)",
+          600: "var(--info-600)",
+          700: "var(--info-700)",
+          DEFAULT: "var(--info)",
         },
 
-        // Status colors para requisiciones y estados de negocio
+        // Status colors para requisiciones (usando paleta pastel)
         status: {
-          draft: '#94a3b8',
-          pending: '#f59e0b',
-          approved: '#10b981',
-          rejected: '#ef4444',
-          ordered: '#3b82f6',
-          cancelled: '#64748b',
+          draft: "var(--neutral-400)",
+          pending: "var(--warning-500)",
+          approved: "var(--success-500)",
+          rejected: "var(--error-500)",
+          ordered: "var(--info-500)",
+          cancelled: "var(--neutral-500)",
         },
       },
 
       borderRadius: {
-        'sm': 'var(--radius-sm)',     // 8px
-        'md': 'var(--radius-md)',     // 12px
-        'lg': 'var(--radius-lg)',     // 16px
-        'xl': 'var(--radius-xl)',     // 20px
-        '2xl': 'var(--radius-2xl)',   // 24px
-        'pill': 'var(--radius-pill)', // 32px
-        'full': 'var(--radius-full)', // 9999px
-        DEFAULT: "var(--radius-lg)",
+        'sm': 'var(--radius-sm)',
+        'md': 'var(--radius-md)',
+        'lg': 'var(--radius-lg)',
+        'xl': 'var(--radius-xl)',
+        '2xl': 'var(--radius-2xl)',
+        'full': 'var(--radius-full)',
+        DEFAULT: "var(--radius)",
       },
 
       fontFamily: {
@@ -146,25 +138,9 @@ export default {
       },
 
       boxShadow: {
-        // Sombras sutiles para modo claro
-        'soft-xs': '0 1px 2px rgba(0, 0, 0, 0.04)',
-        'soft-sm': '0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.05)',
-        'soft-md': '0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04)',
-        'soft-lg': '0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04)',
-
-        // Sombras para modo oscuro (muy sutiles)
-        'dark-sm': '0 2px 8px rgba(0, 0, 0, 0.4)',
-
-        // Mantener compatibilidad con sistema anterior
-        'xs': '0 1px 2px rgba(0, 0, 0, 0.05)',
-        'sm': '0 1px 3px rgba(0, 0, 0, 0.04)',
-        'md': '0 2px 8px rgba(0, 0, 0, 0.06)',
-        'lg': '0 4px 12px rgba(0, 0, 0, 0.08)',
-        'xl': '0 8px 24px rgba(0, 0, 0, 0.12)',
-        '2xl': '0 16px 48px rgba(0, 0, 0, 0.16)',
-        'card': '0 1px 3px rgba(0, 0, 0, 0.1)',
-        'card-hover': '0 4px 12px rgba(0, 0, 0, 0.15)',
-        'elevated': '0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04)',
+        // NO SHADOWS - Sistema minimalista basado en color
+        'none': 'none',
+        DEFAULT: 'none',
       },
 
       spacing: {
@@ -183,7 +159,13 @@ export default {
       },
 
       backgroundImage: {
-        // Simplified - removing complex gradients
+        'gradient-primary': 'var(--gradient-primary)',
+        'gradient-success': 'var(--gradient-success)',
+        'gradient-warning': 'var(--gradient-warning)',
+        'gradient-error': 'var(--gradient-error)',
+        'gradient-info': 'var(--gradient-info)',
+        'gradient-surface': 'var(--gradient-surface)',
+        'gradient-card': 'var(--gradient-card)',
       },
 
       keyframes: {

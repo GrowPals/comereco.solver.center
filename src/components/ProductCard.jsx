@@ -5,6 +5,9 @@ import { Heart, Loader2, Minus, Plus, Trash2, Check, ShoppingCart } from 'lucide
 import { useCart } from '@/context/CartContext';
 import { useFavorites } from '@/hooks/useFavorites';
 import OptimizedImage from '@/components/OptimizedImage';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 const ProductCard = memo(({ product }) => {
@@ -100,9 +103,10 @@ const ProductCard = memo(({ product }) => {
   );
 
   return (
-    <article
+    <Card
+      interactive
       className={cn(
-        'group relative flex w-full flex-col overflow-hidden rounded-3xl surface-card transition-all duration-base ease-smooth-out hover:shadow-elevated hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:hover:shadow-elevated',
+        'group relative flex w-full flex-col overflow-hidden',
         !isInStock && 'opacity-70 grayscale'
       )}
       role="article"
@@ -124,18 +128,19 @@ const ProductCard = memo(({ product }) => {
           />
         </button>
 
+        {/* Category Badge */}
         <div className="absolute left-4 top-3 flex flex-wrap gap-2">
           {product.category && (
-            <span className="rounded-full border border-border bg-white px-3 py-1 caption shadow-sm dark:border-border dark:bg-card/90">
+            <Badge variant="secondary" className="bg-white/95 dark:bg-card/95">
               {product.category}
-            </span>
+            </Badge>
           )}
         </div>
 
-        {/* Contador de items en carrito */}
+        {/* Cart Counter Badge */}
         {currentQuantity > 0 && (
           <div
-            className="absolute left-4 bottom-3 flex items-center gap-1.5 rounded-full bg-primary-600 px-3 py-1.5 shadow-lg animate-in fade-in zoom-in duration-200"
+            className="absolute left-4 bottom-3 flex items-center gap-1.5 rounded-xl bg-primary-500 px-3 py-1.5 animate-in fade-in zoom-in duration-200"
             aria-label={`${currentQuantity} ${currentQuantity === 1 ? 'item' : 'items'} en carrito`}
           >
             <ShoppingCart className="h-3.5 w-3.5 text-white" aria-hidden="true" />
@@ -145,15 +150,15 @@ const ProductCard = memo(({ product }) => {
           </div>
         )}
 
-        {/* Botón de favoritos mejorado */}
+        {/* Favorite Button - Sin círculo, icono plano */}
         <button
           type="button"
           onClick={handleToggleFavorite}
           className={cn(
-            "absolute right-4 top-3 flex h-9 w-9 items-center justify-center rounded-full border shadow-sm transition-all duration-base ease-smooth-out hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 active:scale-95",
+            "absolute right-4 top-3 flex items-center justify-center p-2 rounded-xl transition-all duration-base ease-smooth-out hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 active:scale-95",
             isFavorite
-              ? "border-red-500 bg-red-50 text-red-600 hover:scale-105 dark:border-red-400 dark:bg-red-950/50 dark:text-red-400"
-              : "border-border bg-white text-muted-foreground hover:border-red-300 hover:bg-red-50 hover:text-red-500 hover:scale-105 dark:border-border dark:bg-card/90 dark:hover:border-red-400/50 dark:hover:bg-red-950/30"
+              ? "bg-red-50/95 dark:bg-red-950/50"
+              : "bg-white/95 hover:bg-red-50/95 dark:bg-card/95 dark:hover:bg-red-950/30"
           )}
           aria-label={
             isFavorite
@@ -164,9 +169,9 @@ const ProductCard = memo(({ product }) => {
         >
           <Heart
             className={cn(
-              'h-4 w-4 transition-all duration-base ease-smooth-out',
+              'h-5 w-5 transition-all duration-base ease-smooth-out',
               heartAnimation && 'animate-heart-bounce',
-              isFavorite && 'fill-current'
+              isFavorite ? 'fill-red-400 text-red-400 dark:fill-red-300 dark:text-red-300' : 'text-rose-300 dark:text-rose-400'
             )}
             aria-hidden="true"
           />
@@ -179,50 +184,48 @@ const ProductCard = memo(({ product }) => {
           onClick={handleNavigate}
           className="text-left"
         >
-          <h3 className="line-clamp-2 heading-5 transition-colors group-hover:text-primary-600">
+          <h3 className="line-clamp-2 heading-5 transition-colors group-hover:text-primary">
             {productName}
           </h3>
         </button>
-        <p className="text-secondary-sm">
-          <span className={cn(
-            'font-semibold',
-            isInStock ? 'text-success' : 'text-error uppercase'
-          )}>
+
+        {/* Stock Badge */}
+        <div className="flex items-center gap-2">
+          <Badge
+            variant={isInStock ? 'success' : 'destructive'}
+            className="font-semibold"
+          >
             {availabilityLabel}
-          </span>
+          </Badge>
           {Number.isFinite(stock) && (
-            <span className="text-muted">{` · ${stock} pzas`}</span>
+            <span className="text-sm text-muted-foreground">{stock} pzas</span>
           )}
-        </p>
+        </div>
 
         <div className="flex flex-1 flex-col justify-between gap-4">
-          <div className="rounded-xl bg-muted/40 p-3 dark:bg-muted/20">
-            <span className="caption">
+          {/* Price Section */}
+          <div className="rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 p-4">
+            <span className="caption text-muted-foreground">
               Precio
             </span>
             <div className="mt-1 flex items-baseline justify-between gap-2">
-              <p className="price-large text-emerald-600 dark:text-emerald-400">
+              <p className="price-large bg-gradient-to-br from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent">
                 ${productPrice}
               </p>
               {unitLabel && (
-                <span className="text-muted">/ {unitLabel}</span>
+                <span className="text-muted-foreground">/ {unitLabel}</span>
               )}
             </div>
           </div>
 
+          {/* Action Buttons */}
           {currentQuantity === 0 ? (
-            <button
+            <Button
               type="button"
               onClick={handleAddToCart}
               disabled={isAdding || !isInStock}
-              className={cn(
-                'flex w-full items-center justify-center gap-2 rounded-2xl py-3 text-base font-semibold text-white transition-all duration-base ease-smooth-out active:scale-[0.98]',
-                showSuccess
-                  ? 'bg-success hover:bg-success/90'
-                  : isInStock
-                    ? 'bg-primary-600 hover:bg-primary-700 hover:shadow-button'
-                    : 'cursor-not-allowed bg-muted/60 text-muted-foreground'
-              )}
+              variant={showSuccess ? "success" : "primary"}
+              className="w-full rounded-xl"
             >
               {isAdding ? (
                 <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
@@ -237,13 +240,20 @@ const ProductCard = memo(({ product }) => {
                   Agregar
                 </>
               )}
-            </button>
+            </Button>
           ) : (
-            <div className="flex w-full h-[52px] items-center justify-between gap-3 rounded-2xl surface-card p-2">
-              <button
+            <div className="flex w-full items-center justify-between gap-3 rounded-xl bg-muted/40 dark:bg-muted/20 p-2">
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={handleDecrease}
-                className="flex h-11 w-11 items-center justify-center rounded-xl border border-transparent bg-[var(--surface-contrast)] text-muted-foreground transition-colors hover:border-error/40 hover:bg-error/10 hover:text-error active:scale-95 dark:bg-[rgba(16,32,60,0.85)]"
+                className={cn(
+                  "h-11 w-11 rounded-xl",
+                  currentQuantity === 1
+                    ? "text-red-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
                 aria-label={
                   currentQuantity === 1
                     ? `Quitar ${productName} del carrito`
@@ -255,26 +265,28 @@ const ProductCard = memo(({ product }) => {
                 ) : (
                   <Minus className="h-5 w-5" aria-hidden="true" />
                 )}
-              </button>
+              </Button>
               <span
-                className="flex h-11 min-w-[3.25rem] items-center justify-center rounded-xl bg-card px-3 text-center text-base font-semibold text-foreground"
+                className="flex h-11 min-w-[3.25rem] items-center justify-center rounded-xl bg-background px-3 text-center text-base font-semibold text-foreground"
                 aria-label={`Cantidad seleccionada: ${currentQuantity}`}
               >
                 {currentQuantity}
               </span>
-              <button
+              <Button
                 type="button"
+                variant="primary"
+                size="icon"
                 onClick={handleIncrease}
-                className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-600 text-white transition-colors hover:bg-primary-700 active:scale-95"
+                className="h-11 w-11 rounded-xl"
                 aria-label={`Aumentar cantidad de ${productName}`}
               >
                 <Plus className="h-5 w-5" aria-hidden="true" />
-              </button>
+              </Button>
             </div>
           )}
         </div>
       </div>
-    </article>
+    </Card>
   );
 });
 

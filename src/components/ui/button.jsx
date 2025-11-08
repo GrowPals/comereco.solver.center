@@ -4,82 +4,150 @@ import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { Loader2, CheckCircle } from 'lucide-react';
 
+/**
+ * Button Component - NEW DESIGN SYSTEM
+ *
+ * Sistema de botones moderno y minimalista con:
+ * - Gradientes pastel funcionales (no colores sólidos)
+ * - SIN sombras, SIN bordes duros
+ * - Diferenciación por color y contraste
+ * - Animaciones sutiles y fluidas
+ * - Excelente soporte dark/light mode
+ */
+
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap text-base font-semibold ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-200 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden active:scale-[0.98] dark:ring-offset-background',
+  // Base classes - Sin sombras, animaciones fluidas
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed rounded-xl active:scale-[0.97]',
   {
     variants: {
       variant: {
-        // Default - CTA Primario con glow muy sutil en dark mode
-        default: 'border border-primary-500/30 bg-gradient-primary text-white shadow-button hover:shadow-button-hover rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/8 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border-primary-400/35 dark:bg-[linear-gradient(135deg,rgba(79,140,255,0.95)_0%,rgba(45,99,235,0.92)_100%)] dark:shadow-button dark:hover:shadow-[0_4px_14px_rgba(0,0,0,0.32),0_0_10px_rgba(79,140,255,0.18)]',
+        // Primary - Gradiente azul cielo pastel
+        primary: [
+          'bg-gradient-to-br from-info-400 to-info-500',
+          'text-white',
+          'hover:from-info-500 hover:to-info-600',
+          'dark:from-info-500 dark:to-info-600',
+          'dark:hover:from-info-400 dark:hover:to-info-500',
+        ].join(' '),
 
-        // Primary - CTA Destacado con glow muy sutil en dark mode
-        primary: 'border border-primary-600/35 bg-gradient-primary-intense text-white shadow-button hover:shadow-button-hover rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/8 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border-primary-400/40 dark:bg-[linear-gradient(135deg,rgba(59,130,246,0.96)_0%,rgba(37,99,235,0.93)_100%)] dark:shadow-button dark:hover:shadow-[0_5px_16px_rgba(0,0,0,0.34),0_0_12px_rgba(59,130,246,0.20)]',
+        // Secondary - Fondo muted con gradiente sutil
+        secondary: [
+          'bg-gradient-to-br from-neutral-100 to-neutral-200',
+          'text-neutral-900',
+          'hover:from-neutral-200 hover:to-neutral-300',
+          'dark:from-neutral-200 dark:to-neutral-300',
+          'dark:text-neutral-900',
+          'dark:hover:from-neutral-300 dark:hover:to-neutral-400',
+        ].join(' '),
 
-        // Accent - ComerECO Green (sin glow innecesario)
-        accent: 'border border-emerald-500/30 bg-gradient-accent text-white shadow-button hover:shadow-button-hover rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/8 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border-emerald-400/35 dark:bg-[linear-gradient(135deg,rgba(16,185,129,0.92)_0%,rgba(5,150,105,0.88)_100%)] dark:shadow-button dark:hover:shadow-elevated',
+        // Ghost - Transparente, hover con fondo sutil
+        ghost: [
+          'bg-transparent',
+          'text-foreground',
+          'hover:bg-muted',
+          'dark:hover:bg-neutral-200',
+        ].join(' '),
 
-        // Success - Sin glow, solo sombras
-        success: 'border border-emerald-500/30 bg-gradient-success text-white shadow-button hover:shadow-button-hover rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/8 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border-emerald-400/35 dark:bg-[linear-gradient(135deg,rgba(16,185,129,0.9)_0%,rgba(5,150,105,0.86)_100%)] dark:shadow-button dark:hover:shadow-elevated',
+        // Success - Verde menta pastel
+        success: [
+          'bg-gradient-to-br from-success-400 to-success-500',
+          'text-white',
+          'hover:from-success-500 hover:to-success-600',
+          'dark:from-success-500 dark:to-success-600',
+          'dark:hover:from-success-400 dark:hover:to-success-500',
+        ].join(' '),
 
-        // Destructive - Sin glow excesivo
-        destructive: 'border border-red-500/35 bg-gradient-error text-white shadow-button hover:shadow-button-hover rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/8 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border-red-400/35 dark:bg-[linear-gradient(135deg,rgba(239,68,68,0.92)_0%,rgba(220,38,38,0.88)_100%)] dark:shadow-button dark:hover:shadow-elevated',
+        // Danger/Error - Rojo coral pastel
+        danger: [
+          'bg-gradient-to-br from-error-400 to-error-500',
+          'text-white',
+          'hover:from-error-500 hover:to-error-600',
+          'dark:from-error-500 dark:to-error-600',
+          'dark:hover:from-error-400 dark:hover:to-error-500',
+        ].join(' '),
 
-        // Outline - Limpio y sutil
-        outline: 'border-2 border-primary-500/65 bg-transparent text-primary-600 hover:bg-primary-50 hover:border-primary-600 rounded-xl transition-all dark:text-primary-100 dark:border-primary-400/40 dark:bg-card/30 dark:hover:bg-primary-900/16 dark:hover:border-primary-400/55 dark:hover:text-primary-50',
+        // Warning - Amarillo mostaza pastel
+        warning: [
+          'bg-gradient-to-br from-warning-400 to-warning-500',
+          'text-white',
+          'hover:from-warning-500 hover:to-warning-600',
+          'dark:from-warning-500 dark:to-warning-600',
+          'dark:hover:from-warning-400 dark:hover:to-warning-500',
+        ].join(' '),
 
-        // Secondary - Sutil y profesional
-        secondary: 'bg-card border border-border text-foreground/85 shadow-sm hover:shadow-md hover:border-border/60 rounded-xl hover:bg-muted/50 dark:border-border dark:bg-card/80 dark:text-foreground dark:hover:bg-card dark:hover:border-border/40',
+        // Outline - Borde de color, fondo transparente
+        outline: [
+          'bg-transparent',
+          'border-2 border-primary-400',
+          'text-primary-600',
+          'hover:bg-primary-50',
+          'dark:border-primary-500',
+          'dark:text-primary-400',
+          'dark:hover:bg-primary-900/20',
+        ].join(' '),
 
-        // Ghost - Minimalista
-        ghost: 'border border-transparent bg-transparent text-foreground/80 hover:bg-muted/50 hover:text-foreground rounded-xl active:bg-primary/10 dark:text-foreground/85 dark:hover:bg-card/50 dark:hover:text-foreground',
-
-        // Link - Simple
-        link: 'text-primary-600 underline-offset-4 hover:underline hover:text-primary-700 active:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300',
+        // Link - Texto simple con underline
+        link: [
+          'bg-transparent',
+          'text-primary-600',
+          'underline-offset-4',
+          'hover:underline',
+          'dark:text-primary-400',
+        ].join(' '),
       },
       size: {
-        default: 'h-11 px-6 py-3',
-        sm: 'h-9 px-4 py-2 text-sm rounded-lg',
-        lg: 'h-14 px-8 py-4 text-lg rounded-2xl',
-        icon: 'h-11 w-11 rounded-xl',
-        fab: 'h-14 w-14 rounded-full shadow-button hover:shadow-button-hover hover:scale-105 active:scale-100 dark:shadow-button dark:hover:shadow-[0_6px_16px_rgba(0,0,0,0.34),0_0_10px_rgba(79,140,255,0.18)]',
+        sm: 'h-9 px-4 text-sm rounded-lg',
+        md: 'h-11 px-6 text-base',
+        lg: 'h-14 px-8 text-lg rounded-2xl',
+        icon: 'h-11 w-11',
       },
     },
     defaultVariants: {
-      variant: 'default',
-      size: 'default',
+      variant: 'primary',
+      size: 'md',
     },
   }
 );
 
-const Button = React.forwardRef(({ className, variant, size, asChild = false, isLoading, isSuccess, children, ...props }, ref) => {
-  const Comp = asChild ? Slot : 'button';
-  return (
-    <Comp
-      className={cn(
-        buttonVariants({ variant, size, className }),
-        isSuccess && 'bg-success hover:bg-success/90'
-      )}
-      ref={ref}
-      disabled={isLoading || props.disabled}
-      aria-disabled={isLoading || props.disabled}
-      {...props}
-    >
-      {isLoading && (
-        <>
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
-          <span className="sr-only">Cargando...</span>
-        </>
-      )}
-      {isSuccess && !isLoading && (
-        <>
-          <CheckCircle className="mr-2 h-4 w-4" aria-hidden="true" />
-          <span className="sr-only">Completado</span>
-        </>
-      )}
-      {!isLoading && !isSuccess && children}
-    </Comp>
-  );
-});
+const Button = React.forwardRef(
+  ({
+    className,
+    variant,
+    size,
+    asChild = false,
+    isLoading,
+    isSuccess,
+    children,
+    ...props
+  }, ref) => {
+    const Comp = asChild ? Slot : 'button';
+
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        disabled={isLoading || props.disabled}
+        aria-disabled={isLoading || props.disabled}
+        {...props}
+      >
+        {isLoading && (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            <span className="sr-only">Cargando...</span>
+          </>
+        )}
+        {isSuccess && !isLoading && (
+          <>
+            <CheckCircle className="h-4 w-4" aria-hidden="true" />
+            <span className="sr-only">Completado</span>
+          </>
+        )}
+        {!isLoading && children}
+      </Comp>
+    );
+  }
+);
+
 Button.displayName = "Button";
 
 export { Button, buttonVariants };

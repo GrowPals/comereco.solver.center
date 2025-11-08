@@ -10,17 +10,16 @@ import { ArrowRight, Calendar, Hash, User, DollarSign, ChevronDown } from 'lucid
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/formatters';
-import { IconWrapper } from '@/components/ui/icon-wrapper';
 import useViewport from '@/hooks/useViewport';
 
 const statusAccents = {
-  draft: 'bg-muted/90 dark:bg-muted/85',
-  submitted: 'bg-amber-500',
-  approved: 'bg-gradient-accent',
-  rejected: 'bg-red-500',
-  ordered: 'bg-gradient-primary',
-  cancelled: 'bg-[rgba(239,83,80,0.6)]',
-  default: 'bg-muted/90 dark:bg-muted/85',
+  draft: 'bg-slate-300 dark:bg-slate-600',
+  submitted: 'bg-amber-300 dark:bg-amber-500',
+  approved: 'bg-gradient-to-r from-emerald-300 to-teal-300 dark:from-emerald-500 dark:to-teal-500',
+  rejected: 'bg-red-300 dark:bg-red-500',
+  ordered: 'bg-gradient-to-r from-blue-300 to-indigo-300 dark:from-blue-500 dark:to-indigo-500',
+  cancelled: 'bg-rose-300 dark:bg-rose-500',
+  default: 'bg-slate-300 dark:bg-slate-600',
 };
 
 const RequisitionCard = memo(({ requisition }) => {
@@ -75,7 +74,7 @@ const RequisitionCard = memo(({ requisition }) => {
       >
         <Card
           interactive
-          className="w-full group relative overflow-hidden cursor-pointer border-2 shadow-soft-md transition-all duration-300 active:shadow-soft-lg"
+          className="w-full group relative overflow-hidden cursor-pointer"
           onClick={handleCardClick}
           onKeyDown={handleKeyDown}
           tabIndex={0}
@@ -83,7 +82,7 @@ const RequisitionCard = memo(({ requisition }) => {
           aria-label={`Requisición ${requisition.internal_folio || requisition.id}`}
         >
           {/* Accent Bar */}
-          <div className={cn('absolute top-0 left-0 right-0 h-1 transition-transform duration-300', statusAccent)} />
+          <div className={cn('absolute top-0 left-0 right-0 h-1.5 transition-transform duration-300', statusAccent)} />
 
           <CardContent className="p-4">
             {/* Información Principal - Siempre visible */}
@@ -91,7 +90,7 @@ const RequisitionCard = memo(({ requisition }) => {
               {/* Folio y Estado */}
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <IconWrapper icon={Hash} variant="subtle" size="md" />
+                  <Hash className="w-5 h-5 text-primary-400 dark:text-primary-300 shrink-0" />
                   <div className="min-w-0">
                     <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">Folio</p>
                     <p className="text-lg font-bold text-foreground truncate">{requisition.internal_folio || 'N/A'}</p>
@@ -101,8 +100,8 @@ const RequisitionCard = memo(({ requisition }) => {
               </div>
 
               {/* Monto - Destacado */}
-              <div className="flex items-center gap-3 bg-gradient-to-r from-primary-50/50 to-transparent dark:from-primary-950/20 px-3 py-2.5 rounded-xl">
-                <IconWrapper icon={DollarSign} variant="subtle" size="md" />
+              <div className="flex items-center gap-3 bg-gradient-to-r from-primary-50/80 to-transparent dark:from-primary-950/30 px-3 py-2.5 rounded-xl">
+                <DollarSign className="w-5 h-5 text-emerald-400 dark:text-emerald-300 shrink-0" />
                 <div>
                   <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">Monto Total</p>
                   <p className="text-xl font-bold tracking-tight text-foreground">{formattedAmount}</p>
@@ -112,11 +111,11 @@ const RequisitionCard = memo(({ requisition }) => {
               {/* Información Secundaria - Compacta */}
               <div className="flex items-center gap-4 text-xs text-muted-foreground pt-2 border-t border-border/50">
                 <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                  <User className="w-3.5 h-3.5 shrink-0" />
+                  <User className="w-4 h-4 text-violet-400 dark:text-violet-300 shrink-0" />
                   <span className="truncate font-medium">{requisition.creator?.full_name || 'N/A'}</span>
                 </div>
                 <div className="flex items-center gap-1.5 shrink-0">
-                  <Calendar className="w-3.5 h-3.5" />
+                  <Calendar className="w-4 h-4 text-sky-400 dark:text-sky-300" />
                   <span className="font-medium">{formattedDate}</span>
                 </div>
               </div>
@@ -129,7 +128,7 @@ const RequisitionCard = memo(({ requisition }) => {
                   e.stopPropagation();
                   handleCardClick();
                 }}
-                className="w-full rounded-xl text-primary-600 transition-transform duration-200 hover:bg-primary/10 hover:text-primary-700 dark:hover:bg-primary/20"
+                className="w-full rounded-xl"
                 aria-label={`Ver detalles de requisición ${requisition.internal_folio}`}
               >
                 Ver Detalle <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
@@ -150,7 +149,7 @@ const RequisitionCard = memo(({ requisition }) => {
     >
       <Card
         interactive
-        className="w-full group relative overflow-hidden cursor-pointer border-2 shadow-soft-md transition-all duration-300 hover:shadow-soft-lg"
+        className="w-full group relative overflow-hidden cursor-pointer"
         onClick={handleCardClick}
         onKeyDown={handleKeyDown}
         tabIndex={0}
@@ -158,15 +157,15 @@ const RequisitionCard = memo(({ requisition }) => {
         aria-label={`Requisición ${requisition.internal_folio || requisition.id}`}
       >
         {/* Accent Bar */}
-        <div className={cn('absolute top-0 left-0 right-0 h-1 transition-transform duration-300', statusAccent)} />
+        <div className={cn('absolute top-0 left-0 right-0 h-1.5 transition-transform duration-300', statusAccent)} />
 
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row md:items-center gap-6">
             {/* Folio Section */}
             <div className="flex items-center gap-4 md:min-w-[200px]">
-              <IconWrapper icon={Hash} variant="subtle" size="lg" />
+              <Hash className="w-8 h-8 text-primary-400 dark:text-primary-300" />
               <div>
-                <p className="mb-1 caption">Folio</p>
+                <p className="mb-1 caption text-muted-foreground">Folio</p>
                 <p className="price-medium">{requisition.internal_folio || 'N/A'}</p>
               </div>
             </div>
@@ -175,27 +174,27 @@ const RequisitionCard = memo(({ requisition }) => {
             <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-4">
               {/* Solicitante */}
               <div className="flex items-center gap-3">
-                <IconWrapper icon={User} variant="neutral" size="sm" />
+                <User className="w-5 h-5 text-violet-400 dark:text-violet-300" />
                 <div className="min-w-0">
-                  <p className="mb-0.5 text-muted-xs">Solicitante</p>
+                  <p className="mb-0.5 text-muted-xs text-muted-foreground">Solicitante</p>
                   <p className="truncate text-secondary-sm font-semibold">{requisition.creator?.full_name || 'No disponible'}</p>
                 </div>
               </div>
 
               {/* Fecha */}
               <div className="flex items-center gap-3">
-                <IconWrapper icon={Calendar} variant="neutral" size="sm" />
+                <Calendar className="w-5 h-5 text-sky-400 dark:text-sky-300" />
                 <div className="min-w-0">
-                  <p className="mb-0.5 text-muted-xs">Fecha</p>
+                  <p className="mb-0.5 text-muted-xs text-muted-foreground">Fecha</p>
                   <p className="text-secondary-sm font-semibold">{formattedDate}</p>
                 </div>
               </div>
 
               {/* Monto */}
               <div className="flex items-center gap-3">
-                <IconWrapper icon={DollarSign} variant="neutral" size="sm" />
+                <DollarSign className="w-5 h-5 text-emerald-400 dark:text-emerald-300" />
                 <div className="min-w-0">
-                  <p className="mb-0.5 text-muted-xs">Monto Total</p>
+                  <p className="mb-0.5 text-muted-xs text-muted-foreground">Monto Total</p>
                   <p className="price-medium">{formattedAmount}</p>
                 </div>
               </div>
@@ -211,7 +210,7 @@ const RequisitionCard = memo(({ requisition }) => {
                   e.stopPropagation();
                   handleCardClick();
                 }}
-                className="rounded-xl text-primary-600 transition-transform duration-200 hover:bg-primary/10 hover:text-primary-700 group-hover:translate-x-1 dark:hover:bg-primary/20"
+                className="rounded-xl group-hover:translate-x-1"
                 aria-label={`Ver detalles de requisición ${requisition.internal_folio}`}
               >
                 Ver Detalle <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />

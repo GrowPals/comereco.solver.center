@@ -2,8 +2,20 @@
 import React, { memo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { StatIcon } from '@/components/ui/icon-wrapper';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+// Paleta de colores pastel para iconos
+const iconColors = [
+  'text-blue-300 dark:text-blue-400',
+  'text-emerald-300 dark:text-emerald-400',
+  'text-violet-300 dark:text-violet-400',
+  'text-rose-300 dark:text-rose-400',
+  'text-amber-300 dark:text-amber-400',
+  'text-cyan-300 dark:text-cyan-400',
+  'text-pink-300 dark:text-pink-400',
+  'text-teal-300 dark:text-teal-400',
+];
 
 const StatCard = memo(({
     title,
@@ -13,11 +25,12 @@ const StatCard = memo(({
     format = val => val,
     trend = null, // { direction: 'up' | 'down' | 'neutral', percentage: number, label: string }
     comparison = null, // { value: number, label: string }
-    sparklineData = null // array of numbers for mini chart
+    sparklineData = null, // array of numbers for mini chart
+    iconColorIndex = 0 // índice para seleccionar color del icono
 }) => {
     if (isLoading) {
         return (
-        <Card className="dashboard-panel surface-card">
+        <Card className="dashboard-panel">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
                     <CardTitle className="text-sm font-medium"><Skeleton className="h-4 w-24" /></CardTitle>
                     <Skeleton className="h-12 w-12 rounded-xl" />
@@ -54,26 +67,28 @@ const StatCard = memo(({
         }
     };
 
+    const iconColorClass = iconColors[iconColorIndex % iconColors.length];
+
     return (
-        <Card interactive className="group stat-card surface-card">
+        <Card className="group stat-card">
             <CardHeader className="relative z-10 flex flex-row items-center justify-between space-y-0 pb-3">
                 {Icon && (
-                    <div className="transition-all duration-300 group-hover:scale-110 group-hover:shadow-soft-md">
-                        <StatIcon icon={Icon} />
+                    <div className="transition-transform duration-300 group-hover:scale-110">
+                        <Icon className={cn("w-12 h-12", iconColorClass)} />
                     </div>
                 )}
             </CardHeader>
             <CardContent className="relative z-10">
-                <CardTitle className="caption mb-2">
+                <CardTitle className="caption mb-2 text-muted-foreground">
                     {title}
                 </CardTitle>
-                <div className="mb-2 display-number">
+                <div className="mb-2 text-heading-2 font-bold text-foreground">
                     {format(value)}
                 </div>
 
                 {/* Trend Indicator */}
                 {trend && (
-                    <div className={`flex items-center gap-1.5 text-sm font-semibold ${getTrendColor()}`}>
+                    <div className={cn("flex items-center gap-1.5 text-sm font-semibold", getTrendColor())}>
                         {getTrendIcon()}
                         <span>{trend.percentage > 0 ? '+' : ''}{trend.percentage}%</span>
                         {trend.label && (
@@ -109,9 +124,9 @@ const StatCard = memo(({
                     </div>
                 )}
 
-                {/* Animated accent bar */}
+                {/* Animated accent bar - usando gradient pastel */}
                 {!sparklineData && (
-                    <div className="mt-3 h-1 w-16 rounded-full bg-gradient-primary transition-all duration-300 group-hover:w-full"></div>
+                    <div className="mt-3 h-1 w-16 rounded-full bg-gradient-to-r from-primary-200 to-primary-400 dark:from-primary-400 dark:to-primary-600 transition-all duration-300 group-hover:w-full"></div>
                 )}
             </CardContent>
         </Card>

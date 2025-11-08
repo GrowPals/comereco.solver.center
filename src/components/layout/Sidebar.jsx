@@ -6,6 +6,7 @@ import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/components/ui/useToast';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 const MenuItem = memo(({ to, icon: Icon, children, onClick, badge }) => {
@@ -23,21 +24,20 @@ const MenuItem = memo(({ to, icon: Icon, children, onClick, badge }) => {
         <NavLink to={to} onClick={handleClick}>
             <div
                 className={cn(
-                    'group flex items-center gap-3 rounded-lg px-4 py-3 transition-all duration-base ease-smooth-out',
+                    'group flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-base ease-smooth-out',
                     'font-medium text-sm cursor-pointer',
-                    'border-l-[6px]',
                     isActive
-                        ? 'bg-primary-100/80 dark:bg-primary-900/30 text-primary-700 dark:text-primary-100 border-primary-600 dark:border-primary-400 shadow-sm dark:shadow-primary-900/20'
-                        : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 border-transparent hover:translate-x-0.5'
+                        ? 'bg-primary/10 text-primary'
+                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                 )}
             >
                 {/* Icon */}
                 <Icon
                     className={cn(
-                        'icon-md flex-shrink-0 transition-colors duration-base ease-smooth-out',
+                        'w-5 h-5 flex-shrink-0 transition-colors duration-base ease-smooth-out',
                         isActive
-                            ? 'text-primary-600 dark:text-primary-200'
-                            : 'text-neutral-600 dark:text-neutral-300 group-hover:text-primary-600 dark:group-hover:text-primary-400'
+                            ? 'text-primary'
+                            : 'text-muted-foreground group-hover:text-foreground'
                     )}
                 />
 
@@ -152,8 +152,8 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
             />
             <aside
                 className={cn(
-                    'sidebar-shell fixed inset-y-0 right-0 z-50 flex h-full w-full flex-col overflow-y-auto transition-transform duration-300 ease-out lg:left-0 lg:right-auto lg:overflow-visible lg:shadow-none',
-                    'transition-colors duration-200',
+                    'fixed inset-y-0 right-0 z-50 flex h-full w-full flex-col overflow-y-auto transition-transform duration-300 ease-out lg:left-0 lg:right-auto lg:overflow-visible',
+                    'bg-card border-r border-border transition-colors duration-200',
                     isMobileNavOpen ? 'translate-x-0' : 'translate-x-full',
                     isSidebarOpen ? 'lg:w-72' : 'lg:w-20',
                     'lg:translate-x-0'
@@ -163,93 +163,97 @@ const Sidebar = memo(({ isSidebarOpen, isMobileNavOpen, setMobileNavOpen }) => {
                 id="navigation"
                 tabIndex="-1"
             >
-            <div className="flex items-center justify-between border-b border-border px-6 pb-4 pt-[calc(env(safe-area-inset-top)+1rem)] transition-colors lg:hidden dark:border-border">
-                <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Menú principal</p>
-                <button
-                    type="button"
-                    onClick={() => setMobileNavOpen(false)}
-                    className="flex h-11 w-11 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted/60 dark:border-border dark:text-muted-foreground dark:hover:bg-muted/40 dark:shadow-lg"
-                    aria-label="Cerrar menú"
-                >
-                    <X className="icon-md" />
-                </button>
-            </div>
-            {/* Header del Sidebar - Perfil del Usuario */}
-            <div className="border-b border-border p-6 transition-colors dark:border-border">
-                <NavLink to="/profile" onClick={handleNavClick}>
-                    <div className="-m-2 flex items-center gap-4 rounded-xl p-2 transition-colors hover:bg-[var(--surface-muted)] dark:hover:bg-muted/40">
-                        <Avatar className="h-16 w-16 ring-2 ring-primary/30 dark:ring-primary/40">
-                            <AvatarImage alt={`Avatar de ${userName}`} src={user?.avatar_url} />
-                            <AvatarFallback className="text-lg font-bold text-white">
-                                {userInitials}
-                            </AvatarFallback>
-                        </Avatar>
-                        <div className="min-w-0 flex-1">
-                            <p className="text-base font-bold text-foreground truncate" title={primaryName}>{primaryName}</p>
-                            <p className="truncate text-sm text-muted-foreground" title={userEmail}>{userEmail}</p>
-                            <span className="mt-1 inline-block rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary-600 dark:bg-primary/20 dark:text-primary-100">
-                                {isAdmin ? 'Administrador' : isSupervisor ? 'Supervisor' : 'Usuario'}
-                            </span>
-                        </div>
-                        <ChevronRight className="icon-md flex-shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1" />
-                    </div>
-                </NavLink>
-            </div>
+                {/* Header mobile del sidebar */}
+                <div className="flex items-center justify-between border-b border-border px-6 pb-4 pt-[calc(env(safe-area-inset-top)+1rem)] transition-colors lg:hidden">
+                    <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Menú principal</p>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setMobileNavOpen(false)}
+                        className="h-10 w-10 rounded-xl"
+                        aria-label="Cerrar menú"
+                    >
+                        <X className="w-5 h-5" />
+                    </Button>
+                </div>
 
-            {/* Contenido del menú */}
-            <nav className="flex-1 overflow-y-auto px-4 py-6" role="navigation" aria-label="Menú secundario">
-                {/* Secciones específicas del rol */}
-                {menuSections.map((section, idx) => (
-                    <div key={idx} className="mb-6">
+                {/* Header del Sidebar - Perfil del Usuario */}
+                <div className="border-b border-border p-6 transition-colors">
+                    <NavLink to="/profile" onClick={handleNavClick}>
+                        <div className="-m-2 flex items-center gap-4 rounded-xl p-2 transition-colors hover:bg-muted">
+                            <Avatar className="h-16 w-16">
+                                <AvatarImage alt={`Avatar de ${userName}`} src={user?.avatar_url} />
+                                <AvatarFallback className="text-lg font-bold">
+                                    {userInitials}
+                                </AvatarFallback>
+                            </Avatar>
+                            <div className="min-w-0 flex-1">
+                                <p className="text-base font-bold text-foreground truncate" title={primaryName}>{primaryName}</p>
+                                <p className="truncate text-sm text-muted-foreground" title={userEmail}>{userEmail}</p>
+                                <span className="mt-1 inline-block rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
+                                    {isAdmin ? 'Administrador' : isSupervisor ? 'Supervisor' : 'Usuario'}
+                                </span>
+                            </div>
+                            <ChevronRight className="w-5 h-5 flex-shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1" />
+                        </div>
+                    </NavLink>
+                </div>
+
+                {/* Contenido del menú */}
+                <nav className="flex-1 overflow-y-auto px-4 py-6" role="navigation" aria-label="Menú secundario">
+                    {/* Secciones específicas del rol */}
+                    {menuSections.map((section, idx) => (
+                        <div key={idx} className="mb-6">
+                            <h3 className="mb-2 px-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                                {section.title}
+                            </h3>
+                            <div className="space-y-1">
+                                {section.items.map((item) => (
+                                    <MenuItem
+                                        key={item.to}
+                                        to={item.to}
+                                        icon={item.icon}
+                                        onClick={handleNavClick}
+                                        badge={item.badge}
+                                    >
+                                        {item.text}
+                                    </MenuItem>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+
+                    {/* Sección de Configuración y Ayuda */}
+                    <div className="mb-6">
                         <h3 className="mb-2 px-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                            {section.title}
+                            General
                         </h3>
                         <div className="space-y-1">
-                            {section.items.map((item) => (
-                                <MenuItem
-                                    key={item.to}
-                                    to={item.to}
-                                    icon={item.icon}
-                                    onClick={handleNavClick}
-                                    badge={item.badge}
-                                >
-                                    {item.text}
-                                </MenuItem>
-                            ))}
+                            <MenuItem to="/notifications" icon={Bell} onClick={handleNavClick}>
+                                Notificaciones
+                            </MenuItem>
+                            <MenuItem to="/settings" icon={Settings} onClick={handleNavClick}>
+                                Configuración
+                            </MenuItem>
+                            <MenuItem to="/help" icon={HelpCircle} onClick={handleNavClick}>
+                                Ayuda y Soporte
+                            </MenuItem>
                         </div>
                     </div>
-                ))}
+                </nav>
 
-                {/* Sección de Configuración y Ayuda */}
-                <div className="mb-6">
-                    <h3 className="mb-2 px-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                        General
-                    </h3>
-                    <div className="space-y-1">
-                        <MenuItem to="/notifications" icon={Bell} onClick={handleNavClick}>
-                            Notificaciones
-                        </MenuItem>
-                        <MenuItem to="/settings" icon={Settings} onClick={handleNavClick}>
-                            Configuración
-                        </MenuItem>
-                        <MenuItem to="/help" icon={HelpCircle} onClick={handleNavClick}>
-                            Ayuda y Soporte
-                        </MenuItem>
-                    </div>
+                {/* Footer - Cerrar Sesión */}
+                <div className="border-t border-border p-4 transition-colors">
+                    <Button
+                        variant="ghost"
+                        onClick={handleLogout}
+                        className="w-full justify-start gap-3 rounded-xl px-4 py-3 h-auto text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                        aria-label="Cerrar sesión"
+                    >
+                        <LogOut className="w-5 h-5 flex-shrink-0" />
+                        <span>Cerrar Sesión</span>
+                    </Button>
                 </div>
-            </nav>
-
-            {/* Footer - Cerrar Sesión */}
-            <div className="border-t border-border p-4 transition-colors dark:border-border">
-                <button
-                    onClick={handleLogout}
-                    className="group flex w-full items-center gap-3 px-4 py-3 rounded-lg font-medium text-sm text-neutral-700 dark:text-neutral-300 hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-600 dark:hover:text-red-400 transition-all duration-200"
-                    aria-label="Cerrar sesión"
-                >
-                    <LogOut className="icon-md flex-shrink-0 transition-colors" />
-                    <span>Cerrar Sesión</span>
-                </button>
-            </div>
             </aside>
         </>
     );

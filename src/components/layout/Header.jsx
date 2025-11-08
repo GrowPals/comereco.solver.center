@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ChevronDown, LogOut, User } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import NotificationCenter from '@/components/layout/NotificationCenter';
 import { CartIcon } from '@/components/CartIcon';
@@ -88,7 +89,8 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
     return (
         <header
             className={cn(
-                'nav-shell sticky top-0 z-40 w-full transition-all duration-base ease-smooth-out',
+                'sticky top-0 z-40 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80',
+                'border-b border-border transition-all duration-base ease-smooth-out',
                 'px-4 pb-1.5 pt-[calc(env(safe-area-inset-top)+0.35rem)] sm:px-6 sm:py-3 lg:px-10',
                 !isDesktop && !isHeaderVisible && '-translate-y-full opacity-0',
                 !isDesktop && isHeaderVisible && 'translate-y-0 opacity-100'
@@ -105,9 +107,9 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
                                 className="h-10 w-10 object-contain"
                                 loading="eager"
                             />
-                                <span className="text-xl font-bold tracking-tight">
+                            <span className="text-xl font-bold tracking-tight">
                                 <span className="text-foreground">Comer</span>
-                                <span className="bg-gradient-primary bg-clip-text text-transparent">ECO</span>
+                                <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">ECO</span>
                             </span>
                         </Link>
                         <div className="flex-1">
@@ -120,33 +122,36 @@ const Header = memo(({ setSidebarOpen: _setSidebarOpen }) => {
                         <NotificationCenter />
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <button
-                                    className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2 transition-all duration-base ease-smooth-out hover:bg-[var(--surface-muted)] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-background dark:hover:bg-[rgba(26,48,86,0.55)]"
+                                <Button
+                                    variant="ghost"
+                                    className="flex items-center gap-3 rounded-xl px-3 py-2 h-auto"
                                     aria-label={`Menú de usuario: ${userName}`}
                                     aria-haspopup="true"
                                 >
                                     <Avatar className="h-9 w-9">
                                         <AvatarImage alt={`Avatar de ${userName}`} src={user?.avatar_url} />
-                                        <AvatarFallback className="text-sm font-semibold text-white">
+                                        <AvatarFallback className="text-sm font-semibold">
                                             {userInitials}
                                         </AvatarFallback>
                                     </Avatar>
                                     <span className="text-sm font-semibold text-foreground">{userName}</span>
-                                    <ChevronDown className="icon-sm text-muted-foreground transition-transform group-hover:translate-y-0.5" aria-hidden="true" />
-                                </button>
+                                    <ChevronDown className="w-4 h-4 text-muted-foreground transition-transform group-hover:translate-y-0.5" aria-hidden="true" />
+                                </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-56" align="end" role="menu">
                                 <DropdownMenuItem asChild role="menuitem">
-                                    <Link to="/profile"><User className="mr-2 icon-sm" aria-hidden="true" /> Mi Perfil</Link>
+                                    <Link to="/profile" className="flex items-center">
+                                        <User className="mr-2 w-4 h-4" aria-hidden="true" /> Mi Perfil
+                                    </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
                                     onClick={handleLogout}
-                                    className="text-error focus:bg-error-light focus:text-error"
+                                    className="text-destructive focus:bg-destructive/10 focus:text-destructive"
                                     role="menuitem"
                                     aria-label="Cerrar sesión"
                                 >
-                                    <LogOut className="mr-2 icon-sm" aria-hidden="true" />
+                                    <LogOut className="mr-2 w-4 h-4" aria-hidden="true" />
                                     <span>Cerrar Sesión</span>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>

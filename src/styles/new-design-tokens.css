@@ -1,0 +1,270 @@
+/**
+ * NEW DESIGN SYSTEM - ComerECO Redesign
+ *
+ * Sistema de diseño moderno y minimalista inspirado en Linear, Vercel y Raycast
+ *
+ * Principios:
+ * - Paleta pastel con gradientes sutiles funcionales
+ * - SIN sombras decorativas, SIN bordes duros, SIN efectos glow
+ * - Color y contraste como diferenciadores principales
+ * - Excelente soporte dark/light mode
+ *
+ * @version 2.0.0
+ * @created 2025-11-08
+ */
+
+:root {
+  /* ============================================
+     PALETA PASTEL - LIGHT MODE
+     ============================================ */
+
+  /* Verde Menta - Success/Approval */
+  --success-50: #E6F9F4;
+  --success-100: #B3F0E0;
+  --success-200: #80E7CC;
+  --success-300: #4DDEB8;
+  --success-400: #2DD4AC;
+  --success-500: #10B981;
+  --success-600: #0D9B6E;
+  --success-700: #0A7D5B;
+  --success: var(--success-500);
+
+  /* Amarillo Mostaza - Warning */
+  --warning-50: #FFF8E6;
+  --warning-100: #FFEAB3;
+  --warning-200: #FFDC80;
+  --warning-300: #FFCE4D;
+  --warning-400: #FFC52D;
+  --warning-500: #F5A623;
+  --warning-600: #D98F1F;
+  --warning-700: #B8771A;
+  --warning: var(--warning-500);
+
+  /* Rojo Coral - Error/Danger */
+  --error-50: #FFF0F0;
+  --error-100: #FFD6D6;
+  --error-200: #FFB3B3;
+  --error-300: #FF8A8A;
+  --error-400: #FF6B6B;
+  --error-500: #F97066;
+  --error-600: #E35D54;
+  --error-700: #C94A43;
+  --error: var(--error-500);
+
+  /* Azul Cielo - Info/Primary */
+  --info-50: #EBF5FF;
+  --info-100: #C3E2FF;
+  --info-200: #9BCFFF;
+  --info-300: #73BCFF;
+  --info-400: #54ADFF;
+  --info-500: #3B9EFF;
+  --info-600: #2D8FEB;
+  --info-700: #2178CC;
+  --info: var(--info-500);
+
+  /* Gris Lavanda - Neutral */
+  --neutral-50: #FAFAFC;
+  --neutral-100: #F3F4F8;
+  --neutral-200: #E8EAEF;
+  --neutral-300: #D1D5DD;
+  --neutral-400: #9CA3B0;
+  --neutral-500: #6B7280;
+  --neutral-600: #4B5563;
+  --neutral-700: #374151;
+  --neutral-800: #1F2937;
+  --neutral-900: #111827;
+
+  /* Primary - Basado en Info (Azul Cielo) */
+  --primary-50: var(--info-50);
+  --primary-100: var(--info-100);
+  --primary-200: var(--info-200);
+  --primary-300: var(--info-300);
+  --primary-400: var(--info-400);
+  --primary-500: var(--info-500);
+  --primary-600: var(--info-600);
+  --primary-700: var(--info-700);
+  --primary: var(--primary-500);
+  --primary-foreground: #FFFFFF;
+
+  /* ============================================
+     GRADIENTES FUNCIONALES SUTILES - LIGHT
+     ============================================ */
+
+  /* Gradientes de componentes - muy sutiles */
+  --gradient-success: linear-gradient(135deg, #E6F9F4 0%, #B3F0E0 100%);
+  --gradient-warning: linear-gradient(135deg, #FFF8E6 0%, #FFEAB3 100%);
+  --gradient-error: linear-gradient(135deg, #FFF0F0 0%, #FFD6D6 100%);
+  --gradient-info: linear-gradient(135deg, #EBF5FF 0%, #C3E2FF 100%);
+  --gradient-primary: linear-gradient(135deg, #EBF5FF 0%, #C3E2FF 100%);
+
+  /* Gradientes de superficie - ultra sutiles */
+  --gradient-surface: linear-gradient(180deg, #FAFAFC 0%, #F3F4F8 100%);
+  --gradient-card: linear-gradient(135deg, #FFFFFF 0%, #FAFAFC 100%);
+
+  /* ============================================
+     COLORES SEMANTICOS - LIGHT MODE
+     ============================================ */
+
+  --background: #FFFFFF;
+  --foreground: var(--neutral-900);
+
+  --card: #FFFFFF;
+  --card-foreground: var(--neutral-900);
+
+  --muted: var(--neutral-100);
+  --muted-foreground: var(--neutral-600);
+
+  --border: var(--neutral-200);
+  --input: var(--neutral-200);
+  --ring: var(--primary-300);
+
+  /* ============================================
+     ESPACIADO CONSISTENTE
+     ============================================ */
+
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+
+  /* ============================================
+     BORDER RADIUS - REDONDEADO ESTÁNDAR
+     ============================================ */
+
+  --radius-sm: 0.5rem;    /* 8px */
+  --radius-md: 0.75rem;   /* 12px */
+  --radius-lg: 1rem;      /* 16px */
+  --radius-xl: 1.25rem;   /* 20px */
+  --radius-2xl: 1.5rem;   /* 24px */
+  --radius-full: 9999px;
+  --radius: var(--radius-xl);
+
+  /* ============================================
+     ICONOS - COLORES PASTELES
+     ============================================ */
+
+  --icon-success: var(--success-500);
+  --icon-warning: var(--warning-500);
+  --icon-error: var(--error-500);
+  --icon-info: var(--info-500);
+  --icon-muted: var(--neutral-400);
+
+  /* ============================================
+     TRANSICIONES FLUIDAS
+     ============================================ */
+
+  --transition-fast: 150ms;
+  --transition-base: 200ms;
+  --transition-slow: 300ms;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================
+   DARK MODE - PALETA PASTEL ADAPTADA
+   ============================================ */
+
+.dark {
+  /* Verde Menta - Dark */
+  --success-50: #0A2E23;
+  --success-100: #0F4035;
+  --success-200: #14594B;
+  --success-300: #1A7361;
+  --success-400: #20A080;
+  --success-500: #34D399;
+  --success-600: #6EE7B7;
+  --success-700: #A7F3D0;
+  --success: var(--success-500);
+
+  /* Amarillo Mostaza - Dark */
+  --warning-50: #2E2410;
+  --warning-100: #4A3A1A;
+  --warning-200: #6B5423;
+  --warning-300: #8C6E2D;
+  --warning-400: #B8963D;
+  --warning-500: #FBBF24;
+  --warning-600: #FCD34D;
+  --warning-700: #FDE68A;
+  --warning: var(--warning-500);
+
+  /* Rojo Coral - Dark */
+  --error-50: #2E1010;
+  --error-100: #4A1A1A;
+  --error-200: #6B2323;
+  --error-300: #8C2D2D;
+  --error-400: #B83D3D;
+  --error-500: #FB7185;
+  --error-600: #FDA4AF;
+  --error-700: #FECDD3;
+  --error: var(--error-500);
+
+  /* Azul Cielo - Dark */
+  --info-50: #0F1E2E;
+  --info-100: #1A3148;
+  --info-200: #244867;
+  --info-300: #2E6086;
+  --info-400: #3D82B3;
+  --info-500: #60A5FA;
+  --info-600: #93C5FD;
+  --info-700: #BFDBFE;
+  --info: var(--info-500);
+
+  /* Gris Lavanda - Dark */
+  --neutral-50: #0A0B0E;
+  --neutral-100: #15161A;
+  --neutral-200: #202228;
+  --neutral-300: #2D2F38;
+  --neutral-400: #484B59;
+  --neutral-500: #6B7280;
+  --neutral-600: #9CA3AF;
+  --neutral-700: #D1D5DB;
+  --neutral-800: #E5E7EB;
+  --neutral-900: #F3F4F6;
+
+  /* Primary - Dark */
+  --primary-50: var(--info-50);
+  --primary-100: var(--info-100);
+  --primary-200: var(--info-200);
+  --primary-300: var(--info-300);
+  --primary-400: var(--info-400);
+  --primary-500: var(--info-500);
+  --primary-600: var(--info-600);
+  --primary-700: var(--info-700);
+  --primary: var(--primary-500);
+  --primary-foreground: var(--neutral-900);
+
+  /* Gradientes - Dark Mode */
+  --gradient-success: linear-gradient(135deg, #0A2E23 0%, #14594B 100%);
+  --gradient-warning: linear-gradient(135deg, #2E2410 0%, #4A3A1A 100%);
+  --gradient-error: linear-gradient(135deg, #2E1010 0%, #4A1A1A 100%);
+  --gradient-info: linear-gradient(135deg, #0F1E2E 0%, #1A3148 100%);
+  --gradient-primary: linear-gradient(135deg, #0F1E2E 0%, #1A3148 100%);
+
+  --gradient-surface: linear-gradient(180deg, #15161A 0%, #0A0B0E 100%);
+  --gradient-card: linear-gradient(135deg, #202228 0%, #15161A 100%);
+
+  /* Semánticos - Dark */
+  --background: #0A0B0E;
+  --foreground: var(--neutral-900);
+
+  --card: #15161A;
+  --card-foreground: var(--neutral-900);
+
+  --muted: var(--neutral-200);
+  --muted-foreground: var(--neutral-600);
+
+  --border: var(--neutral-300);
+  --input: var(--neutral-300);
+  --ring: var(--primary-400);
+
+  /* Iconos - Dark */
+  --icon-success: var(--success-600);
+  --icon-warning: var(--warning-600);
+  --icon-error: var(--error-600);
+  --icon-info: var(--info-600);
+  --icon-muted: var(--neutral-500);
+}
