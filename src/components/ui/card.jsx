@@ -1,32 +1,23 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
-const Card = React.forwardRef(({ className, interactive = false, accentColor = 'primary', variant = 'default', ...props }, ref) => {
-  // Sistema de variantes de sombras
-  const shadowClasses = {
-    default: 'shadow-soft-sm',
-    elevated: 'shadow-soft-md dark:shadow-dark-sm',
-    interactive: 'shadow-soft-sm hover:shadow-soft-md transition-shadow duration-base cursor-pointer',
-  };
-
+const Card = React.forwardRef(({
+  className,
+  interactive = false,
+  variant = 'default',
+  ...props
+}, ref) => {
   return (
     <div
       ref={ref}
       className={cn(
-        'relative overflow-hidden rounded-2xl border border-border bg-card',
-        // Sistema de sombras mejorado
-        shadowClasses[variant] || shadowClasses.default,
-        // Transiciones suaves con easing curve
-        'transition-all duration-base ease-smooth-out',
-        // Accent bar top - mantener como indicador visual elegante
-        'before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:scale-x-0 before:rounded-t-2xl before:transition-transform before:duration-base before:ease-smooth-out',
-        accentColor === 'primary' && 'before:bg-gradient-primary',
-        accentColor === 'accent' && 'before:bg-gradient-accent',
-        accentColor === 'success' && 'before:bg-gradient-success',
-        // Dark mode: limpio sin overlays innecesarios, con bordes visibles
-        'dark:bg-card',
-        // Interactive: shadow transitions + hover lift sutil
-        interactive && 'cursor-pointer hover:border-neutral-300 hover:before:scale-x-100 hover:shadow-soft-md hover:-translate-y-0.5 dark:hover:border-[rgba(130,200,255,0.22)]',
+        'relative overflow-hidden rounded-xl border bg-card text-card-foreground',
+        // Sin sombras, usar solo borde para diferenciación
+        'border-border',
+        // Transiciones suaves
+        'transition-all duration-200',
+        // Interactive: hover con cambio de borde
+        interactive && 'cursor-pointer hover:border-primary/40 hover:-translate-y-0.5',
         className
       )}
       {...props}
@@ -38,7 +29,7 @@ Card.displayName = 'Card';
 const CardHeader = React.forwardRef(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('flex flex-col space-y-1.5 p-6 text-foreground', className)}
+    className={cn('flex flex-col space-y-2 p-6', className)}
     {...props}
   />
 ));
@@ -47,7 +38,7 @@ CardHeader.displayName = 'CardHeader';
 const CardTitle = React.forwardRef(({ className, as: Component = 'h3', ...props }, ref) => (
   <Component
     ref={ref}
-    className={cn('font-semibold leading-none tracking-tight text-foreground', className)}
+    className={cn('text-xl font-semibold leading-tight tracking-tight', className)}
     {...props}
   />
 ));
@@ -63,14 +54,14 @@ const CardDescription = React.forwardRef(({ className, ...props }, ref) => (
 CardDescription.displayName = 'CardDescription';
 
 const CardContent = React.forwardRef(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn('p-6 pt-0 text-foreground', className)} {...props} />
+  <div ref={ref} className={cn('p-6 pt-0', className)} {...props} />
 ));
 CardContent.displayName = 'CardContent';
 
 const CardFooter = React.forwardRef(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('flex items-center p-6 pt-0 text-foreground', className)}
+    className={cn('flex items-center p-6 pt-0', className)}
     {...props}
   />
 ));

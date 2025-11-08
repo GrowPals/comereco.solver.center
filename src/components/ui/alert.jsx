@@ -3,35 +3,19 @@ import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const alertVariants = cva(
-  "relative w-full rounded-lg p-4",
+  "relative w-full rounded-xl p-4",
   {
     variants: {
       variant: {
-        default: "bg-slate-50 text-slate-900 dark:bg-slate-800 dark:text-slate-100",
+        default: "bg-gradient-to-r from-lavender-100 to-lavender-200 text-lavender-900 dark:from-lavender-900/40 dark:to-lavender-800/40 dark:text-lavender-100",
 
-        warning: cn(
-          "bg-amber-50 dark:bg-amber-900/15",
-          "border-l-4 border-amber-400 dark:border-amber-500",
-          "text-amber-900 dark:text-amber-200"
-        ),
+        warning: "bg-gradient-to-r from-mustard-100 to-mustard-200 text-mustard-900 dark:from-mustard-900/40 dark:to-mustard-800/40 dark:text-mustard-100",
 
-        error: cn(
-          "bg-red-50 dark:bg-red-900/15",
-          "border-l-4 border-red-400 dark:border-red-500",
-          "text-red-900 dark:text-red-200"
-        ),
+        error: "bg-gradient-to-r from-coral-100 to-coral-200 text-coral-900 dark:from-coral-900/40 dark:to-coral-800/40 dark:text-coral-100",
 
-        success: cn(
-          "bg-emerald-50 dark:bg-emerald-900/15",
-          "border-l-4 border-emerald-400 dark:border-emerald-500",
-          "text-emerald-900 dark:text-emerald-200"
-        ),
+        success: "bg-gradient-to-r from-mint-100 to-mint-200 text-mint-900 dark:from-mint-900/40 dark:to-mint-800/40 dark:text-mint-100",
 
-        info: cn(
-          "bg-blue-50 dark:bg-blue-900/15",
-          "border-l-4 border-blue-400 dark:border-blue-500",
-          "text-blue-900 dark:text-blue-200"
-        ),
+        info: "bg-gradient-to-r from-sky-100 to-sky-200 text-sky-900 dark:from-sky-900/40 dark:to-sky-800/40 dark:text-sky-100",
       },
     },
     defaultVariants: {

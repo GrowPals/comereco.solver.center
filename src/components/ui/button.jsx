@@ -5,60 +5,63 @@ import { cn } from '@/lib/utils';
 import { Loader2, CheckCircle } from 'lucide-react';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap text-base font-semibold ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-200 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden active:scale-[0.98] dark:ring-offset-background',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]',
   {
     variants: {
       variant: {
-        // Default - CTA Primario con glow muy sutil en dark mode
-        default: 'border border-primary-500/30 bg-gradient-primary text-white shadow-button hover:shadow-button-hover rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/8 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border-primary-400/35 dark:bg-[linear-gradient(135deg,rgba(79,140,255,0.95)_0%,rgba(45,99,235,0.92)_100%)] dark:shadow-button dark:hover:shadow-[0_4px_14px_rgba(0,0,0,0.32),0_0_10px_rgba(79,140,255,0.18)]',
+        // Primary - Gradiente verde menta
+        primary: 'bg-gradient-mint hover:bg-gradient-mint-hover text-white rounded-xl border-0',
 
-        // Primary - CTA Destacado con glow muy sutil en dark mode
-        primary: 'border border-primary-600/35 bg-gradient-primary-intense text-white shadow-button hover:shadow-button-hover rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/8 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border-primary-400/40 dark:bg-[linear-gradient(135deg,rgba(59,130,246,0.96)_0%,rgba(37,99,235,0.93)_100%)] dark:shadow-button dark:hover:shadow-[0_5px_16px_rgba(0,0,0,0.34),0_0_12px_rgba(59,130,246,0.20)]',
+        // Secondary - Azul cielo pastel
+        secondary: 'bg-gradient-to-r from-sky-100 to-sky-200 hover:from-sky-200 hover:to-sky-300 text-sky-900 rounded-xl border-0 dark:from-sky-900 dark:to-sky-800 dark:hover:from-sky-800 dark:hover:to-sky-700 dark:text-sky-100',
 
-        // Accent - ComerECO Green (sin glow innecesario)
-        accent: 'border border-emerald-500/30 bg-gradient-accent text-white shadow-button hover:shadow-button-hover rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/8 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border-emerald-400/35 dark:bg-[linear-gradient(135deg,rgba(16,185,129,0.92)_0%,rgba(5,150,105,0.88)_100%)] dark:shadow-button dark:hover:shadow-elevated',
+        // Ghost - Transparente con hover
+        ghost: 'bg-transparent hover:bg-muted/10 text-foreground rounded-xl border-0',
 
-        // Success - Sin glow, solo sombras
-        success: 'border border-emerald-500/30 bg-gradient-success text-white shadow-button hover:shadow-button-hover rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/8 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border-emerald-400/35 dark:bg-[linear-gradient(135deg,rgba(16,185,129,0.9)_0%,rgba(5,150,105,0.86)_100%)] dark:shadow-button dark:hover:shadow-elevated',
+        // Danger/Destructive - Rojo coral pastel
+        danger: 'bg-gradient-coral hover:bg-gradient-coral-hover text-white rounded-xl border-0',
 
-        // Destructive - Sin glow excesivo
-        destructive: 'border border-red-500/35 bg-gradient-error text-white shadow-button hover:shadow-button-hover rounded-xl before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/8 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity dark:border-red-400/35 dark:bg-[linear-gradient(135deg,rgba(239,68,68,0.92)_0%,rgba(220,38,38,0.88)_100%)] dark:shadow-button dark:hover:shadow-elevated',
+        // Success - Verde menta (igual que primary pero semánticamente diferente)
+        success: 'bg-gradient-mint hover:bg-gradient-mint-hover text-white rounded-xl border-0',
 
-        // Outline - Limpio y sutil
-        outline: 'border-2 border-primary-500/65 bg-transparent text-primary-600 hover:bg-primary-50 hover:border-primary-600 rounded-xl transition-all dark:text-primary-100 dark:border-primary-400/40 dark:bg-card/30 dark:hover:bg-primary-900/16 dark:hover:border-primary-400/55 dark:hover:text-primary-50',
+        // Warning - Amarillo mostaza
+        warning: 'bg-gradient-mustard hover:bg-gradient-mustard-hover text-white rounded-xl border-0',
 
-        // Secondary - Sutil y profesional
-        secondary: 'bg-card border border-border text-foreground/85 shadow-sm hover:shadow-md hover:border-border/60 rounded-xl hover:bg-muted/50 dark:border-border dark:bg-card/80 dark:text-foreground dark:hover:bg-card dark:hover:border-border/40',
+        // Outline - Sin fondo, solo borde suave
+        outline: 'bg-transparent hover:bg-muted/10 text-foreground rounded-xl border border-border',
 
-        // Ghost - Minimalista
-        ghost: 'border border-transparent bg-transparent text-foreground/80 hover:bg-muted/50 hover:text-foreground rounded-xl active:bg-primary/10 dark:text-foreground/85 dark:hover:bg-card/50 dark:hover:text-foreground',
-
-        // Link - Simple
-        link: 'text-primary-600 underline-offset-4 hover:underline hover:text-primary-700 active:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300',
+        // Link - Sin decoraciones
+        link: 'text-primary underline-offset-4 hover:underline bg-transparent border-0',
       },
       size: {
-        default: 'h-11 px-6 py-3',
-        sm: 'h-9 px-4 py-2 text-sm rounded-lg',
-        lg: 'h-14 px-8 py-4 text-lg rounded-2xl',
-        icon: 'h-11 w-11 rounded-xl',
-        fab: 'h-14 w-14 rounded-full shadow-button hover:shadow-button-hover hover:scale-105 active:scale-100 dark:shadow-button dark:hover:shadow-[0_6px_16px_rgba(0,0,0,0.34),0_0_10px_rgba(79,140,255,0.18)]',
+        sm: 'h-9 px-4 py-2 text-sm',
+        md: 'h-11 px-6 py-3 text-base',
+        lg: 'h-14 px-8 py-4 text-lg',
+        icon: 'h-11 w-11',
       },
     },
     defaultVariants: {
-      variant: 'default',
-      size: 'default',
+      variant: 'primary',
+      size: 'md',
     },
   }
 );
 
-const Button = React.forwardRef(({ className, variant, size, asChild = false, isLoading, isSuccess, children, ...props }, ref) => {
+const Button = React.forwardRef(({
+  className,
+  variant,
+  size,
+  asChild = false,
+  isLoading,
+  isSuccess,
+  children,
+  ...props
+}, ref) => {
   const Comp = asChild ? Slot : 'button';
+
   return (
     <Comp
-      className={cn(
-        buttonVariants({ variant, size, className }),
-        isSuccess && 'bg-success hover:bg-success/90'
-      )}
+      className={cn(buttonVariants({ variant, size, className }))}
       ref={ref}
       disabled={isLoading || props.disabled}
       aria-disabled={isLoading || props.disabled}
@@ -66,13 +69,13 @@ const Button = React.forwardRef(({ className, variant, size, asChild = false, is
     >
       {isLoading && (
         <>
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+          <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
           <span className="sr-only">Cargando...</span>
         </>
       )}
       {isSuccess && !isLoading && (
         <>
-          <CheckCircle className="mr-2 h-4 w-4" aria-hidden="true" />
+          <CheckCircle className="h-5 w-5" aria-hidden="true" />
           <span className="sr-only">Completado</span>
         </>
       )}
@@ -80,6 +83,7 @@ const Button = React.forwardRef(({ className, variant, size, asChild = false, is
     </Comp>
   );
 });
+
 Button.displayName = "Button";
 
 export { Button, buttonVariants };

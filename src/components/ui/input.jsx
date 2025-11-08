@@ -10,10 +10,10 @@ const Input = React.forwardRef(({ className, type, icon, error, success, ...prop
       {icon && (
         <div
           className={cn(
-            "absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground transition-all duration-200",
-            isFocused ? "scale-110 text-primary-600" : "text-muted-foreground",
-            error && "text-red-500 dark:text-red-400",
-            success && "text-green-500 dark:text-green-400"
+            "absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-200",
+            isFocused ? "text-primary" : "text-muted-foreground",
+            error && "text-coral-500",
+            success && "text-mint-500"
           )}
         >
           {React.cloneElement(icon, { className: "h-5 w-5" })}
@@ -22,14 +22,22 @@ const Input = React.forwardRef(({ className, type, icon, error, success, ...prop
       <input
         type={type}
         className={cn(
-          "flex h-12 w-full rounded-xl border border-border/80 bg-[var(--surface-contrast)] px-4 py-3 text-base text-foreground shadow-xs ring-offset-background transition-all duration-200 file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-500",
-          "focus-visible:outline-none focus-visible:border-primary-500 focus-visible:shadow-[var(--focus-glow)] focus-visible:ring-0 dark:focus-visible:border-[rgba(124,188,255,0.55)]",
-          "hover:border-neutral-300 dark:hover:border-[rgba(120,186,255,0.40)]",
-          "dark:border-[rgba(90,150,230,0.28)] dark:bg-[#0f1a2d] dark:text-neutral-50 dark:placeholder:text-neutral-500",
-          "disabled:cursor-not-allowed disabled:bg-neutral-50 disabled:opacity-60 dark:disabled:bg-[rgba(16,32,60,0.8)]",
+          // Base - sin sombras, solo borde suave
+          "flex h-12 w-full rounded-xl border bg-background px-4 py-3 text-base transition-all duration-200",
+          "file:border-0 file:bg-transparent file:text-sm file:font-medium",
+          "placeholder:text-muted-foreground",
+          // Focus - cambio de borde sin glow
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+          // Hover
+          "hover:border-primary/40",
+          // Disabled
+          "disabled:cursor-not-allowed disabled:opacity-50",
+          // Icon padding
           icon ? "pl-12" : "px-4",
-          error && "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-200/30 focus-visible:shadow-none dark:border-red-600 dark:focus-visible:ring-red-500/25",
-          success && "border-green-500 focus-visible:border-green-500 focus-visible:ring-green-200/30 dark:border-green-500 dark:focus-visible:ring-green-500/25",
+          // Estados
+          error && "border-coral-500 focus-visible:ring-coral-200",
+          success && "border-mint-500 focus-visible:ring-mint-200",
+          !error && !success && "border-border",
           className
         )}
         ref={ref}
@@ -38,15 +46,8 @@ const Input = React.forwardRef(({ className, type, icon, error, success, ...prop
         {...props}
       />
 
-      <div
-        className={cn(
-          "pointer-events-none absolute bottom-0 left-0 h-0.5 bg-primary-500/70 transition-all duration-300 dark:bg-primary-400/50",
-          isFocused ? "w-full opacity-100" : "w-0 opacity-0"
-        )}
-      />
-
       {error && (
-        <p className="mt-2 flex items-center gap-1.5 text-sm text-red-600 animate-in slide-in-from-top-1 dark:text-red-400">
+        <p className="mt-2 flex items-center gap-1.5 text-sm text-coral-600 dark:text-coral-400 animate-fadeIn">
           <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"
@@ -59,7 +60,7 @@ const Input = React.forwardRef(({ className, type, icon, error, success, ...prop
       )}
 
       {success && (
-        <p className="mt-2 flex items-center gap-1.5 text-sm text-green-600 animate-in slide-in-from-top-1 dark:text-green-400">
+        <p className="mt-2 flex items-center gap-1.5 text-sm text-mint-600 dark:text-mint-400 animate-fadeIn">
           <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"
