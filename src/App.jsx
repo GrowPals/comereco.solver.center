@@ -1,5 +1,5 @@
 
-import React, { Suspense, lazy, useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
@@ -11,7 +11,6 @@ import { useSessionExpirationHandler } from '@/hooks/useSessionExpirationHandler
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
 import BottomNav from '@/components/layout/BottomNav';
-import CompanyScopeIndicator from '@/components/layout/CompanyScopeIndicator';
 import PageLoader from '@/components/PageLoader';
 import SkipLinks from '@/components/SkipLinks';
 import AppProviders from '@/context/AppProviders';
@@ -19,32 +18,33 @@ import { ToastProvider } from '@/components/ui/toast-notification';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { AlertContainer } from '@/components/AlertContainer';
 import { cn } from '@/lib/utils';
+import lazyWithRetry from '@/utils/lazyWithRetry';
 
 // Lazy loading de las páginas
-const Dashboard = lazy(() => import('@/pages/Dashboard'));
-const RequisitionsPage = lazy(() => import('@/pages/Requisitions'));
-const NewRequisitionPage = lazy(() => import('@/pages/NewRequisition'));
-const RequisitionDetail = lazy(() => import('@/pages/RequisitionDetail'));
-const LoginPage = lazy(() => import('@/pages/Login'));
-const ProfilePage = lazy(() => import('@/pages/Profile'));
-const ApprovalsPage = lazy(() => import('@/pages/Approvals'));
-const UsersPage = lazy(() => import('@/pages/Users'));
-const SettingsPage = lazy(() => import('@/pages/Settings'));
-const CatalogPage = lazy(() => import('@/pages/Catalog'));
-const NotificationsPage = lazy(() => import('@/pages/Notifications'));
-const CheckoutPage = lazy(() => import('@/pages/Checkout'));
-const CartPage = lazy(() => import('@/pages/Cart'));
-const TemplatesPage = lazy(() => import('@/pages/Templates'));
-const ProjectsPage = lazy(() => import('@/pages/Projects'));
-const ProjectDetail = lazy(() => import('@/pages/ProjectDetail'));
-const ManageProductsPage = lazy(() => import('@/pages/admin/ManageProducts'));
-const ReportsPage = lazy(() => import('@/pages/admin/Reports'));
-const FavoritesPage = lazy(() => import('@/pages/Favorites'));
-const ResetPasswordPage = lazy(() => import('@/pages/ResetPassword'));
-const HelpPage = lazy(() => import('@/pages/Help'));
-const NotFoundPage = lazy(() => import('@/pages/NotFound'));
-const ProductDetail = lazy(() => import('@/pages/ProductDetail'));
-const InventoryRestockRulesPage = lazy(() => import('@/pages/InventoryRestockRules'));
+const Dashboard = lazyWithRetry(() => import('@/pages/Dashboard'));
+const RequisitionsPage = lazyWithRetry(() => import('@/pages/Requisitions'));
+const NewRequisitionPage = lazyWithRetry(() => import('@/pages/NewRequisition'));
+const RequisitionDetail = lazyWithRetry(() => import('@/pages/RequisitionDetail'));
+const LoginPage = lazyWithRetry(() => import('@/pages/Login'));
+const ProfilePage = lazyWithRetry(() => import('@/pages/Profile'));
+const ApprovalsPage = lazyWithRetry(() => import('@/pages/Approvals'));
+const UsersPage = lazyWithRetry(() => import('@/pages/Users'));
+const SettingsPage = lazyWithRetry(() => import('@/pages/Settings'));
+const CatalogPage = lazyWithRetry(() => import('@/pages/Catalog'));
+const NotificationsPage = lazyWithRetry(() => import('@/pages/Notifications'));
+const CheckoutPage = lazyWithRetry(() => import('@/pages/Checkout'));
+const CartPage = lazyWithRetry(() => import('@/pages/Cart'));
+const TemplatesPage = lazyWithRetry(() => import('@/pages/Templates'));
+const ProjectsPage = lazyWithRetry(() => import('@/pages/Projects'));
+const ProjectDetail = lazyWithRetry(() => import('@/pages/ProjectDetail'));
+const ManageProductsPage = lazyWithRetry(() => import('@/pages/admin/ManageProducts'));
+const ReportsPage = lazyWithRetry(() => import('@/pages/admin/Reports'));
+const FavoritesPage = lazyWithRetry(() => import('@/pages/Favorites'));
+const ResetPasswordPage = lazyWithRetry(() => import('@/pages/ResetPassword'));
+const HelpPage = lazyWithRetry(() => import('@/pages/Help'));
+const NotFoundPage = lazyWithRetry(() => import('@/pages/NotFound'));
+const ProductDetail = lazyWithRetry(() => import('@/pages/ProductDetail'));
+const InventoryRestockRulesPage = lazyWithRetry(() => import('@/pages/InventoryRestockRules'));
 
 
 // Componente para rutas privadas
@@ -166,9 +166,6 @@ const AppLayout = () => {
         isSidebarOpen ? 'lg:pl-[18rem]' : 'lg:pl-[5rem]'
       )}>
         {showNav && <Header setSidebarOpen={handleToggleSidebar} />}
-
-        {/* Floating company scope indicator */}
-        {showNav && <CompanyScopeIndicator />}
 
         {/* Zona de alertas globales */}
         <AlertContainer />

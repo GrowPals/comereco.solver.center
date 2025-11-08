@@ -12,32 +12,16 @@ import { es } from 'date-fns/locale';
 import { Clock } from 'lucide-react';
 import { formatPrice } from '@/lib/formatters';
 import { SectionIcon } from '@/components/ui/icon-wrapper';
+import { cn } from '@/lib/utils';
 
-// Funciones helper movidas fuera del componente para evitar recreación
-const getStatusVariant = (status) => {
-    switch (status) {
-        case 'approved': return 'success';
-        case 'rejected': return 'destructive';
-        case 'submitted': return 'warning';
-        case 'cancelled': return 'destructive';
-        case 'draft': return 'secondary';
-        case 'ordered': return 'default'; // Info/blue badge para "Ordenada"
-        case 'processing': return 'default';
-        default: return 'default';
-    }
-};
-
-const getStatusLabel = (status) => {
-    switch (status) {
-        case 'approved': return 'Aprobada';
-        case 'rejected': return 'Rechazada';
-        case 'submitted': return 'Enviada';
-        case 'cancelled': return 'Cancelada';
-        case 'draft': return 'Borrador';
-        case 'ordered': return 'Ordenada';
-        case 'processing': return 'En proceso';
-        default: return status;
-    }
+const statusAccentClass = {
+    approved: 'bg-emerald-400',
+    rejected: 'bg-red-400',
+    submitted: 'bg-amber-400',
+    pending: 'bg-amber-400',
+    ordered: 'bg-blue-400',
+    draft: 'bg-slate-400',
+    processing: 'bg-cyan-400',
 };
 
 const RecentRequisitions = memo(() => {
@@ -96,14 +80,17 @@ const RecentRequisitions = memo(() => {
                             </p>
                         </div>
                     ) : (
-                        safeRequisitions.map(req => (
-                            <div
-                                key={req.id}
-                                onClick={() => handleRowClick(req.id)}
-                                className="group cursor-pointer rounded-xl border border-border bg-card p-4 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-primary/40 hover:shadow-md active:scale-[0.98]"
-                            >
-                                <div className="flex items-start justify-between gap-3">
-                                    <div className="flex-1 space-y-2">
+                        safeRequisitions.map(req => {
+                            const accent = statusAccentClass[req.business_status] || 'bg-primary-400';
+                            return (
+                                <div
+                                    key={req.id}
+                                    onClick={() => handleRowClick(req.id)}
+                                    className="group relative cursor-pointer rounded-2xl border border-border bg-card p-4 pl-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg active:scale-[0.98]"
+                                >
+                                    <span className={cn('absolute inset-y-4 left-2 w-1 rounded-full', accent)} aria-hidden="true" />
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div className="flex-1 space-y-2">
                                         <div className="flex items-center gap-2">
                                             <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                                                 Folio
@@ -126,21 +113,18 @@ const RecentRequisitions = memo(() => {
                                                 ${formatPrice(req.total_amount)}
                                             </span>
                                         </div>
+                                        </div>
+                                        <Badge status={req.business_status} className="shrink-0 font-semibold" />
                                     </div>
-                                    <Badge
-                                        variant={getStatusVariant(req.business_status)}
-                                        className="shrink-0 font-semibold"
-                                    >
-                                        {getStatusLabel(req.business_status)}
-                                    </Badge>
                                 </div>
-                            </div>
-                        ))
+                            );
+                        })
                     )}
                 </div>
 
                 {/* Desktop Table View */}
                 <div className="hidden overflow-x-auto md:block">
+                    <div className="mx-4 rounded-3xl border border-border/70 bg-card shadow-sm">
                     <Table>
                         <TableHeader>
                             <TableRow className="border-border">
@@ -172,33 +156,37 @@ const RecentRequisitions = memo(() => {
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                safeRequisitions.map(req => (
-                                    <TableRow
-                                        key={req.id}
-                                        onClick={() => handleRowClick(req.id)}
-                                        className="cursor-pointer hover:bg-muted/70 transition-colors border-border/70"
-                                    >
-                                        <TableCell className="font-bold text-foreground">{req.internal_folio}</TableCell>
-                                        <TableCell className="hidden sm:table-cell text-muted-foreground">{req.project?.name || 'N/A'}</TableCell>
-                                        <TableCell className="hidden md:table-cell text-muted-foreground">
-                                            {format(parseISO(req.created_at), 'dd MMM yyyy', { locale: es })}
-                                        </TableCell>
-                                        <TableCell className="font-semibold text-foreground">
-                                            ${formatPrice(req.total_amount)}
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            <Badge
-                                                variant={getStatusVariant(req.business_status)}
-                                                className="font-semibold"
-                                            >
-                                                {getStatusLabel(req.business_status)}
-                                            </Badge>
-                                        </TableCell>
-                                    </TableRow>
-                                ))
+                                safeRequisitions.map(req => {
+                                    const accent = statusAccentClass[req.business_status] || 'bg-primary-300';
+                                    return (
+                                        <TableRow
+                                            key={req.id}
+                                            onClick={() => handleRowClick(req.id)}
+                                            className="group cursor-pointer border-border/70 transition-colors hover:bg-muted/60"
+                                        >
+                                            <TableCell className="font-semibold text-foreground">
+                                                <div className="flex items-center gap-3">
+                                                    <span className={cn('h-2 w-2 rounded-full', accent)} aria-hidden="true" />
+                                                    {req.internal_folio}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="hidden sm:table-cell text-muted-foreground">{req.project?.name || 'N/A'}</TableCell>
+                                            <TableCell className="hidden md:table-cell text-muted-foreground">
+                                                {format(parseISO(req.created_at), 'dd MMM yyyy', { locale: es })}
+                                            </TableCell>
+                                            <TableCell className="font-semibold text-foreground">
+                                                ${formatPrice(req.total_amount)}
+                                            </TableCell>
+                                            <TableCell className="text-right">
+                                                <Badge status={req.business_status} className="font-semibold" />
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })
                             )}
                         </TableBody>
                     </Table>
+                    </div>
                 </div>
             </CardContent>
         </Card>

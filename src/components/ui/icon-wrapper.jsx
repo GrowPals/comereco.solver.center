@@ -1,4 +1,6 @@
+import React from 'react';
 import { cn } from "@/lib/utils";
+import { IconToken } from './icon-token';
 
 /**
  * Variantes de iconos según contexto
@@ -71,15 +73,12 @@ export function IconWrapper({
  */
 export function StatIcon({ icon: Icon, className }) {
   return (
-    <div className={cn(
-      "w-12 h-12 rounded-lg",
-      "bg-blue-50 dark:bg-blue-900/20",
-      "flex items-center justify-center",
-      "shrink-0",
-      className
-    )}>
-      <Icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-    </div>
+    <IconToken
+      icon={Icon}
+      size="md"
+      className={cn('shrink-0', className)}
+      aria-hidden="true"
+    />
   );
 }
 
@@ -88,9 +87,11 @@ export function StatIcon({ icon: Icon, className }) {
  */
 export function SectionIcon({ icon: Icon, className }) {
   return (
-    <Icon className={cn(
-      "w-5 h-5 text-blue-600 dark:text-blue-400",
-      className
-    )} />
+    <IconToken
+      icon={Icon}
+      size="sm"
+      className={className}
+      aria-hidden="true"
+    />
   );
 }

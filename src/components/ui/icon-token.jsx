@@ -25,6 +25,13 @@ export const IconToken = ({
   children,
   ...props
 }) => {
+  const iconSizes = {
+    sm: 'h-4 w-4',
+    md: 'h-5 w-5',
+    lg: 'h-6 w-6',
+    xl: 'h-8 w-8',
+  };
+
   return (
     <span
       className={cn(
@@ -35,7 +42,7 @@ export const IconToken = ({
       )}
       {...props}
     >
-      {children ?? <Icon aria-hidden="true" className="h-1/2 w-1/2" />}
+      {children ?? <Icon aria-hidden="true" className={iconSizes[size]} />}
     </span>
   );
 };
