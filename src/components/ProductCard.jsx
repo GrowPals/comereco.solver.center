@@ -89,7 +89,7 @@ const ProductCard = memo(({ product }) => {
     <article
       className={cn(
         'group relative flex w-full flex-col overflow-hidden rounded-3xl surface-card transition-all duration-base ease-smooth-out hover:shadow-elevated hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:hover:shadow-elevated',
-        !isInStock && 'opacity-70 grayscale-[0.3]'
+        !isInStock && 'opacity-70 grayscale'
       )}
       role="article"
       aria-label={`Producto ${productName}, precio ${productPrice} pesos${!isInStock ? ', sin stock' : ''}`}
