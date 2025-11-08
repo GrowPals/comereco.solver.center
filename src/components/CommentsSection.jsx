@@ -70,11 +70,16 @@ const CommentsSection = memo(({ requisitionId, comments = [], onAddComment, onDe
           <AvatarFallback>{((user?.full_name || user?.email)?.[0] || '?').toUpperCase()}</AvatarFallback>
         </Avatar>
         <div className="flex-1 flex gap-2">
+          <label htmlFor="comment-input" className="sr-only">
+            Escribe un comentario
+          </label>
           <Input
+            id="comment-input"
             placeholder="Escribe un comentario..."
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             className="flex-1"
+            aria-label="Escribir nuevo comentario"
           />
           <Button type="submit" disabled={!newComment.trim() || isSubmitting} size="icon" aria-label="Enviar comentario">
             <Send className="h-4 w-4" />

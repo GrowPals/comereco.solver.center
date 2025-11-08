@@ -105,29 +105,45 @@ export const SupabaseAuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
+    let isMounted = true;
+
     const initializeSession = async () => {
+      if (!isMounted) return;
       setLoading(true);
+
       const { data: { session }, error } = await supabase.auth.getSession();
+      if (!isMounted) return;
+
       if (error) {
         logger.error('Error getting session:', error);
       }
       setSession(session);
+
       // FIX: Llamar a fetchUserProfile al inicializar
       await fetchUserProfile(session?.user);
-      setLoading(false);
+
+      if (isMounted) {
+        setLoading(false);
+      }
     };
 
     initializeSession();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (!isMounted) return;
       setLoading(true);
       setSession(session);
+
       // FIX: Llamar a fetchUserProfile en cada cambio de estado de auth
       await fetchUserProfile(session?.user);
-      setLoading(false);
+
+      if (isMounted) {
+        setLoading(false);
+      }
     });
 
     return () => {
+      isMounted = false;
       authListener?.subscription?.unsubscribe();
     };
   }, [fetchUserProfile]);

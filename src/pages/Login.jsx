@@ -237,6 +237,7 @@ const LoginPage = () => {
                                         className="absolute right-2 top-1/2 -translate-y-1/2 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 text-muted-foreground transition-colors duration-200 hover:bg-muted/70 hover:text-foreground active:bg-muted/60 dark:hover:bg-muted/40"
                                         disabled={isLoading}
                                         aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                        aria-pressed={showPassword}
                                     >
                                         {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                                     </button>
