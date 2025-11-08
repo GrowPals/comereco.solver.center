@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useContext,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 
@@ -14,6 +15,8 @@ const AlertContext = createContext(null);
  */
 export const AlertProvider = ({ children }) => {
   const [alerts, setAlerts] = useState([]);
+  // Almacenar referencias a los timeouts para poder limpiarlos
+  const timeoutsRef = useRef(new Map());
 
   /**
    * Remueve una alerta por su ID
@@ -21,6 +24,12 @@ export const AlertProvider = ({ children }) => {
    */
   const removeAlert = useCallback((id) => {
     setAlerts((prevAlerts) => prevAlerts.filter((alert) => alert.id !== id));
+    // Limpiar el timeout asociado si existe
+    const timeoutId = timeoutsRef.current.get(id);
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutsRef.current.delete(id);
+    }
   }, []);
 
   /**
@@ -38,9 +47,11 @@ export const AlertProvider = ({ children }) => {
 
     // Auto-dismiss si tiene duration
     if (alert.duration) {
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         removeAlert(id);
       }, alert.duration);
+      // Guardar la referencia del timeout
+      timeoutsRef.current.set(id, timeoutId);
     }
 
     return id;
@@ -50,6 +61,11 @@ export const AlertProvider = ({ children }) => {
    * Limpia todas las alertas
    */
   const clearAlerts = useCallback(() => {
+    // Limpiar todos los timeouts antes de eliminar las alertas
+    timeoutsRef.current.forEach((timeoutId) => {
+      clearTimeout(timeoutId);
+    });
+    timeoutsRef.current.clear();
     setAlerts([]);
   }, []);
 
