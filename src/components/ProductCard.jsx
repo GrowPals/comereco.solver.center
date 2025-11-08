@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Heart, Loader2, Minus, Plus, Trash2, Check } from 'lucide-react';
+import { Heart, Loader2, Minus, Plus, Trash2, Check, ShoppingCart } from 'lucide-react';
 
 import { useCart } from '@/context/CartContext';
 import { useFavorites } from '@/hooks/useFavorites';
@@ -17,6 +17,7 @@ const ProductCard = memo(({ product }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [currentQuantity, setCurrentQuantity] = useState(0);
+  const [heartAnimation, setHeartAnimation] = useState(false);
 
   const isFavorite = Array.isArray(favorites) && favorites.includes(product.id);
 
@@ -41,7 +42,9 @@ const ProductCard = memo(({ product }) => {
   const handleToggleFavorite = useCallback(
     (event) => {
       event.stopPropagation();
+      setHeartAnimation(true);
       toggleFavorite(product.id, productName);
+      setTimeout(() => setHeartAnimation(false), 500);
     },
     [toggleFavorite, product.id, productName]
   );
@@ -114,14 +117,29 @@ const ProductCard = memo(({ product }) => {
             </span>
           )}
         </div>
+
+        {/* Contador de items en carrito */}
+        {currentQuantity > 0 && (
+          <div
+            className="absolute left-4 bottom-3 flex items-center gap-1.5 rounded-full bg-primary-600 px-3 py-1.5 shadow-lg animate-in fade-in zoom-in duration-200"
+            aria-label={`${currentQuantity} ${currentQuantity === 1 ? 'item' : 'items'} en carrito`}
+          >
+            <ShoppingCart className="h-3.5 w-3.5 text-white" aria-hidden="true" />
+            <span className="text-xs font-bold text-white tabular-nums">
+              {currentQuantity}
+            </span>
+          </div>
+        )}
+
+        {/* Botón de favoritos mejorado */}
         <button
           type="button"
           onClick={handleToggleFavorite}
           className={cn(
-            "absolute right-4 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-border bg-white text-muted-foreground shadow-sm transition-all duration-200 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 dark:border-border dark:bg-card/90",
+            "absolute right-4 top-3 flex h-9 w-9 items-center justify-center rounded-full border shadow-sm transition-all duration-200 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500",
             isFavorite
-              ? "text-red-500 hover:scale-110"
-              : "hover:text-red-500"
+              ? "border-red-500 bg-red-50 text-red-600 hover:scale-110 dark:border-red-400 dark:bg-red-950/50 dark:text-red-400"
+              : "border-border bg-white text-muted-foreground hover:border-red-300 hover:bg-red-50 hover:text-red-500 dark:border-border dark:bg-card/90 dark:hover:border-red-400/50 dark:hover:bg-red-950/30"
           )}
           aria-label={
             isFavorite
@@ -133,7 +151,8 @@ const ProductCard = memo(({ product }) => {
           <Heart
             className={cn(
               'h-4 w-4 transition-all duration-300',
-              isFavorite && 'animate-[heartBeat_0.3s_ease-in-out] fill-current scale-110'
+              heartAnimation && 'animate-heart-bounce',
+              isFavorite && 'fill-current'
             )}
             aria-hidden="true"
           />

@@ -153,25 +153,27 @@ export default function RelatedProducts({ products, currentProductId }) {
             onClick={() => scrollToPosition('left')}
             disabled={!canScrollLeft}
             className={cn(
-              "p-2 rounded-full transition-all",
+              "p-2 rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2",
               canScrollLeft
                 ? "bg-card border shadow-sm hover:shadow-md text-foreground/90"
                 : "bg-muted text-muted-foreground/50 cursor-not-allowed"
             )}
+            aria-label="Desplazar productos relacionados a la izquierda"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-5 h-5" aria-hidden="true" />
           </button>
           <button
             onClick={() => scrollToPosition('right')}
             disabled={!canScrollRight}
             className={cn(
-              "p-2 rounded-full transition-all",
+              "p-2 rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2",
               canScrollRight
                 ? "bg-card border shadow-sm hover:shadow-md text-foreground/90"
                 : "bg-muted text-muted-foreground/50 cursor-not-allowed"
             )}
+            aria-label="Desplazar productos relacionados a la derecha"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
       </div>

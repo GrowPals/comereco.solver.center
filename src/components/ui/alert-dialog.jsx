@@ -1,3 +1,17 @@
+/**
+ * Alert Dialog Component
+ *
+ * Implementa modal de alerta con accesibilidad completa mediante Radix UI.
+ *
+ * Características de accesibilidad incluidas automáticamente:
+ * - Focus trapping: El foco permanece dentro del alert dialog mientras está abierto
+ * - Focus return: El foco regresa al elemento que abrió el dialog al cerrarse
+ * - Escape para cerrar: Presionar Escape cierra el alert dialog
+ * - Primer elemento interactivo: El foco se mueve automáticamente al botón de cancelar
+ * - Tab/Shift+Tab: Cicla solo entre elementos interactivos dentro del alert dialog
+ *
+ * @see https://www.radix-ui.com/docs/primitives/components/alert-dialog#accessibility
+ */
 import * as React from 'react';
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
 

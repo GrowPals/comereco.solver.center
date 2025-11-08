@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm, Controller } from 'react-hook-form';
-import { Plus, MoreHorizontal, User as UserIcon, Shield, Briefcase, Trash2, Code, Zap } from 'lucide-react';
+import { Plus, MoreHorizontal, User as UserIcon, Shield, Briefcase, Trash2, Code, Zap, X, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -42,6 +42,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { fetchUsersInCompany, inviteUser, updateUserProfile, toggleUserStatus, deleteUser, isApprovalBypassSupported, isProfileEmailSupported } from '@/services/userService';
 import { useToast } from '@/components/ui/useToast';
 import PageLoader from '@/components/PageLoader';
+import { getAvatarGradient, getInitials } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
@@ -202,6 +203,11 @@ const Users = () => {
     const [userToDelete, setUserToDelete] = useState(null);
     const [isToggleStatusDialogOpen, setToggleStatusDialogOpen] = useState(false);
     const [userToToggle, setUserToToggle] = useState(null);
+    const [migrationAlertDismissed, setMigrationAlertDismissed] = useState(() => {
+        const dismissed = localStorage.getItem('migration_alert_dismissed');
+        return dismissed === 'true';
+    });
+    const [migrationAlertCollapsed, setMigrationAlertCollapsed] = useState(true);
     const { toast } = useToast();
     const queryClient = useQueryClient();
 
@@ -433,28 +439,89 @@ const Users = () => {
                         </Button>
                     </header>
 
-                    {setupWarnings.length > 0 && (
-                        <Alert variant="warning">
-                            <AlertTitle>Migraciones pendientes</AlertTitle>
-                            <AlertDescription>
-                                <ul className="list-disc space-y-1 pl-5">
-                                    {setupWarnings.map((warning, index) => (
-                                        <li key={index} className="text-sm">{warning}</li>
-                                    ))}
-                                </ul>
-                            </AlertDescription>
-                        </Alert>
+                    {setupWarnings.length > 0 && !migrationAlertDismissed && (
+                        <div className="relative overflow-hidden rounded-xl border border-blue-200 bg-blue-50/50 dark:border-blue-800/50 dark:bg-blue-950/30">
+                            <div className="flex items-start gap-3 p-4">
+                                <div className="flex-shrink-0 mt-0.5">
+                                    <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between gap-2">
+                                        <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-100">
+                                            Configuración pendiente
+                                        </h3>
+                                        <div className="flex items-center gap-1">
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-7 w-7 p-0 text-blue-600 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-900/50"
+                                                onClick={() => setMigrationAlertCollapsed(!migrationAlertCollapsed)}
+                                                aria-label={migrationAlertCollapsed ? "Expandir detalles" : "Colapsar detalles"}
+                                            >
+                                                {migrationAlertCollapsed ? (
+                                                    <ChevronDown className="h-4 w-4" />
+                                                ) : (
+                                                    <ChevronUp className="h-4 w-4" />
+                                                )}
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-7 w-7 p-0 text-blue-600 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-900/50"
+                                                onClick={() => {
+                                                    setMigrationAlertDismissed(true);
+                                                    localStorage.setItem('migration_alert_dismissed', 'true');
+                                                }}
+                                                aria-label="Cerrar notificación"
+                                            >
+                                                <X className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    <p className="mt-1 text-sm text-blue-800 dark:text-blue-200">
+                                        Algunas funciones avanzadas requieren actualizar la base de datos.
+                                    </p>
+                                    {!migrationAlertCollapsed && (
+                                        <div className="mt-3 space-y-2">
+                                            <ul className="space-y-1.5 text-sm text-blue-700 dark:text-blue-300">
+                                                {setupWarnings.map((warning, index) => (
+                                                    <li key={index} className="flex items-start gap-2">
+                                                        <span className="text-blue-400 dark:text-blue-500 mt-1">•</span>
+                                                        <span className="flex-1">{warning}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                            <div className="pt-2">
+                                                <p className="text-xs text-blue-600 dark:text-blue-400">
+                                                    <strong>Nota:</strong> Estas configuraciones son opcionales y no afectan las funcionalidades principales.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
                     )}
 
                     {/* Users mobile list */}
                     <div className="space-y-4 md:hidden">
-                        {users?.map((user) => (
+                        {users?.map((user) => {
+                            const gradient = getAvatarGradient(user.full_name);
+                            const initials = getInitials(user.full_name);
+
+                            return (
                             <div key={user.id} className="rounded-2xl border border-border bg-card p-4 shadow-sm dark:border-border dark:bg-card">
                                 <div className="flex items-start gap-3">
-                                        <Avatar className="h-11 w-11 border border-border dark:border-border">
-                                            <AvatarImage src={user.avatar_url} />
-                                        <AvatarFallback className="text-white font-semibold">
-                                            {user.full_name?.charAt(0) || 'U'}
+                                    <Avatar className="h-11 w-11 border border-border dark:border-border">
+                                        <AvatarImage src={user.avatar_url} />
+                                        <AvatarFallback
+                                            className="text-white font-bold text-sm"
+                                            style={{
+                                                background: `linear-gradient(135deg, ${gradient.from} 0%, ${gradient.via} 50%, ${gradient.to} 100%)`,
+                                                boxShadow: `0 4px 12px ${gradient.shadow}`
+                                            }}
+                                        >
+                                            {initials}
                                         </AvatarFallback>
                                     </Avatar>
                                     <div className="flex-1 min-w-0">
@@ -527,7 +594,8 @@ const Users = () => {
                                     </span>
                                 </div>
                             </div>
-                        ))}
+                            );
+                        })}
                     </div>
 
                     {/* Users Table */}
@@ -543,14 +611,24 @@ const Users = () => {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {users?.map((user) => (
+                            {users?.map((user) => {
+                                const gradient = getAvatarGradient(user.full_name);
+                                const initials = getInitials(user.full_name);
+
+                                return (
                                 <TableRow key={user.id} className="transition-colors hover:bg-muted/85 dark:hover:bg-muted/70">
                                     <TableCell>
                                         <div className="flex items-center space-x-3">
                                             <Avatar className="h-11 w-11 border-2 border-border dark:border-border">
                                                 <AvatarImage src={user.avatar_url} />
-                                                <AvatarFallback className="text-white font-semibold">
-                                                    {user.full_name?.charAt(0) || 'U'}
+                                                <AvatarFallback
+                                                    className="text-white font-bold text-sm"
+                                                    style={{
+                                                        background: `linear-gradient(135deg, ${gradient.from} 0%, ${gradient.via} 50%, ${gradient.to} 100%)`,
+                                                        boxShadow: `0 4px 12px ${gradient.shadow}`
+                                                    }}
+                                                >
+                                                    {initials}
                                                 </AvatarFallback>
                                             </Avatar>
                                             <div className="flex-1">
@@ -627,7 +705,8 @@ const Users = () => {
                                         </DropdownMenu>
                                     </TableCell>
                                 </TableRow>
-                            ))}
+                                );
+                            })}
                         </TableBody>
                     </Table>
                     </div>

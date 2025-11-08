@@ -73,7 +73,74 @@ const RecentRequisitions = memo(() => {
                 </div>
             </CardHeader>
             <CardContent className="px-0">
-                <div className="overflow-x-auto">
+                {/* Mobile Card View */}
+                <div className="space-y-3 px-4 md:hidden">
+                    {isLoading ? (
+                        Array.from({ length: 5 }).map((_, i) => (
+                            <div key={i} className="rounded-xl border border-border bg-card p-4 shadow-sm">
+                                <div className="flex items-start justify-between gap-3">
+                                    <div className="flex-1 space-y-2">
+                                        <Skeleton className="h-5 w-24" />
+                                        <Skeleton className="h-4 w-32" />
+                                        <Skeleton className="h-4 w-28" />
+                                    </div>
+                                    <Skeleton className="h-6 w-20 rounded-full" />
+                                </div>
+                            </div>
+                        ))
+                    ) : safeRequisitions.length === 0 ? (
+                        <div className="flex flex-col items-center gap-2 py-12 text-center">
+                            <Clock className="h-12 w-12 text-muted-foreground/50" />
+                            <p className="font-medium text-muted-foreground/80">
+                                {isError ? 'No se pudieron cargar las requisiciones' : 'No hay requisiciones recientes'}
+                            </p>
+                        </div>
+                    ) : (
+                        safeRequisitions.map(req => (
+                            <div
+                                key={req.id}
+                                onClick={() => handleRowClick(req.id)}
+                                className="group cursor-pointer rounded-xl border border-border bg-card p-4 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-primary/40 hover:shadow-md active:scale-[0.98]"
+                            >
+                                <div className="flex items-start justify-between gap-3">
+                                    <div className="flex-1 space-y-2">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                                                Folio
+                                            </span>
+                                            <span className="font-bold text-foreground">{req.internal_folio}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm">
+                                            <span className="text-muted-foreground">Proyecto:</span>
+                                            <span className="font-medium text-foreground">{req.project?.name || 'N/A'}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm">
+                                            <span className="text-muted-foreground">Fecha:</span>
+                                            <span className="text-muted-foreground">
+                                                {format(parseISO(req.created_at), 'dd MMM yyyy', { locale: es })}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm">
+                                            <span className="text-muted-foreground">Total:</span>
+                                            <span className="font-semibold text-foreground">
+                                                ${formatPrice(req.total_amount)}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <Badge
+                                        variant={getStatusVariant(req.business_status)}
+                                        className="shrink-0 font-semibold"
+                                    >
+                                        {getStatusLabel(req.business_status)}
+                                    </Badge>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
+
+                {/* Desktop Table View */}
+                <div className="hidden overflow-x-auto md:block">
                     <Table>
                         <TableHeader>
                             <TableRow className="border-border">

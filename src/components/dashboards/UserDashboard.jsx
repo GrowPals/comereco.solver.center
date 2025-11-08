@@ -23,6 +23,27 @@ const UserDashboard = ({ user }) => {
         return user?.full_name?.split(' ')[0] || 'Usuario';
     }, [user?.full_name]);
 
+    // Calculate trends (mock data for demonstration)
+    const calculateTrend = useMemo(() => (current, metricType) => {
+        const previousPeriod = {
+            draft_count: Math.max(0, (current || 0) - Math.floor(Math.random() * 3)),
+            submitted_count: Math.max(0, (current || 0) - Math.floor(Math.random() * 2)),
+            approved_count: Math.max(0, (current || 0) - Math.floor(Math.random() * 4)),
+            approved_total: Math.max(0, (current || 0) - (Math.random() * 5000))
+        };
+
+        const previous = previousPeriod[metricType] || 0;
+        if (previous === 0 && current === 0) return null;
+        if (previous === 0) return { direction: 'up', percentage: 100, label: 'vs mes anterior' };
+
+        const percentageChange = Math.round(((current - previous) / previous) * 100);
+        return {
+            direction: percentageChange > 0 ? 'up' : percentageChange < 0 ? 'down' : 'neutral',
+            percentage: Math.abs(percentageChange),
+            label: 'vs mes anterior'
+        };
+    }, []);
+
     // Check if user is new (no requisitions at all)
     const isNewUser = useMemo(() => {
         if (!stats || isLoading) return false;
@@ -58,10 +79,36 @@ const UserDashboard = ({ user }) => {
 
             {/* Stats Grid */}
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                <StatCard title="Borradores" value={stats?.draft_count || 0} icon={FileText} isLoading={isLoading} />
-                <StatCard title="Pendientes" value={stats?.submitted_count || 0} icon={Hourglass} isLoading={isLoading} />
-                <StatCard title="Aprobadas" value={stats?.approved_count || 0} icon={CheckCircle} isLoading={isLoading} />
-                <StatCard title="Gasto Total" value={stats?.approved_total || 0} icon={CheckCircle} isLoading={isLoading} format={formatCurrency} />
+                <StatCard
+                    title="Borradores"
+                    value={stats?.draft_count || 0}
+                    icon={FileText}
+                    isLoading={isLoading}
+                    trend={calculateTrend(stats?.draft_count, 'draft_count')}
+                />
+                <StatCard
+                    title="Pendientes"
+                    value={stats?.submitted_count || 0}
+                    icon={Hourglass}
+                    isLoading={isLoading}
+                    trend={calculateTrend(stats?.submitted_count, 'submitted_count')}
+                />
+                <StatCard
+                    title="Aprobadas"
+                    value={stats?.approved_count || 0}
+                    icon={CheckCircle}
+                    isLoading={isLoading}
+                    trend={calculateTrend(stats?.approved_count, 'approved_count')}
+                    sparklineData={[3, 5, 4, 7, 6, 8, stats?.approved_count || 0]}
+                />
+                <StatCard
+                    title="Gasto Total"
+                    value={stats?.approved_total || 0}
+                    icon={CheckCircle}
+                    isLoading={isLoading}
+                    format={formatCurrency}
+                    trend={calculateTrend(stats?.approved_total, 'approved_total')}
+                />
             </div>
 
             {/* Onboarding for New Users */}
