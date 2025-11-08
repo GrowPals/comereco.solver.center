@@ -1,4 +1,17 @@
-
+/**
+ * Dialog Component
+ *
+ * Implementa modal dialogs con accesibilidad completa mediante Radix UI.
+ *
+ * Características de accesibilidad incluidas automáticamente:
+ * - Focus trapping: El foco permanece dentro del dialog mientras está abierto
+ * - Focus return: El foco regresa al elemento que abrió el dialog al cerrarse
+ * - Escape para cerrar: Presionar Escape cierra el dialog
+ * - Primer elemento interactivo: El foco se mueve automáticamente al primer elemento interactivo
+ * - Tab/Shift+Tab: Cicla solo entre elementos interactivos dentro del dialog
+ *
+ * @see https://www.radix-ui.com/docs/primitives/components/dialog#accessibility
+ */
 import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
