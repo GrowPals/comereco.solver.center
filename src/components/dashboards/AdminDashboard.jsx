@@ -9,7 +9,7 @@ import CompanyContextIndicator from '@/components/layout/CompanyContextIndicator
 import { Users, FolderKanban, FileText, ShoppingBag, BarChart2 } from 'lucide-react';
 
 const AdminDashboard = memo(({ user }) => {
-    const { data: stats, isLoading } = useQuery({
+    const { data: stats, isLoading, isError } = useQuery({
         queryKey: ['dashboardStats', user.id],
         queryFn: getDashboardStats,
         staleTime: 1000 * 60 * 5, // 5 minutos

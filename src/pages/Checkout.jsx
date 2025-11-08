@@ -41,7 +41,7 @@ const CheckoutPage = () => {
     const [templateName, setTemplateName] = useState('');
     const [templateDescription, setTemplateDescription] = useState('');
 
-    const { data: projects, isLoading: isLoadingProjects } = useQuery({
+    const { data: projects, isLoading: isLoadingProjects, isError, error } = useQuery({
         queryKey: ['myProjects'],
         queryFn: getMyProjects,
     });
@@ -109,6 +109,14 @@ const CheckoutPage = () => {
     };
 
     if (isLoadingProjects) return <PageLoader />;
+    if (isError) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[400px] p-8">
+                <p className="text-destructive mb-4">Error al cargar los proyectos</p>
+                <p className="text-muted-foreground text-sm">{error?.message || 'Intenta nuevamente más tarde'}</p>
+            </div>
+        );
+    }
     if (items.length === 0 && !createRequisitionMutation.isSuccess) {
         return (
             <div className="h-screen -mt-20">

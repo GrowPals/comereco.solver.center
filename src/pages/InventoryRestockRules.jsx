@@ -185,7 +185,7 @@ const InventoryRestockRules = () => {
   const debouncedSearch = useDebounce(filters.searchTerm, 400);
   const queryFilters = useMemo(() => buildQueryFilters(filters, debouncedSearch), [filters, debouncedSearch]);
 
-  const { data, isLoading, isFetching } = useRestockRulesList(queryFilters);
+  const { data, isLoading, isFetching, isError, error } = useRestockRulesList(queryFilters);
   const rules = data?.rules ?? [];
   const total = data?.total ?? 0;
   const pageSize = data?.pageSize ?? PAGE_SIZE;
@@ -205,6 +205,17 @@ const InventoryRestockRules = () => {
     ? Array.from(new Set(categoriesData))
     : [];
   const projectOptions = Array.isArray(projectsData) ? projectsData : [];
+
+  if (isError) {
+    return (
+      <PageContainer>
+        <div className="flex flex-col items-center justify-center min-h-[400px] p-8">
+          <p className="text-destructive mb-4">Error al cargar las reglas de reabastecimiento</p>
+          <p className="text-muted-foreground text-sm">{error?.message || 'Intenta nuevamente más tarde'}</p>
+        </div>
+      </PageContainer>
+    );
+  }
 
   if (!canManageRestockRules) {
     return (

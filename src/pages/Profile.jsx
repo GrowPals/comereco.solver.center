@@ -86,6 +86,7 @@ const ProfilePage = () => {
   const [stats, setStats] = useState({ created: 0, approved: 0 });
   const [recentRequisitions, setRecentRequisitions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(null);
@@ -114,6 +115,7 @@ const ProfilePage = () => {
   const loadProfileData = useCallback(async () => {
     if (!user?.id) return;
     setLoading(true);
+    setError(null);
     try {
       // Según la documentación técnica, el campo correcto es created_by (no requester_id)
       // Mantenemos la consulta separada para evitar embeds ambiguos
@@ -147,6 +149,7 @@ const ProfilePage = () => {
       setRecentRequisitions(enrichedRequisitions.filter(r => r.created_by === user.id).slice(0, 3));
     } catch (error) {
       logger.error('Failed to load profile data:', error);
+      setError(error.message || 'No se pudieron cargar los datos del perfil.');
       toast.error('Error', 'No se pudieron cargar los datos del perfil.');
     } finally {
       setLoading(false);

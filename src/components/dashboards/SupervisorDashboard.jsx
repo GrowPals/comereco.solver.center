@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 
 const SupervisorDashboard = memo(({ user }) => {
     const navigate = useNavigate();
-    const { data: stats, isLoading: isLoadingStats } = useQuery({
+    const { data: stats, isLoading: isLoadingStats, isError } = useQuery({
         queryKey: ['dashboardStats', user.id],
         queryFn: getDashboardStats,
         staleTime: 1000 * 60 * 5, // 5 minutos
@@ -56,6 +56,15 @@ const SupervisorDashboard = memo(({ user }) => {
         { label: 'Mis Proyectos', icon: FolderKanban, path: '/projects', variant: 'outline' },
         { label: 'Historial', icon: History, path: '/requisitions', variant: 'outline' },
     ];
+
+    if (isError) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[400px] p-8">
+                <p className="text-destructive mb-4">Error al cargar las estadísticas</p>
+                <p className="text-muted-foreground text-sm">Intenta nuevamente más tarde</p>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-8">

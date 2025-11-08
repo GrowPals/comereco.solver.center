@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, Users, FileText, TrendingUp, Calendar, Shield, CheckCircle2, XCircle, Clock, Package } from 'lucide-react';
@@ -23,6 +23,10 @@ const ProjectDetail = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { canManageProjects } = useUserPermissions();
+
+  if (!projectId) {
+    return <Navigate to="/projects" replace />;
+  }
 
   const { data: project, isLoading, isError } = useQuery({
     queryKey: ['projectDetails', projectId],

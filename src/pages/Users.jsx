@@ -511,7 +511,12 @@ const Users = () => {
 
                     {/* Users mobile list */}
                     <div className="space-y-4 md:hidden">
-                        {users?.map((user) => {
+                        {users?.length === 0 ? (
+                            <div className="text-center py-12">
+                                <p className="text-muted-foreground">No hay usuarios disponibles</p>
+                            </div>
+                        ) : (
+                            users?.map((user) => {
                             const gradient = getAvatarGradient(user.full_name);
                             const initials = getInitials(user.full_name);
 
@@ -601,11 +606,17 @@ const Users = () => {
                                 </div>
                             </div>
                             );
-                        })}
+                        })
+                        )}
                     </div>
 
                     {/* Users Table */}
                     <div className="hidden overflow-hidden rounded-2xl border-2 border-border bg-card shadow-soft-md dark:border-border dark:bg-card md:block">
+                        {users?.length === 0 ? (
+                            <div className="text-center py-12">
+                                <p className="text-muted-foreground">No hay usuarios disponibles</p>
+                            </div>
+                        ) : (
                         <Table>
                         <TableHeader>
                             <TableRow>
@@ -715,6 +726,7 @@ const Users = () => {
                             })}
                         </TableBody>
                     </Table>
+                        )}
                     </div>
                 </div>
             </PageContainer>

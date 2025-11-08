@@ -45,34 +45,14 @@ const SettingsCard = ({ title, description, children, onSave, isSaving }) => (
 );
 
 const SettingsPage = () => {
-    const [activeTab, setActiveTab] = useState('general');
-    const [isSaving, setIsSaving] = useState(false);
-    const [savingSection, setSavingSection] = useState(null);
-    const toast = useToastNotification();
-
-    const handleSave = (section) => {
-        setIsSaving(true);
-        setSavingSection(section);
-    };
-
-    // Completar guardado después de 1 segundo
-    useEffect(() => {
-        if (isSaving && savingSection) {
-            const timer = setTimeout(() => {
-                toast.success('Configuración Guardada', `Tus preferencias de ${savingSection} han sido actualizadas.`);
-                setIsSaving(false);
-                setSavingSection(null);
-            }, 1000);
-            return () => clearTimeout(timer);
-        }
-    }, [isSaving, savingSection, toast]);
+    const [activeTab, setActiveTab] = useState('appearance'); // Default to working tab
 
     const renderContent = () => {
         switch (activeTab) {
-            case 'general': return <GeneralSettings onSave={() => handleSave('General')} isSaving={isSaving} />;
-            case 'notifications': return <NotificationSettings onSave={() => handleSave('Notificaciones')} isSaving={isSaving} />;
-            case 'privacy': return <PrivacySettings onSave={() => handleSave('Privacidad')} isSaving={isSaving} />;
-            case 'security': return <SecuritySettings onSave={() => handleSave('Seguridad')} isSaving={isSaving} />;
+            case 'general': return <GeneralSettings />;
+            case 'notifications': return <NotificationSettings />;
+            case 'privacy': return <PrivacySettings />;
+            case 'security': return <SecuritySettings />;
             case 'appearance': return <AppearanceSettings />;
             default: return null;
         }
@@ -137,45 +117,64 @@ const SettingsPage = () => {
 };
 
 // Sub-components for each tab
-const GeneralSettings = ({ onSave, isSaving }) => (
-    <SettingsCard title="General" description="Preferencias de idioma y región." onSave={onSave} isSaving={isSaving}>
-        <div className="space-y-4">
+const GeneralSettings = () => (
+    <SettingsCard title="General" description="Preferencias de idioma y región.">
+        <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-500/30 dark:bg-amber-500/10">
+            <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                ⚠️ Funcionalidad en desarrollo. Los cambios no se guardarán.
+            </p>
+        </div>
+        <div className="space-y-4 opacity-60 pointer-events-none">
             <Label>Idioma</Label>
-            <Select defaultValue="es"><SelectTrigger><SelectValue/></SelectTrigger><SelectContent><SelectItem value="es">Español</SelectItem></SelectContent></Select>
+            <Select defaultValue="es" disabled><SelectTrigger><SelectValue/></SelectTrigger><SelectContent><SelectItem value="es">Español</SelectItem></SelectContent></Select>
         </div>
-        <div className="space-y-4">
+        <div className="space-y-4 opacity-60 pointer-events-none">
             <Label>Zona Horaria</Label>
-            <Select defaultValue="gmt-6"><SelectTrigger><SelectValue/></SelectTrigger><SelectContent><SelectItem value="gmt-6">(GMT-6) Ciudad de México</SelectItem></SelectContent></Select>
+            <Select defaultValue="gmt-6" disabled><SelectTrigger><SelectValue/></SelectTrigger><SelectContent><SelectItem value="gmt-6">(GMT-6) Ciudad de México</SelectItem></SelectContent></Select>
         </div>
-        <div className="space-y-4">
+        <div className="space-y-4 opacity-60 pointer-events-none">
             <Label>Formato de Fecha</Label>
-            <RadioGroup defaultValue="dmy"><div className="flex gap-4"><RadioGroupItem value="dmy" id="dmy"/><Label htmlFor="dmy">DD/MM/YYYY</Label></div></RadioGroup>
+            <RadioGroup defaultValue="dmy" disabled><div className="flex gap-4"><RadioGroupItem value="dmy" id="dmy" disabled/><Label htmlFor="dmy">DD/MM/YYYY</Label></div></RadioGroup>
         </div>
     </SettingsCard>
 );
 
-const NotificationSettings = ({ onSave, isSaving }) => (
-     <SettingsCard title="Notificaciones" description="Controla cómo y cuándo recibes notificaciones." onSave={onSave} isSaving={isSaving}>
-        <h3 className="font-semibold">Notificaciones en la App</h3>
-        <div className="flex items-center justify-between"><Label>Requisiciones aprobadas</Label><Switch defaultChecked /></div>
-        <div className="flex items-center justify-between"><Label>Requisiciones rechazadas</Label><Switch defaultChecked /></div>
-        <div className="flex items-center justify-between"><Label>Nuevos comentarios</Label><Switch defaultChecked /></div>
-        
-        <h3 className="font-semibold pt-4 border-t">Notificaciones por Email</h3>
-        <div className="flex items-center justify-between"><Label>Enviar resumen semanal</Label><Switch /></div>
+const NotificationSettings = () => (
+     <SettingsCard title="Notificaciones" description="Controla cómo y cuándo recibes notificaciones.">
+        <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-500/30 dark:bg-amber-500/10">
+            <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                ⚠️ Funcionalidad en desarrollo. Los cambios no se guardarán.
+            </p>
+        </div>
+        <div className="opacity-60 pointer-events-none space-y-4">
+            <h3 className="font-semibold">Notificaciones en la App</h3>
+            <div className="flex items-center justify-between"><Label>Requisiciones aprobadas</Label><Switch defaultChecked disabled /></div>
+            <div className="flex items-center justify-between"><Label>Requisiciones rechazadas</Label><Switch defaultChecked disabled /></div>
+            <div className="flex items-center justify-between"><Label>Nuevos comentarios</Label><Switch defaultChecked disabled /></div>
+
+            <h3 className="font-semibold pt-4 border-t">Notificaciones por Email</h3>
+            <div className="flex items-center justify-between"><Label>Enviar resumen semanal</Label><Switch disabled /></div>
+        </div>
     </SettingsCard>
 );
 
-const PrivacySettings = ({ onSave, isSaving }) => (
-    <SettingsCard title="Privacidad" description="Controla la visibilidad de tu información." onSave={onSave} isSaving={isSaving}>
-        <RadioGroup defaultValue="team">
-            <Label>Visibilidad del Perfil</Label>
-            <div className="space-y-2 pt-2">
-                <div className="flex items-center space-x-2"><RadioGroupItem value="team" id="team"/><Label htmlFor="team">Visible para todo mi equipo</Label></div>
-                <div className="flex items-center space-x-2"><RadioGroupItem value="admins" id="admins"/><Label htmlFor="admins">Visible solo para administradores</Label></div>
-            </div>
-        </RadioGroup>
-        <div className="flex items-center justify-between"><Label>Mostrar mi estado de conexión</Label><Switch defaultChecked /></div>
+const PrivacySettings = () => (
+    <SettingsCard title="Privacidad" description="Controla la visibilidad de tu información.">
+        <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-500/30 dark:bg-amber-500/10">
+            <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                ⚠️ Funcionalidad en desarrollo. Los cambios no se guardarán.
+            </p>
+        </div>
+        <div className="opacity-60 pointer-events-none space-y-4">
+            <RadioGroup defaultValue="team">
+                <Label>Visibilidad del Perfil</Label>
+                <div className="space-y-2 pt-2">
+                    <div className="flex items-center space-x-2"><RadioGroupItem value="team" id="team" disabled/><Label htmlFor="team">Visible para todo mi equipo</Label></div>
+                    <div className="flex items-center space-x-2"><RadioGroupItem value="admins" id="admins" disabled/><Label htmlFor="admins">Visible solo para administradores</Label></div>
+                </div>
+            </RadioGroup>
+            <div className="flex items-center justify-between"><Label>Mostrar mi estado de conexión</Label><Switch defaultChecked disabled /></div>
+        </div>
     </SettingsCard>
 );
 

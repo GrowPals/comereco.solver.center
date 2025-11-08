@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { ArrowLeft, Check, X, Send, FileText, MessageSquare, FolderOpen, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -37,7 +37,11 @@ const RequisitionDetail = () => {
     const { toast } = useToast();
     const { user } = useSupabaseAuth();
     const { canApproveRequisitions } = useUserPermissions();
-    
+
+    if (!requisitionId) {
+        return <Navigate to="/requisitions" replace />;
+    }
+
     const { data: requisition, isLoading, isError, refetch } = useRequisitionDetails(requisitionId);
     const { submit, isSubmitting, approve, isApproving, reject, isRejecting } = useRequisitionActions();
 

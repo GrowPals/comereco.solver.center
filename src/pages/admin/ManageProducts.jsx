@@ -295,7 +295,7 @@ const ManageProductsPage = () => {
         return saved ? JSON.parse(saved) : { column: null, direction: null };
     });
     const [hoveredRow, setHoveredRow] = useState(null);
-    const { data: products, isLoading } = useQuery({ queryKey: ['adminProducts'], queryFn: getAdminProducts });
+    const { data: products, isLoading, isError, error } = useQuery({ queryKey: ['adminProducts'], queryFn: getAdminProducts });
 
     const mutationOptions = {
         onSuccess: () => {
@@ -418,6 +418,14 @@ const ManageProductsPage = () => {
     };
 
     if (isLoading) return <PageLoader />;
+    if (isError) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[400px] p-8">
+                <p className="text-destructive mb-4">Error al cargar los productos</p>
+                <p className="text-muted-foreground text-sm">{error?.message || 'Intenta nuevamente más tarde'}</p>
+            </div>
+        );
+    }
 
     return (
         <>

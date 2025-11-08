@@ -13,7 +13,7 @@ import { Card } from '@/components/ui/card';
 
 const UserDashboard = ({ user }) => {
     const navigate = useNavigate();
-    const { data: stats, isLoading } = useQuery({
+    const { data: stats, isLoading, isError } = useQuery({
         queryKey: ['dashboardStats', user.id],
         queryFn: getDashboardStats,
     });
@@ -60,6 +60,15 @@ const UserDashboard = ({ user }) => {
     ], []);
 
     const handleNavigateToCatalog = useMemo(() => () => navigate('/catalog'), [navigate]);
+
+    if (isError) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[400px] p-8">
+                <p className="text-destructive mb-4">Error al cargar las estadísticas</p>
+                <p className="text-muted-foreground text-sm">Intenta nuevamente más tarde</p>
+            </div>
+        );
+    }
 
     return (
         <div className="mx-auto max-w-7xl space-y-10">

@@ -58,7 +58,7 @@ const NotificationsPage = () => {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [dialogAction, setDialogAction] = useState(null);
 
-    const { data: allNotifications = [], isLoading } = useQuery({
+    const { data: allNotifications = [], isLoading, isError, error } = useQuery({
         queryKey: ['notifications'],
         queryFn: getNotifications,
     });
@@ -103,7 +103,15 @@ const NotificationsPage = () => {
     };
 
     if (isLoading) return <PageLoader />;
-    
+    if (isError) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[400px] p-8">
+                <p className="text-destructive mb-4">Error al cargar las notificaciones</p>
+                <p className="text-muted-foreground text-sm">{error?.message || 'Intenta nuevamente más tarde'}</p>
+            </div>
+        );
+    }
+
     const NotificationCard = ({ notification }) => {
         const { icon: Icon, badgeClass } = notificationIcons[notification.type] || notificationIcons.default;
         const isSelected = selectedIds.includes(notification.id);

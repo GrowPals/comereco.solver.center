@@ -21,7 +21,7 @@ const GeneralDataStep = () => {
     const requiredDate = watch('requiredDate');
 
     // Fetch projects from API instead of mockdata
-    const { data: projects = [], isLoading: isLoadingProjects } = useQuery({
+    const { data: projects = [], isLoading: isLoadingProjects, isError: isErrorProjects } = useQuery({
         queryKey: ['myProjects'],
         queryFn: getMyProjects,
         staleTime: 60000, // 1 minuto
@@ -109,17 +109,18 @@ const GeneralDataStep = () => {
                         id="costCenter"
                         {...register('costCenter')}
                         className="flex h-12 w-full items-center justify-between rounded-md border border-input bg-card px-3 py-2 text-base ring-offset-background disabled:cursor-not-allowed disabled:opacity-50"
-                        disabled={isLoadingProjects}
+                        disabled={isLoadingProjects || isErrorProjects}
                     >
                         <option value="">
-                            {isLoadingProjects ? 'Cargando proyectos...' : 'Selecciona un proyecto...'}
+                            {isLoadingProjects ? 'Cargando proyectos...' : isErrorProjects ? 'Error al cargar proyectos' : 'Selecciona un proyecto...'}
                         </option>
-                        {projects.map(proj => (
+                        {!isErrorProjects && projects.map(proj => (
                             <option key={proj.id} value={proj.id}>
                                 {proj.name}
                             </option>
                         ))}
                     </select>
+                    {isErrorProjects && <p className="text-sm text-destructive mt-1">No se pudieron cargar los proyectos. Puedes continuar sin seleccionar uno.</p>}
                 </div>
             </div>
 
