@@ -15,6 +15,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const rootDir = join(__dirname, '..');
 
+const requiredSecrets = ['PLAYWRIGHT_TEST_EMAIL', 'PLAYWRIGHT_TEST_PASSWORD'];
+const missingSecrets = requiredSecrets.filter((key) => !process.env[key] || !process.env[key]?.trim());
+
+if (missingSecrets.length) {
+  console.error(`❌ Faltan variables sensibles: ${missingSecrets.join(', ')}. Configúralas antes de continuar.`);
+  process.exit(1);
+}
+
+const PLAYWRIGHT_EMAIL = process.env.PLAYWRIGHT_TEST_EMAIL.trim();
+const PLAYWRIGHT_PASSWORD = process.env.PLAYWRIGHT_TEST_PASSWORD.trim();
+
 const informe = {
   timestamp: new Date().toISOString(),
   resumenEjecutivo: {},
@@ -56,8 +67,8 @@ informe.dependencias = {
 // 3. Variables
 console.log('3. Verificando variables de entorno...');
 informe.variables = {
-  PLAYWRIGHT_TEST_EMAIL: process.env.PLAYWRIGHT_TEST_EMAIL || 'team@growpals.mx',
-  PLAYWRIGHT_TEST_PASSWORD: process.env.PLAYWRIGHT_TEST_PASSWORD ? '✅ Configurada' : '❌ Faltante'
+  PLAYWRIGHT_TEST_EMAIL: '✅ Configurada',
+  PLAYWRIGHT_TEST_PASSWORD: '✅ Configurada'
 };
 
 // 4. Tests - leer resultados
@@ -77,7 +88,7 @@ try {
   const output = execSync('npm run test:smoke', { 
     encoding: 'utf-8', 
     cwd: rootDir,
-    env: { ...process.env, PLAYWRIGHT_TEST_EMAIL: 'team@growpals.mx', PLAYWRIGHT_TEST_PASSWORD: 'growpals#2025!' },
+    env: { ...process.env, PLAYWRIGHT_TEST_EMAIL: PLAYWRIGHT_EMAIL, PLAYWRIGHT_TEST_PASSWORD: PLAYWRIGHT_PASSWORD },
     timeout: 60000
   });
   const duration = ((Date.now() - start) / 1000).toFixed(2);
@@ -94,7 +105,7 @@ try {
   const output = execSync('npm run test:routes -- --project=chromium --workers=1', { 
     encoding: 'utf-8', 
     cwd: rootDir,
-    env: { ...process.env, PLAYWRIGHT_TEST_EMAIL: 'team@growpals.mx', PLAYWRIGHT_TEST_PASSWORD: 'growpals#2025!' },
+    env: { ...process.env, PLAYWRIGHT_TEST_EMAIL: PLAYWRIGHT_EMAIL, PLAYWRIGHT_TEST_PASSWORD: PLAYWRIGHT_PASSWORD },
     timeout: 300000
   });
   const duration = ((Date.now() - start) / 1000).toFixed(2);
@@ -111,7 +122,7 @@ try {
   const output = execSync('npm run test:sync -- --project=chromium --workers=1', { 
     encoding: 'utf-8', 
     cwd: rootDir,
-    env: { ...process.env, PLAYWRIGHT_TEST_EMAIL: 'team@growpals.mx', PLAYWRIGHT_TEST_PASSWORD: 'growpals#2025!' },
+    env: { ...process.env, PLAYWRIGHT_TEST_EMAIL: PLAYWRIGHT_EMAIL, PLAYWRIGHT_TEST_PASSWORD: PLAYWRIGHT_PASSWORD },
     timeout: 300000
   });
   const duration = ((Date.now() - start) / 1000).toFixed(2);
@@ -128,7 +139,7 @@ try {
   const output = execSync('npm run test:performance -- --project=chromium --workers=1', { 
     encoding: 'utf-8', 
     cwd: rootDir,
-    env: { ...process.env, PLAYWRIGHT_TEST_EMAIL: 'team@growpals.mx', PLAYWRIGHT_TEST_PASSWORD: 'growpals#2025!' },
+    env: { ...process.env, PLAYWRIGHT_TEST_EMAIL: PLAYWRIGHT_EMAIL, PLAYWRIGHT_TEST_PASSWORD: PLAYWRIGHT_PASSWORD },
     timeout: 300000
   });
   const duration = ((Date.now() - start) / 1000).toFixed(2);
@@ -423,4 +434,3 @@ console.log(`\nEstado General: ${informe.resumenEjecutivo.estadoGeneral}`);
 console.log(`Tests: ${totalPassed}/${totalTests} pasaron`);
 
 process.exit(0);
-

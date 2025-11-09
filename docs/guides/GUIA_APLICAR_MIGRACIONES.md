@@ -99,7 +99,7 @@ supabase link --project-ref azjaehrdzdfgrumbqmuc
 
 > **Producción ComerECO (credenciales actuales)**  
 > ```bash
-> supabase link --project-ref azjaehrdzdfgrumbqmuc --password 'VicmaBigez2405.'
+> supabase link --project-ref azjaehrdzdfgrumbqmuc --password "$SUPABASE_DB_PASSWORD"
 > ```
 
 **Salida esperada:**

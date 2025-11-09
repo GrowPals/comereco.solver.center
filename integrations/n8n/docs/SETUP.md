@@ -203,7 +203,7 @@ WEBHOOK_URL=https://n8n.tu-dominio.com/
 # Supabase Database
 # ========================================
 SUPABASE_DB_HOST=db.azjaehrdzdfgrumbqmuc.supabase.co
-SUPABASE_DB_PASSWORD=VicmaBigez2405.
+SUPABASE_DB_PASSWORD=<SUPABASE_DB_PASSWORD>
 SUPABASE_PROJECT_REF=azjaehrdzdfgrumbqmuc
 
 # ========================================

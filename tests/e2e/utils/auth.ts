@@ -8,8 +8,7 @@ type LoginOptions = {
 
 const DEFAULT_TEST_EMAIL =
   process.env.PLAYWRIGHT_TEST_EMAIL ||
-  process.env.CORE_ADMIN_EMAIL ||
-  'team@growpals.mx';
+  process.env.CORE_ADMIN_EMAIL;
 
 const DEFAULT_TEST_PASSWORD =
   process.env.PLAYWRIGHT_TEST_PASSWORD ||

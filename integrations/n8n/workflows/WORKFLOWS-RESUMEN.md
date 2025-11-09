@@ -178,7 +178,7 @@ Host: aws-1-us-east-2.pooler.supabase.com
 Port: 5432
 Database: postgres
 User: postgres.azjaehrdzdfgrumbqmuc
-Password: VicmaBigez2405.
+Password: <SUPABASE_DB_PASSWORD>
 SSL: Disable
 ```
 

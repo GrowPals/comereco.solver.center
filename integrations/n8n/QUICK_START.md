@@ -18,7 +18,7 @@ nano .env
 ```bash
 N8N_BASIC_AUTH_PASSWORD=TU_PASSWORD_SEGURO  # Min 16 caracteres
 
-SUPABASE_DB_PASSWORD=VicmaBigez2405.
+SUPABASE_DB_PASSWORD=<SUPABASE_DB_PASSWORD>
 
 BIND_API_URL=https://api.bind-erp.com  # URL real
 BIND_API_TOKEN=TU_TOKEN_DE_BIND
@@ -63,7 +63,7 @@ open http://localhost:5678
    - Host: `db.azjaehrdzdfgrumbqmuc.supabase.co`
    - Database: `postgres`
    - User: `postgres`
-   - Password: `VicmaBigez2405.`
+   - Password: `<SUPABASE_DB_PASSWORD>`
    - Port: `5432`
    - SSL: `allow`
 4. Test Connection → Save

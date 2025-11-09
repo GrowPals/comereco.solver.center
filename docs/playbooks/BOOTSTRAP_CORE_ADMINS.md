@@ -7,14 +7,14 @@ Este playbook crea las cuatro empresas base y sus cuentas administradoras (más 
 ```bash
 export SUPABASE_URL="https://azjaehrdzdfgrumbqmuc.supabase.co"
 export SUPABASE_SERVICE_ROLE_KEY="<service_role>"
-# Opcional: sobrescribe las contraseñas si no quieres usar las predeterminadas
-export CORE_PASSWORD_GROWPALS="growpals#2025!"
-export CORE_PASSWORD_COMERECO="Comereco01#"
-export CORE_PASSWORD_MANNY="Tupartnermanny24!"
-export CORE_PASSWORD_SOLUCIONES="SOLUCIONES#2030!"
+# Define contraseñas únicas por compañía antes de ejecutar el script
+export CORE_PASSWORD_GROWPALS="<password-growpals>"
+export CORE_PASSWORD_COMERECO="<password-comereco>"
+export CORE_PASSWORD_MANNY="<password-manny>"
+export CORE_PASSWORD_SOLUCIONES="<password-soluciones>"
 ```
 
-> **Nota:** Las contraseñas anteriores vienen definidas como fallback en el script porque las solicitó el equipo. Cambia los valores cuando las lleves a producción.
+> **Nota:** El script ya no incluye contraseñas predeterminadas; si alguna variable falta, la ejecución se detendrá para evitar crear cuentas inseguras.
 
 ## 2. Ejecutar el bootstrap
 

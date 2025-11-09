@@ -45,8 +45,8 @@
 ## 2. ✅ VARIABLES DE ENTORNO
 
 ### Configuración
-- **PLAYWRIGHT_TEST_EMAIL:** ✅ Configurada (`team@growpals.mx`)
-- **PLAYWRIGHT_TEST_PASSWORD:** ✅ Configurada (`growpals#2025!`)
+- **PLAYWRIGHT_TEST_EMAIL:** ✅ Configurada (`<PLAYWRIGHT_TEST_EMAIL>`)
+- **PLAYWRIGHT_TEST_PASSWORD:** ✅ Configurada (`<PLAYWRIGHT_TEST_PASSWORD>`)
 
 ### Helper de Autenticación
 - **Archivo:** `tests/e2e/utils/auth.ts`
@@ -281,4 +281,3 @@ La aplicación **está funcionalmente lista para producción** con las siguiente
 
 **Generado:** 2025-01-09  
 **Versión:** 1.0.0
-

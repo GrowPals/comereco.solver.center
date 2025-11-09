@@ -35,8 +35,8 @@ La aplicación está funcionalmente completa. Se identificaron y corrigieron pro
 
 | Variable | Valor | Estado |
 |----------|-------|--------|
-| PLAYWRIGHT_TEST_EMAIL | team@growpals.mx | ✅ Configurada |
-| PLAYWRIGHT_TEST_PASSWORD | growpals#2025! | ✅ Configurada |
+| PLAYWRIGHT_TEST_EMAIL | <PLAYWRIGHT_TEST_EMAIL> | ✅ Configurada |
+| PLAYWRIGHT_TEST_PASSWORD | <PLAYWRIGHT_TEST_PASSWORD> | ✅ Configurada |
 
 #### Helper de Autenticación (`tests/e2e/utils/auth.ts`)
 **Estado:** ✅ **COMPLETAMENTE CORREGIDO**
@@ -318,4 +318,3 @@ La aplicación está funcionalmente completa. Se identificaron y corrigieron pro
 **Generado:** 2025-01-09  
 **Versión:** 1.0.0  
 **Estado:** ✅ **LISTO PARA PRODUCCIÓN**
-

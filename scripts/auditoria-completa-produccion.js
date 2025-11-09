@@ -16,6 +16,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const rootDir = join(__dirname, '..');
 
+const requiredSecrets = ['PLAYWRIGHT_TEST_EMAIL', 'PLAYWRIGHT_TEST_PASSWORD'];
+const missingSecrets = requiredSecrets.filter((key) => !process.env[key] || !process.env[key]?.trim());
+
+if (missingSecrets.length) {
+  console.error(`❌ Faltan variables sensibles: ${missingSecrets.join(', ')}. Configúralas antes de ejecutar la auditoría.`);
+  process.exit(1);
+}
+
+const PLAYWRIGHT_EMAIL = process.env.PLAYWRIGHT_TEST_EMAIL.trim();
+const PLAYWRIGHT_PASSWORD = process.env.PLAYWRIGHT_TEST_PASSWORD.trim();
+
 const report = {
   timestamp: new Date().toISOString(),
   entorno: {},
@@ -111,22 +122,17 @@ try {
 // 3. Verificar variables de entorno
 console.log('\n🔐 3. VERIFICANDO VARIABLES DE ENTORNO...\n');
 
-const requiredVars = {
-  PLAYWRIGHT_TEST_EMAIL: process.env.PLAYWRIGHT_TEST_EMAIL || 'team@growpals.mx',
-  PLAYWRIGHT_TEST_PASSWORD: process.env.PLAYWRIGHT_TEST_PASSWORD || 'growpals#2025!'
-};
-
 report.variables = {
-  PLAYWRIGHT_TEST_EMAIL: requiredVars.PLAYWRIGHT_TEST_EMAIL ? '✅ Configurada' : '❌ Faltante',
-  PLAYWRIGHT_TEST_PASSWORD: requiredVars.PLAYWRIGHT_TEST_PASSWORD ? '✅ Configurada' : '❌ Faltante'
+  PLAYWRIGHT_TEST_EMAIL: '✅ Configurada',
+  PLAYWRIGHT_TEST_PASSWORD: '✅ Configurada'
 };
 
-console.log(`✅ PLAYWRIGHT_TEST_EMAIL: ${requiredVars.PLAYWRIGHT_TEST_EMAIL ? 'Configurada' : 'Faltante'}`);
-console.log(`✅ PLAYWRIGHT_TEST_PASSWORD: ${requiredVars.PLAYWRIGHT_TEST_PASSWORD ? 'Configurada' : 'Faltante'}`);
+console.log('✅ PLAYWRIGHT_TEST_EMAIL: Configurada');
+console.log('✅ PLAYWRIGHT_TEST_PASSWORD: Configurada');
 
 // Exportar variables para tests
-process.env.PLAYWRIGHT_TEST_EMAIL = requiredVars.PLAYWRIGHT_TEST_EMAIL;
-process.env.PLAYWRIGHT_TEST_PASSWORD = requiredVars.PLAYWRIGHT_TEST_PASSWORD;
+process.env.PLAYWRIGHT_TEST_EMAIL = PLAYWRIGHT_EMAIL;
+process.env.PLAYWRIGHT_TEST_PASSWORD = PLAYWRIGHT_PASSWORD;
 
 // 4. Ejecutar tests de Playwright
 console.log('\n🧪 4. EJECUTANDO TESTS DE PLAYWRIGHT...\n');
@@ -451,4 +457,3 @@ writeFileSync(htmlPath, htmlReport);
 console.log(`📄 Reporte HTML guardado en: ${htmlPath}`);
 
 process.exit(report.problemas.length > 0 ? 1 : 0);
-

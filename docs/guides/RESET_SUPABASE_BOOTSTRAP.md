@@ -6,13 +6,13 @@ Guía operativa para dejar la base de datos `azjaehrdzdfgrumbqmuc` limpia y list
 
 ```bash
 cp .env.example .env            # si no existe
-export DB_URL="postgresql://postgres.azjaehrdzdfgrumbqmuc:VicmaBigez2405.@aws-1-us-east-2.pooler.supabase.com:5432/postgres?sslmode=require"
+export DB_URL="postgresql://postgres.azjaehrdzdfgrumbqmuc:$SUPABASE_DB_PASSWORD@aws-1-us-east-2.pooler.supabase.com:5432/postgres?sslmode=require"
 ```
 
 ## 2. Camino corto (script automatizado)
 
 ```bash
-DB_URL="postgresql://postgres.azjaehrdzdfgrumbqmuc:VicmaBigez2405.@aws-1-us-east-2.pooler.supabase.com:5432/postgres?sslmode=require" \
+DB_URL="postgresql://postgres.azjaehrdzdfgrumbqmuc:$SUPABASE_DB_PASSWORD@aws-1-us-east-2.pooler.supabase.com:5432/postgres?sslmode=require" \
   ./scripts/reset-supabase.sh
 ```
 

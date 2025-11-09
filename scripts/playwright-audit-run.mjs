@@ -3,8 +3,16 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 const BASE_URL = process.env.AUDIT_BASE_URL || 'http://127.0.0.1:4173';
-const EMAIL = process.env.AUDIT_EMAIL || 'team@growpals.mx';
-const PASSWORD = process.env.AUDIT_PASSWORD || 'growpals#2025!';
+const resolvedEmail = (process.env.AUDIT_EMAIL || process.env.PLAYWRIGHT_TEST_EMAIL || '').trim();
+const resolvedPassword = (process.env.AUDIT_PASSWORD || process.env.PLAYWRIGHT_TEST_PASSWORD || '').trim();
+
+if (!resolvedEmail || !resolvedPassword) {
+  console.error('❌ Define AUDIT_EMAIL/AUDIT_PASSWORD o reutiliza PLAYWRIGHT_TEST_EMAIL/PLAYWRIGHT_TEST_PASSWORD antes de ejecutar el script de auditoría.');
+  process.exit(1);
+}
+
+const EMAIL = resolvedEmail;
+const PASSWORD = resolvedPassword;
 const OUTPUT_DIR = process.env.AUDIT_OUTPUT_DIR || '.playwright-mcp/audit-v3';
 
 const routes = [

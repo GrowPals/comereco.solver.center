@@ -1476,7 +1476,7 @@ ORDER BY approved_at DESC;
 ```bash
 # Variables de entorno (NO hardcodear)
 SUPABASE_DB_HOST=aws-1-us-east-2.pooler.supabase.com
-SUPABASE_DB_PASSWORD=VicmaBigez2405.
+SUPABASE_DB_PASSWORD=<SUPABASE_DB_PASSWORD>
 BIND_API_TOKEN=***
 SMTP_PASSWORD=***
 ```

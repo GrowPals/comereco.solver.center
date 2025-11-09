@@ -28,7 +28,6 @@ const CORE_COMPANIES = [
       fullName: 'Growpals Admin',
       role: 'dev',
       passwordEnv: 'CORE_PASSWORD_GROWPALS',
-      passwordFallback: 'growpals#2025!',
       platformAdmin: true,
     },
   },
@@ -39,7 +38,6 @@ const CORE_COMPANIES = [
       fullName: 'Carmen',
       role: 'admin',
       passwordEnv: 'CORE_PASSWORD_COMERECO',
-      passwordFallback: 'Comereco01#',
     },
   },
   {
@@ -49,7 +47,6 @@ const CORE_COMPANIES = [
       fullName: 'Alejandro Chavez',
       role: 'admin',
       passwordEnv: 'CORE_PASSWORD_MANNY',
-      passwordFallback: 'Tupartnermanny24!',
     },
   },
   {
@@ -59,17 +56,24 @@ const CORE_COMPANIES = [
       fullName: 'Luis Enrique',
       role: 'admin',
       passwordEnv: 'CORE_PASSWORD_SOLUCIONES',
-      passwordFallback: 'SOLUCIONES#2030!',
     },
   },
 ];
 
 const APP_ROLES = new Set(['admin', 'supervisor', 'user', 'dev']);
-const DEFAULT_INVITER_EMAIL = process.env.CORE_INVITER_EMAIL || 'team@growpals.mx';
+const DEFAULT_INVITER_EMAIL = process.env.CORE_INVITER_EMAIL;
+
+if (!DEFAULT_INVITER_EMAIL) {
+  console.error('⚠️  Define CORE_INVITER_EMAIL en tu .env con el correo del usuario invitador.');
+  process.exit(1);
+}
 
 const getPassword = (entry) => {
   const envValue = process.env[entry.passwordEnv];
-  return (envValue && envValue.trim()) || entry.passwordFallback;
+  if (!envValue || !envValue.trim()) {
+    throw new Error(`Falta la variable ${entry.passwordEnv} para ${entry.email}`);
+  }
+  return envValue.trim();
 };
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));

@@ -9,7 +9,7 @@ Archivo: `scripts/db/run_rls_checks.sql`
 
 ## Cómo ejecutarlo
 ```bash
-psql "postgresql://postgres.azjaehrdzdfgrumbqmuc:VicmaBigez2405.@aws-1-us-east-2.pooler.supabase.com:5432/postgres?sslmode=require" \
+psql "postgresql://postgres.azjaehrdzdfgrumbqmuc:$SUPABASE_DB_PASSWORD@aws-1-us-east-2.pooler.supabase.com:5432/postgres?sslmode=require" \
   -f scripts/db/run_rls_checks.sql
 ```
 
