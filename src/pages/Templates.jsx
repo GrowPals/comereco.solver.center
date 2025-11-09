@@ -34,7 +34,7 @@ import PageLoader from '@/components/PageLoader';
 import EmptyState from '@/components/EmptyState';
 import { useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
-import { es } from 'date-fns/locale';
+import es from 'date-fns/locale/es';
 import TemplateItemsEditor from '@/components/TemplateItemsEditor';
 import PageContainer from '@/components/layout/PageContainer';
 import { cn } from '@/lib/utils';

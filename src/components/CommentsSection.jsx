@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/components/ui/use-toast';
 import { Send, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
+import es from 'date-fns/locale/es';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const CommentsSection = memo(({ requisitionId, comments = [], onAddComment, onDeleteComment }) => {

@@ -2,7 +2,7 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, X, FileText, Package, User, Loader2 } from 'lucide-react';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger, PopoverAnchor } from '@/components/ui/popover';
 import { performGlobalSearch } from '@/services/searchService';
 import { useDebounce } from '@/hooks/useDebounce';
 import { cn } from '@/lib/utils';
@@ -94,6 +94,11 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
+        <button type="button" tabIndex={-1} aria-hidden="true" className="sr-only">
+          Alternar buscador global
+        </button>
+      </PopoverTrigger>
+      <PopoverAnchor asChild>
         <div className="relative flex-1">
           <Search className={cn(
             'pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground/80 transition-colors',
@@ -133,7 +138,7 @@ const GlobalSearch = ({ variant = 'desktop' }) => {
             </button>
           )}
         </div>
-      </PopoverTrigger>
+      </PopoverAnchor>
       <PopoverContent
         ref={popoverRef}
         className={cn(

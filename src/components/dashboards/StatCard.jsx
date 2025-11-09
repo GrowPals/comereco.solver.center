@@ -61,7 +61,7 @@ const StatCard = memo(({
             <CardContent className="relative z-10 flex flex-col justify-between p-4 sm:p-5 h-full">
                 <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1 space-y-1">
-                        <CardTitle className="caption text-[10px] tracking-[0.22em] text-muted-foreground">
+                        <CardTitle as="p" className="caption text-[10px] tracking-[0.22em] text-muted-foreground">
                             {title}
                         </CardTitle>
                         <div className="display-number leading-tight">

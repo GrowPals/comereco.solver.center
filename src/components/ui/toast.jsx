@@ -19,15 +19,20 @@ const ToastViewport = React.forwardRef(({ className, ...props }, ref) => (
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName;
 
 const toastVariants = cva(
-	'group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-4 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full data-[state=closed]:slide-out-to-right-full',
+	'group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-2xl border p-4 pr-8 shadow-xl shadow-black/10 backdrop-blur-md transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full data-[state=closed]:slide-out-to-right-full',
 	{
 		variants: {
 			variant: {
-				default: 'border bg-background text-foreground',
-                success: 'bg-success-light border-success text-success-dark',
-                info: 'bg-info-light border-info text-info-dark',
-				warning: 'bg-warning-light border-warning text-warning-dark',
-				destructive: 'bg-error-light border-error text-error-dark',
+				default:
+					'border-border/60 bg-white/90 text-foreground dark:border-white/10 dark:bg-[rgba(15,23,42,0.92)] dark:text-white/95',
+				success:
+					'border-emerald-200 bg-emerald-50 text-emerald-900 dark:border-emerald-500/40 dark:bg-emerald-500/15 dark:text-emerald-50',
+				info:
+					'border-sky-200 bg-sky-50 text-sky-900 dark:border-sky-400/40 dark:bg-sky-500/15 dark:text-sky-50',
+				warning:
+					'border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-400/40 dark:bg-amber-500/18 dark:text-amber-50',
+				destructive:
+					'border-rose-200 bg-rose-50 text-rose-900 dark:border-rose-500/40 dark:bg-rose-500/15 dark:text-rose-50',
 			},
 		},
 		defaultVariants: {

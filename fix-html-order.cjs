@@ -18,7 +18,7 @@ const path = require('path');
 
 const htmlPath = path.join(__dirname, 'dist', 'index.html');
 
-console.log('🔧 Post-Build: Fixing script loading order...\n');
+console.log('🔧 Post-Build: Skipping manual script reordering (handled by Vite)...');
 
 try {
     if (!fs.existsSync(htmlPath)) {
@@ -26,6 +26,9 @@ try {
         console.error('   Run "npm run build" first');
         process.exit(1);
     }
+
+    // Vite ya genera el orden correcto, no hacemos cambios manuales
+    process.exit(0);
 
     let html = fs.readFileSync(htmlPath, 'utf8');
 

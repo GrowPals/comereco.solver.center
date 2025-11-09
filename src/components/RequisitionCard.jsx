@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { format, parseISO } from 'date-fns';
-import { es } from 'date-fns/locale';
+import es from 'date-fns/locale/es';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Calendar, Hash, User, DollarSign, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';

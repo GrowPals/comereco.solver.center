@@ -465,47 +465,21 @@ export default defineConfig({
 		commonjsOptions: {
 			transformMixedEsModules: true,
 		},
-		rollupOptions: {
-			external: [
-				'@babel/parser',
-				'@babel/traverse',
-				'@babel/generator',
-				'@babel/types'
-			],
-			output: {
-				// Optimized chunking strategy
-				manualChunks: (id) => {
-					// Separate vendor chunks for better caching
-					if (id.includes('node_modules')) {
-						// React core in separate chunk
-						if (id.includes('react') || id.includes('react-dom')) {
-							return 'vendor-react';
-						}
-						// UI libraries
-						if (id.includes('@radix-ui') || id.includes('lucide-react')) {
-							return 'vendor-ui';
-						}
-						// Data libraries
-						if (id.includes('@tanstack') || id.includes('@supabase')) {
-							return 'vendor-data';
-						}
-						// Charts
-						if (id.includes('chart.js') || id.includes('react-chartjs')) {
-							return 'vendor-charts';
-						}
-						// Everything else
-						return 'vendor';
-					}
-				},
-				// Configuración de nombres de archivos
-				chunkFileNames: 'assets/[name]-[hash].js',
-				entryFileNames: 'assets/[name]-[hash].js',
-				assetFileNames: 'assets/[name]-[hash].[ext]',
-				chunkSizeWarningLimit: 1000,
-				// Prevenir code splitting problemático
-				inlineDynamicImports: false,
-			}
-		},
+			rollupOptions: {
+				external: [
+					'@babel/parser',
+					'@babel/traverse',
+					'@babel/generator',
+					'@babel/types'
+				],
+				output: {
+					chunkFileNames: 'assets/[name]-[hash].js',
+					entryFileNames: 'assets/[name]-[hash].js',
+					assetFileNames: 'assets/[name]-[hash].[ext]',
+					chunkSizeWarningLimit: 1000,
+					inlineDynamicImports: false,
+				}
+			},
 		chunkSizeWarningLimit: 1000
 	}
 });

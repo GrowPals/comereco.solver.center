@@ -19,7 +19,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
+import es from 'date-fns/locale/es';
 import { supabase } from '@/lib/customSupabaseClient';
 import PageLoader from '@/components/PageLoader';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
