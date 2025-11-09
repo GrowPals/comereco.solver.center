@@ -1,6 +1,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { getProducts, getProductById, getUniqueProductCategories } from '@/services/productService';
+import { isValidUUID } from '@/utils/validation';
 
 /**
  * Hook para obtener una lista paginada y filtrada de productos.
@@ -29,7 +30,7 @@ export const useProductDetails = (productId) => {
   return useQuery({
     queryKey: ['product', productId],
     queryFn: () => getProductById(productId),
-    enabled: !!productId, // Solo ejecuta la query si productId no es nulo
+    enabled: !!productId && isValidUUID(productId), // Solo ejecuta la query si productId es un UUID válido
     staleTime: 1000 * 60 * 15, // 15 minutos - detalles cambian poco
     gcTime: 1000 * 60 * 30,
   });

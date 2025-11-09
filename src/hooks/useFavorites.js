@@ -2,7 +2,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { supabase } from '@/lib/customSupabaseClient';
-import { useToast } from '@/components/ui/useToast';
+import { useToast } from '@/components/ui/use-toast';
 import logger from '@/utils/logger';
 
 

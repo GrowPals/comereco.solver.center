@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { RestockRuleForm } from '@/components/inventory/RestockRuleForm';
 import { useRestockRuleMutations } from '@/hooks/useRestockRules';
-import { useToast } from '@/components/ui/useToast';
+import { useToast } from '@/components/ui/use-toast';
 import { PauseCircle, PlayCircle, PencilLine, Trash2, ExternalLink, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 

@@ -14,7 +14,7 @@ import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import PageContainer from '@/components/layout/PageContainer';
-import { useToast } from '@/components/ui/useToast';
+import { useToast } from '@/components/ui/use-toast';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { createTemplate } from '@/services/templateService';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';

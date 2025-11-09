@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useToastNotification } from '@/components/ui/toast-notification';
+import { useToast } from '@/components/ui/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import PageContainer from '@/components/layout/PageContainer';
@@ -47,12 +47,16 @@ const SettingsCard = ({ title, description, children, onSave, isSaving }) => (
 const SettingsPage = () => {
     const [activeTab, setActiveTab] = useState('general');
     const [isSaving, setIsSaving] = useState(false);
-    const toast = useToastNotification();
+    const { toast } = useToast();
 
     const handleSave = (section) => {
         setIsSaving(true);
         setTimeout(() => {
-            toast.success('Configuración Guardada', `Tus preferencias de ${section} han sido actualizadas.`);
+            toast({
+                title: 'Configuración Guardada',
+                description: `Tus preferencias de ${section} han sido actualizadas.`,
+                variant: 'success',
+            });
             setIsSaving(false);
         }, 1000);
     };

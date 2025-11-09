@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { RequisitionProvider, useRequisition } from '@/context/RequisitionContext';
 import { createRequisition } from '@/services/requisitionService';
 import { createTemplate } from '@/services/templateService';
-import { useToast } from '@/components/ui/useToast';
+import { useToast } from '@/components/ui/use-toast';
 import { useCart } from '@/context/CartContext';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';

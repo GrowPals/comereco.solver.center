@@ -31,7 +31,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import logger from '@/utils/logger';
-import { useToast } from '@/components/ui/useToast';
+import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 import { formatNumber } from '@/lib/formatters';
 import { StatIcon, SectionIcon } from '@/components/ui/icon-wrapper';

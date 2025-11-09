@@ -40,7 +40,7 @@ import PageContainer from '@/components/layout/PageContainer';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { fetchUsersInCompany, inviteUser, updateUserProfile, toggleUserStatus, deleteUser, isApprovalBypassSupported, isProfileEmailSupported } from '@/services/userService';
-import { useToast } from '@/components/ui/useToast';
+import { useToast } from '@/components/ui/use-toast';
 import PageLoader from '@/components/PageLoader';
 import { getAvatarGradient, getInitials } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';

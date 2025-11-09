@@ -10,7 +10,7 @@ import { RippleButton } from '@/components/ui/ripple-button';
 import { FloatingInput } from '@/components/ui/floating-input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { useToastNotification } from '@/components/ui/toast-notification';
+import { useToast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import logger from '@/utils/logger';
@@ -27,7 +27,7 @@ const LoginPage = () => {
     const { signIn, session } = useSupabaseAuth();
     const navigate = useNavigate();
     const location = useLocation();
-    const toast = useToastNotification();
+    const { toast } = useToast();
     const from = location.state?.from?.pathname || "/dashboard";
 
     const [isLoading, setIsLoading] = useState(false);
@@ -56,7 +56,10 @@ const LoginPage = () => {
                 handleRememberChange(formData.remember);
                 await new Promise(resolve => setTimeout(resolve, 100));
 
-                toast.success('¡Bienvenido de vuelta!', 'Has iniciado sesión correctamente.');
+                toast({
+                    title: '¡Bienvenido de vuelta!',
+                    description: 'Has iniciado sesión correctamente.',
+                });
             } else {
                 const errorMessage = error.message?.includes('Invalid login credentials')
                   ? 'Email o contraseña incorrectos.'
@@ -64,7 +67,11 @@ const LoginPage = () => {
                 setAuthError(errorMessage);
                 setIsShaking(true);
                 setTimeout(() => setIsShaking(false), 500);
-                toast.error('Error al iniciar sesión', errorMessage);
+                toast({
+                    title: 'Error al iniciar sesión',
+                    description: errorMessage,
+                    variant: 'destructive',
+                });
             }
         } catch (err) {
             logger.error('Error during login:', err);
@@ -96,12 +103,20 @@ const LoginPage = () => {
         e.preventDefault();
 
         if (!resetEmail || !resetEmail.trim()) {
-            toast.error('Email requerido', 'Por favor ingresa tu email');
+            toast({
+                title: 'Email requerido',
+                description: 'Por favor ingresa tu email',
+                variant: 'destructive',
+            });
             return;
         }
 
         if (!resetEmail.match(/^\S+@\S+$/i)) {
-            toast.error('Email inválido', 'Por favor ingresa un email válido');
+            toast({
+                title: 'Email inválido',
+                description: 'Por favor ingresa un email válido',
+                variant: 'destructive',
+            });
             return;
         }
 
@@ -116,18 +131,19 @@ const LoginPage = () => {
                 throw error;
             }
 
-            toast.success(
-                'Email enviado',
-                'Revisa tu bandeja de entrada para restablecer tu contraseña'
-            );
+            toast({
+                title: 'Email enviado',
+                description: 'Revisa tu bandeja de entrada para restablecer tu contraseña',
+            });
             setShowResetDialog(false);
             setResetEmail('');
         } catch (error) {
             logger.error('Error sending reset email:', error);
-            toast.error(
-                'Error al enviar email',
-                error.message || 'No se pudo enviar el email de recuperación'
-            );
+            toast({
+                title: 'Error al enviar email',
+                description: error.message || 'No se pudo enviar el email de recuperación',
+                variant: 'destructive',
+            });
         } finally {
             setIsResetting(false);
         }

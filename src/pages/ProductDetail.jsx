@@ -30,9 +30,15 @@ import { cn } from '@/lib/utils';
 import { formatPrice } from '@/lib/formatters';
 import logger from '@/utils/logger';
 import { PAGINATION } from '@/constants/config';
+import { isValidUUID } from '@/utils/validation';
+import { useQueryClient } from '@tanstack/react-query';
 
 // Función para obtener producto por ID
 const fetchProductById = async (productId, companyId) => {
+  // Validar UUID antes de hacer la query
+  if (!isValidUUID(productId)) {
+    throw new Error('ID de producto inválido');
+  }
   let query = supabase
     .from('products')
     .select('*')
@@ -67,6 +73,17 @@ const fetchProductById = async (productId, companyId) => {
 
 // Función para obtener productos relacionados
 const fetchRelatedProducts = async (categoryId, currentProductId, companyId, limit = PAGINATION.RELATED_PRODUCTS_LIMIT) => {
+  // Validar UUID antes de hacer la query
+  if (currentProductId && !isValidUUID(currentProductId)) {
+    logger.warn('Invalid product ID format in fetchRelatedProducts:', currentProductId);
+    return [];
+  }
+
+  if (!companyId || !isValidUUID(companyId)) {
+    logger.warn('Invalid company ID format in fetchRelatedProducts:', companyId);
+    return [];
+  }
+
   // Primero intentar por categoría
   let query = supabase
     .from('products')
@@ -102,6 +119,17 @@ const fetchRelatedProducts = async (categoryId, currentProductId, companyId, lim
 
 // Función para obtener historial de pedidos
 const fetchProductHistory = async (productId, userId) => {
+  // Validar UUID antes de hacer la query
+  if (!isValidUUID(productId)) {
+    logger.warn('Invalid product ID format in fetchProductHistory:', productId);
+    return null;
+  }
+
+  if (!userId || !isValidUUID(userId)) {
+    logger.warn('Invalid user ID format in fetchProductHistory:', userId);
+    return null;
+  }
+
   try {
     // Consulta directa (RPC function no existe en el schema actual)
     const { data, error } = await supabase
@@ -116,7 +144,7 @@ const fetchProductHistory = async (productId, userId) => {
       `)
       .eq('product_id', productId)
       .eq('requisitions.created_by', userId)
-      .in('requisitions.business_status', ['approved', 'delivered', 'completed'])
+      .in('requisitions.business_status', ['approved', 'ordered', 'completed'])
       .order('requisitions(created_at)', { ascending: false })
       .limit(PAGINATION.PRODUCT_HISTORY_LIMIT);
 
@@ -193,10 +221,21 @@ export default function ProductDetail() {
   const { user } = useSupabaseAuth();
   const { items: cart, addToCart, updateQuantity, removeFromCart } = useCart();
   const { favorites, toggleFavorite } = useFavorites();
+  const queryClient = useQueryClient();
 
   const [quantity, setQuantity] = useState(1);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [showAddedFeedback, setShowAddedFeedback] = useState(false);
+
+  // Limpiar caché de React Query si el ID es inválido
+  useEffect(() => {
+    if (id && !isValidUUID(id)) {
+      // Limpiar cualquier caché relacionada con este ID inválido
+      queryClient.removeQueries({ queryKey: ['product', id] });
+      queryClient.removeQueries({ queryKey: ['related-products', undefined, id] });
+      queryClient.removeQueries({ queryKey: ['product-history', id] });
+    }
+  }, [id, queryClient]);
 
   // Query para obtener el producto
   const {
@@ -206,25 +245,46 @@ export default function ProductDetail() {
   } = useQuery({
     queryKey: ['product', id, user?.company_id],
     queryFn: () => fetchProductById(id, user?.company_id),
-    enabled: !!user?.company_id && !!id,
+    enabled: !!user?.company_id && !!id && isValidUUID(id), // Solo ejecutar si el ID es un UUID válido
     staleTime: 5 * 60 * 1000,
+    retry: false, // No reintentar si falla (evita queries con IDs inválidos)
   });
 
   // Query para productos relacionados
   const { data: relatedProducts } = useQuery({
     queryKey: ['related-products', product?.category_id, id, user?.company_id],
     queryFn: () => fetchRelatedProducts(product?.category_id, id, user?.company_id),
-    enabled: !!product && !!user?.company_id,
+    enabled: !!product && !!user?.company_id && isValidUUID(id),
     staleTime: 10 * 60 * 1000,
+    retry: false, // No reintentar si falla
   });
 
   // Query para historial
   const { data: orderHistory } = useQuery({
     queryKey: ['product-history', id, user?.id],
     queryFn: () => fetchProductHistory(id, user?.id),
-    enabled: !!user?.id && !!id,
+    enabled: !!user?.id && !!id && isValidUUID(id),
     staleTime: 5 * 60 * 1000,
+    retry: false, // No reintentar si falla
   });
+
+  // Validar ID antes de continuar
+  if (id && !isValidUUID(id)) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <AlertCircle className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+          <h1 className="text-2xl font-bold mb-2">Producto no encontrado</h1>
+          <p className="text-muted-foreground mb-4">
+            El ID del producto no es válido. Por favor, accede al producto desde el catálogo.
+          </p>
+          <Button onClick={() => navigate('/catalog')}>
+            Volver al Catálogo
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   // Obtener cantidad actual en el carrito
   const cartItem = useMemo(() => {

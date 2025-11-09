@@ -3,6 +3,7 @@ import { supabase } from '@/lib/customSupabaseClient';
 import { getCachedSession, ensureScopedCompanyId, getScopedCompanyId } from '@/lib/supabaseHelpers';
 import { formatErrorMessage } from '@/utils/errorHandler';
 import logger from '@/utils/logger';
+import { isValidUUID } from '@/utils/validation';
 
 /**
  * CORREGIDO: Respeta el Company Scope seleccionado (empresa específica o vista global para devs)
@@ -73,6 +74,12 @@ export const fetchProducts = async ({ pageParam = 0, searchTerm = '', category =
 };
 
 export const fetchProductById = async (productId) => {
+    // Validar UUID antes de hacer la query
+    if (!isValidUUID(productId)) {
+        logger.warn('Invalid product ID format:', productId);
+        throw new Error('ID de producto inválido. Por favor, accede al producto desde el catálogo.');
+    }
+
     // Validar sesión antes de hacer queries (usando cache)
     const { session, error: sessionError } = await getCachedSession();
     if (sessionError || !session) {

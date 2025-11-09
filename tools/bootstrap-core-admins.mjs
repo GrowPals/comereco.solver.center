@@ -65,6 +65,7 @@ const CORE_COMPANIES = [
 ];
 
 const APP_ROLES = new Set(['admin', 'supervisor', 'user', 'dev']);
+const DEFAULT_INVITER_EMAIL = process.env.CORE_INVITER_EMAIL || 'team@growpals.mx';
 
 const getPassword = (entry) => {
   const envValue = process.env[entry.passwordEnv];
@@ -118,7 +119,40 @@ async function ensureCompany(name) {
   return insertData.id;
 }
 
-async function ensureUser(companyId, adminConfig) {
+async function ensureInvitation(invitedById, companyId, email, role) {
+  if (!invitedById) {
+    const inviter = await findUserByEmail(DEFAULT_INVITER_EMAIL);
+    invitedById = inviter?.id;
+  }
+
+  if (!invitedById) {
+    throw new Error('No se encontró un usuario válido para registrar invitaciones');
+  }
+
+  const normalizedEmail = email.toLowerCase();
+
+  await app
+    .from('user_invitations')
+    .delete()
+    .eq('company_id', companyId)
+    .eq('status', 'pending')
+    .eq('email', normalizedEmail);
+
+  const { error } = await app
+    .from('user_invitations')
+    .insert({
+      email: normalizedEmail,
+      company_id: companyId,
+      role,
+      invited_by: invitedById,
+    });
+
+  if (error && !error.message?.includes('user_invitations_pending_unique')) {
+    throw error;
+  }
+}
+
+async function ensureUser(companyId, adminConfig, inviterUserId) {
   const { email, fullName, role, platformAdmin } = adminConfig;
   if (!APP_ROLES.has(role)) {
     throw new Error(`Rol inválido para ${email}: ${role}`);
@@ -149,7 +183,17 @@ async function ensureUser(companyId, adminConfig) {
         cause: error?.cause,
         raw: error,
       });
-      if (error.message?.toLowerCase().includes('already registered')) {
+      const needsInvite = error.message?.toLowerCase().includes('invitation');
+      const alreadyRegistered = error.message?.toLowerCase().includes('already registered');
+      if (needsInvite) {
+        console.log(`⚠️  Proyecto requiere invitación previa. Generando invite para ${email}`);
+        await ensureInvitation(inviterUserId, companyId, email, role);
+        const { data: inviteData, error: inviteError } = await app.auth.admin.inviteUserByEmail(email);
+        if (inviteError && !inviteError.message?.toLowerCase().includes('already registered')) {
+          throw inviteError;
+        }
+        user = inviteData?.user || await findUserByEmail(email);
+      } else if (alreadyRegistered) {
         user = await findUserByEmail(email);
       } else {
         throw error;
@@ -231,10 +275,14 @@ async function ensureUser(companyId, adminConfig) {
 
 async function main() {
   const summary = [];
+  let inviterUserId = null;
   for (const company of CORE_COMPANIES) {
     const companyId = await ensureCompany(company.name);
     try {
-      const userId = await ensureUser(companyId, company.admin);
+      const userId = await ensureUser(companyId, company.admin, inviterUserId);
+      if (company.admin.email.toLowerCase() === DEFAULT_INVITER_EMAIL.toLowerCase()) {
+        inviterUserId = userId;
+      }
       summary.push({ company: company.name, admin: company.admin.email, role: company.admin.role, userId });
     } catch (error) {
       console.error('Failed ensuring user', {

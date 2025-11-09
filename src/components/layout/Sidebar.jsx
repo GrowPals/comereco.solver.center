@@ -5,7 +5,7 @@ import { Home, List, FolderKanban, Users, ShoppingBag, BarChart, CheckSquare, Se
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useToast } from '@/components/ui/useToast';
+import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 import { ROUTES } from '@/config/routes.config';
 

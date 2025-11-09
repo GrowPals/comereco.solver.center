@@ -15,9 +15,10 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
-import { useToast } from '@/components/ui/useToast';
+import { useToast } from '@/components/ui/use-toast';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import PageLoader from '@/components/PageLoader';
@@ -217,20 +218,32 @@ const NotificationsPage = () => {
                                     </SelectContent>
                                 </Select>
                             </div>
-                            <div className="flex flex-col gap-2 border-t border-border pt-3 sm:border-none sm:pt-0 sm:flex-row sm:items-center">
-                                <Button
-                                    variant="ghost"
-                                    onClick={() => setFilters({ query: '', type: 'all' })}
-                                    className="w-full justify-center rounded-xl border border-transparent hover:border-border sm:w-auto dark:hover:border-border"
-                                >
-                                    <X className="mr-2 h-4 w-4" />Limpiar
-                                </Button>
+                            <div className="flex w-full items-center gap-3 border-t border-border pt-4 sm:w-auto sm:border-none sm:pt-0">
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button
+                                                variant="outline"
+                                                size="icon"
+                                                onClick={() => setFilters({ query: '', type: 'all' })}
+                                                className="h-11 w-11 shrink-0 rounded-xl"
+                                            >
+                                                <X className="h-5 w-5" />
+                                                <span className="sr-only">Limpiar filtros</span>
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>Limpiar filtros</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
                                  <Button
                                     onClick={() => confirmAction('markAllRead', allNotifications.filter(n => !n.is_read).map(n => n.id))}
                                     disabled={unreadCount === 0}
-                                    className="w-full rounded-xl sm:w-auto"
+                                    className="w-full rounded-xl"
                                 >
-                                    <CheckCheck className="mr-2 h-5 w-5" /> Marcar todo como leído
+                                    <CheckCheck className="mr-2 h-5 w-5" />
+                                    Marcar leídas
                                 </Button>
                             </div>
                         </div>

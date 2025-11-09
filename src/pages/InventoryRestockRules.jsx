@@ -25,7 +25,7 @@ import { cn } from '@/lib/utils';
 import { IconWrapper } from '@/components/ui/icon-wrapper';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useToast } from '@/components/ui/useToast';
+import { useToast } from '@/components/ui/use-toast';
 import { RestockRuleForm } from '@/components/inventory/RestockRuleForm';
 import { formatNumber } from '@/lib/formatters';
 import { SectionIcon } from '@/components/ui/icon-wrapper';

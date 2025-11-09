@@ -5,7 +5,7 @@ import { ArrowLeft, Check, X, Send, FileText, MessageSquare, FolderOpen, CheckCi
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/components/ui/useToast';
+import { useToast } from '@/components/ui/use-toast';
 import {
   Dialog,
   DialogContent,

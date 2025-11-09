@@ -1,6 +1,7 @@
 import path from 'node:path';
 import react from '@vitejs/plugin-react';
 import { createLogger, defineConfig } from 'vite';
+import { VitePWA } from 'vite-plugin-pwa';
 import inlineEditPlugin from './plugins/visual-editor/vite-plugin-react-inline-editor.js';
 import editModeDevPlugin from './plugins/visual-editor/vite-plugin-edit-mode.js';
 import iframeRouteRestorationPlugin from './plugins/vite-plugin-iframe-route-restoration.js';
@@ -242,6 +243,174 @@ export default defineConfig({
 			babel: {
 				plugins: [],
 				presets: [],
+			},
+		}),
+		VitePWA({
+			registerType: 'autoUpdate',
+			includeAssets: [
+				'logo.png',
+				'pwa-icon-192.png',
+				'pwa-icon-512.png',
+				'placeholder.svg',
+				'placeholder-dark.svg',
+				'robots.txt',
+				'sitemap.xml',
+				'browserconfig.xml',
+				'offline.html'
+			],
+			manifest: {
+				name: 'ComerECO - Sistema de Requisiciones',
+				short_name: 'ComerECO',
+				description: 'Sistema web interno para la gestión de requisiciones y compras del Grupo Solven. Gestiona pedidos, aprobaciones y catálogo de productos desde cualquier dispositivo.',
+				theme_color: '#10b981',
+				background_color: '#050816',
+				display: 'standalone',
+				orientation: 'portrait-primary',
+				lang: 'es-MX',
+				dir: 'ltr',
+				scope: '/',
+				start_url: '/',
+				categories: ['productivity', 'business', 'finance'],
+				icons: [
+					{
+						src: '/pwa-icon-192.png',
+						sizes: '192x192',
+						type: 'image/png',
+						purpose: 'any maskable'
+					},
+					{
+						src: '/pwa-icon-512.png',
+						sizes: '512x512',
+						type: 'image/png',
+						purpose: 'any maskable'
+					}
+				],
+				shortcuts: [
+					{
+						name: 'Nueva Requisición',
+						short_name: 'Nueva',
+						description: 'Crear una nueva requisición de compra',
+						url: '/requisitions/new',
+						icons: [{ src: '/pwa-icon-192.png', sizes: '192x192' }]
+					},
+					{
+						name: 'Catálogo',
+						short_name: 'Catálogo',
+						description: 'Explorar catálogo de productos',
+						url: '/catalog',
+						icons: [{ src: '/pwa-icon-192.png', sizes: '192x192' }]
+					},
+					{
+						name: 'Aprobaciones',
+						short_name: 'Aprobar',
+						description: 'Revisar aprobaciones pendientes',
+						url: '/approvals',
+						icons: [{ src: '/pwa-icon-192.png', sizes: '192x192' }]
+					},
+					{
+						name: 'Reportes',
+						short_name: 'Reportes',
+						description: 'Ver reportes estratégicos y métricas',
+						url: '/reports',
+						icons: [{ src: '/pwa-icon-192.png', sizes: '192x192' }]
+					}
+				]
+			},
+			workbox: {
+				globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest,woff,woff2,ttf,eot}'],
+				// Estrategia de caché para rutas SPA - CacheFirst para mejor performance
+				navigateFallback: '/index.html',
+				navigateFallbackDenylist: [/^\/api/, /^\/_/, /^\/admin/],
+				// Fallback offline
+				navigateFallbackAllowlist: [/^(?!\/__).*/],
+				// Runtime caching strategies
+				runtimeCaching: [
+					// API de Supabase - NetworkFirst con fallback a caché
+					{
+						urlPattern: /^https:\/\/azjaehrdzdfgrumbqmuc\.supabase\.co\/.*/i,
+						handler: 'NetworkFirst',
+						options: {
+							cacheName: 'supabase-api-cache',
+							expiration: {
+								maxEntries: 100,
+								maxAgeSeconds: 60 * 60 * 24, // 24 hours
+							},
+							networkTimeoutSeconds: 10,
+							cacheableResponse: {
+								statuses: [0, 200],
+							},
+						},
+					},
+					// Assets estáticos - CacheFirst para máxima velocidad
+					{
+						urlPattern: /\.(?:js|css|woff2?|ttf|eot)$/,
+						handler: 'CacheFirst',
+						options: {
+							cacheName: 'static-assets-cache',
+							expiration: {
+								maxEntries: 200,
+								maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+							},
+							cacheableResponse: {
+								statuses: [0, 200],
+							},
+						},
+					},
+					// Imágenes - StaleWhileRevalidate para balance
+					{
+						urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/,
+						handler: 'StaleWhileRevalidate',
+						options: {
+							cacheName: 'images-cache',
+							expiration: {
+								maxEntries: 100,
+								maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+							},
+							cacheableResponse: {
+								statuses: [0, 200],
+							},
+						},
+					},
+					// HTML y rutas - NetworkFirst para siempre tener la última versión
+					{
+						urlPattern: /\.(?:html)$/,
+						handler: 'NetworkFirst',
+						options: {
+							cacheName: 'html-cache',
+							expiration: {
+								maxEntries: 50,
+								maxAgeSeconds: 60 * 60 * 24, // 24 hours
+							},
+							networkTimeoutSeconds: 5,
+						},
+					},
+					// Rutas de la aplicación - NetworkFirst con fallback offline
+					{
+						urlPattern: ({ request }) => request.mode === 'navigate',
+						handler: 'NetworkFirst',
+						options: {
+							cacheName: 'pages-cache',
+							expiration: {
+								maxEntries: 50,
+								maxAgeSeconds: 60 * 60 * 24, // 24 hours
+							},
+							networkTimeoutSeconds: 5,
+						},
+					},
+				],
+				// Limpiar cachés antiguos automáticamente
+				cleanupOutdatedCaches: true,
+				// Skip waiting para actualizaciones inmediatas
+				skipWaiting: true,
+				clientsClaim: true,
+			},
+			devOptions: {
+				enabled: false,
+				type: 'module',
+			},
+			// Inyectar el manifest en el HTML
+			injectManifest: {
+				globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
 			},
 		}),
 		addTransformIndexHtml

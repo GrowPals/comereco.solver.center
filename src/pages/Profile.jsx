@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { FloatingLabelInput } from '@/components/ui/floating-label-input';
-import { useToastNotification } from '@/components/ui/toast-notification';
+import { useToast } from '@/components/ui/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/lib/customSupabaseClient';
 import { updateUserProfile } from '@/services/userService';
@@ -80,7 +80,7 @@ const MobileProfileInfoRow = ({ icon: Icon, label, value, placeholder, editable 
 
 const ProfilePage = () => {
   const { user, loading: authLoading, refreshUserProfile } = useSupabaseAuth();
-  const toast = useToastNotification();
+  const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({ full_name: '', phone: '' });
   const [stats, setStats] = useState({ created: 0, approved: 0 });
@@ -147,7 +147,11 @@ const ProfilePage = () => {
       setRecentRequisitions(enrichedRequisitions.filter(r => r.created_by === user.id).slice(0, 3));
     } catch (error) {
       logger.error('Failed to load profile data:', error);
-      toast.error('Error', 'No se pudieron cargar los datos del perfil.');
+      toast({
+        title: 'Error al cargar datos',
+        description: 'No se pudieron cargar los datos del perfil.',
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }
@@ -176,10 +180,18 @@ const ProfilePage = () => {
       if (typeof refreshUserProfile === 'function') {
         await refreshUserProfile();
       }
-      toast.success('Éxito', 'Tu foto de perfil se actualizó correctamente.');
+      toast({
+        title: 'Éxito',
+        description: 'Tu foto de perfil se actualizó correctamente.',
+        variant: 'success',
+      });
     } catch (error) {
       logger.error('Error uploading avatar:', error);
-      toast.error('Error', error.message || 'No se pudo actualizar tu foto de perfil.');
+      toast({
+        title: 'Error',
+        description: error.message || 'No se pudo actualizar tu foto de perfil.',
+        variant: 'destructive',
+      });
     } finally {
       setIsUploadingAvatar(false);
       if (event.target) {
@@ -197,10 +209,18 @@ const ProfilePage = () => {
       if (typeof refreshUserProfile === 'function') {
         await refreshUserProfile();
       }
-      toast.success('Éxito', 'Se eliminó tu foto de perfil.');
+      toast({
+        title: 'Éxito',
+        description: 'Se eliminó tu foto de perfil.',
+        variant: 'success',
+      });
     } catch (error) {
       logger.error('Error removing avatar:', error);
-      toast.error('Error', error.message || 'No se pudo eliminar tu foto de perfil.');
+      toast({
+        title: 'Error',
+        description: error.message || 'No se pudo eliminar tu foto de perfil.',
+        variant: 'destructive',
+      });
     } finally {
       setIsUploadingAvatar(false);
     }
@@ -222,13 +242,21 @@ const ProfilePage = () => {
 
       await updateUserProfile(user.id, updateData);
 
-      toast.success('Éxito', 'Tu perfil ha sido actualizado correctamente.');
+      toast({
+        title: 'Éxito',
+        description: 'Tu perfil ha sido actualizado correctamente.',
+        variant: 'success',
+      });
       setIsEditing(false);
 
       await loadProfileData();
     } catch (error) {
       logger.error('Error updating profile:', error);
-      toast.error('Error', error.message || 'No se pudo actualizar tu perfil.');
+      toast({
+        title: 'Error',
+        description: error.message || 'No se pudo actualizar tu perfil.',
+        variant: 'destructive',
+      });
     } finally {
       setIsSaving(false);
     }

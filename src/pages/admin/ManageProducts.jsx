@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { PlusCircle, MoreHorizontal, Edit, ToggleLeft, ToggleRight, ShoppingBag, Trash2, Upload, X, Image as ImageIcon, ArrowUpDown, ArrowUp, ArrowDown, Copy } from 'lucide-react';
 import OptimizedImage from '@/components/OptimizedImage';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/useToast';
+import { useToast } from '@/components/ui/use-toast';
 import PageLoader from '@/components/PageLoader';
 import PageContainer from '@/components/layout/PageContainer';
 import EmptyState from '@/components/EmptyState';

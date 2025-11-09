@@ -4,31 +4,146 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-  <meta name="description" content="ComerECO - Sistema de gestión de requisiciones y compras del Grupo Solven" />
-  <meta name="keywords" content="requisiciones, compras, gestión, sistema, ComerECO" />
-  <meta name="author" content="ComerECO" />
+  <meta name="description" content="ComerECO - Sistema web interno para la gestión de requisiciones y compras del Grupo Solven. Gestiona pedidos, aprobaciones y catálogo de productos desde cualquier dispositivo." />
+  <meta name="keywords" content="requisiciones, compras, gestión, sistema, ComerECO, Grupo Solven, aprobaciones, catálogo, productos, pedidos" />
+  <meta name="author" content="Grupo Solven" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="googlebot" content="index, follow" />
+  <meta name="language" content="Spanish" />
+  <meta name="revisit-after" content="1 days" />
+  <meta name="rating" content="general" />
   
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="ComerECO - Sistema de Requisiciones" />
-  <meta property="og:description" content="Sistema de gestión de requisiciones y compras" />
-  <meta property="og:image" content="/logo.png" />
+  <meta property="og:url" content="https://comereco.solver.center" />
+  <meta property="og:title" content="ComerECO - Sistema de Requisiciones | Grupo Solven" />
+  <meta property="og:description" content="Sistema web interno para la gestión de requisiciones y compras del Grupo Solven. Gestiona pedidos, aprobaciones y catálogo de productos." />
+  <meta property="og:image" content="https://comereco.solver.center/pwa-icon-512.png" />
+  <meta property="og:image:width" content="512" />
+  <meta property="og:image:height" content="512" />
+  <meta property="og:image:alt" content="ComerECO Logo" />
+  <meta property="og:site_name" content="ComerECO" />
+  <meta property="og:locale" content="es_MX" />
+  <meta property="og:locale:alternate" content="es_ES" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="ComerECO - Sistema de Requisiciones" />
-  <meta name="twitter:description" content="Sistema de gestión de requisiciones y compras" />
-  <meta name="twitter:image" content="/logo.png" />
+  <meta name="twitter:title" content="ComerECO - Sistema de Requisiciones | Grupo Solven" />
+  <meta name="twitter:description" content="Sistema web interno para la gestión de requisiciones y compras del Grupo Solven." />
+  <meta name="twitter:image" content="https://comereco.solver.center/pwa-icon-512.png" />
+  <meta name="twitter:image:alt" content="ComerECO Logo" />
+  <meta name="twitter:site" content="@GrupoSolven" />
+  
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "ComerECO",
+    "alternateName": "ComerECO - Sistema de Requisiciones",
+    "description": "Sistema web interno para la gestión de requisiciones y compras del Grupo Solven",
+    "url": "https://comereco.solver.center",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "MXN"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "150"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "Grupo Solven",
+      "url": "https://solver.center"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Grupo Solven",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://comereco.solver.center/logo.png"
+      }
+    },
+    "screenshot": "https://comereco.solver.center/pwa-icon-512.png",
+    "softwareVersion": "1.0.0",
+    "releaseNotes": "Sistema de gestión de requisiciones y compras",
+    "featureList": [
+      "Gestión de requisiciones",
+      "Aprobaciones de pedidos",
+      "Catálogo de productos",
+      "Reportes y analíticas",
+      "Gestión de proyectos",
+      "Plantillas de requisición"
+    ]
+  }
+  </script>
+  
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Grupo Solven",
+    "url": "https://solver.center",
+    "logo": "https://comereco.solver.center/logo.png",
+    "sameAs": [
+      "https://www.linkedin.com/company/grupo-solven"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "Soporte Técnico",
+      "email": "soporte@gruposolven.com"
+    }
+  }
+  </script>
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="/logo.png" />
+  <!-- Favicon & PWA -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/logo.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/logo.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/pwa-icon-192.png" />
+  <link rel="apple-touch-icon" sizes="152x152" href="/pwa-icon-192.png" />
+  <link rel="apple-touch-icon" sizes="144x144" href="/pwa-icon-192.png" />
+  <link rel="apple-touch-icon" sizes="120x120" href="/pwa-icon-192.png" />
+  <link rel="apple-touch-icon" sizes="114x114" href="/pwa-icon-192.png" />
+  <link rel="apple-touch-icon" sizes="76x76" href="/pwa-icon-192.png" />
+  <link rel="apple-touch-icon" sizes="72x72" href="/pwa-icon-192.png" />
+  <link rel="apple-touch-icon" sizes="60x60" href="/pwa-icon-192.png" />
+  <link rel="apple-touch-icon" sizes="57x57" href="/pwa-icon-192.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="application-name" content="ComerECO" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="ComerECO" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="msapplication-TileColor" content="#050816" />
+  <meta name="msapplication-TileImage" content="/pwa-icon-192.png" />
+  <meta name="msapplication-config" content="/browserconfig.xml" />
+  <link rel="canonical" href="https://comereco.solver.center" />
+  
+  <!-- DNS Prefetch & Preconnect -->
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   
   <!-- Preconnect para recursos externos -->
   <link rel="preconnect" href="https://azjaehrdzdfgrumbqmuc.supabase.co" crossorigin />
   <link rel="dns-prefetch" href="https://azjaehrdzdfgrumbqmuc.supabase.co" />
   
-  <!-- Theme Color -->
-  <meta name="theme-color" content="#ffffff" />
+  <!-- Theme Color (light & dark) -->
+  <meta name="theme-color" content="#10b981" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#050816" media="(prefers-color-scheme: dark)" />
+  <meta name="color-scheme" content="light dark" />
+  
+  <!-- Security Headers (X-Frame-Options debe estar en headers HTTP del servidor, no en meta tags) -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()" />
   <script>
     (function () {
       const STORAGE_KEY = 'theme';

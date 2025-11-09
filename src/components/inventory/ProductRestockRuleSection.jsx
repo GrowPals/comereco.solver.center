@@ -9,7 +9,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { RestockRuleForm } from '@/components/inventory/RestockRuleForm';
 import { useRestockRule, useRestockRuleMutations } from '@/hooks/useRestockRules';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
-import { useToast } from '@/components/ui/useToast';
+import { useToast } from '@/components/ui/use-toast';
 import { getAllProjects } from '@/services/projectService';
 import { cn } from '@/lib/utils';
 import { formatNumber } from '@/lib/formatters';

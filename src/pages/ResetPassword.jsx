@@ -7,14 +7,14 @@ import { Lock, Eye, EyeOff, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { supabase } from '@/lib/customSupabaseClient';
 import { RippleButton } from '@/components/ui/ripple-button';
 import { FloatingInput } from '@/components/ui/floating-input';
-import { useToastNotification } from '@/components/ui/toast-notification';
+import { useToast } from '@/components/ui/use-toast';
 import logger from '@/utils/logger';
 import { cn } from '@/lib/utils';
 
 const ResetPassword = () => {
     const { register, handleSubmit, formState: { errors }, watch } = useForm();
     const navigate = useNavigate();
-    const toast = useToastNotification();
+    const { toast } = useToast();
     const [searchParams] = useSearchParams();
 
     const [isLoading, setIsLoading] = useState(false);
@@ -33,10 +33,11 @@ const ResetPassword = () => {
         const type = hashParams.get('type');
 
         if (!accessToken || type !== 'recovery') {
-            toast.error(
-                'Enlace inválido',
-                'El enlace de recuperación no es válido o ha expirado'
-            );
+            toast({
+                title: 'Enlace inválido',
+                description: 'El enlace de recuperación no es válido o ha expirado',
+                variant: 'destructive',
+            });
             setTimeout(() => navigate('/login'), 3000);
         }
     }, [navigate, toast]);
@@ -55,10 +56,11 @@ const ResetPassword = () => {
             }
 
             setIsSuccess(true);
-            toast.success(
-                'Contraseña actualizada',
-                'Tu contraseña ha sido cambiada exitosamente'
-            );
+            toast({
+                title: 'Contraseña actualizada',
+                description: 'Tu contraseña ha sido cambiada exitosamente',
+                variant: 'success',
+            });
 
             // Redirigir al inicio después de 2 segundos
             setTimeout(() => {
@@ -74,7 +76,11 @@ const ResetPassword = () => {
             setResetError(errorMessage);
             setIsShaking(true);
             setTimeout(() => setIsShaking(false), 500);
-            toast.error('Error', errorMessage);
+            toast({
+                title: 'Error',
+                description: errorMessage,
+                variant: 'destructive',
+            });
         } finally {
             setIsLoading(false);
         }

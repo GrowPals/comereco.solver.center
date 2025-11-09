@@ -7,7 +7,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { ShoppingCart, CreditCard, MessageSquare, AlertTriangle, Save } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
-import { useToast } from '@/components/ui/useToast';
+import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';

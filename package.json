@@ -10,6 +10,7 @@
     "build:clean": "rm -rf dist .vite node_modules/.vite && npm run build",
     "preview": "vite preview --host ::",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix --quiet",
+    "test": "npm run test:e2e",
     "test:e2e": "playwright test",
     "test:smoke": "playwright test tests/e2e/smoke.spec.ts",
     "test:routes": "playwright test tests/e2e/routes.spec.ts",
@@ -24,7 +25,11 @@
     "sync:morning": "./scripts/sync-with-claude.sh morning",
     "sync:evening": "./scripts/sync-with-claude.sh evening",
     "optimize": "./scripts/auto-optimize.sh",
-    "optimize:verbose": "./scripts/auto-optimize.sh --verbose"
+    "optimize:verbose": "./scripts/auto-optimize.sh --verbose",
+    "verify:pwa": "node scripts/verify-pwa.js",
+    "audit:pwa": "node scripts/audit-pwa-exhaustive.js",
+    "test:offline": "node scripts/test-offline-functionality.js",
+    "build:verify-pwa": "node scripts/build-and-verify-pwa.js"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.1.2",
@@ -53,6 +58,7 @@
     "clsx": "^2.0.0",
     "date-fns": "^3.6.0",
     "framer-motion": "^10.16.4",
+    "lighthouse": "^13.0.1",
     "lucide-react": "^0.292.0",
     "react": "18.3.1",
     "react-chartjs-2": "^5.2.0",
@@ -74,13 +80,15 @@
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",
     "autoprefixer": "^10.4.16",
+    "dotenv": "^17.2.3",
     "eslint": "^9.39.1",
     "eslint-plugin-react": "^7.37.3",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.16",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.3",
-    "vite": "^4.4.5"
+    "vite": "^4.4.5",
+    "vite-plugin-pwa": "^1.1.0"
   },
   "overrides": {
     "react": "18.3.1",

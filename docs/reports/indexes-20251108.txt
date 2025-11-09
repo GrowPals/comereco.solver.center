@@ -43,8 +43,6 @@ Output format is aligned.
  auth                | flow_state                  | idx_user_id_auth_method                               |        0 |            0 |             0 | 8192 bytes
  realtime            | subscription                | ix_realtime_subscription_entity                       |        0 |            0 |             0 | 8192 bytes
  cron                | job                         | job_pkey                                              |        0 |            0 |             0 | 16 kB
- realtime            | messages_2025_11_05         | messages_2025_11_05_inserted_at_topic_idx             |        0 |            0 |             0 | 8192 bytes
- realtime            | messages_2025_11_05         | messages_2025_11_05_pkey                              |        0 |            0 |             0 | 8192 bytes
  realtime            | messages_2025_11_06         | messages_2025_11_06_inserted_at_topic_idx             |        0 |            0 |             0 | 8192 bytes
  realtime            | messages_2025_11_06         | messages_2025_11_06_pkey                              |        0 |            0 |             0 | 8192 bytes
  realtime            | messages_2025_11_07         | messages_2025_11_07_inserted_at_topic_idx             |        0 |            0 |             0 | 8192 bytes
@@ -57,6 +55,8 @@ Output format is aligned.
  realtime            | messages_2025_11_10         | messages_2025_11_10_pkey                              |        0 |            0 |             0 | 8192 bytes
  realtime            | messages_2025_11_11         | messages_2025_11_11_inserted_at_topic_idx             |        0 |            0 |             0 | 8192 bytes
  realtime            | messages_2025_11_11         | messages_2025_11_11_pkey                              |        0 |            0 |             0 | 8192 bytes
+ realtime            | messages_2025_11_12         | messages_2025_11_12_inserted_at_topic_idx             |        0 |            0 |             0 | 8192 bytes
+ realtime            | messages_2025_11_12         | messages_2025_11_12_pkey                              |        0 |            0 |             0 | 8192 bytes
  auth                | mfa_challenges              | mfa_challenge_created_at_idx                          |        0 |            0 |             0 | 8192 bytes
  auth                | mfa_factors                 | mfa_factors_last_challenged_at_key                    |        0 |            0 |             0 | 8192 bytes
  auth                | mfa_factors                 | mfa_factors_user_friendly_name_unique                 |        0 |            0 |             0 | 8192 bytes
@@ -124,7 +124,6 @@ Output format is aligned.
  auth                | mfa_factors                 | mfa_factors_pkey                                      |        2 |            0 |             0 | 8192 bytes
  auth                | one_time_tokens             | one_time_tokens_pkey                                  |        2 |            0 |             0 | 16 kB
  auth                | one_time_tokens             | one_time_tokens_token_hash_hash_idx                   |        2 |            2 |             0 | 32 kB
- auth                | refresh_tokens              | refresh_tokens_pkey                                   |        2 |            2 |             2 | 16 kB
  auth                | saml_relay_states           | saml_relay_states_pkey                                |        2 |            0 |             0 | 8192 bytes
  cron                | job                         | jobname_username_uniq                                 |        3 |            0 |             0 | 16 kB
  pgmq                | meta                        | meta_queue_name_key                                   |        3 |            0 |             0 | 16 kB
@@ -134,14 +133,13 @@ Output format is aligned.
  storage             | prefixes                    | idx_prefixes_lower_name                               |        4 |            5 |             3 | 16 kB
  public              | inventory_restock_rule_logs | inventory_restock_rule_logs_pkey                      |        4 |            0 |             0 | 8192 bytes
  public              | profiles                    | idx_profiles_role_v2                                  |        5 |            0 |             0 | 16 kB
+ auth                | refresh_tokens              | refresh_tokens_pkey                                   |        5 |            5 |             5 | 16 kB
  auth                | sso_domains                 | sso_domains_pkey                                      |        5 |            0 |             0 | 8192 bytes
  auth                | audit_log_entries           | audit_log_entries_pkey                                |        6 |          237 |           232 | 56 kB
  public              | bind_sync_logs              | idx_bind_sync_logs_synced_at                          |        6 |            0 |             0 | 8192 bytes
  public              | requisition_items           | requisition_items_pkey                                |        6 |          102 |           100 | 8192 bytes
  public              | bind_sync_logs              | bind_sync_logs_pkey                                   |        7 |            0 |             0 | 8192 bytes
- auth                | refresh_tokens              | refresh_tokens_token_unique                           |        7 |            7 |             6 | 16 kB
  auth                | sso_providers               | sso_providers_pkey                                    |        7 |            0 |             0 | 8192 bytes
- public              | requisition_templates       | idx_requisition_templates_user_company                |        8 |            0 |             0 | 8192 bytes
  storage             | migrations                  | migrations_pkey                                       |        8 |            8 |             8 | 16 kB
  public              | bind_mappings               | bind_mappings_pkey                                    |       10 |          170 |           140 | 8192 bytes
  storage             | objects                     | bucketid_objname                                      |       10 |            5 |             0 | 16 kB
@@ -152,26 +150,26 @@ Output format is aligned.
  public              | requisition_items           | requisition_items_requisition_id_product_id_key       |       15 |           95 |            95 | 8192 bytes
  public              | integration_queue           | integration_queue_pkey                                |       16 |           18 |             4 | 16 kB
  cron                | job_run_details             | job_run_details_pkey                                  |       16 |           16 |            16 | 16 kB
- public              | inventory_restock_rules     | uq_inventory_restock_rules_active                     |       16 |           23 |            23 | 8192 bytes
+ auth                | refresh_tokens              | refresh_tokens_token_unique                           |       16 |           16 |            15 | 16 kB
  public              | inventory_restock_rules     | idx_inventory_restock_rules_company_status            |       18 |           16 |            16 | 8192 bytes
  auth                | sessions                    | sessions_user_id_idx                                  |       18 |          179 |             0 | 16 kB
- public              | projects                    | idx_projects_company_active                           |       20 |            0 |             0 | 8192 bytes
- public              | products                    | idx_products_company_active                           |       23 |           15 |             4 | 16 kB
  auth                | refresh_tokens              | refresh_tokens_session_id_revoked_idx                 |       23 |           27 |            25 | 16 kB
  storage             | prefixes                    | prefixes_pkey                                         |       24 |           20 |            16 | 16 kB
  public              | bind_mappings               | bind_mappings_company_id_mapping_type_supabase_id_key |       27 |            0 |             0 | 8192 bytes
+ public              | requisition_templates       | idx_requisition_templates_user_company                |       31 |            0 |             0 | 8192 bytes
  storage             | objects                     | objects_bucket_id_level_idx                           |       31 |           83 |            77 | 16 kB
  public              | notifications               | notifications_pkey                                    |       35 |            0 |             0 | 8192 bytes
  public              | products                    | idx_products_sku                                      |       37 |          261 |           129 | 16 kB
  storage             | buckets                     | buckets_pkey                                          |       40 |           38 |            38 | 16 kB
  public              | inventory_restock_rule_logs | idx_inventory_restock_rule_logs_rule                  |       40 |           96 |             0 | 8192 bytes
+ public              | products                    | idx_products_company_active                           |       44 |           15 |             4 | 16 kB
  public              | requisition_templates       | idx_templates_project                                 |       46 |            0 |             0 | 8192 bytes
- public              | products                    | products_company_id_bind_id_unique                    |       50 |           42 |            24 | 16 kB
+ public              | projects                    | idx_projects_company_active                           |       51 |            0 |             0 | 8192 bytes
  public              | user_invitations            | idx_user_invitations_company                          |       54 |          206 |            28 | 16 kB
  auth                | users                       | users_is_anonymous_idx                                |       54 |          370 |            50 | 16 kB
  public              | requisitions                | idx_requisitions_project                              |       60 |          438 |            46 | 8192 bytes
- supabase_migrations | schema_migrations           | schema_migrations_pkey                                |       60 |          589 |           431 | 16 kB
  auth                | schema_migrations           | schema_migrations_pkey                                |       60 |            0 |             0 | 16 kB
+ supabase_migrations | schema_migrations           | schema_migrations_pkey                                |       60 |          589 |           431 | 16 kB
  public              | audit_log                   | idx_audit_log_company_ts                              |       62 |           56 |             0 | 8192 bytes
  public              | notifications               | idx_notifications_company_id                          |       62 |           36 |             0 | 8192 bytes
  public              | inventory_restock_rules     | inventory_restock_rules_pkey                          |       66 |           86 |            86 | 8192 bytes
@@ -179,6 +177,7 @@ Output format is aligned.
  public              | user_invitations            | idx_user_invitations_invited_by                       |       69 |            0 |             0 | 16 kB
  public              | requisition_templates       | requisition_templates_pkey                            |       69 |           78 |            78 | 8192 bytes
  public              | user_favorites              | user_favorites_pkey                                   |       75 |            4 |             4 | 8192 bytes
+ public              | inventory_restock_rules     | uq_inventory_restock_rules_active                     |       78 |           23 |            23 | 8192 bytes
  auth                | users                       | users_instance_id_email_idx                           |       78 |           74 |            58 | 16 kB
  public              | bind_sync_logs              | idx_bind_sync_logs_company_type                       |       82 |           80 |            80 | 8192 bytes
  public              | requisition_templates       | idx_requisition_templates_company_id                  |       83 |           30 |             0 | 8192 bytes
@@ -190,10 +189,10 @@ Output format is aligned.
  public              | projects                    | idx_projects_supervisor                               |      104 |           30 |            14 | 8192 bytes
  public              | audit_log                   | idx_audit_log_user_id                                 |      105 |           11 |             1 | 8192 bytes
  auth                | sessions                    | sessions_pkey                                         |      107 |          106 |           106 | 16 kB
- public              | requisitions                | idx_requisitions_company_active                       |      163 |            0 |             0 | 8192 bytes
  public              | user_cart_items             | idx_user_cart_items_product_id                        |      166 |            7 |             4 | 8192 bytes
  public              | bind_mappings               | idx_bind_mappings_company_type                        |      175 |           84 |            51 | 8192 bytes
  public              | user_favorites              | idx_user_favorites_product_id                         |      175 |           15 |            13 | 8192 bytes
+ public              | products                    | products_company_id_bind_id_unique                    |      199 |           42 |            24 | 16 kB
  public              | platform_admins             | idx_platform_admins_granted_by                        |      200 |            0 |             0 | 16 kB
  auth                | oauth_consents              | oauth_consents_user_order_idx                         |      201 |            0 |             0 | 8192 bytes
  auth                | identities                  | identities_email_idx                                  |      207 |           13 |             1 | 16 kB
@@ -201,38 +200,39 @@ Output format is aligned.
  auth                | users                       | users_pkey                                            |      233 |          226 |           134 | 16 kB
  public              | products                    | idx_products_company_category_active                  |      315 |        18062 |         12073 | 16 kB
  public              | requisitions                | idx_requisitions_approved_at                          |      336 |         2037 |           910 | 8192 bytes
- auth                | mfa_amr_claims              | mfa_amr_claims_session_id_authentication_method_pkey  |      360 |           77 |             0 | 16 kB
+ auth                | mfa_amr_claims              | mfa_amr_claims_session_id_authentication_method_pkey  |      370 |           77 |             0 | 16 kB
  public              | inventory_restock_rules     | idx_inventory_restock_rules_company_project           |      394 |          311 |           311 | 8192 bytes
  public              | user_cart_items             | user_cart_items_pkey                                  |      396 |          331 |           324 | 8192 bytes
  auth                | one_time_tokens             | one_time_tokens_user_id_token_type_key                |      442 |            8 |             0 | 16 kB
  public              | requisition_templates       | idx_templates_created_by                              |      473 |         2716 |          2716 | 8192 bytes
  public              | profiles                    | idx_profiles_company_role                             |      522 |         2040 |          1836 | 16 kB
+ public              | requisitions                | idx_requisitions_company_active                       |      556 |            0 |             0 | 8192 bytes
  public              | user_cart_items             | idx_user_cart_items_user_product                      |      659 |         1293 |           275 | 8192 bytes
  public              | products                    | idx_products_company_is_active                        |      821 |        61659 |         35331 | 16 kB
  public              | requisitions                | idx_requisitions_approved_by                          |      822 |        15012 |           297 | 8192 bytes
- auth                | mfa_factors                 | unique_phone_factor_per_user                          |      986 |            0 |             0 | 8192 bytes
  public              | projects                    | projects_pkey                                         |      991 |         2887 |           869 | 8192 bytes
- auth                | identities                  | identities_user_id_idx                                |     1034 |         1007 |           611 | 16 kB
- public              | companies                   | companies_pkey                                        |     1111 |         1111 |          1075 | 16 kB
- public              | user_favorites              | idx_user_favorites_user_product                       |     1227 |        13352 |         12424 | 8192 bytes
+ auth                | mfa_factors                 | unique_phone_factor_per_user                          |     1008 |            0 |             0 | 8192 bytes
+ auth                | identities                  | identities_user_id_idx                                |     1056 |         1029 |           633 | 16 kB
  public              | products                    | idx_products_company_id                               |     1270 |        64650 |         64351 | 16 kB
  public              | projects                    | idx_projects_company                                  |     1274 |        17481 |         15028 | 8192 bytes
  public              | requisitions                | idx_requisitions_created_by                           |     1368 |        91729 |            14 | 8192 bytes
- public              | project_members             | idx_project_members_user_id                           |     1720 |         7102 |          7100 | 8192 bytes
+ public              | user_favorites              | idx_user_favorites_user_product                       |     1561 |        13352 |         12424 | 8192 bytes
+ public              | companies                   | companies_pkey                                        |     1577 |         1577 |          1541 | 16 kB
  public              | requisition_items           | idx_requisition_items_requisition_id                  |     1773 |        20093 |         12011 | 8192 bytes
+ public              | project_members             | idx_project_members_user_id                           |     1852 |         7102 |          7100 | 8192 bytes
  public              | requisitions                | requisitions_pkey                                     |     2258 |         4717 |          1054 | 8192 bytes
- public              | notifications               | idx_notifications_user_is_read_created                |     3669 |        39007 |         36700 | 8192 bytes
- public              | requisitions                | idx_requisitions_company_id                           |     3924 |        75307 |         25769 | 8192 bytes
- public              | profiles                    | idx_profiles_id_company                               |     7266 |         8104 |          8046 | 16 kB
- public              | platform_admins             | platform_admins_pkey                                  |     7625 |          854 |           851 | 16 kB
- realtime            | subscription                | subscription_subscription_id_entity_filters_key       |     7835 |            0 |             0 | 8192 bytes
+ public              | requisitions                | idx_requisitions_company_id                           |     4212 |        75307 |         25769 | 8192 bytes
+ public              | notifications               | idx_notifications_user_is_read_created                |     5061 |        39007 |         36700 | 8192 bytes
+ public              | platform_admins             | platform_admins_pkey                                  |     7630 |          859 |           856 | 16 kB
+ public              | profiles                    | idx_profiles_id_company                               |     7902 |         8740 |          8682 | 16 kB
+ realtime            | subscription                | subscription_subscription_id_entity_filters_key       |     8028 |            0 |             0 | 8192 bytes
  public              | products                    | products_pkey                                         |    12728 |        42013 |         21812 | 16 kB
 
 
 Top statements touching user tables (limited)
                                                                                                                                                                                                                                                                                                                                                                                                     query                                                                                                                                                                                                                                                                                                                                                                                                    | calls | total_ms | avg_ms 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------+----------+--------
- SELECT public.refresh_integration_views()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |     7 |   523.59 |  74.80
+ SELECT public.refresh_integration_views()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |    69 |  4380.46 |  63.48
  -- Crear items para las nuevas requisiciones                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               +|     1 |   252.19 | 252.19
  WITH new_reqs AS (                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         +|       |          | 
      SELECT r.id as req_id, r.company_id                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    +|       |          | 

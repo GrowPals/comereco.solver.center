@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { useToast } from '@/components/ui/useToast';
+import { useToast } from '@/components/ui/use-toast';
 import { fetchPendingApprovals, updateRequisitionStatus } from '@/services/requisitionService';
 import PageLoader from '@/components/PageLoader';
 import PageContainer from '@/components/layout/PageContainer';

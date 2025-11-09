@@ -1,0 +1,24 @@
+# robots.txt para ComerECO
+# Sistema interno de gestión de requisiciones del Grupo Solven
+
+User-agent: *
+Allow: /
+
+# Bloquear acceso a rutas administrativas y APIs
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /static/
+
+# Permitir acceso a recursos públicos
+Allow: /assets/
+Allow: /logo.png
+Allow: /pwa-icon-*.png
+Allow: /manifest.webmanifest
+
+# Sitemap
+Sitemap: https://comereco.solver.center/sitemap.xml
+
+# Crawl-delay (opcional, ajustar según necesidades)
+Crawl-delay: 1
+

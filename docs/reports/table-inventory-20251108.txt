@@ -1,0 +1,82 @@
+    table_schema     |           table_name            | table_type 
+---------------------+---------------------------------+------------
+ auth                | audit_log_entries               | BASE TABLE
+ auth                | flow_state                      | BASE TABLE
+ auth                | identities                      | BASE TABLE
+ auth                | instances                       | BASE TABLE
+ auth                | mfa_amr_claims                  | BASE TABLE
+ auth                | mfa_challenges                  | BASE TABLE
+ auth                | mfa_factors                     | BASE TABLE
+ auth                | oauth_authorizations            | BASE TABLE
+ auth                | oauth_clients                   | BASE TABLE
+ auth                | oauth_consents                  | BASE TABLE
+ auth                | one_time_tokens                 | BASE TABLE
+ auth                | refresh_tokens                  | BASE TABLE
+ auth                | saml_providers                  | BASE TABLE
+ auth                | saml_relay_states               | BASE TABLE
+ auth                | schema_migrations               | BASE TABLE
+ auth                | sessions                        | BASE TABLE
+ auth                | sso_domains                     | BASE TABLE
+ auth                | sso_providers                   | BASE TABLE
+ auth                | users                           | BASE TABLE
+ cron                | job                             | BASE TABLE
+ cron                | job_run_details                 | BASE TABLE
+ extensions          | pg_stat_statements              | VIEW
+ extensions          | pg_stat_statements_info         | VIEW
+ pgmq                | a_requisition_outbox_queue      | BASE TABLE
+ pgmq                | meta                            | BASE TABLE
+ pgmq                | q_requisition_outbox_queue      | BASE TABLE
+ public              | audit_log                       | BASE TABLE
+ public              | audit_log_archive               | BASE TABLE
+ public              | bind_mappings                   | BASE TABLE
+ public              | bind_sync_logs                  | BASE TABLE
+ public              | bind_sync_logs_archive          | BASE TABLE
+ public              | companies                       | BASE TABLE
+ public              | company_products_view           | VIEW
+ public              | dashboard_stats                 | VIEW
+ public              | folio_sequences                 | BASE TABLE
+ public              | integration_queue               | BASE TABLE
+ public              | inventory_restock_rule_logs     | BASE TABLE
+ public              | inventory_restock_rules         | BASE TABLE
+ public              | inventory_restock_rules_view    | VIEW
+ public              | mv_integration_dashboard        | VIEW
+ public              | notifications                   | BASE TABLE
+ public              | platform_admins                 | BASE TABLE
+ public              | products                        | BASE TABLE
+ public              | products_pending_sync           | VIEW
+ public              | profiles                        | BASE TABLE
+ public              | project_members                 | BASE TABLE
+ public              | projects                        | BASE TABLE
+ public              | requisition_items               | BASE TABLE
+ public              | requisition_template_items      | BASE TABLE
+ public              | requisition_template_items_view | VIEW
+ public              | requisition_templates           | BASE TABLE
+ public              | requisitions                    | BASE TABLE
+ public              | requisitions_pending_sync       | VIEW
+ public              | restock_alerts_dashboard        | VIEW
+ public              | user_cart_items                 | BASE TABLE
+ public              | user_favorites                  | BASE TABLE
+ public              | user_invitations                | BASE TABLE
+ realtime            | messages                        | BASE TABLE
+ realtime            | messages_2025_11_06             | BASE TABLE
+ realtime            | messages_2025_11_07             | BASE TABLE
+ realtime            | messages_2025_11_08             | BASE TABLE
+ realtime            | messages_2025_11_09             | BASE TABLE
+ realtime            | messages_2025_11_10             | BASE TABLE
+ realtime            | messages_2025_11_11             | BASE TABLE
+ realtime            | messages_2025_11_12             | BASE TABLE
+ realtime            | schema_migrations               | BASE TABLE
+ realtime            | subscription                    | BASE TABLE
+ storage             | buckets                         | BASE TABLE
+ storage             | buckets_analytics               | BASE TABLE
+ storage             | migrations                      | BASE TABLE
+ storage             | objects                         | BASE TABLE
+ storage             | prefixes                        | BASE TABLE
+ storage             | s3_multipart_uploads            | BASE TABLE
+ storage             | s3_multipart_uploads_parts      | BASE TABLE
+ supabase_migrations | schema_migrations               | BASE TABLE
+ supabase_migrations | seed_files                      | BASE TABLE
+ vault               | decrypted_secrets               | VIEW
+ vault               | secrets                         | BASE TABLE
+(78 rows)
+

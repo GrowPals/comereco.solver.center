@@ -1,6 +1,24 @@
 import { defineConfig, devices } from '@playwright/test';
+import fs from 'node:fs';
+import path from 'node:path';
+import dotenv from 'dotenv';
 
-const PORT = process.env.VITE_PORT ?? '4173';
+const envFiles = new Set<string>([
+  path.resolve(process.cwd(), '.env'),
+  path.resolve(process.cwd(), '.env.local'),
+]);
+
+if (process.env.PLAYWRIGHT_ENV_FILE) {
+  envFiles.add(path.resolve(process.cwd(), process.env.PLAYWRIGHT_ENV_FILE));
+}
+
+for (const filePath of envFiles) {
+  if (fs.existsSync(filePath)) {
+    dotenv.config({ path: filePath, override: true });
+  }
+}
+
+const PORT = process.env.VITE_PORT ?? '5174';
 const HOST = process.env.VITE_HOST ?? '127.0.0.1';
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? `http://${HOST}:${PORT}`;
 

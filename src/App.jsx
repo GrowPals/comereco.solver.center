@@ -1,12 +1,13 @@
 
 import React, { Suspense, useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useParams, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
 import { getProducts } from '@/services/productService';
 import { fetchRequisitions } from '@/services/requisitionService';
 import { useSessionExpirationHandler } from '@/hooks/useSessionExpirationHandler';
+import { isValidUUID } from '@/utils/validation';
 
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
@@ -17,6 +18,7 @@ import AppProviders from '@/context/AppProviders';
 import { ToastProvider } from '@/components/ui/toast-notification';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { AlertContainer } from '@/components/AlertContainer';
+import PWAUpdatePrompt from '@/components/PWAUpdatePrompt';
 import { cn } from '@/lib/utils';
 import lazyWithRetry from '@/utils/lazyWithRetry';
 import { ROUTES, ROUTES_WITHOUT_NAV, ROUTES_WITHOUT_BOTTOM_NAV, getPermissionCheck } from '@/config/routes.config';
@@ -47,6 +49,20 @@ const NotFoundPage = lazyWithRetry(() => import('@/pages/NotFound'));
 const ProductDetail = lazyWithRetry(() => import('@/pages/ProductDetail'));
 const InventoryRestockRulesPage = lazyWithRetry(() => import('@/pages/InventoryRestockRules'));
 
+
+// Componente para redirigir /producto/:id a /products/:id
+function ProductRedirect() {
+  const { id } = useParams();
+  const location = useLocation();
+  
+  // Validar UUID antes de redirigir - usar Navigate directamente para redirección inmediata
+  if (id && isValidUUID(id)) {
+    return <Navigate to={`/products/${id}`} replace state={{ from: location }} />;
+  }
+  
+  // Si el ID no es válido, redirigir al catálogo
+  return <Navigate to="/catalog" replace />;
+}
 
 // Componente para rutas privadas
 function PrivateRoute({ children, permissionCheck }) {
@@ -168,6 +184,9 @@ const AppLayout = () => {
 
         {/* Zona de alertas globales */}
         <AlertContainer />
+        
+        {/* Notificaciones PWA (actualizaciones y estado offline) */}
+        <PWAUpdatePrompt />
 
         <main
           className="app-main-shell relative w-full flex-1 overflow-x-hidden pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-[calc(env(safe-area-inset-top)+1rem)] transition-all duration-300 sm:pt-[calc(env(safe-area-inset-top)+1.5rem)] lg:pb-10 lg:pt-10"
@@ -196,6 +215,11 @@ const AppLayout = () => {
                         <Route path="/requisitions/:id" element={<RequisitionDetail />} />
                         
                         {/* Productos */}
+                        {/* Redirección de ruta antigua /producto/:id a /products/:id */}
+                        <Route 
+                          path="/producto/:id" 
+                          element={<ProductRedirect />} 
+                        />
                         <Route path="/products/:id" element={<ProductDetail />} />
                         <Route path={ROUTES.PRODUCTS_MANAGE} element={
                           <PrivateRoute permissionCheck={getPermissionCheck(ROUTES.PRODUCTS_MANAGE)}>
@@ -276,7 +300,12 @@ const AppLayout = () => {
 
 // Componente Raíz que ahora usa AppProviders
 const App = () => (
-  <Router>
+  <Router
+    future={{
+      v7_startTransition: true,
+      v7_relativeSplatPath: true,
+    }}
+  >
     <AppProviders>
       <ToastProvider>
         <Suspense fallback={
