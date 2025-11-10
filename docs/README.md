@@ -37,6 +37,22 @@ docs/
 │   ├── CHECKLIST_PRODUCCION_AUTOMATIZACION.md # Tareas para producción
 │   └── MODELO_PERMISOS_IMPLEMENTADO.md        # Modelo de permisos actual
 │
+├── audits/                                    # Auditorías funcionales, UI/UX y performance
+│   ├── README.md                              # Índice y guía rápida
+│   ├── performance/                           # Resultados Lighthouse + fixes
+│   ├── ui-ux/                                 # Auditorías visuales y checklists
+│   └── legacy/                                # Reportes históricos (pre 2025)
+│
+├── design/                                    # Sistema visual (tipografía, elevación, tokens)
+├── features/                                  # Specs funcionales (p.ej. alert banner)
+├── operations/                                # Checklists y runbooks de despliegue
+│   ├── CHECKLIST_PRODUCCION.md                # QA previo a release
+│   └── VERCEL_DEPLOYMENT.md                   # Guía para Vercel
+│
+├── integrations/                              # Integraciones externas
+│   ├── BIND_SUPABASE_WORKFLOWS.md             # Flujo BIND ⇄ Supabase
+│   └── claude/                                # Workflows y prompts Claude Code
+│
 ├── 📖 guides/                                  # Guías técnicas
 │   ├── IMPLEMENTACION_BACKEND_SUPABASE.md     # Backend con Supabase
 │   ├── REFERENCIA_BD_SUPABASE.md              # ⭐ Esquema completo de BD
@@ -68,7 +84,11 @@ docs/
 ├── 🔧 troubleshooting/                         # Solución de problemas
 │   ├── FIX_REACT_USESTATE_ERROR.md            # Fix error useState
 │   ├── FIX_REACT_CREATECONTEXT_ERROR.md       # Fix error createContext
-│   └── FIX_DEPRECATION_WARNINGS.md            # Fix warnings deprecados
+│   ├── FIX_DEPRECATION_WARNINGS.md            # Fix warnings deprecados
+│   ├── CORRECCION_ERRORES_CONSOLA.md          # Fix logs consola (parcial)
+│   ├── CORRECCION_ERRORES_CONSOLA_FINAL.md    # Fix logs consola (final)
+│   ├── CORRECCIONES_FINALES.md                # Resumen de fixes críticos
+│   └── CORRECCION_REACT_ROUTER_FLAGS.md       # Flags React Router
 │
 ├── 🗄️ api/                                     # Scripts SQL
 │   ├── CREATE_TEST_USER.sql                   # Crear usuario de prueba
@@ -99,6 +119,10 @@ docs/
 | [REPORTE_AUDITORIA_BACKEND_FINAL.md](REPORTE_AUDITORIA_BACKEND_FINAL.md) | ⭐ Auditoría Backend 100% (Nov 2025) | ✅ Vigente |
 | [REFERENCIA_BD_SUPABASE.md](guides/REFERENCIA_BD_SUPABASE.md) | Esquema completo de base de datos | ✅ Vigente |
 | [MODELO_PERMISOS_IMPLEMENTADO.md](MODELO_PERMISOS_IMPLEMENTADO.md) | Modelo de permisos implementado | ✅ Vigente |
+| [DESIGN_SYSTEM.md](design/DESIGN_SYSTEM.md) | Sistema de diseño (tokens, layouts, grids) | ✅ Vigente |
+| [ELEVATION_SYSTEM.md](design/ELEVATION_SYSTEM.md) | Reglas de elevación y sombras | ✅ Vigente |
+| [TYPOGRAPHY.md](design/TYPOGRAPHY.md) | Catálogo tipográfico aprobado | ✅ Vigente |
+| [ALERT_BANNER_SYSTEM.md](features/ALERT_BANNER_SYSTEM.md) | Especificación del sistema de alertas | ✅ Vigente |
 
 ### 🚀 Deployment y Configuración
 
@@ -109,6 +133,19 @@ docs/
 | [GUIA_CONFIGURACION_VERCEL.md](guides/GUIA_CONFIGURACION_VERCEL.md) | Configuración Vercel | ✅ Vigente |
 | [GUIA_CONFIGURACION_DOMINIOS.md](guides/GUIA_CONFIGURACION_DOMINIOS.md) | Configuración de dominios | ✅ Vigente |
 | [INSTRUCCIONES_VARIABLES_ENTORNO.md](guides/INSTRUCCIONES_VARIABLES_ENTORNO.md) | Variables de entorno | ✅ Vigente |
+| [CHECKLIST_PRODUCCION.md](operations/CHECKLIST_PRODUCCION.md) | QA previo al release | ✅ Vigente |
+| [VERCEL_DEPLOYMENT.md](operations/VERCEL_DEPLOYMENT.md) | Troubleshooting despliegues en Vercel | ✅ Vigente |
+
+### ✅ Auditorías y QA
+
+| Documento | Descripción | Estado |
+|-----------|-------------|--------|
+| [audits/README.md](audits/README.md) | Índice rápido de auditorías | ✅ Vigente |
+| [INFORME_AUDITORIA_COMPLETA.md](INFORME_AUDITORIA_COMPLETA.md) | Estado general 2025-01 | ✅ Vigente |
+| [INFORME_AUDITORIA_FINAL_COMPLETO.md](INFORME_AUDITORIA_FINAL_COMPLETO.md) | Evidencias para release | ✅ Vigente |
+| [INFORME_FINAL_AUDITORIA.md](INFORME_FINAL_AUDITORIA.md) | Resumen ejecutivo para stakeholders | ✅ Vigente |
+| [audits/ui-ux/UI_UX_QUICK_FIX_CHECKLIST.md](audits/ui-ux/UI_UX_QUICK_FIX_CHECKLIST.md) | Checklist accionable UI/UX | ✅ Vigente |
+| [audits/performance/PERFORMANCE_AUDIT_REPORT.md](audits/performance/PERFORMANCE_AUDIT_REPORT.md) | Resultados de performance y PWA | ✅ Vigente |
 
 ### 💾 Base de Datos y Backend
 
@@ -137,6 +174,8 @@ docs/
 | [../GUIA_IMPLEMENTACION_BIND_PASO_A_PASO.md](../GUIA_IMPLEMENTACION_BIND_PASO_A_PASO.md) | Guía de integración Bind ERP | 🔵 Blueprint |
 | [../integrations/n8n/](../integrations/n8n/) | Documentación n8n | 🔵 Blueprint |
 | [CHECKLIST_PRODUCCION_AUTOMATIZACION.md](CHECKLIST_PRODUCCION_AUTOMATIZACION.md) | Checklist de automatización | 🔵 Blueprint |
+| [CLAUDE_CODE_WEB_README.md](integrations/claude/CLAUDE_CODE_WEB_README.md) | Setup y prerequisitos Claude Code | 📘 Referencia |
+| [WORKFLOW_CLAUDE_CODE_WEB.md](integrations/claude/WORKFLOW_CLAUDE_CODE_WEB.md) | Flujo operativo Claude Code Web | 📘 Referencia |
 
 ### 🧪 Testing y QA
 
@@ -151,6 +190,11 @@ docs/
 | [PASOS_PARA_ARREGLAR_LOGIN.md](guides/PASOS_PARA_ARREGLAR_LOGIN.md) | Solucionar problemas login | ✅ Vigente |
 | [troubleshooting/FIX_REACT_USESTATE_ERROR.md](troubleshooting/FIX_REACT_USESTATE_ERROR.md) | Fix error useState | ✅ Vigente |
 | [troubleshooting/FIX_REACT_CREATECONTEXT_ERROR.md](troubleshooting/FIX_REACT_CREATECONTEXT_ERROR.md) | Fix error createContext | ✅ Vigente |
+| [troubleshooting/FIX_DEPRECATION_WARNINGS.md](troubleshooting/FIX_DEPRECATION_WARNINGS.md) | Fix warnings deprecados | ✅ Vigente |
+| [troubleshooting/CORRECCION_ERRORES_CONSOLA.md](troubleshooting/CORRECCION_ERRORES_CONSOLA.md) | Correcciones iniciales de consola | 📘 Referencia |
+| [troubleshooting/CORRECCION_ERRORES_CONSOLA_FINAL.md](troubleshooting/CORRECCION_ERRORES_CONSOLA_FINAL.md) | Resultado final de limpieza de consola | 📘 Referencia |
+| [troubleshooting/CORRECCIONES_FINALES.md](troubleshooting/CORRECCIONES_FINALES.md) | Bitácora de fixes críticos | 📘 Referencia |
+| [troubleshooting/CORRECCION_REACT_ROUTER_FLAGS.md](troubleshooting/CORRECCION_REACT_ROUTER_FLAGS.md) | Fix de banderas de React Router | 📘 Referencia |
 
 ### 💻 Desarrollo
 

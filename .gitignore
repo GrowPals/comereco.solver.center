@@ -41,6 +41,7 @@ Thumbs.db
 .env.development.local
 .env.test.local
 .env.production.local
+.env.mcp.hostinger
 
 # Local/sensitive env snapshots
 backups/env/

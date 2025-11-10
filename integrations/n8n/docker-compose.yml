@@ -48,6 +48,9 @@ services:
       - SUPABASE_DB_PASSWORD=${SUPABASE_DB_PASSWORD}
       - BIND_API_URL=${BIND_API_URL}
       - BIND_API_TOKEN=${BIND_API_TOKEN}
+      
+      # Forzar IPv4 para conexiones (soluciona problema ENETUNREACH IPv6)
+      - NODE_OPTIONS=--dns-result-order=ipv4first
 
     volumes:
       # Persistir datos de n8n (workflows, credenciales, ejecuciones)
@@ -56,6 +59,11 @@ services:
       # Opcional: Montar workflows locales (útil para desarrollo)
       # - ./workflows:/home/node/.n8n/workflows
 
+    # Configuración DNS para forzar IPv4
+    dns:
+      - 8.8.8.8  # Google DNS IPv4
+      - 8.8.4.4  # Google DNS IPv4 alternativo
+    
     networks:
       - n8n_network
 
@@ -75,4 +83,5 @@ volumes:
 networks:
   n8n_network:
     driver: bridge
+    enable_ipv6: false  # Deshabilitar IPv6 para evitar problemas de conexión
     name: n8n_network

@@ -310,7 +310,7 @@ La aplicación está funcionalmente completa. Se identificaron y corrigieron pro
 ## 📄 ARCHIVOS DE REPORTE
 
 - **Este informe:** `docs/INFORME_AUDITORIA_FINAL_COMPLETO.md`
-- **Resumen ejecutivo:** `AUDITORIA_COMPLETA_RESUMEN_EJECUTIVO.md`
+- **Resumen ejecutivo:** `docs/audits/legacy/AUDITORIA_COMPLETA_RESUMEN_EJECUTIVO.md`
 - **Reporte Playwright:** Ejecutar `npx playwright show-report`
 
 ---

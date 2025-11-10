@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "n8n": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@n8n/mcp-server",
+        "--url", "https://n8n-n8n.jpayvn.easypanel.host",
+        "--api-key", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3OTFkNTE0NC1kYzZlLTRhNDUtOTFjYy1hMTI2Mzk3ODAxOGEiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzYyNzM1NTI2fQ.TbwXblqdhEonSiF8qQr_xd8M3a0ZlIHGCEX2kd61Ojo"
+      ]
+    }
+  },
+  "_notes": {
+    "n8n": {
+      "public_url": "https://n8n-n8n.jpayvn.easypanel.host/",
+      "internal_url": "http://n8n_n8n:5678/",
+      "description": "URL pública para MCP, URL interna para uso dentro de EasyPanel/Docker"
+    }
+  }
+}
+

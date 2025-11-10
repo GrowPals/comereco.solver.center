@@ -7,13 +7,13 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "0 2 * * *"
+              "expression": "5 2 * * *"
             }
           ]
         }
       },
       "id": "schedule-daily",
-      "name": "Schedule Daily 2am",
+      "name": "Schedule Daily 02:05",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [250, 300]
@@ -21,35 +21,36 @@
     {
       "parameters": {
         "method": "GET",
-        "url": "={{ $env.BIND_API_URL }}/products",
+        "url": "={{ $env.BIND_API_URL }}/Products",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "httpHeaderAuth",
         "sendQuery": true,
         "queryParameters": {
           "parameters": [
             {
-              "name": "company_id",
-              "value": "={{ $env.BIND_COMPANY_ID }}"
+              "name": "$top",
+              "value": "={{ $env.BIND_PAGE_SIZE || 500 }}"
             },
             {
-              "name": "page",
-              "value": "1"
+              "name": "$skip",
+              "value": "0"
             },
             {
-              "name": "per_page",
-              "value": "100"
+              "name": "$orderby",
+              "value": "LastUpdate desc"
             }
           ]
         },
         "options": {
-          "timeout": 30000
+          "timeout": 30000,
+          "fullResponse": false
         }
       },
       "id": "fetch-products",
       "name": "Fetch Products from BIND",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [450, 300],
+      "position": [480, 300],
       "credentials": {
         "httpHeaderAuth": {
           "id": "bind-api-auth",
@@ -59,13 +60,13 @@
     },
     {
       "parameters": {
-        "jsCode": "// Extract products array from response\nconst response = $input.first().json;\nconst products = response.products || response.data || [];\n\nif (products.length === 0) {\n  return [];\n}\n\n// Transform each product\nreturn products.map(product => ({\n  json: {\n    bind_id: product.bind_id || product.id,\n    sku: product.sku,\n    name: product.name,\n    description: product.description || null,\n    price: parseFloat(product.price || 0),\n    stock: parseInt(product.stock || 0),\n    unit: product.unit || 'pza',\n    category: product.category || null,\n    image_url: product.image_url || null,\n    is_active: product.is_active !== false,\n    sync_timestamp: new Date().toISOString()\n  }\n}));"
+        "jsCode": "const response = $input.first().json;\nconst list = response.value || response.products || response.data || [];\n\nconst normalized = list\n  .map((product) => {\n    const bindId = product.ID || product.id || product.BindID || product.ProductID;\n    if (!bindId) {\n      return null;\n    }\n\n    const rawPrice = product.Cost ?? product.Price ?? product.UnitPrice ?? 0;\n    const rawStock = product.CurrentInventory ?? product.Stock ?? product.Quantity ?? 0;\n\n    return {\n      bind_id: String(bindId),\n      sku: product.Code || product.SKU || product.Number || null,\n      name: product.Title || product.Name || product.ProductName || product.Description || `Producto ${bindId}` ,\n      description: product.Description || product.LongDescription || null,\n      price: Number(rawPrice) || 0,\n      stock: Number(rawStock) || 0,\n      unit: product.Unit || product.UnitName || 'pza',\n      category: product.Category1Name || product.Category1 || product.Category || null,\n      image_url: product.ImageUrl || product.ImageURL || null,\n      is_active: product.IsActive !== false && product.Status !== 'Inactive',\n      bind_updated_at: product.LastUpdate || product.UpdateDate || product.UpdatedAt || null,\n      vat_rate: product.ChargeVAT ? 0.16 : 0,\n      currency: product.CurrencyCode || 'MXN',\n      sync_timestamp: new Date().toISOString()\n    };\n  })\n  .filter(Boolean);\n\nreturn normalized.map((json) => ({ json }));"
       },
       "id": "transform-products",
-      "name": "Transform Products",
+      "name": "Normalize Products",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [650, 300]
+      "position": [700, 300]
     },
     {
       "parameters": {
@@ -83,7 +84,7 @@
       "name": "Has Products?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
-      "position": [850, 300]
+      "position": [920, 300]
     },
     {
       "parameters": {
@@ -92,18 +93,18 @@
             {
               "id": "message",
               "name": "message",
-              "value": "No products returned from BIND API",
+              "value": "BIND devolvió 0 productos",
               "type": "string"
             }
           ]
         },
         "options": {}
       },
-      "id": "no-products-end",
-      "name": "No Products - End",
+      "id": "no-products",
+      "name": "No Products",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.3,
-      "position": [1050, 500]
+      "position": [1120, 480]
     },
     {
       "parameters": {
@@ -111,56 +112,47 @@
         "batchSize": 10,
         "options": {}
       },
-      "id": "loop-products",
-      "name": "Loop Products (Batch 10)",
+      "id": "iterate-products",
+      "name": "Iterate Products",
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
-      "position": [1050, 200]
+      "position": [1140, 220]
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "INSERT INTO products (\n  company_id,\n  bind_id,\n  sku,\n  name,\n  description,\n  price,\n  stock,\n  unit,\n  category,\n  image_url,\n  is_active,\n  bind_last_synced_at,\n  bind_sync_enabled\n) VALUES (\n  '{{ $env.COMPANY_ID }}'::uuid,\n  '{{ $json.bind_id }}',\n  '{{ $json.sku }}',\n  '{{ $json.name }}',\n  {{ $json.description ? `'${$json.description}'` : 'NULL' }},\n  {{ $json.price }},\n  {{ $json.stock }},\n  '{{ $json.unit }}',\n  {{ $json.category ? `'${$json.category}'` : 'NULL' }},\n  {{ $json.image_url ? `'${$json.image_url}'` : 'NULL' }},\n  {{ $json.is_active }},\n  NOW(),\n  true\n)\nON CONFLICT (company_id, bind_id)\nDO UPDATE SET\n  sku = EXCLUDED.sku,\n  name = EXCLUDED.name,\n  description = EXCLUDED.description,\n  price = EXCLUDED.price,\n  stock = EXCLUDED.stock,\n  unit = EXCLUDED.unit,\n  category = EXCLUDED.category,\n  image_url = EXCLUDED.image_url,\n  is_active = EXCLUDED.is_active,\n  bind_last_synced_at = NOW(),\n  updated_at = NOW()\nRETURNING id, bind_id, name;",
+        "query": "WITH incoming AS (\n  SELECT\n    '{{ $json | jsonStringify }}'::jsonb AS data,\n    '{{ $env.COMPANY_ID }}'::uuid AS company_id\n),\nupsert AS (\n  INSERT INTO public.products (\n    company_id,\n    bind_id,\n    sku,\n    name,\n    description,\n    price,\n    stock,\n    unit,\n    category,\n    image_url,\n    is_active,\n    bind_last_synced_at,\n    bind_sync_enabled,\n    updated_at\n  )\n  SELECT\n    incoming.company_id,\n    data->>'bind_id',\n    COALESCE(NULLIF(data->>'sku',''), data->>'bind_id'),\n    COALESCE(data->>'name', 'Producto sin nombre'),\n    NULLIF(data->>'description',''),\n    COALESCE(NULLIF(data->>'price','')::numeric, 0),\n    COALESCE(NULLIF(data->>'stock','')::numeric, 0)::integer,\n    COALESCE(NULLIF(data->>'unit',''), 'pza'),\n    NULLIF(data->>'category',''),\n    NULLIF(data->>'image_url',''),\n    COALESCE((data->>'is_active')::boolean, true),\n    timezone('utc', now()),\n    true,\n    timezone('utc', now())\n  FROM incoming\n  ON CONFLICT (company_id, bind_id)\n  DO UPDATE SET\n    sku = EXCLUDED.sku,\n    name = EXCLUDED.name,\n    description = EXCLUDED.description,\n    price = EXCLUDED.price,\n    stock = EXCLUDED.stock,\n    unit = EXCLUDED.unit,\n    category = EXCLUDED.category,\n    image_url = EXCLUDED.image_url,\n    is_active = EXCLUDED.is_active,\n    bind_last_synced_at = timezone('utc', now()),\n    bind_sync_enabled = true,\n    updated_at = timezone('utc', now())\n  RETURNING id, company_id, bind_id, sku, name, price, stock, updated_at\n)\nSELECT\n  upsert.*,\n  incoming.data AS source_payload\nFROM upsert\nJOIN incoming ON true;",
         "options": {}
       },
       "id": "upsert-product",
       "name": "Upsert Product",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
-      "position": [1250, 200],
+      "position": [1380, 220],
       "credentials": {
         "postgres": {
           "id": "supabase-production",
           "name": "Supabase Production"
         }
-      },
-      "continueOnFail": true
+      }
     },
     {
       "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "synced",
-              "name": "synced",
-              "value": "={{ $json.id ? 'success' : 'failed' }}",
-              "type": "string"
-            },
-            {
-              "id": "product_name",
-              "name": "product_name",
-              "value": "={{ $('Transform Products').item.json.name }}",
-              "type": "string"
-            }
-          ]
-        },
+        "operation": "executeQuery",
+        "query": "WITH payload AS (\n  SELECT\n    '{{ $env.COMPANY_ID }}'::uuid AS company_id,\n    '{{ $('Iterate Products').item.json.bind_id }}' AS bind_id,\n    '{{ $('Iterate Products').item.json | jsonStringify }}'::jsonb AS request_payload,\n    '{{ $json | jsonStringify }}'::jsonb AS response_payload\n)\nINSERT INTO public.bind_sync_logs (\n  company_id,\n  sync_type,\n  entity_type,\n  entity_id,\n  bind_id,\n  status,\n  request_payload,\n  response_payload,\n  synced_at,\n  created_at\n)\nSELECT\n  company_id,\n  'products',\n  'product',\n  '{{ $json.id }}'::uuid,\n  bind_id,\n  'success',\n  request_payload,\n  response_payload,\n  timezone('utc', now()),\n  timezone('utc', now())\nFROM payload\nRETURNING id, status, bind_id, entity_id;",
         "options": {}
       },
-      "id": "track-result",
-      "name": "Track Result",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.3,
-      "position": [1450, 200]
+      "id": "log-product-sync",
+      "name": "Log Product Sync",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1610, 220],
+      "credentials": {
+        "postgres": {
+          "id": "supabase-production",
+          "name": "Supabase Production"
+        }
+      }
     },
     {
       "parameters": {},
@@ -168,21 +160,39 @@
       "name": "Loop Back",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
-      "position": [1650, 200]
+      "position": [1810, 220]
     },
     {
       "parameters": {
-        "jsCode": "// After all products synced, generate summary\nconst allResults = $input.all();\n\nconst summary = {\n  workflow: 'WF-03 Products Sync',\n  execution_id: $execution.id,\n  started_at: $execution.startedAt,\n  finished_at: new Date().toISOString(),\n  total_products: allResults.length,\n  successful: allResults.filter(r => r.json.synced === 'success').length,\n  failed: allResults.filter(r => r.json.synced === 'failed').length\n};\n\nreturn { json: summary };"
+        "jsCode": "const logs = $items('Log Product Sync');\nconst total = logs.length;\nconst failed = logs.filter((item) => item.json?.status !== 'success').length;\n\nreturn {\n  json: {\n    workflow: 'WF-03 Products Sync',\n    execution_id: $execution.id,\n    started_at: $execution.startedAt,\n    finished_at: new Date().toISOString(),\n    total_synced: total,\n    failed,\n    status: failed > 0 ? 'failed' : (total === 0 ? 'skipped' : 'success')\n  }\n};"
       },
       "id": "generate-summary",
       "name": "Generate Summary",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1850, 200]
+      "position": [2010, 260]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO public.bind_sync_logs (\n  company_id,\n  sync_type,\n  entity_type,\n  status,\n  request_payload,\n  response_payload,\n  synced_at,\n  created_at\n) VALUES (\n  '{{ $env.COMPANY_ID }}'::uuid,\n  'products',\n  'workflow',\n  CASE WHEN {{ $json.failed }} > 0 THEN 'failed'\n       WHEN {{ $json.total_synced }} = 0 THEN 'pending'\n       ELSE 'success'\n  END,\n  json_build_object(\n    'trigger', 'cron',\n    'page_size', {{ $env.BIND_PAGE_SIZE || 500 }}\n  ),\n  '{{ $json | jsonStringify }}'::jsonb,\n  timezone('utc', now()),\n  timezone('utc', now())\n)\nRETURNING id, status;",
+        "options": {}
+      },
+      "id": "log-summary",
+      "name": "Log Summary",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2230, 260],
+      "credentials": {
+        "postgres": {
+          "id": "supabase-production",
+          "name": "Supabase Production"
+        }
+      }
     }
   ],
   "connections": {
-    "Schedule Daily 2am": {
+    "Schedule Daily 02:05": {
       "main": [
         [
           {
@@ -197,14 +207,14 @@
       "main": [
         [
           {
-            "node": "Transform Products",
+            "node": "Normalize Products",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Transform Products": {
+    "Normalize Products": {
       "main": [
         [
           {
@@ -219,21 +229,21 @@
       "main": [
         [
           {
-            "node": "Loop Products (Batch 10)",
+            "node": "Iterate Products",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "No Products - End",
+            "node": "No Products",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Loop Products (Batch 10)": {
+    "Iterate Products": {
       "main": [
         [
           {
@@ -255,14 +265,14 @@
       "main": [
         [
           {
-            "node": "Track Result",
+            "node": "Log Product Sync",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Track Result": {
+    "Log Product Sync": {
       "main": [
         [
           {
@@ -277,7 +287,18 @@
       "main": [
         [
           {
-            "node": "Loop Products (Batch 10)",
+            "node": "Iterate Products",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Summary": {
+      "main": [
+        [
+          {
+            "node": "Log Summary",
             "type": "main",
             "index": 0
           }
@@ -287,9 +308,9 @@
   },
   "settings": {
     "executionOrder": "v1",
+    "saveDataSuccessExecution": "all",
     "saveManualExecutions": true,
-    "callerPolicy": "workflowsFromSameOwner",
-    "errorWorkflow": ""
+    "callerPolicy": "workflowsFromSameOwner"
   },
   "staticData": null,
   "tags": [
@@ -302,7 +323,5 @@
       "id": "products"
     }
   ],
-  "triggerCount": 1,
-  "updatedAt": "2025-11-05T00:00:00.000Z",
-  "versionId": "1"
+  "triggerCount": 1
 }

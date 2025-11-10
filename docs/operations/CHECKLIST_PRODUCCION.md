@@ -160,10 +160,10 @@ npm run preview
 
 ## 📄 DOCUMENTACIÓN
 
-- ✅ `AUDITORIA_COMPLETA_FINAL.md` - Informe completo
-- ✅ `docs/GUIA_LIGHTHOUSE_MANUAL.md` - Guía Lighthouse
-- ✅ `CORRECCION_REACT_ROUTER_FLAGS.md` - Corrección flags
-- ✅ `RESUMEN_COMPLETO_AUDITORIA.md` - Resumen detallado
+- ✅ [`AUDITORIA_COMPLETA_FINAL.md`](../audits/legacy/AUDITORIA_COMPLETA_FINAL.md) - Informe completo
+- ✅ [`GUIA_LIGHTHOUSE_MANUAL.md`](../GUIA_LIGHTHOUSE_MANUAL.md) - Guía Lighthouse
+- ✅ [`CORRECCION_REACT_ROUTER_FLAGS.md`](../troubleshooting/CORRECCION_REACT_ROUTER_FLAGS.md) - Corrección flags
+- ✅ [`RESUMEN_COMPLETO_AUDITORIA.md`](../audits/legacy/RESUMEN_COMPLETO_AUDITORIA.md) - Resumen detallado
 
 ---
 
@@ -179,4 +179,3 @@ La aplicación está funcionalmente completa y lista para despliegue. Solo falta
 
 **Generado:** 2025-01-09  
 **Versión:** 1.0.0
-

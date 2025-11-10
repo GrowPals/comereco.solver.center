@@ -67,7 +67,7 @@ Digitalizar y optimizar el proceso de requisiciones de compra dentro de la compa
 
 ## 🌐 Despliegue en Vercel
 
-> **⚠️ IMPORTANTE:** Si la webapp no carga en Vercel (pantalla en blanco), consulta la guía completa de troubleshooting: [`VERCEL_DEPLOYMENT.md`](VERCEL_DEPLOYMENT.md)
+> **⚠️ IMPORTANTE:** Si la webapp no carga en Vercel (pantalla en blanco), consulta la guía completa de troubleshooting: [`VERCEL_DEPLOYMENT.md`](docs/operations/VERCEL_DEPLOYMENT.md)
 
 ### Opción 1: Despliegue Automático con Git
 
@@ -77,7 +77,7 @@ Digitalizar y optimizar el proceso de requisiciones de compra dentro de la compa
    - `VITE_SUPABASE_URL` = `https://azjaehrdzdfgrumbqmuc.supabase.co`
    - `VITE_SUPABASE_ANON_KEY` = [tu clave anon de Supabase]
 
-   **Sin estas variables la app no cargará.** Ver [`VERCEL_DEPLOYMENT.md`](VERCEL_DEPLOYMENT.md) para más detalles.
+  **Sin estas variables la app no cargará.** Ver [`VERCEL_DEPLOYMENT.md`](docs/operations/VERCEL_DEPLOYMENT.md) para más detalles.
 
 4. Haz push a tu rama principal y Vercel desplegará automáticamente
 

@@ -111,9 +111,9 @@ La auditoría completa de la aplicación ComerECO ha sido finalizada con éxito.
 
 ## 📄 DOCUMENTACIÓN GENERADA
 
-1. ✅ `RESUMEN_COMPLETO_AUDITORIA.md` - Resumen detallado
-2. ✅ `RESUMEN_FINAL_CORRECCIONES.md` - Correcciones aplicadas
-3. ✅ `CORRECCIONES_FINALES.md` - Últimas correcciones
+1. ✅ [`RESUMEN_COMPLETO_AUDITORIA.md`](RESUMEN_COMPLETO_AUDITORIA.md) - Resumen detallado
+2. ✅ [`RESUMEN_FINAL_CORRECCIONES.md`](RESUMEN_FINAL_CORRECCIONES.md) - Correcciones aplicadas
+3. ✅ [`CORRECCIONES_FINALES.md`](../../troubleshooting/CORRECCIONES_FINALES.md) - Últimas correcciones
 4. ✅ `docs/GUIA_LIGHTHOUSE_MANUAL.md` - Guía Lighthouse
 5. ✅ `docs/INFORME_AUDITORIA_FINAL_COMPLETO.md` - Informe completo
 6. ✅ `scripts/run-lighthouse-audit.js` - Script automatizado (opcional)
@@ -153,4 +153,3 @@ La auditoría completa de la aplicación ComerECO ha sido finalizada con éxito.
 **Generado:** 2025-01-09  
 **Versión:** 1.0.0  
 **Estado:** ✅ **AUDITORÍA COMPLETA**
-
