@@ -1,376 +1,85 @@
 # 📦 Resumen de Workflows - COMERECO n8n
 
-**Fecha:** 2025-11-05
-**Estado:** 3 workflows listos, 3 pendientes
+**Fecha:** 2025-11-10  
+**Estado:** 8 workflows listos (WF-01 → WF-08)
 
 ---
 
-## ✅ Workflows Listos para Importar
+## 📚 Tabla rápida
 
-### 🎯 WF-01: Monitoreo de Stock Bajo
-**Archivo:** `WF-01-Stock-Monitoring.json`
+| ID | Nombre | Tipo | Trigger | Estado |
+|----|--------|------|---------|--------|
+| WF-01 | Restock Alerts Monitor | Supabase → Logs | `*/30 * * * *` | 🟢 Activo |
+| WF-02 | Bind Catalog Reset (manual) | Bind → Supabase | Manual | 🟢 Listo |
+| WF-03 | Bind Catalog Sync | Bind → Supabase | `0 2 * * *` | 🟢 Listo |
+| WF-04 | Integration Queue to BIND | Supabase → Bind | `*/5 * * * *` | 🟢 Activo |
+| WF-05 | Queue & Bind Monitor | Supabase → Logs | `*/15 * * * *` | 🟡 Desactivado |
+| WF-06 | Bind Stock Sync | Bind → Supabase | `30 2 * * *` | 🟢 Listo |
+| WF-07 | Bind Alerts Notifier | Logs → Slack | `*/15 * * * *` | 🟡 Falta Slack |
+| WF-08 | Bind Maintenance | Supabase | `0 3 * * 0` | 🟢 Listo |
 
-**¿Qué hace?**
-- Detecta productos con stock por debajo del mínimo
-- Clasifica alertas: CRITICAL, HIGH, MEDIUM
-- **CRITICAL/HIGH**: Crea requisición automáticamente
-- **MEDIUM**: Solo registra log
-
-**Trigger:** Lunes a Viernes, 8am y 2pm
-
-**Nodos:** 14 nodos
-
-**Credenciales:**
-- ✅ Supabase Production (Postgres)
-
-**Variables:**
-- Ninguna requerida
+> **Credenciales comunes**  
+> - `supabase manny puntos` (HTTP Header Auth) → envía `apikey`  
+> - `Supabase REST Ops` (Custom Auth) → `Authorization: Bearer <service_role>`  
+> - `BIND ERP` (HTTP Header Auth) → token premium de Bind  
+> - `SLACK_WEBHOOK_URL` (env var) → sólo WF‑07
 
 ---
 
-### 🚀 WF-02: Sincronización de Requisiciones a BIND
-**Archivo:** `WF-02-Requisition-Sync-to-BIND.json`
+### WF-01 · Restock Alerts Monitor
+- Consulta `restock_alerts_dashboard`, detecta alertas ≠ `ok` y registra cada evento con `p_sync_type = restock_alert`.
+- Si no hay alertas deja heartbeat (`p_entity_type = restock_monitor`).
+- **Credenciales:** `supabase manny puntos` + `Supabase REST Ops`.
 
-**¿Qué hace?**
-- Lee requisiciones aprobadas (`approved` + `pending_sync`)
-- Transforma al formato de BIND
-- POST a BIND API
-- Actualiza estados y registra logs
-- Retry automático hasta 3 veces
+### WF-02 · Bind Catalog Reset
+- Flujo manual para “barrer” el catálogo completo y reimportar desde Bind.
+- Pasos: desactivar productos → descargar Bind con **BIND ERP** → `batch_upsert_products_from_bind` → `log_bind_sync_event` (`catalog_full`).
+- Úsalo antes de activar WF‑03 si necesitas comenzar desde cero.
 
-**Trigger:** Cada 15 minutos
+### WF-03 · Bind Catalog Sync
+- Cron 02:00. Descarga lotes (`$top=100`) de Bind, transforma y ejecuta `batch_upsert_products_from_bind`.
+- Deja log por lote (`p_sync_type = catalog`). Preparado para paginar (`$skip`) si se necesitan más de 100 productos.
 
-**Nodos:** 15 nodos
+### WF-04 · Integration Queue to BIND
+- Workflow principal de requisiciones: `dequeue → Build Bind Order Payload → Payload Ready?`
+  - Rama TRUE: `POST Create Order` (credencial **BIND ERP**) → `GET Order Initial` (opcional) → Logs → `complete_integration_job(p_status='success')`.
+  - Rama FALSE: `Prepare Failure (Validation)` → log → `complete_integration_job` con `next_status` (`pending|error`).
+  - Errores de Bind reutilizan `Prepare Failure (BIND)`.
+- Toda la actividad se conserva en `bind_sync_logs` mediante `log_bind_sync_event`.
 
-**Credenciales:**
-- ✅ Supabase Production (Postgres)
-- ✅ BIND ERP API (HTTP Header Auth)
+### WF-05 · Queue & Bind Monitor
+- Calcula métricas (`pending`, `processing`, `maxAttempts`, `oldestPending`) y registra un snapshot (`p_sync_type = monitoring`).
+- Se deja desactivado por defecto; no necesita credenciales adicionales.
 
-**Variables:**
-- `BIND_API_URL` - URL base de BIND API
+### WF-06 · Bind Stock Sync
+- Descarga inventario (`/api/Inventory`) con **BIND ERP**, agrupa en lotes de 100 y llama a `sync_bind_inventory_batch`.
+- Cada lote queda registrado (`p_sync_type = inventory`).
 
-**Documentación:**
-- 📖 [WF-02-README.md](./WF-02-README.md)
-- ⚡ [WF-02-CONFIGURACION-RAPIDA.md](./WF-02-CONFIGURACION-RAPIDA.md)
+### WF-07 · Bind Alerts Notifier
+- Busca `log_bind_sync_event` con `status in (pending,error)`, arma mensaje y (si existe `SLACK_WEBHOOK_URL`) manda Slack.
+- `Send Slack Alert` tiene `continueOnFail` para no romper la ejecución si el webhook no está configurado; de cualquier manera se registra `alert_dispatch`.
 
----
-
-### 📦 WF-03: Sincronizar Productos desde BIND
-**Archivo:** `WF-03-Products-Sync-from-BIND.json`
-
-**¿Qué hace?**
-- GET products desde BIND API
-- Transforma productos al formato Supabase
-- UPSERT en tabla `products` (crea o actualiza)
-- Procesa en batches de 10
-
-**Trigger:** Diario a las 2am
-
-**Nodos:** 10 nodos
-
-**Credenciales:**
-- ✅ Supabase Production (Postgres)
-- ✅ BIND ERP API (HTTP Header Auth)
-
-**Variables:**
-- `BIND_API_URL` - URL base de BIND API
-- `BIND_COMPANY_ID` - ID de empresa en BIND
-- `COMPANY_ID` - UUID de empresa en Supabase
+### WF-08 · Bind Maintenance
+- Domingos 03:00: `refresh_integration_views()` + `purge_bind_logs(p_before := now() - 30 días)`.
+- Cada tarea exitosa se apila en `tasks` y se registra (`p_sync_type = maintenance`).
 
 ---
 
-## ⏳ Workflows Pendientes
+## 📂 Archivos de exportación
+Todos los workflows se guardan en `integrations/n8n/workflows/exported/` con el nombre `WF-0X-<Slug>.json`.  
+Cada export conserva el ID de n8n (`workflow.id`) para rastrear cambios.
 
-### WF-04: Actualización de Inventario (solo stock)
-**Estado:** 🟡 Pendiente
-**Prioridad:** Media
-**Complejidad:** Baja
-
-**¿Qué hará?**
-- Actualiza SOLO stock de productos existentes
-- Más rápido que WF-03 (no sincroniza todo el producto)
-- Recomendado: Cada hora
-
----
-
-### WF-05: Notificaciones de Requisiciones
-**Estado:** 🟡 Pendiente
-**Prioridad:** Media
-**Complejidad:** Baja
-
-**¿Qué hará?**
-- Envía emails cuando cambia estado de requisiciones
-- Notificaciones in-app
-- Eventos: aprobada, rechazada, sincronizada, error
-
-**Requiere:**
-- Credencial SMTP (Gmail, SendGrid, etc.)
-
----
-
-### WF-06: Retry de Sincronizaciones Fallidas
-**Estado:** 🟡 Pendiente
-**Prioridad:** Baja
-**Complejidad:** Media
-
-**¿Qué hará?**
-- Busca requisiciones con `sync_failed`
-- Reintenta automáticamente
-- Alerta si falla 3+ veces
-
----
-
-## 🎯 Orden de Implementación Recomendado
-
-### Fase 1: MVP (Esta Semana)
+## 🔐 Variables / credenciales
 ```
-1. ✅ WF-02: Requisition Sync
-   - El más crítico
-   - Sincroniza requisiciones a BIND
-
-2. ✅ WF-01: Stock Monitoring
-   - Detecta stock bajo
-   - Crea requisiciones automáticas
-
-3. ✅ WF-03: Products Sync
-   - Mantiene catálogo actualizado
+BIND_API_TOKEN=<token premium>
+SLACK_WEBHOOK_URL=<url opcional>
 ```
 
-### Fase 2: Optimización (Próxima Semana)
-```
-4. WF-04: Inventory Sync
-   - Actualización rápida de stock
+## ▶️ Activación recomendada
+1. WF‑04 (ya activo)  
+2. WF‑01 (logs continuos)  
+3. WF‑03 y WF‑06 (cuando definas `BIND_API_TOKEN`)  
+4. WF‑05 / WF‑07 (observabilidad y Slack)  
+5. WF‑08 (mantenimiento semanal)
 
-5. WF-05: Notifications
-   - Mejora comunicación con usuarios
-```
-
-### Fase 3: Mantenimiento (Futuro)
-```
-6. WF-06: Retry Failed Syncs
-   - Reducir intervención manual
-```
-
----
-
-## 📊 Comparación Rápida
-
-| Workflow | Trigger | Frecuencia | Nodos | Prioridad |
-|----------|---------|------------|-------|-----------|
-| WF-01 | Schedule | 8am & 2pm | 14 | 🟡 Media |
-| WF-02 | Schedule | Cada 15 min | 15 | 🔴 Alta |
-| WF-03 | Schedule | Diario 2am | 10 | 🟡 Media |
-| WF-04 | Schedule | Cada hora | ~8 | 🟢 Baja |
-| WF-05 | Webhook | Real-time | ~12 | 🟡 Media |
-| WF-06 | Schedule | Cada 2 horas | ~10 | 🟢 Baja |
-
----
-
-## 🚀 Cómo Empezar
-
-### 1. Configurar Credenciales (Una Sola Vez)
-
-#### Supabase Production
-```yaml
-Type: Postgres
-Name: Supabase Production
-Host: aws-1-us-east-2.pooler.supabase.com
-Port: 5432
-Database: postgres
-User: postgres.azjaehrdzdfgrumbqmuc
-Password: <SUPABASE_DB_PASSWORD>
-SSL: Disable
-```
-
-#### BIND ERP API
-```yaml
-Type: HTTP Header Auth
-Name: BIND ERP API
-Header Name: Authorization
-Header Value: Bearer [TU_TOKEN]
-```
-
----
-
-### 2. Configurar Variables de Entorno
-
-Agrega en tu n8n (docker-compose.yml o Settings → Variables):
-
-```bash
-BIND_API_URL=https://api.bind.com.mx/v1
-BIND_COMPANY_ID=[ID de tu empresa en BIND]
-COMPANY_ID=[UUID de tu empresa en Supabase]
-```
-
----
-
-### 3. Importar Workflows
-
-**Orden recomendado:**
-
-1. **WF-02 primero** (el más importante)
-   ```
-   Import → WF-02-Requisition-Sync-to-BIND.json
-   ```
-
-2. **WF-01 segundo** (crea requisiciones automáticas)
-   ```
-   Import → WF-01-Stock-Monitoring.json
-   ```
-
-3. **WF-03 tercero** (mantiene productos actualizados)
-   ```
-   Import → WF-03-Products-Sync-from-BIND.json
-   ```
-
----
-
-### 4. Probar Manualmente
-
-Para cada workflow:
-1. Abre en n8n
-2. Click "Execute Workflow"
-3. Verifica que no hay errores
-4. Revisa logs en Supabase
-
----
-
-### 5. Activar en Producción
-
-Solo cuando estés seguro:
-```
-Toggle "Active" → ON
-```
-
----
-
-## 🔍 Queries de Verificación
-
-### Ver últimas sincronizaciones a BIND
-```sql
-SELECT
-  sync_type,
-  entity_id,
-  status,
-  error_message,
-  synced_at
-FROM bind_sync_logs
-ORDER BY synced_at DESC
-LIMIT 10;
-```
-
-### Ver requisiciones pendientes de sincronizar
-```sql
-SELECT COUNT(*) as pending
-FROM requisitions
-WHERE business_status = 'approved'
-  AND integration_status = 'pending_sync';
-```
-
-### Ver alertas de stock bajo activas
-```sql
-SELECT
-  product_name,
-  current_stock,
-  min_stock,
-  alert_level
-FROM restock_alerts_dashboard
-WHERE alert_level IN ('CRITICAL', 'HIGH')
-ORDER BY alert_level;
-```
-
-### Ver logs de restock automático
-```sql
-SELECT
-  trigger_type,
-  stock_at_trigger,
-  min_stock_at_trigger,
-  requisition_id,
-  created_at
-FROM inventory_restock_rule_logs
-ORDER BY created_at DESC
-LIMIT 10;
-```
-
----
-
-## 📈 Métricas Esperadas
-
-### WF-01: Stock Monitoring
-- **Ejecuciones:** 10 por semana (2 al día, 5 días)
-- **Alertas:** 0-20 por ejecución (depende de inventario)
-- **Requisiciones creadas:** 0-5 automáticas por día
-
-### WF-02: Requisition Sync
-- **Ejecuciones:** ~96 por día (cada 15 min)
-- **Requisiciones procesadas:** 1-10 por ejecución
-- **Tasa de éxito esperada:** >95%
-
-### WF-03: Products Sync
-- **Ejecuciones:** 1 por día (2am)
-- **Productos sincronizados:** 50-500 (depende de catálogo)
-- **Duración:** 2-10 minutos
-
----
-
-## 🚨 Alertas Importantes
-
-### ⚠️ Si WF-02 falla
-**Impacto:** Requisiciones no llegan a BIND
-**Acción:** Revisar token de BIND y logs
-
-### ⚠️ Si WF-01 no crea requisiciones
-**Impacto:** Stock puede agotarse sin alerta
-**Acción:** Verificar que hay reglas de restock activas
-
-### ⚠️ Si WF-03 falla
-**Impacto:** Catálogo desactualizado
-**Acción:** Verificar endpoint de BIND
-
----
-
-## 📚 Documentación Completa
-
-- [WORKFLOWS_MASTER_PLAN.md](../docs/WORKFLOWS_MASTER_PLAN.md) - Plan arquitectónico completo
-- [SETUP.md](../docs/SETUP.md) - Instalación de n8n
-- [WF-02-README.md](./WF-02-README.md) - Documentación WF-02
-- [WF-02-CONFIGURACION-RAPIDA.md](./WF-02-CONFIGURACION-RAPIDA.md) - Setup rápido
-
----
-
-## ✅ Checklist de Producción
-
-Antes de ir a producción, verifica:
-
-**Credenciales:**
-- [ ] Supabase Production configurada y probada
-- [ ] BIND ERP API configurada y probada
-- [ ] IP del servidor autorizada en Supabase
-
-**Variables:**
-- [ ] BIND_API_URL definida
-- [ ] BIND_COMPANY_ID definida
-- [ ] COMPANY_ID definida
-
-**Workflows:**
-- [ ] WF-02 importado y probado
-- [ ] WF-01 importado y probado
-- [ ] WF-03 importado y probado
-- [ ] Al menos 1 ejecución exitosa de cada uno
-
-**Base de Datos:**
-- [ ] Tabla `bind_sync_logs` existe
-- [ ] Tabla `inventory_restock_rule_logs` existe
-- [ ] Función `create_full_requisition()` existe
-- [ ] Vista `restock_alerts_dashboard` existe
-
-**Testing:**
-- [ ] Requisición de prueba sincronizada OK a BIND
-- [ ] Productos sincronizados OK desde BIND
-- [ ] Logs verificados en Supabase
-
----
-
-**Última Actualización:** 2025-11-05
-**Workflows Listos:** 3/6
-**Estado:** ✅ MVP Completo - Listo para Testing
+Con esto el repositorio refleja el estado real del entorno n8n: 8 workflows funcionales, credenciales homogéneas y documentación alineada.
